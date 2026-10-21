@@ -8,6 +8,7 @@
 //! * [`morph`] – exact Euclidean choke and spread of a plate (for underbase and traps).
 //! * [`halftone`] – amplitude-modulated screening (round, elliptical, line) at a screen angle.
 //! * [`marks`] – registration crosshairs.
+//! * [`export`] – 1-bit PNG and TIFF film files with their resolution.
 //! * [`profile`] – mesh / lines-per-inch / angle sanity checks.
 //! * [`job`] – a serialisable job (inks, underbase, trap) and the pipeline that runs it.
 //!
@@ -17,6 +18,7 @@
 
 pub mod color;
 pub mod error;
+pub mod export;
 pub mod halftone;
 pub mod image;
 pub mod job;

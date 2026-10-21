@@ -49,6 +49,7 @@ log = { workspace = true }
 [dev-dependencies]
 vectorcraft-affinity = { workspace = true, features = ["synth"] }
 crc32fast = { workspace = true }
+tiff = { workspace = true }
 vectorcraft-testkit = { workspace = true }
 proptest = { workspace = true }
 # A variable font built in code (no font file is committed).

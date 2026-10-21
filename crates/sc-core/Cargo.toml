@@ -10,9 +10,11 @@ repository.workspace = true
 [dependencies]
 serde.workspace = true
 thiserror.workspace = true
+png.workspace = true
 
 [dev-dependencies]
 serde_json.workspace = true
+tiff.workspace = true
 
 [lints]
 workspace = true

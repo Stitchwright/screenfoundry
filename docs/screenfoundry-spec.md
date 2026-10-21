@@ -42,7 +42,7 @@ Known simplifications to fix:
 - Separation is hard assignment to the nearest ink: no anti-aliased edge handling, no
   simulated-process (overlapping halftone channels), no index-colour dithering.
 - Trap and choke use one global radius; no per-pair or per-edge control.
-- Film is `Bitmap1` in memory only: no TIFF/PDF export yet.
+- Film files are 1-bit PNG or uncompressed TIFF only: no compressed TIFF, PDF or job sheet yet.
 - The app icon artwork is still StitchFoundry's (renamed files, old picture): a new original icon is part of SC-9.
 - The bug-report page of the StitchHub still knows this app as `stitchfoundry` (`help.rs`); switch it when the hub has `screenfoundry`.
 
@@ -51,7 +51,7 @@ Known simplifications to fix:
 | Id | Task | Notes |
 |---|---|---|
 | SC-1 (done: commands `screen.palette`, `screen.advice`, `screen.separate`, `screen.halftone`; Screen Print menu with Separate Colors… and Halftone Film…; the panel comes with SC-3) | Engine commands: `screen.palette`, `screen.separate`, `screen.underbase`, `screen.halftone`, `screen.marks` | Wrap `sc-core`; params documented; tests per command; reachable from MCP and CLI. |
-| SC-2 | Film export: 1-bit TIFF (CCITT G4) and PDF per screen, at job dpi, with job-sheet page | Use permissive crates only. |
+| SC-2 (partly done: 1-bit PNG and uncompressed TIFF, with the resolution recorded) | Film export: 1-bit TIFF (CCITT G4) and PDF per screen, at job dpi, with job-sheet page | Left: compressed TIFF, PDF, the job sheet. Use permissive crates only. |
 | SC-3 | Separations panel: palette editor, per-plate preview, ink library, mesh and lpi advice | Panels read engine state only. |
 | SC-4 | Vector-first spot separation: each ink = a layer or object set; overprint/knockout, trap on paths | Uses the vector document directly; no rasterising until output. |
 | SC-5 | Simulated process: spot-channel halftones over an underbase, highlight white | Needs the rules the research marks unverified; calibrate with real shops. |
@@ -76,3 +76,4 @@ Decided by the owner on 2026-10-21: remove the embroidery code (done, `docs/plan
 - 2026-10-21: SC-1 landed: four `screen.*` engine commands, PNG films (1-bit TIFF/PDF is SC-2).
 - 2026-10-21: Screen Print menu (right of Effect) with two folder-picking items; translations for 23 languages are a machine-written first pass and need native review.
 - 2026-10-21: embroidery removed (`docs/plans/remove-embroidery.md`); app renamed to ScreenFoundry (binaries, ids, packaging, catalogs) with the old document extension and settings folder still read.
+- 2026-10-21: SC-2 first part: 1-bit PNG and TIFF films with their resolution (`format` option).

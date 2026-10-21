@@ -180,3 +180,39 @@ fn bad_input_is_an_error_and_changes_nothing() {
     }
     assert_eq!(s.doc().unwrap().history.undo.len(), before);
 }
+
+#[test]
+fn films_come_as_one_bit_png_or_tiff_with_their_resolution() {
+    let mut s = session();
+    let dir = vectorcraft_testkit::temp_dir("screen-formats");
+    let png = s.execute("screen.separate", &json!({"dpi": 100, "inks": inks()})).unwrap();
+    let f = &png["films"][0];
+    assert_eq!(f["format"], "png");
+    let bytes = vectorcraft_format::base64_decode(f["dataBase64"].as_str().unwrap()).unwrap();
+    assert!(bytes.starts_with(b"\x89PNG"));
+    assert!(bytes.windows(4).any(|w| w == b"pHYs"), "the PNG records its resolution");
+    // 1-bit grayscale: bit depth 1, colour type 0 (the IHDR starts at byte 16).
+    assert_eq!((bytes[24], bytes[25]), (1, 0));
+
+    let tiff = s.execute("screen.separate", &json!({"dpi": 100, "inks": inks(), "format": "tiff", "dir": dir.to_string_lossy()})).unwrap();
+    for f in tiff["films"].as_array().unwrap() {
+        assert_eq!(f["format"], "tiff");
+        let path = f["path"].as_str().unwrap();
+        assert!(path.ends_with(".tif"), "{path}");
+        let bytes = std::fs::read(path).unwrap();
+        assert_eq!(&bytes[..4], b"II*\0");
+        let mut d = tiff::decoder::Decoder::new(std::io::Cursor::new(bytes)).unwrap();
+        assert_eq!(d.colortype().unwrap(), tiff::ColorType::Gray(1));
+        assert_eq!(u64::from(d.dimensions().unwrap().0), f["width"].as_u64().unwrap());
+    }
+    // The halftone takes the option too.
+    let mut png = Vec::new();
+    let img = image::RgbaImage::from_pixel(60, 60, image::Rgba([128, 128, 128, 255]));
+    image::DynamicImage::ImageRgba8(img).write_to(&mut std::io::Cursor::new(&mut png), image::ImageFormat::Png).unwrap();
+    let src = json!({"dataBase64": vectorcraft_format::base64_encode(&png)});
+    let h = s.execute("screen.halftone", &json!({"source": src, "dpi": 600, "format": "tiff"})).unwrap();
+    assert_eq!(h["films"][0]["format"], "tiff");
+    assert!(s.execute("screen.separate", &json!({"inks": inks(), "format": "gif"})).is_err());
+    assert!(s.execute("screen.halftone", &json!({"source": src, "format": 3})).is_err());
+    let _ = std::fs::remove_dir_all(dir);
+}

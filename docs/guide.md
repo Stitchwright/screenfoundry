@@ -76,9 +76,11 @@ of a job grow by the same margin, so the marks line up from one film to the next
 
 ## Films and output
 
-Films are written as PNG files (black where ink must reach the garment). Choose a folder with
-`dir`; without one the films come back as base64. 1-bit TIFF and PDF output, and direct-to-screen
-and DTF output, are planned.
+Films are 1-bit images, black where ink must reach the garment, with the job's resolution
+recorded in the file so they print at the right size. Choose `format`: `png` (default) or `tiff`
+(uncompressed baseline, which imagesetters and direct-to-screen machines read). Choose a folder
+with `dir`; without one the films come back as base64. PDF output, direct-to-screen and DTF
+output are planned.
 
 ## Commands and automation
 
@@ -98,6 +100,6 @@ parameter.
 - Separation is one solid film per ink. Simulated process (overlapping halftone channels) and
   index color are not built yet.
 - One trap width and one choke width for the whole job.
-- PNG films only.
+- Films are PNG or uncompressed TIFF; no PDF, compressed TIFF, or machine-specific output yet.
 - The defaults come from published practitioner advice that disagrees in places. Test-print
   before a production run.

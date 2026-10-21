@@ -49,7 +49,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Separate Colors",
             [],
             None,
-            "{source?, dpi?, inks?: [{name?, color: \"#rrggbb\", mesh? (156)}], colors?: how many inks to find in the art when `inks` is not given (4; 1–12), underbase?: true|{name?, color? (#ffffff), mesh? (110), chokeMm? (0.3)}, trapMm?: spread of colours that print before a darker one (0.25; 0–5), marks?: add registration marks (false), dir?: a folder to write one PNG film a screen (without it: base64)} spot-colour separation: one solid film per screen, the underbase first then the colours light to dark → {dpi, width, height, films: [{name, color, role: underbase|color, mesh, coverage, width, height, path | dataBase64}]}",
+            "{source?, dpi?, inks?: [{name?, color: \"#rrggbb\", mesh? (156)}], colors?: how many inks to find in the art when `inks` is not given (4; 1–12), underbase?: true|{name?, color? (#ffffff), mesh? (110), chokeMm? (0.3)}, trapMm?: spread of colours that print before a darker one (0.25; 0–5), marks?: add registration marks (false), format?: png|tiff (png), dir?: a folder to write one 1-bit film file a screen (without it: base64)} spot-colour separation: one solid film per screen, the underbase first then the colours light to dark → {dpi, width, height, films: [{name, color, role: underbase|color, format, mesh, coverage, width, height, path | dataBase64}]}",
             always,
             separate
         ),
@@ -58,7 +58,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Halftone Film",
             [],
             None,
-            "{source?, dpi?, ink?: \"#rrggbb\" (#000000), name?, mesh? (230), lpi? (45), angle? (22.5), shape?: round|ellipse|line (round), minDot?: tones below this print nothing (0.08), maxDot?: tones above this print solid (0.95), marks?, dir?} one ink's tones screened into dots → {dpi, width, height, films: [{name, color, role, mesh, coverage, width, height, path | dataBase64}], advice: [{code, message}]}",
+            "{source?, dpi?, ink?: \"#rrggbb\" (#000000), name?, mesh? (230), lpi? (45), angle? (22.5), shape?: round|ellipse|line (round), minDot?: tones below this print nothing (0.08), maxDot?: tones above this print solid (0.95), marks?, format?: png|tiff (png), dir?} one ink's tones screened into dots → {dpi, width, height, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64}], advice: [{code, message}]}",
             always,
             halftone_film
         ),
@@ -190,18 +190,50 @@ fn slug(name: &str) -> String {
     if s.is_empty() { "screen".into() } else { s.chars().take(40).collect() }
 }
 
-fn film_png(b: &Bitmap1) -> Result<Vec<u8>> {
-    // Black where ink must reach the garment, white elsewhere.
-    let data: Vec<u8> = b.bits().iter().map(|&on| if on { 0 } else { 255 }).collect();
-    let img = image::GrayImage::from_raw(b.width() as u32, b.height() as u32, data)
-        .ok_or_else(|| bad("screen", "the film's pixel buffer doesn't match its size"))?;
-    let mut out = Vec::new();
-    img.write_to(&mut Cursor::new(&mut out), image::ImageFormat::Png).map_err(|e| EngineError::Other(format!("PNG encoding failed: {e}")))?;
-    Ok(out)
+/// A film file format.
+#[derive(Clone, Copy)]
+enum FilmFormat {
+    Png,
+    Tiff,
+}
+
+impl FilmFormat {
+    fn parse(cmd: &str, p: &Value) -> Result<Self> {
+        let given = match p.get("format") {
+            None | Some(Value::Null) => "png",
+            Some(Value::String(f)) => f.as_str(),
+            Some(_) => return Err(bad(cmd, "`format` is png or tiff")),
+        };
+        match given {
+            "png" => Ok(Self::Png),
+            "tiff" | "tif" => Ok(Self::Tiff),
+            _ => Err(bad(cmd, "`format` is png or tiff")),
+        }
+    }
+    fn extension(self) -> &'static str {
+        match self {
+            Self::Png => "png",
+            Self::Tiff => "tif",
+        }
+    }
+    fn name(self) -> &'static str {
+        match self {
+            Self::Png => "png",
+            Self::Tiff => "tiff",
+        }
+    }
+    /// A 1-bit file with the film's resolution: black where ink must reach the garment.
+    fn encode(self, cmd: &str, film: &Bitmap1, dpi: f64) -> Result<Vec<u8>> {
+        match self {
+            Self::Png => sc_core::export::png_1bit(film, dpi),
+            Self::Tiff => sc_core::export::tiff_1bit(film, dpi),
+        }
+        .map_err(sc(cmd))
+    }
 }
 
 /// The result entries for `films`, written under `dir` when given.
-fn emit(cmd: &str, films: Vec<Film>, dpi: f64, marks: bool, dir: Option<&str>) -> Result<Vec<Value>> {
+fn emit(cmd: &str, films: Vec<Film>, dpi: f64, marks: bool, fmt: FilmFormat, dir: Option<&str>) -> Result<Vec<Value>> {
     let spec = if marks { Some(MarkSpec::for_dpi(dpi).map_err(sc(cmd))?) } else { None };
     let mut out = Vec::with_capacity(films.len());
     for (i, f) in films.into_iter().enumerate() {
@@ -211,23 +243,23 @@ fn emit(cmd: &str, films: Vec<Film>, dpi: f64, marks: bool, dir: Option<&str>) -
             Some(m) => frame_with_marks(&f.bitmap, m).map_err(sc(cmd))?,
             None => f.bitmap,
         };
-        let png = film_png(&bitmap)?;
+        let file = fmt.encode(cmd, &bitmap, dpi)?;
         let role = match f.role {
             Role::Underbase => "underbase",
             Role::Color => "color",
         };
         let mut v = json!({
-            "name": name, "color": to_hex(f.ink_rgb), "role": role, "mesh": f.mesh,
+            "name": name, "color": to_hex(f.ink_rgb), "role": role, "format": fmt.name(), "mesh": f.mesh,
             "coverage": coverage,
             "width": bitmap.width(), "height": bitmap.height(),
         });
         match dir {
             Some(dir) => {
-                let path = format!("{}/{:02}-{}-{}.png", dir.trim_end_matches(['/', '\\']), i + 1, role, slug(&name));
-                super::fileio::write_file(&path, &png)?;
+                let path = format!("{}/{:02}-{}-{}.{}", dir.trim_end_matches(['/', '\\']), i + 1, role, slug(&name), fmt.extension());
+                super::fileio::write_file(&path, &file)?;
                 v["path"] = json!(path);
             }
-            None => v["dataBase64"] = json!(vectorcraft_format::base64_encode(&png)),
+            None => v["dataBase64"] = json!(vectorcraft_format::base64_encode(&file)),
         }
         out.push(v);
     }
@@ -243,6 +275,7 @@ fn separate(s: &mut Session, p: &Value) -> Result<Value> {
     let dpi = num(p, C, "dpi", DEFAULT_DPI, 25.0..=2400.0)?;
     let trap_mm = num(p, C, "trapMm", 0.25, 0.0..=5.0)?;
     let marks = bool_or(p, "marks", false);
+    let fmt = FilmFormat::parse(C, p)?;
     let mm_px = |mm: f64| mm / 25.4 * dpi;
     let img = artwork(s, p, C, dpi)?;
 
@@ -293,7 +326,7 @@ fn separate(s: &mut Session, p: &Value) -> Result<Value> {
 
     let job = SpotJob { inks, underbase, trap_px: mm_px(trap_mm) };
     let films = job.run(&img).map_err(sc(C))?;
-    let films = emit(C, films, dpi, marks, dir_param(p))?;
+    let films = emit(C, films, dpi, marks, fmt, dir_param(p))?;
     let (w, h) = films.first().map(|f| (f["width"].clone(), f["height"].clone())).unwrap_or_default();
     Ok(json!({ "dpi": dpi, "width": w, "height": h, "films": films }))
 }
@@ -323,7 +356,7 @@ fn halftone_film(s: &mut Session, p: &Value) -> Result<Value> {
     };
     let bitmap = halftone(&plate, &opts).map_err(sc(C))?;
     let film = Film { name: name_of(p.get("name"), "Halftone".into()), ink_rgb: ink, mesh, role: Role::Color, bitmap };
-    let films = emit(C, vec![film], dpi, bool_or(p, "marks", false), dir_param(p))?;
+    let films = emit(C, vec![film], dpi, bool_or(p, "marks", false), FilmFormat::parse(C, p)?, dir_param(p))?;
     let (w, h) = films.first().map(|f| (f["width"].clone(), f["height"].clone())).unwrap_or_default();
     Ok(json!({
         "dpi": dpi, "width": w, "height": h, "films": films,
