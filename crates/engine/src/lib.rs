@@ -2394,6 +2394,8 @@ mod tests_saveoptions;
 #[cfg(test)]
 mod tests_scalestrokes;
 #[cfg(test)]
+mod tests_screen;
+#[cfg(test)]
 mod tests_scripts;
 #[cfg(test)]
 mod tests_select_ids_first;

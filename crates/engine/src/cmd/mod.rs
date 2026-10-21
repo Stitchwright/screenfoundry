@@ -125,6 +125,7 @@ pub mod quilting;
 pub mod rasterfx;
 mod recolor;
 pub mod recovery;
+pub mod screen;
 pub mod scripts;
 mod select;
 pub(crate) mod shaper;
@@ -283,6 +284,7 @@ pub fn command_specs() -> &'static [CommandSpec] {
         v.extend(layer::specs());
         v.extend(layerpanel::specs());
         v.extend(draw2::specs());
+        v.extend(screen::specs());
         v.extend(embroidery::specs());
         v.extend(embroidery_edit::specs());
         v.extend(embroidery_stitches::specs());

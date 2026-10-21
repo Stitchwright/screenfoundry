@@ -72,6 +72,26 @@ pub fn add_registration_marks(film: &mut Bitmap1, art: Rect, m: &MarkSpec) -> Re
     Ok(())
 }
 
+/// A copy of `film` on a larger film with the four registration marks around it. The margin is
+/// the gap plus the mark's size on every side, so every screen of a job grows identically and the
+/// marks line up from one film to the next.
+pub fn frame_with_marks(film: &Bitmap1, m: &MarkSpec) -> Result<Bitmap1> {
+    let margin = m.gap_px.checked_add(m.size_px).and_then(|v| v.checked_add(1)).ok_or(ScError::MarksDontFit)?;
+    let width = film.width().checked_add(margin.saturating_mul(2)).ok_or(ScError::MarksDontFit)?;
+    let height = film.height().checked_add(margin.saturating_mul(2)).ok_or(ScError::MarksDontFit)?;
+    let mut out = Bitmap1::new(width, height)?;
+    for y in 0..film.height() {
+        for x in 0..film.width() {
+            if film.get(x, y) {
+                out.set((x + margin) as i64, (y + margin) as i64, true);
+            }
+        }
+    }
+    let art = Rect { x: margin, y: margin, width: film.width(), height: film.height() };
+    add_registration_marks(&mut out, art, m)?;
+    Ok(out)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -105,6 +125,22 @@ mod tests {
         assert_eq!(add_registration_marks(&mut film, art, &m), Err(ScError::MarksDontFit));
         let huge = Rect { x: usize::MAX, y: 0, width: usize::MAX, height: 1 };
         assert!(corner_centers(10, 10, huge, &m).is_err());
+    }
+
+    #[test]
+    fn framing_keeps_the_art_and_adds_identical_margins() {
+        let m = MarkSpec { size_px: 20, line_px: 2, gap_px: 10 };
+        let mut a = Bitmap1::new(30, 20).unwrap();
+        a.set(3, 4, true);
+        let b = Bitmap1::new(30, 20).unwrap();
+        let (fa, fb) = (frame_with_marks(&a, &m).unwrap(), frame_with_marks(&b, &m).unwrap());
+        assert_eq!((fa.width(), fa.height()), (fb.width(), fb.height()));
+        assert_eq!(fa.width(), 30 + 2 * 31);
+        assert!(fa.get(3 + 31, 4 + 31), "art is carried over, offset by the margin");
+        // The marks are the only difference between an empty film and a film with one dot.
+        let diff = fa.bits().iter().zip(fb.bits()).filter(|(x, y)| x != y).count();
+        assert_eq!(diff, 1);
+        assert!(frame_with_marks(&a, &MarkSpec { size_px: usize::MAX, line_px: 1, gap_px: 1 }).is_err());
     }
 
     #[test]

@@ -49,7 +49,7 @@ Known simplifications to fix:
 
 | Id | Task | Notes |
 |---|---|---|
-| SC-1 | Engine commands: `screen.palette`, `screen.separate`, `screen.underbase`, `screen.halftone`, `screen.marks` | Wrap `sc-core`; params documented; tests per command; reachable from MCP and CLI. |
+| SC-1 (done: commands `screen.palette`, `screen.advice`, `screen.separate`, `screen.halftone`; menu and panel come with SC-3) | Engine commands: `screen.palette`, `screen.separate`, `screen.underbase`, `screen.halftone`, `screen.marks` | Wrap `sc-core`; params documented; tests per command; reachable from MCP and CLI. |
 | SC-2 | Film export: 1-bit TIFF (CCITT G4) and PDF per screen, at job dpi, with job-sheet page | Use permissive crates only. |
 | SC-3 | Separations panel: palette editor, per-plate preview, ink library, mesh and lpi advice | Panels read engine state only. |
 | SC-4 | Vector-first spot separation: each ink = a layer or object set; overprint/knockout, trap on paths | Uses the vector document directly; no rasterising until output. |
@@ -74,3 +74,4 @@ Known simplifications to fix:
 ## 7. Revision history
 
 - 2026-10-21: created; `sc-core` separation core landed.
+- 2026-10-21: SC-1 landed: four `screen.*` engine commands, PNG films (1-bit TIFF/PDF is SC-2).

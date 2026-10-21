@@ -25,9 +25,38 @@ pub fn delta_e_sq(a: [f64; 3], b: [f64; 3]) -> f64 {
     (a[0] - b[0]).powi(2) + (a[1] - b[1]).powi(2) + (a[2] - b[2]).powi(2)
 }
 
+/// `#rgb` or `#rrggbb` (the `#` is optional) to sRGB.
+pub fn parse_hex(s: &str) -> Option<[u8; 3]> {
+    let h = s.trim().trim_start_matches('#');
+    if !h.is_ascii() {
+        return None;
+    }
+    let v = |i: usize, n: usize| u8::from_str_radix(h.get(i..i + n)?, 16).ok();
+    match h.len() {
+        3 => Some([v(0, 1)? * 17, v(1, 1)? * 17, v(2, 1)? * 17]),
+        6 => Some([v(0, 2)?, v(2, 2)?, v(4, 2)?]),
+        _ => None,
+    }
+}
+
+/// `#rrggbb`, lowercase.
+pub fn to_hex(c: [u8; 3]) -> String {
+    format!("#{:02x}{:02x}{:02x}", c[0], c[1], c[2])
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn hex_round_trips_and_rejects_junk() {
+        assert_eq!(parse_hex("#ff8000"), Some([255, 128, 0]));
+        assert_eq!(parse_hex("f80"), Some([255, 136, 0]));
+        assert_eq!(to_hex([255, 128, 0]), "#ff8000");
+        for bad in ["", "#", "#12", "#12345", "#gg0000", "#1234567", "é1234", "#ff80 0"] {
+            assert_eq!(parse_hex(bad), None, "{bad:?}");
+        }
+    }
 
     #[test]
     fn white_and_black() {

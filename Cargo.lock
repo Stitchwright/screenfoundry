@@ -5342,6 +5342,7 @@ dependencies = [
  "proptest",
  "roxmltree 0.21.1",
  "ruzstd",
+ "sc-core",
  "serde",
  "serde_json",
  "sf-core",
