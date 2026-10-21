@@ -6,16 +6,15 @@
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>MIT OR Apache-2.0</project_license>
   <name>StitchFoundry</name>
-  <summary>Digitize machine embroidery designs</summary>
+  <summary>Separate artwork into films for screen printing</summary>
   <developer id="com.stitchwright">
     <name>SiteSentrix</name>
   </developer>
   <description>
     <p>
-      StitchFoundry is an open-source machine-embroidery digitizer built on a full vector editor.
-      Give any shape satin, fill or run stitches with editable direction, letter with any font,
-      auto-digitize images, edit and sequence stitches, and read and write DST, PES, JEF, EXP,
-      VP3, XXX and U01 files. It is based on VectorCraft.
+      StitchFoundry is an open-source screen-printing prepress app built on a full vector editor.
+      Separate artwork into one film per screen, with an underbase, trapping, halftones and
+      registration marks. It is based on VectorCraft.
     </p>
   </description>
   <launchable type="desktop-id">com.stitchwright.stitchfoundry.desktop</launchable>
@@ -30,19 +29,11 @@
     <category>VectorGraphics</category>
   </categories>
   <keywords>
-    <keyword>embroidery</keyword>
-    <keyword>digitizing</keyword>
-    <keyword>stitch</keyword>
-    <keyword>dst</keyword>
-    <keyword>pes</keyword>
-    <keyword>vp3</keyword>
+    <keyword>screen printing</keyword>
+    <keyword>silkscreen</keyword>
+    <keyword>separations</keyword>
+    <keyword>halftone</keyword>
   </keywords>
-  <screenshots>
-    <screenshot type="default">
-      <caption>Digitizing: thirty satin petals and a fill vine sewn as one thread, with the Stitch Sequence panel</caption>
-      <image>https://raw.githubusercontent.com/Stitchwright/StitchFoundry/main/docs/images/stitchfoundry-branching.png</image>
-    </screenshot>
-  </screenshots>
   <branding>
     <color type="primary" scheme_preference="light">#f6c3cb</color>
     <color type="primary" scheme_preference="dark">#1e2b4f</color>

@@ -34,8 +34,8 @@ by reading and re-implementing or by copying with attribution in `NOTICE`.
 
 ## 3. What exists today
 
-`crates/sc-core` (package `sc-core`, layer: standalone): see the README table. 31 unit tests;
-clippy clean with the workspace no-panic lints. Not yet wired into the engine, UI, CLI or MCP.
+`crates/sc-core` (package `sc-core`, layer: standalone): see the README table. 33 unit tests;
+clippy clean with the workspace no-panic lints. Wired into the engine as `screen.*` commands (SC-1) and so reachable from the menu, the CLI, the control channel and MCP.
 
 Known simplifications to fix:
 
@@ -43,7 +43,7 @@ Known simplifications to fix:
   simulated-process (overlapping halftone channels), no index-colour dithering.
 - Trap and choke use one global radius; no per-pair or per-edge control.
 - Film is `Bitmap1` in memory only: no TIFF/PDF export yet.
-- The rest of the app is still the embroidery product; embroidery crates are untouched.
+- The app shell still carries the StitchFoundry name and icons (the rename task, SC-9).
 
 ## 4. Roadmap
 
@@ -57,14 +57,12 @@ Known simplifications to fix:
 | SC-6 | Index colour with a fixed ink palette and non-overlapping patterns | Palette selection per the research. |
 | SC-7 | Stochastic (FM) and hybrid screening | Check void-and-cluster patent status first. |
 | SC-8 | CTS / DTF / DCS 2.0 output; job-sheet export | After SC-2. |
-| SC-9 | Rebrand the shell: app name, menus, icons (original work only), remove or hide embroidery | Decision below. |
+| SC-9 | Rename to `screenfoundry`: binaries, window title, About and Home text, icons (original work only), packaging, CI, docs, file extension with a legacy alias | Owner chose the name `screenfoundry`. |
 | SC-10 | Calibration: print-test pages and shop feedback loop to tune the default profiles | The only way to settle the research's open conflicts. |
 
 ## 5. Decisions for the owner
 
-1. Keep or remove the embroidery crates and UI? They are kept for now so the build stays green.
-2. Reuse PhotoCraft by dependency (git rev) or by copying code with attribution?
-3. Name of the app binary and CLI (currently still `vectorcraft` / `stitchfoundry-cli`).
+Decided by the owner on 2026-10-21: remove the embroidery code (done, `docs/plans/remove-embroidery.md`); use PhotoCraft both as a git dependency and by copying with attribution where code is adapted; name the app and CLI `screenfoundry`.
 
 ## 6. Verification
 
@@ -75,4 +73,4 @@ Known simplifications to fix:
 
 - 2026-10-21: created; `sc-core` separation core landed.
 - 2026-10-21: SC-1 landed: four `screen.*` engine commands, PNG films (1-bit TIFF/PDF is SC-2).
-- 2026-10-21: Screen Print menu (right of Embroidery) with two folder-picking items; translations for 23 languages are a machine-written first pass and need native review.
+- 2026-10-21: Screen Print menu (right of Effect) with two folder-picking items; translations for 23 languages are a machine-written first pass and need native review.

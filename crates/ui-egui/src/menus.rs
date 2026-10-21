@@ -2845,8 +2845,6 @@ pub fn menu_tree_named(english_names: bool) -> Vec<(&'static str, Vec<Item>)> {
                         c("Shape", "select.same.shapeType"),
                         c("Symbol Instance", "select.same.symbolInstance"),
                         Sep,
-                        c("Thread Color", "select.same.thread"),
-                        Sep,
                         c("Font Family", "select.same.fontFamily"),
                         c("Font Family & Style", "select.same.fontFamilyStyle"),
                         c("Font Family, Style & Size", "select.same.fontFamilyStyleSize"),

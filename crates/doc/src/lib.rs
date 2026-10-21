@@ -700,9 +700,6 @@ pub struct Document {
     /// Variables (data merge): named values bound to objects, applied per dataset.
     #[serde(default, skip_serializing_if = "crate::skip::is_default")]
     pub variables: Shared<Variables>,
-    /// Embroidery: hoop, fabric, machine settings and thread chart of the stitch plan.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub embroidery: Option<Box<sf_core::attr::DocEmbroidery>>,
     #[serde(default)]
     pub grid: GridPrefs,
     #[serde(default = "ppi72")]
@@ -901,7 +898,6 @@ impl Document {
             views: vec![],
             saved_selections: Default::default(),
             variables: Default::default(),
-            embroidery: None,
             grid: GridPrefs::default(),
             raster_effects_ppi: 72.0,
             images: BTreeMap::new(),
@@ -2092,24 +2088,38 @@ mod tests {
         assert!(!ids.contains(&a) && !ids.contains(&b));
     }
 
+    /// Files written while this was an embroidery app carry `embroidery` keys on the document and
+    /// on objects. They still open. An object's key is ignored (and gone on the next save); the
+    /// document's is kept as an unknown key, as any key from a newer version is.
     #[test]
-    fn embroidery_round_trips_follows_transforms_and_old_files_load() {
-        let (mut d, a, _) = doc_with_rects();
-        let plain = serde_json::to_string(&d).unwrap();
-        assert!(!plain.contains("embroidery"), "documents without embroidery write no key");
-        let mut e = sf_core::attr::Embroidery::fill();
-        e.guides.push(sf_core::direction::Guide::new(sf_core::Point::new(0.0, 0.0), sf_core::Point::new(10.0, 0.0)));
-        d.node_mut(a).unwrap().embroidery = Some(Box::new(e));
-        d.embroidery = Some(Box::default());
-        let back: Document = serde_json::from_str(&serde_json::to_string(&d).unwrap()).unwrap();
-        assert_eq!(back, d);
-        // moving the object moves its inclination lines
-        d.node_mut(a).unwrap().transform(Affine::translate((5.0, 7.0)), Scaling::default());
-        let g = d.node(a).unwrap().embroidery.as_ref().unwrap().guides[0];
-        assert!((g.a.x - 5.0).abs() < 1e-9 && (g.a.y - 7.0).abs() < 1e-9);
-        // a file written before embroidery existed still loads
-        let old: Document = serde_json::from_str(&plain).unwrap();
-        assert!(old.embroidery.is_none());
+    fn files_with_old_embroidery_keys_still_load() {
+        let (d, a, _) = doc_with_rects();
+        let mut v = serde_json::to_value(&d).unwrap();
+        assert!(v.get("embroidery").is_none(), "no embroidery key is written any more");
+        v["embroidery"] = serde_json::json!({ "hoop": "Brother 100 x 100", "fabric": "Cotton" });
+        let mut found = 0;
+        fn walk(v: &mut serde_json::Value, found: &mut usize) {
+            match v {
+                serde_json::Value::Object(o) => {
+                    if o.contains_key("kind") && o.contains_key("id") {
+                        o.insert("embroidery".into(), serde_json::json!({ "stitch": { "type": "fill" }, "width": 6.0 }));
+                        *found += 1;
+                    }
+                    o.values_mut().for_each(|c| walk(c, found));
+                }
+                serde_json::Value::Array(a) => a.iter_mut().for_each(|c| walk(c, found)),
+                _ => {}
+            }
+        }
+        walk(&mut v, &mut found);
+        assert!(found >= 2, "the fixture has objects to mark");
+        let back: Document = serde_json::from_value(v).unwrap();
+        assert!(back.node(a).is_some(), "the objects are still there");
+        let saved = serde_json::to_string(&back).unwrap();
+        // The object-level data is gone; the document-level block is carried through untouched, like
+        // any key a newer version wrote (so nothing is lost if the file goes back to the old app).
+        assert_eq!(saved.matches("embroidery").count(), 1, "{saved}");
+        assert!(saved.contains(r#""embroidery":{"fabric":"Cotton","hoop":"Brother 100 x 100"}"#));
     }
 
     #[test]

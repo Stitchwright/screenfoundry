@@ -665,19 +665,6 @@ pub const FORMATS: &[Format] = &[
     reader("psb", "PSB", &["psb"], "image/x-psb", true),
     // PostScript programs, read as EPS files are; Print to PostScript writes them, exports don't.
     reader("ps", "PostScript", &["ps"], "application/postscript", false),
-    // Machine embroidery files open as manual stitches (Embroidery › Export Machine File writes them).
-    reader("dst", "Tajima DST", &["dst"], "application/x-dst", false),
-    reader("exp", "Melco EXP", &["exp"], "application/x-exp", false),
-    reader("jef", "Janome JEF", &["jef"], "application/x-jef", false),
-    reader("pes", "Brother PES", &["pes"], "application/x-pes", false),
-    reader("pec", "Brother PEC", &["pec"], "application/x-pec", false),
-    reader("vp3", "Pfaff VP3", &["vp3"], "application/x-vp3", false),
-    reader("xxx", "Singer XXX", &["xxx"], "application/x-xxx", false),
-    reader("u01", "Barudan U01", &["u01"], "application/x-u01", false),
-    reader("pcs", "Pfaff PCS", &["pcs"], "application/x-pcs", false),
-    reader("tap", "Happy TAP", &["tap"], "application/x-tap", false),
-    reader("dsb", "Barudan DSB", &["dsb"], "application/x-dsb", false),
-    reader("dsz", "ZSK DSZ", &["dsz"], "application/x-dsz", false),
 ];
 
 /// Every extension `document.open` reads (the "All readable files" filter of open dialogs).
@@ -714,18 +701,6 @@ pub const OPEN_EXTS: &[&str] = &[
     "af",
     "afdesign",
     "afpub",
-    "dst",
-    "exp",
-    "jef",
-    "pes",
-    "pec",
-    "vp3",
-    "xxx",
-    "u01",
-    "pcs",
-    "tap",
-    "dsb",
-    "dsz",
 ];
 
 /// Extensions in [`OPEN_EXTS`] the packaging declares no type for: Photoshop documents belong to
@@ -792,18 +767,6 @@ pub const PLACE_EXTS: &[&str] = &[
     "af",
     "afdesign",
     "afpub",
-    "dst",
-    "exp",
-    "jef",
-    "pes",
-    "pec",
-    "vp3",
-    "xxx",
-    "u01",
-    "pcs",
-    "tap",
-    "dsb",
-    "dsz",
     "txt",
     "rtf",
     "docx",

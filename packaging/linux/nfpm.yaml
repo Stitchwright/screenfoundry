@@ -17,10 +17,9 @@ vendor: SiteSentrix
 homepage: https://github.com/Stitchwright/StitchFoundry
 license: MIT OR Apache-2.0
 description: |-
-  Open-source machine-embroidery digitizing, built on a full vector editor.
-  Satin, fill and run stitches with editable direction, lettering from any font,
-  auto-digitizing, stitch editing and sequencing; reads and writes DST, PES,
-  JEF, EXP, VP3, XXX and U01, plus SVG and PDF.
+  Open-source screen-printing prepress, built on a full vector editor.
+  Separates artwork into one film per screen, with underbase, trapping,
+  halftones and registration marks; reads and writes SVG and PDF.
   Includes stitchfoundry-cli, a headless converter and command runner.
 
 # The binaries link only glibc and libgcc_s directly. Windowing (X11/Wayland, xkbcommon) and the

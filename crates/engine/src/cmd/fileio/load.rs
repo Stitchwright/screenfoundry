@@ -103,12 +103,6 @@ pub fn detect(name: &str, bytes: &[u8]) -> Option<&'static Format> {
     if clipboard::looks_like_svg(&String::from_utf8_lossy(&bytes[..bytes.len().min(4096)])) {
         return format("svg");
     }
-    // Machine embroidery files with a signature (the others go by their extension).
-    if let Some(f) = sf_formats::detect(bytes)
-        .filter(|f| matches!(f, sf_formats::Format::Pes | sf_formats::Format::Pec | sf_formats::Format::Vp3 | sf_formats::Format::Dst))
-    {
-        return format(f.extension());
-    }
     by_name
 }
 
@@ -284,10 +278,6 @@ pub fn load_with(name: &str, bytes: &[u8], opts: &LoadOptions) -> Result<Loaded>
             preview_only = i.preview_only;
             (i.doc, i.warnings, false)
         }
-        id if crate::cmd::embroidery::MACHINE_READ_EXTS.contains(&id) => {
-            let (doc, warnings) = crate::cmd::embroidery::machine_file_doc(&title, bytes, id)?;
-            (doc, warnings, false)
-        }
         _ if format.raster => (raster_doc(&title, bytes)?, vec![], false),
         _ => return Err(err(format!("{} files can't be opened yet", format.label))),
     };
@@ -338,12 +328,7 @@ pub(crate) fn import_svg(text: &str, folder: Option<&str>) -> Result<(Document, 
             Some((bytes, link))
         })
     };
-    let (mut doc, mut warnings) = vectorcraft_svg::import_with(text, &vectorcraft_svg::ImportOptions { folder, read: Some(&read) }).map_err(err)?;
-    // an Ink/Stitch design: its art sewn the way its settings say
-    let stitched = vectorcraft_embroidery::inkstitch::apply(&mut doc);
-    if stitched > 0 {
-        warnings.push(format!("an Ink/Stitch design: {stitched} objects sewn from their Ink/Stitch settings"));
-    }
+    let (doc, warnings) = vectorcraft_svg::import_with(text, &vectorcraft_svg::ImportOptions { folder, read: Some(&read) }).map_err(err)?;
     Ok((doc, warnings))
 }
 

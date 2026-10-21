@@ -1,6 +1,6 @@
 # Plan: remove embroidery from ScreenFoundry
 
-Progress: stage A done (UI, plus the tools crate and the apps' AI/secret wiring, which turned out to be small and were pulled in); B, C (document model), D and E remain.
+Progress: stages A to E are done and `cargo xtask ci` passes (all 10 steps). The compiler forced B, C and D to land together. Not done, on purpose: the translation rows for strings only embroidery used are still in the 23 catalogs (harmless; the tests don't flag extra rows), and the product-name text ("StitchFoundry" in the About box, Home screen, packaging, MCP server name, URLs, file extension) belongs to the rename task SC-0c.
 
 Status: approved by the owner 2026-10-21 ("I want the embroidery pulled out"). Executed in the
 stages below, one commit per stage. Task id: **SC-0b**.
@@ -41,10 +41,12 @@ could open before.
 
 ## Compatibility
 
-- **Documents:** `Node.embroidery` and `Document.embroidery` are serialised keys. Neither
-  struct uses `deny_unknown_fields`, so files that carry them still load; the keys are
-  ignored and dropped on the next save. Stage C adds a test that loads a document with both
-  keys and checks it opens and re-saves without them. No format version bump.
+- **Documents:** `Node.embroidery` and `Document.embroidery` were serialised keys. Neither
+  struct uses `deny_unknown_fields`, so files that carry them still load. An object's key is
+  ignored and gone on the next save; the document's key is kept as an unknown key (the
+  document carries those through a save, as it does for keys from a newer version), so no
+  data is lost if a file goes back to an older app. A test (`files_with_old_embroidery_keys_
+  still_load`) pins both. No format version bump.
 - **`.stitchfoundry` files** keep opening (`SAVE_EXTENSION` stays until the rename task).
 - **Preferences:** unknown preference keys are ignored; stage B adds a test for a preferences
   file that still has embroidery keys.

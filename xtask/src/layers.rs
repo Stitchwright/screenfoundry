@@ -62,15 +62,9 @@ pub const TABLE: &[(&str, Class)] = &[
     ("metafile", Class::Layer(3)),
     ("plugins", Class::Layer(2)),
     ("affinity", Class::Standalone),
-    // StitchFoundry embroidery crates (package names keep their `sf-` prefix).
-    ("sf-core", Class::Standalone),
-    ("embroidery", Class::Layer(2)),
-    ("sf-formats", Class::Layer(1)),
     ("scriptcheck", Class::Standalone),
     // ScreenFoundry screen-printing core (no dependencies on the app crates).
     ("sc-core", Class::Standalone),
-    // StitchFoundry's cloud service (a server binary, never in the app or the web build).
-    ("stitchfoundry-cloud", Class::Exempt),
 ];
 
 /// Explicit orderings *within* a layer (earlier may be used by later).
@@ -89,8 +83,6 @@ pub const INTRA_LAYER_ORDER: &[&[&str]] = &[
     &["pdf", "eps"],
     &["plugins", "effects"],
     &["three-d", "effects"],
-    // Embroidery stitches type from its glyph outlines.
-    &["text", "embroidery"],
     // Inflate cuts its surface's grid cells to the shape with Pathfinder's booleans.
     &["pathops", "three-d"],
 ];

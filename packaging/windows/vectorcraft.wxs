@@ -24,7 +24,7 @@
       Scope="perMachine"
       Compressed="yes"
       Language="1033">
-    <SummaryInformation Description="StitchFoundry machine embroidery digitizer" Manufacturer="SiteSentrix" />
+    <SummaryInformation Description="StitchFoundry screen-printing prepress" Manufacturer="SiteSentrix" />
     <!-- Same-version upgrades let successive pre-releases of one X.Y.Z replace each other
          (MSI versions are numeric, so 1.2.3-rc.1 and 1.2.3-rc.2 are both 1.2.3). -->
     <MajorUpgrade AllowSameVersionUpgrades="yes"
@@ -116,7 +116,7 @@
       <Component Id="VectorcraftApp" Guid="4C957E70-848A-478D-95BF-4394D7E225FF">
         <File Id="VectorcraftExe" Source="$(var.BinDir)\stitchfoundry.exe" KeyPath="yes">
           <Shortcut Id="StartMenuShortcut" Directory="ProgramMenuFolder" Name="StitchFoundry"
-              Description="StitchFoundry machine embroidery digitizer" WorkingDirectory="INSTALLFOLDER" Advertise="yes"
+              Description="StitchFoundry screen-printing prepress" WorkingDirectory="INSTALLFOLDER" Advertise="yes"
               Icon="VectorcraftIcon.ico" IconIndex="0" />
         </File>
 
@@ -133,7 +133,7 @@
          app. A per-machine install puts it on the common desktop. `wix msi validate` reports ICE38,
          ICE43 and ICE57 for it: they take a desktop shortcut for per-user data, which it isn't here. -->
     <Component Id="DesktopShortcut" Directory="DesktopFolder" Guid="498F2D4C-E655-47F6-B406-2D4C449B8D26" Condition="INSTALLDESKTOPSHORTCUT">
-      <Shortcut Id="DesktopShortcut" Name="StitchFoundry" Description="StitchFoundry machine embroidery digitizer"
+      <Shortcut Id="DesktopShortcut" Name="StitchFoundry" Description="StitchFoundry screen-printing prepress"
           Target="[#VectorcraftExe]" WorkingDirectory="INSTALLFOLDER" Icon="VectorcraftIcon.ico" IconIndex="0" />
       <RegistryValue Root="HKLM" Key="Software\StitchFoundry" Name="DesktopShortcut" Value="1" Type="integer" KeyPath="yes" />
     </Component>

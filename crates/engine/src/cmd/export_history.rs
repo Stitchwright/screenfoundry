@@ -10,15 +10,7 @@ use super::*;
 const MAX: usize = 100;
 
 /// The commands whose exports are remembered (when they write files).
-pub const RECORDED: &[&str] = &[
-    "document.export",
-    "document.exportSelection",
-    "embroidery.send",
-    "embroidery.output",
-    "embroidery.multiHoop",
-    "embroidery.library.convert",
-    "embroidery.exportImage",
-];
+pub const RECORDED: &[&str] = &["document.export", "document.exportSelection", "screen.separate", "screen.halftone"];
 
 pub fn specs() -> Vec<CommandSpec> {
     vec![
@@ -48,9 +40,7 @@ pub fn specs() -> Vec<CommandSpec> {
 fn writes_files(command: &str, params: &Value) -> bool {
     let given = |k: &str| params.get(k).and_then(Value::as_str).is_some_and(|v| !v.trim().is_empty());
     match command {
-        "embroidery.send" | "embroidery.library.convert" => true,
-        "embroidery.multiHoop" => given("dir"),
-        "embroidery.output" => given("dir") || given("profile"),
+        "screen.separate" | "screen.halftone" => given("dir"),
         _ => given("path"),
     }
 }
@@ -72,8 +62,8 @@ fn written(r: &Value) -> Vec<String> {
     for c in r["converted"].as_array().into_iter().flatten() {
         add(&c["to"]);
     }
-    for h in r["hoopings"].as_array().into_iter().flatten() {
-        add(&h["file"]);
+    for f in r["films"].as_array().into_iter().flatten() {
+        add(&f["path"]);
     }
     out.truncate(MAX);
     out
@@ -148,13 +138,7 @@ fn again(s: &mut Session, p: &Value) -> Result<Value> {
     };
     let rec = s.export_history.get(index).cloned().ok_or_else(|| bad(CMD, format!("no export {index} in the history")))?;
     let command = rec["command"].as_str().filter(|c| RECORDED.contains(c)).ok_or_else(|| bad(CMD, "that export can't be run again"))?.to_string();
-    let mut params = rec["params"].clone();
-    // the files it wrote are written again, not numbered beside them
-    if command.starts_with("embroidery.")
-        && let Some(o) = params.as_object_mut()
-    {
-        o.insert("replace".into(), json!(true));
-    }
+    let params = rec["params"].clone();
     let r = s.execute(&command, &params);
     note(s, &command, &params, r.as_ref().map_err(ToString::to_string));
     r

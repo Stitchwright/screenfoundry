@@ -536,11 +536,6 @@ pub struct Node {
     /// bounding box and handles stand at this angle. Transforms turn it with the object (see
     /// [`crate::orient`]); Reset Bounding Box sets it back to 0.
     pub bbox_angle: f64,
-    /// Embroidery: how this object is stitched (stitch type, parameters, thread,
-    /// inclination lines, start/stop beads). Kept on the node so copies, duplicates
-    /// and pastes keep it, and moved by [`Node::transform`]. Inline, not in the extras: most
-    /// objects of an embroidery design have it.
-    pub embroidery: Option<Box<sf_core::attr::Embroidery>>,
     /// The rarely set parts, read with [`Node::extras`] and changed with [`Node::extras_mut`]
     /// (public so that `Node { opacity: 1.0, ..node }` works).
     pub extras: Extras,
@@ -741,7 +736,6 @@ impl Serialize for Node {
             e.dimension.is_none(),
             e.intertwine.is_none(),
             e.live_paint_gaps.is_none(),
-            self.embroidery.is_none(),
             e.objects_on_path.is_none(),
         ];
         let mut st = s.serialize_struct("Node", skips.iter().filter(|s| !**s).count())?;
@@ -781,7 +775,6 @@ impl Serialize for Node {
         field!("dimension", &e.dimension);
         field!("intertwine", &e.intertwine);
         field!("live_paint_gaps", &e.live_paint_gaps);
-        field!("embroidery", &self.embroidery);
         field!("objects_on_path", &e.objects_on_path);
         st.end()
     }
@@ -843,8 +836,6 @@ struct NodeWire {
     #[serde(default)]
     live_paint_gaps: Option<Box<crate::live_paint::GapOptions>>,
     #[serde(default)]
-    embroidery: Option<Box<sf_core::attr::Embroidery>>,
-    #[serde(default)]
     objects_on_path: Option<Box<crate::objects_on_path::ObjectsOnPath>>,
 }
 
@@ -880,7 +871,6 @@ impl From<NodeWire> for Node {
             appearance: w.appearance,
             kind: w.kind,
             bbox_angle: w.bbox_angle,
-            embroidery: w.embroidery,
             extras: Extras((extras != NO_EXTRAS).then(|| Box::new(extras))),
         }
     }
@@ -958,7 +948,6 @@ impl Node {
             appearance: Appearance::default().into(),
             kind,
             bbox_angle: 0.0,
-            embroidery: None,
             extras: Extras::default(),
         }
     }
@@ -1311,10 +1300,6 @@ impl Node {
         }
         // Type and symbols in perspective keep looking the same, moved by `a`.
         self.transform_projection(a);
-        // Inclination lines, start/stop beads and fill angles follow the stitched object.
-        if let Some(e) = &mut self.embroidery {
-            e.transform(&sf_core::Affine(a.as_coeffs()));
-        }
         // Refitting an unplaced gradient only reproduces moves and uniform scales.
         if !keeps_gradient_fit(a) {
             self.pin_gradients();

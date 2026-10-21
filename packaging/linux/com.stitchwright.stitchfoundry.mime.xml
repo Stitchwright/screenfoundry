@@ -36,5 +36,4 @@
       </match>
     </magic>
   </mime-type>
-  <!-- Embroidery machine files: one type per format (shared-mime-info has none). -->
 </mime-info>

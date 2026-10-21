@@ -1,5 +1,5 @@
 //! Help → project links (this app's GitHub repository: source code, issues and releases; the
-//! commands return the URL; the frontend opens it) and the user guide (`docs/embroidery.md`,
+//! commands return the URL; the frontend opens it) and the user guide (`docs/guide.md`,
 //! compiled in): its topics, one topic's text, a search, and the topic for a tool (F1).
 
 use serde_json::{Value, json};
@@ -13,7 +13,7 @@ pub const GITHUB_URL: &str = "https://github.com/Stitchwright/StitchFoundry";
 pub const BUG_REPORT_URL: &str = "https://hub.stitchbench.app/report-a-bug";
 
 /// The user guide, compiled in for the Help window.
-const GUIDE: &str = include_str!("../../../../docs/embroidery.md");
+const GUIDE: &str = include_str!("../../../../docs/guide.md");
 
 /// Most topics a search returns.
 const MAX_FOUND: usize = 40;
@@ -123,19 +123,8 @@ fn topic(_: &mut Session, p: &Value) -> Result<Value> {
     Ok(json!({ "id": t.id, "title": t.title, "text": t.text.trim() }))
 }
 
-/// The topic for each tool with its own, by tool id.
-const TOOL_TOPICS: &[(&str, &str)] = &[
-    ("embroideryBrush", "the-digitizing-widget-and-brush"),
-    ("embroideryDirection", "stitch-direction-automatic-then-editable"),
-    ("embroideryStitches", "editing-single-stitches"),
-    ("embroideryColumn", "stitch-types"),
-    ("embroideryMotif", "stitch-types"),
-    ("embroideryClick", "click-to-stitch"),
-    ("embroideryCrossStitch", "cross-stitch-patterns"),
-    ("type", "lettering"),
-    ("areaType", "lettering"),
-    ("typeOnPath", "lettering"),
-];
+/// The topic for each tool with its own, by tool id. None yet: every tool opens Quick start.
+const TOOL_TOPICS: &[(&str, &str)] = &[];
 
 fn for_tool(s: &mut Session, p: &Value) -> Result<Value> {
     let tool = str_param(p, "tool").map(str::to_string).unwrap_or_else(|| s.tool_id().to_string());
@@ -201,7 +190,7 @@ mod tests {
         let mut s = Session::new();
         let all = s.execute("help.topics", &json!({})).unwrap();
         let topics = all["topics"].as_array().unwrap();
-        assert!(topics.len() > 30);
+        assert!(topics.len() >= 9);
         assert_eq!(topics[0]["id"], "overview");
         assert!(topics.iter().any(|t| t["id"] == "quick-start" && t["title"] == "Quick start"));
         // every topic opens, its text without its heading
@@ -217,13 +206,12 @@ mod tests {
             assert!(topics.iter().any(|t| t["id"] == id), "{id}");
         }
         // search: titles first
-        let found = s.execute("help.topics", &json!({"query": "appliqué"})).unwrap();
+        let found = s.execute("help.topics", &json!({"query": "trap"})).unwrap();
         let found = found["topics"].as_array().unwrap();
-        assert!(found[0]["title"].as_str().unwrap().to_lowercase().contains("appliqué"), "{found:?}");
+        assert!(found[0]["title"].as_str().unwrap().to_lowercase().contains("trap"), "{found:?}");
         assert!(s.execute("help.topics", &json!({"query": "zzzqqq"})).unwrap()["topics"].as_array().unwrap().is_empty());
         assert!(s.execute("help.topic", &json!({"id": "nope"})).is_err());
         // F1: a tool's topic, else Quick start
-        assert_eq!(s.execute("help.forTool", &json!({"tool": "embroideryClick"})).unwrap()["id"], "click-to-stitch");
         assert_eq!(s.execute("help.forTool", &json!({"tool": "pen"})).unwrap()["id"], "quick-start");
         for (_, id) in TOOL_TOPICS {
             assert!(topics.iter().any(|t| t["id"] == *id), "{id}");

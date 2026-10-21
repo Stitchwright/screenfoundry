@@ -381,8 +381,6 @@ pub struct DocState {
     /// Transform Again after a perspective move or scale (Perspective Selection tool): the
     /// `perspective.transform` params it repeats. `None` once an ordinary transform follows.
     pub last_perspective: Option<Value>,
-    /// The embroidery stitch plan cache (shared by commands and the canvas).
-    pub embroidery: cmd::embroidery::EmbroideryState,
 }
 
 static NEXT_DOC_UID: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(1);
@@ -555,7 +553,6 @@ impl DocState {
             imported_from: None,
             import_losses: vec![],
             last_perspective: None,
-            embroidery: Default::default(),
         }
     }
     /// Unsaved changes: the document differs from the saved one (selection changes and changes that
@@ -1025,71 +1022,6 @@ pub struct Prefs {
     /// not a Preferences dialog field: resetting the preferences keeps it; `pdf.preset.*` edit it.
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub pdf_presets: Vec<vectorcraft_pdf::PdfPreset>,
-    /// Embroidery machine profiles: the standard ones the user changed and the user's own
-    /// (`embroidery.machine.*`; the standard ones as they ship aren't stored). A local library,
-    /// not a Preferences dialog field: resetting the preferences keeps it.
-    #[serde(skip_serializing_if = "Vec::is_empty")]
-    pub embroidery_machines: Vec<sf_core::machines::MachineProfile>,
-    /// My Motifs: motifs kept from designs for any design (`embroidery.motif.keep`). A local
-    /// library, not a Preferences dialog field: resetting the preferences keeps it.
-    #[serde(skip_serializing_if = "Vec::is_empty")]
-    pub embroidery_motifs: Vec<sf_core::model::CustomMotif>,
-    /// The embroidery font folders loaded (`embroidery.font.load`), loaded again in later
-    /// sessions the first time lettering needs a font. A local library, not a Preferences dialog
-    /// field: resetting the preferences keeps it.
-    #[serde(skip_serializing_if = "Vec::is_empty")]
-    pub embroidery_font_dirs: Vec<String>,
-    /// Monogram templates of the user's own (`embroidery.monogram.saveTemplate`). A local
-    /// library, not a Preferences dialog field.
-    #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub embroidery_monogram_templates: Vec<cmd::embroidery_monogram::MonogramTemplate>,
-    /// Output profiles of the user's own (`embroidery.output.saveProfile`): what a batch output
-    /// writes. A local library, not a Preferences dialog field.
-    #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub embroidery_output_profiles: Vec<cmd::embroidery_output::OutputProfile>,
-    /// Hoops of the user's own (`embroidery.hoop.saveCustom`), listed after the standard ones. A
-    /// local library, not a Preferences dialog field.
-    #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub embroidery_custom_hoops: Vec<sf_core::hoops::Hoop>,
-    /// Thread charts of the user's own (`embroidery.chart.import`, `.save`), listed after the
-    /// built-in ones. A local library, not a Preferences dialog field.
-    #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub embroidery_thread_charts: Vec<sf_core::threads::ThreadChart>,
-    /// Design templates of the user's own (`embroidery.template.save`). A local library, not a
-    /// Preferences dialog field.
-    #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub embroidery_templates: Vec<cmd::embroidery_templates::OwnTemplate>,
-    /// Stitch properties new objects take in every design, by stitch type (`embroidery.current
-    /// .saveAsDefault`): a design's own Properties for New Objects come first. A local library, not
-    /// a Preferences dialog field.
-    #[serde(default, skip_serializing_if = "std::collections::BTreeMap::is_empty")]
-    pub embroidery_default_properties: std::collections::BTreeMap<String, sf_core::attr::Embroidery>,
-    /// Job orders (`embroidery.job.create`). A local list, not a Preferences dialog field.
-    #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub embroidery_jobs: Vec<cmd::embroidery_jobs::Job>,
-    /// The send queue (`embroidery.queue.add`): designs waiting for their machine's folder, and
-    /// the ones sent. Kept across sessions; not a Preferences dialog field.
-    #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub embroidery_queue: Vec<cmd::embroidery_queue::QueueItem>,
-    /// The lettering kiosk (`embroidery.kiosk`): on or off, its PIN, and what it offers.
-    #[serde(default, skip_serializing_if = "crate::cmd::embroidery_kiosk::KioskSetup::is_empty")]
-    pub embroidery_kiosk: cmd::embroidery_kiosk::KioskSetup,
-    /// What every worksheet carries (`embroidery.worksheet.setup`): the shop's name, details and
-    /// logo, and the sections left out.
-    #[serde(default, skip_serializing_if = "crate::cmd::embroidery_sheet_setup::SheetSetup::is_empty")]
-    pub embroidery_sheet_setup: cmd::embroidery_sheet_setup::SheetSetup,
-    /// The machine folders designs are sent to (`embroidery.send`): USB sticks, machine folders,
-    /// network shares, the last used first. A local list, not a Preferences dialog field.
-    #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub embroidery_send_dirs: Vec<String>,
-    /// The embroidery machine someone sews on (`embroidery.myMachine.set`): one of
-    /// `sf_core::machines::HOME_MACHINES` by name, "" when not chosen. New designs take its first
-    /// hoop and Save for My Machine its format.
-    #[serde(default, skip_serializing_if = "String::is_empty")]
-    pub my_machine: String,
-    /// Where Keep Safe saves a beginner's new designs (`file.keepSafe`; empty: Documents/StitchFoundry Designs).
-    #[serde(default, skip_serializing_if = "String::is_empty")]
-    pub my_designs_folder: String,
     /// File → Export for Screens: the user's batch export presets (`document.exportPresets.*`;
     /// the built-in ones aren't stored). A local library, not a Preferences dialog field.
     #[serde(skip_serializing_if = "Vec::is_empty")]
@@ -1281,22 +1213,6 @@ impl Default for Prefs {
             new_doc_presets: vec![],
             recent_new_docs: vec![],
             pdf_presets: vec![],
-            embroidery_machines: vec![],
-            embroidery_motifs: vec![],
-            embroidery_font_dirs: vec![],
-            embroidery_monogram_templates: vec![],
-            embroidery_output_profiles: vec![],
-            embroidery_custom_hoops: vec![],
-            embroidery_thread_charts: vec![],
-            embroidery_templates: vec![],
-            embroidery_default_properties: Default::default(),
-            embroidery_jobs: vec![],
-            embroidery_queue: vec![],
-            embroidery_sheet_setup: Default::default(),
-            embroidery_kiosk: Default::default(),
-            embroidery_send_dirs: vec![],
-            my_machine: String::new(),
-            my_designs_folder: String::new(),
             screen_export_presets: vec![],
             templates_folder: String::new(),
             append_converted: true,
@@ -1430,13 +1346,6 @@ pub struct Session {
     pub link_stamps: std::collections::HashMap<(u64, String), link_watch::Stamp>,
     /// The stamps being taken on a worker thread ([`Session::start_link_scan`]).
     pub link_scan: Option<link_watch::LinkScan>,
-    /// The embroidery fonts loaded for lettering (`embroidery.font.load`); not saved.
-    pub embroidery_fonts: Vec<Arc<vectorcraft_embroidery::fonts::EmbFont>>,
-    /// Whether the font folders remembered from earlier sessions have been loaded.
-    pub embroidery_fonts_ready: bool,
-    /// What the design library read from each machine file, by path, kept while the file's size
-    /// and date stay the same (`embroidery.library.scan`).
-    pub design_library: std::collections::HashMap<String, cmd::embroidery_library::Entry>,
     /// The exports of this session that wrote files, newest first ([`cmd::export_history`]).
     pub export_history: std::collections::VecDeque<serde_json::Value>,
 }
@@ -1504,9 +1413,6 @@ impl Session {
             search_threads: None,
             link_stamps: Default::default(),
             link_scan: None,
-            embroidery_fonts: Vec::new(),
-            embroidery_fonts_ready: false,
-            design_library: Default::default(),
             export_history: Default::default(),
         }
     }
@@ -2209,8 +2115,6 @@ mod tests_draw2;
 mod tests_editcolors;
 #[cfg(test)]
 mod tests_effectedit;
-#[cfg(test)]
-mod tests_embroidery;
 #[cfg(test)]
 mod tests_emptytype;
 #[cfg(test)]

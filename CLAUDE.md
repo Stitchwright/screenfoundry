@@ -4,9 +4,10 @@
 > StitchFoundry / VectorCraft codebase. For screen-printing work read
 > [`docs/screenfoundry-spec.md`](docs/screenfoundry-spec.md) first (product, rules, state, roadmap
 > with task ids `SC-n`), then [`docs/research/silkscreen-landscape.md`](docs/research/silkscreen-landscape.md).
-> The embroidery docs (`docs/stitchfoundry-spec.md`, `docs/embroidery.md`) describe inherited code
-> that is not the focus. Everything below still applies unchanged; where it says StitchFoundry,
-> read ScreenFoundry for new work. Code for the screen-printing engine lives in `crates/sc-core`.
+> The inherited embroidery product has been removed (plan: `docs/plans/remove-embroidery.md`);
+> the user guide is `docs/guide.md`. Everything below still applies unchanged; where it says
+> StitchFoundry, read ScreenFoundry for new work. Code for the screen-printing engine lives in
+> `crates/sc-core`.
 > PhotoCraft (`storytold/photocraft`, MIT OR Apache-2.0) may be read and reused with attribution
 > in `NOTICE`; GPL/AGPL silkscreen tools (InkSplit, Separate+, Ghostscript) are ideas only.
 
@@ -72,7 +73,7 @@ Formerly **DrawCraft** (renamed 2026-10-01): old `.drawcraft` files and `"format
 When something fails and the cause isn't obvious, follow the `/debug` skill
 (`.claude/skills/debug/SKILL.md`, based on Kuhlmann, *The Book of Debugging*). What matters most:
 - **Reproduce first, and make the loop fast**: one named input and one command; never the full CI
-  as the loop. Run the one failing test, or the command on its own with `vectorcraft-cli run --cmd …` (`embroidery.exportImage` to see stitches).
+  as the loop. Run the one failing test, or the command on its own with `vectorcraft-cli run --cmd …` (`screen.separate` with a `dir` to see the films).
 - **Look at what the program actually did** before theorising, and build a flag or command when you
   keep wanting to see something.
 - **One hypothesis per experiment**, written down with what either result will teach; cap guessing

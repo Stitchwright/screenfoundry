@@ -46,17 +46,11 @@ vectorcraft-scriptcheck = { path = "crates/scriptcheck" }
 # ScreenFoundry screen-printing core
 sc-core = { path = "crates/sc-core" }
 
-# StitchFoundry embroidery crates
-sf-core = { path = "crates/sf-core" }
-sf-formats = { path = "crates/sf-formats" }
-vectorcraft-embroidery = { path = "crates/embroidery" }
 
 # foundation
 kurbo = { version = "0.13", features = ["serde"] }
 peniko = "0.6"
 thiserror = "2"
-# embroidery: robust polygon offsets/booleans for fills and underlay
-i_overlay = "9"
 base64 = "0.23"
 serde = { version = "1", features = ["derive", "rc"] }
 serde_json = { version = "1", features = ["float_roundtrip"] }

@@ -77,8 +77,9 @@ fn progress_sink(out: SyncSender<String>, msg: &Value) -> Option<cancel::Progres
     }))
 }
 
-const INSTRUCTIONS: &str = "StitchFoundry is a machine-embroidery digitizing app built on a professional vector editor: any path, \
-shape or type can carry a stitch type (embroidery.* commands). Coordinates are \
+const INSTRUCTIONS: &str = "StitchFoundry is a screen-printing prepress app built on a professional vector editor: draw or import \
+artwork, then separate it into one film per screen with the screen.* commands (screen.palette, screen.separate, \
+screen.halftone, screen.advice). Coordinates are \
 points in document space (y down, origin at the first artboard's top-left; a new document is 612×792). \
 Draw with draw_shape / draw_path, change colours with set_paint, look with render_preview and doc_inspect. \
 Every menu action is a command: find it with command_list and run it with command_run (or command_batch for several). New objects become \

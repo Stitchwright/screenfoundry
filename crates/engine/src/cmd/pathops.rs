@@ -200,18 +200,16 @@ struct Style {
     appearance: Appearance,
     opacity: f32,
     blend: BlendMode,
-    embroidery: Option<Box<sf_core::attr::Embroidery>>,
 }
 
 impl Style {
     fn of(n: &Node) -> Self {
-        Style { appearance: (*n.appearance).clone(), opacity: n.opacity, blend: n.blend, embroidery: n.embroidery.clone() }
+        Style { appearance: (*n.appearance).clone(), opacity: n.opacity, blend: n.blend }
     }
     fn apply(&self, n: &mut Node) {
         n.appearance = self.appearance.clone().into();
         n.opacity = self.opacity;
         n.blend = self.blend;
-        n.embroidery = self.embroidery.clone();
     }
 }
 
@@ -241,7 +239,7 @@ pub(crate) fn text_outline(t: &TextObject) -> PathData {
 
 fn style_of(n: &Node) -> Style {
     match &n.kind {
-        NodeKind::Text(t) => Style { appearance: t.first_style().appearance(), opacity: n.opacity, blend: n.blend, embroidery: n.embroidery.clone() },
+        NodeKind::Text(t) => Style { appearance: t.first_style().appearance(), opacity: n.opacity, blend: n.blend },
         _ => Style::of(n),
     }
 }
