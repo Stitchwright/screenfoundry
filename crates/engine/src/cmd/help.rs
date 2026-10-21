@@ -7,9 +7,10 @@ use serde_json::{Value, json};
 use super::*;
 
 /// This app's source repository.
-pub const GITHUB_URL: &str = "https://github.com/Stitchwright/StitchFoundry";
+pub const GITHUB_URL: &str = "https://github.com/Stitchwright/screenfoundry";
 
 /// Where bug reports go: StitchHub's report page, which files them as issues on this app's GitHub repository.
+// `program=stitchfoundry` below is the name the hub knows this app by; it switches to `screenfoundry` once the hub has that program.
 pub const BUG_REPORT_URL: &str = "https://hub.stitchbench.app/report-a-bug";
 
 /// The user guide, compiled in for the Help window.
@@ -20,7 +21,7 @@ const MAX_FOUND: usize = 40;
 
 pub fn specs() -> Vec<CommandSpec> {
     vec![
-        cmd!(query "help.github", "StitchFoundry on GitHub", ["Help"], None, "{} → {url} source code, issues and releases", always, |_, _| url(GITHUB_URL.into())),
+        cmd!(query "help.github", "ScreenFoundry on GitHub", ["Help"], None, "{} → {url} source code, issues and releases", always, |_, _| url(GITHUB_URL.into())),
         cmd!(
             query "help.reportBug",
             "Report a Bug…",

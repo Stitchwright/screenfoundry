@@ -4,12 +4,12 @@ version.workspace = true
 edition.workspace = true
 license.workspace = true
 publish = false
-default-run = "stitchfoundry"
+default-run = "screenfoundry"
 
-# The program is named stitchfoundry (so it installs beside VectorCraft); the package keeps
+# The program is named screenfoundry (so it installs beside VectorCraft); the package keeps
 # VectorCraft's name, so `cargo run -p vectorcraft` still works.
 [[bin]]
-name = "stitchfoundry"
+name = "screenfoundry"
 path = "src/main.rs"
 
 [lints]
@@ -101,7 +101,7 @@ wayland-backend = { version = "0.3", features = ["client_system"] }
 zbus = "=5.19.0"
 
 [build-dependencies]
-# Icon + VERSIONINFO for stitchfoundry.exe; build.rs only uses it when targeting Windows.
+# Icon + VERSIONINFO for screenfoundry.exe; build.rs only uses it when targeting Windows.
 winresource = "0.1"
 
 [dev-dependencies]

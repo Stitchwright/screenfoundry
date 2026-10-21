@@ -1,15 +1,15 @@
-StitchFoundry portable mode
+ScreenFoundry portable mode
 
-While this file sits next to stitchfoundry.exe, StitchFoundry keeps its preferences, swatch and
-graphic style libraries, added fonts, crash-recovery files and logs in the StitchFoundryData folder
-beside it, and writes nothing to %APPDATA%. Copy the whole folder to move StitchFoundry with its
-settings. The first time StitchFoundryData is created, any settings already in
-%APPDATA%\StitchFoundry are copied into it; the originals are left where they were.
+While this file sits next to screenfoundry.exe, ScreenFoundry keeps its preferences, swatch and
+graphic style libraries, added fonts, crash-recovery files and logs in the ScreenFoundryData folder
+beside it, and writes nothing to %APPDATA%. Copy the whole folder to move ScreenFoundry with its
+settings. The first time ScreenFoundryData is created, any settings already in
+%APPDATA%\ScreenFoundry are copied into it; the originals are left where they were.
 
 Keep this folder somewhere only you can write to: whoever can write here decides your settings,
-including the plug-ins and fonts folders StitchFoundry loads from, and the Data Recovery copies of
+including the plug-ins and fonts folders ScreenFoundry loads from, and the Data Recovery copies of
 your unsaved documents are kept here too.
 
-Delete this file to use the normal per-user settings folder (%APPDATA%\StitchFoundry) instead.
-If StitchFoundryData can't be written (for example on a read-only drive), StitchFoundry logs a
-warning and uses %APPDATA%\StitchFoundry instead.
+Delete this file to use the normal per-user settings folder (%APPDATA%\ScreenFoundry) instead.
+If ScreenFoundryData can't be written (for example on a read-only drive), ScreenFoundry logs a
+warning and uses %APPDATA%\ScreenFoundry instead.

@@ -159,14 +159,14 @@ impl Backend for Remote {
             })
             .map_err(|e| {
                 self.conn = None;
-                format!("StitchFoundry app at {}: `{method}` failed: {e}; operation may have completed; inspect state before retrying", self.addr)
+                format!("ScreenFoundry app at {}: `{method}` failed: {e}; operation may have completed; inspect state before retrying", self.addr)
             })?;
         if v.get("id").is_none() && v.get("ok").and_then(Value::as_bool) == Some(false) {
             // The app's refusals carry no id (too many connections, a line it would not read):
             // it ran nothing and closes the connection, so the next call starts a fresh one.
             self.conn = None;
             let why = v.get("error").and_then(Value::as_str).unwrap_or("unknown error");
-            return Err(format!("StitchFoundry app at {} refused `{method}`: {why}; nothing was run", self.addr));
+            return Err(format!("ScreenFoundry app at {} refused `{method}`: {why}; nothing was run", self.addr));
         }
         if v.get("id") != Some(&json!(id)) {
             // Not the answer to this call: the stream is desynchronised (or the endpoint faulty),
@@ -174,7 +174,7 @@ impl Backend for Remote {
             // still have completed, as with any reply that never arrived whole (#1728).
             self.conn = None;
             return Err(format!(
-                "StitchFoundry app at {}: reply id mismatch (expected {id}); connection dropped; operation may have completed; inspect state before retrying",
+                "ScreenFoundry app at {}: reply id mismatch (expected {id}); connection dropped; operation may have completed; inspect state before retrying",
                 self.addr
             ));
         }

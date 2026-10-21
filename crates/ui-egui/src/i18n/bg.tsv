@@ -77,7 +77,7 @@
 	A lower value follows the stroke closely; a higher one gives fewer points and smoother curves.	По-ниската стойност следва щриха отблизо; по-високата дава по-малко опорни точки и по-плавни криви.
 	A new preset starting from the selected one	Нова предварителна настройка въз основа на избраната
 	A saved copy of the selected preset	Запазено копие на избраната предварителна настройка
-	About StitchFoundry	Относно StitchFoundry
+	About ScreenFoundry	Относно ScreenFoundry
 	above	над
 	Absolute Position	Абсолютна позиция
 	Accurate	Точно
@@ -180,7 +180,7 @@
 	Appearance Panel	Панел „Външен вид“
 	Appearance panel	Панел „Външен вид“
 	Applies when the linked file is relinked or updated.	Прилага се, когато свързаният файл бъде пресвързан или актуализиран.
-	Applies the next time StitchFoundry starts.	Прилага се при следващото стартиране на StitchFoundry.
+	Applies the next time ScreenFoundry starts.	Прилага се при следващото стартиране на ScreenFoundry.
 	Apply	Прилагане
 	Apply Brush	Прилагане на четка
 	Apply Character Style	Прилагане на стил на знаци
@@ -361,7 +361,7 @@
 	Check Script	Проверка на скрипт
 	Check Script…	Проверка на скрипт…
 	Copy Report	Копиране на отчет
-	StitchFoundry read this script without running it.	StitchFoundry прочете този скрипт, без да го изпълнява.
+	ScreenFoundry read this script without running it.	ScreenFoundry прочете този скрипт, без да го изпълнява.
 	Needs nothing beyond plain JavaScript	Не изисква нищо извън обикновения JavaScript
 	Needs the script language's own objects or directives	Изисква собствени обекти или директиви на езика за скриптове
 	Needs the document model	Изисква документалния модел
@@ -1533,7 +1533,7 @@
 	Keyboard Shortcuts…	Клавишни комбинации…
 	Import Shortcut Set	Импортиране на набор от клавишни комбинации
 	Import Shortcut Set…	Импортиране на набор от клавишни комбинации…
-	Each entry of the file is matched to a StitchFoundry tool, command or panel. Check the matches and answer what is left.	Всеки запис във файла се съпоставя с инструмент, команда или панел на StitchFoundry. Проверете съответствията и отговорете на останалите.
+	Each entry of the file is matched to a ScreenFoundry tool, command or panel. Check the matches and answer what is left.	Всеки запис във файла се съпоставя с инструмент, команда или панел на ScreenFoundry. Проверете съответствията и отговорете на останалите.
 	Keys	Клавиши
 	The file writes keys and modifiers as codes. Check the proposed meanings and answer the codes that are not known yet.	Файлът записва клавишите и модификаторите като кодове. Проверете предложения смисъл и отговорете на все още неизвестните кодове.
 	Click, then press the key this code stands for (Esc cancels)	Кликнете, след което натиснете клавиша, съответстващ на този код (Esc отменя)
@@ -1543,7 +1543,7 @@
 	not known yet	все още не е известно
 	Shortcuts	Пряк пътища
 	In the File	Във файла
-	In StitchFoundry	Във StitchFoundry
+	In ScreenFoundry	Във ScreenFoundry
 	Needs Attention Only	Само изискващи внимание
 	Ready	Готово
 	Needs a choice	Изисква избор
@@ -1552,7 +1552,7 @@
 	Tools take a single key (optionally with Shift)	Инструментите използват един клавиш (по избор със Shift)
 	A later row takes this shortcut	По-късен ред заема тази клавишна комбинация
 	Same item as a later row	Същият елемент като по-късен ред
-	Start from StitchFoundry Defaults	Започни от стандартните настройки на StitchFoundry
+	Start from ScreenFoundry Defaults	Започни от стандартните настройки на ScreenFoundry
 	Add to the Current Shortcuts	Добавяне към текущите клавишни комбинации
 	Remember My Choices	Запомни изборите ми
 	{ready} of {total} ready	{ready} от {total} готови
@@ -2320,7 +2320,7 @@
 	Quarter Space	Четвъртинка интервал
 	Quick Actions	Бързи действия
 	Quickly start a new file	Бързо стартиране на нов файл
-	Quit StitchFoundry	Изход от StitchFoundry
+	Quit ScreenFoundry	Изход от ScreenFoundry
 	Radar Graph Tool	Инструмент „Радарна диаграма“
 	Radial	Радиален
 	Radial Glows	Лъчисти сияния
@@ -2445,7 +2445,7 @@
 	{count} folder(s) or file(s) couldn't be read	{count} папки или файла не можаха да бъдат прочетени
 	The search stopped at its limit: search a smaller folder.	Търсенето спре поради достигане на лимита: потърсете в по-малка папка.
 	Copy only fonts you own or are licensed to install.	Копирайте само шрифтове, които притежавате или имате лиценз да инсталирате.
-	StitchFoundry copies the fonts to {folder}.	StitchFoundry копира шрифтовете в {folder}.
+	ScreenFoundry copies the fonts to {folder}.	ScreenFoundry копира шрифтовете в {folder}.
 	Registered Trademark Symbol	Символ за регистрирана търговска марка
 	Registration marks	Знаци за регистрация
 	Registry name:	Име на системния регистър:
@@ -2553,7 +2553,7 @@
 	Revert	Връщане към запазеното
 	Revert to the saved version of “{name}”?	Връщане към запазената версия на „{name}“?
 	Replace “{name}”, the file this document was opened from?	Замяна на „{name}“, файла, от който беше отворен този документ?
-	Opening it left out what StitchFoundry can't read yet ({what}), so replacing it loses that for good. Save under another name to keep it.	Отварянето му пропусна това, което StitchFoundry все още не може да прочете ({what}), така че замяната му го губи завинаги. Запазете под друго име, за да го запазите.
+	Opening it left out what ScreenFoundry can't read yet ({what}), so replacing it loses that for good. Save under another name to keep it.	Отварянето му пропусна това, което ScreenFoundry все още не може да прочете ({what}), така че замяната му го губи завинаги. Запазете под друго име, за да го запазите.
 	Opening it left out what VectorCraft can't read yet ({what}), so replacing it loses that for good. Save under another name to keep it.	Отварянето му пропусна това, което VectorCraft все още не може да прочете ({what}), така че замяната му го губи завинаги. Запазете под друго име, за да го запазите.
 	“{name}” already exists. Replace it?	„{name}“ вече съществува. Да бъде ли заменен?
 	The name in the save panel was “{typed}”; VectorCraft added the file type's extension. Replacing the file overwrites its contents.	Името в панела за запазване беше „{typed}“, а VectorCraft добави разширението на типа файл. Замяната на файла презаписва съдържанието му.
@@ -3393,9 +3393,9 @@
 	Vector Halftone	Векторен полутон
 	Vector Halftone…	Векторен полутон…
 	Vector illustration — fast, open, scriptable.	Векторна илюстрация — бърза, отворена, скриптуема.
-	StitchFoundry didn't quit normally last time. These documents had unsaved changes:	StitchFoundry не се затвори нормално последния път. Тези документи съдържаха незапазени промени:
-	StitchFoundry Help…	Помощ за StitchFoundry…
-	StitchFoundry on GitHub	StitchFoundry в GitHub
+	ScreenFoundry didn't quit normally last time. These documents had unsaved changes:	ScreenFoundry не се затвори нормално последния път. Тези документи съдържаха незапазени промени:
+	ScreenFoundry Help…	Помощ за ScreenFoundry…
+	ScreenFoundry on GitHub	ScreenFoundry в GitHub
 	Vectors	Вектори
 	Version {version} — open-source vector illustration in pure Rust.	Версия {version} — векторна илюстрация с отворен код на чист Rust.
 	Version:	Версия:
@@ -3435,7 +3435,7 @@
 	Web Snap:	Прилепване в уеб:
 	Weight	Дебелина
 	Weight:	Дебелина:
-	Welcome to StitchFoundry	Добре дошли във StitchFoundry
+	Welcome to ScreenFoundry	Добре дошли във ScreenFoundry
 	When pasting text	При поставяне на текст
 	White	Бяло
 	Widget Position:	Позиция на джаджата:
@@ -3713,7 +3713,7 @@ axis	Both	И двете
 @msg	Split Into Grid: select paths large enough for the grid	Разделяне на мрежа: изберете пътища, достатъчно големи за мрежата
 @msg	Targa files are RGB: colorModel rgb	Файловете Targa са RGB: colorModel rgb
 @msg	Text Wrap: select a wrap object	Обгръщане на текст: изберете обгръщащ обект
-@msg	This shortcut file is in a form StitchFoundry can't read.	 Този файл с преки пътища е във формат, който StitchFoundry не може да прочете.
+@msg	This shortcut file is in a form ScreenFoundry can't read.	 Този файл с преки пътища е във формат, който ScreenFoundry не може да прочете.
 @msg	`aspect` must be a number (%)	`aspect` трябва да бъде число (%)
 @msg	`at` must be [x, y]	`at` трябва да бъде [x, y]
 @msg	`color` must be a colour	`color` трябва да бъде цвят
@@ -3802,7 +3802,7 @@ axis	Both	И двете
 @msg	can't encode the document: {0}	документът не може да бъде кодиран: {0}
 @msg	can't parse shortcut `{c}`	клавишният бърз път `{c}` не може да бъде разпознат
 @msg	can't parse shortcut `{s}` for `{k}`	клавишният бърз път `{s}` за `{k}` не може да бъде разпознат
-@msg	can't save version {0}: StitchFoundry writes versions {MIN_VERSION} to {VERSION}	версия {0} не може да бъде запазена: StitchFoundry записва версии от {MIN_VERSION} до {VERSION}
+@msg	can't save version {0}: ScreenFoundry writes versions {MIN_VERSION} to {VERSION}	версия {0} не може да бъде запазена: ScreenFoundry записва версии от {MIN_VERSION} до {VERSION}
 @msg	can't write .{ext} images	не могат да се записват .{ext} изображения
 @msg	cannot distort a zero-size bounding box	не може да се деформира ограничителна кутия с нулев размер
 @msg	cannot read PDF: {0}	PDF файлът не може да бъде прочетен: {0}
@@ -3828,7 +3828,7 @@ axis	Both	И двете
 @msg	empty brush stroke	празен щрих с четка
 @msg	empty cutter	празен нож
 @msg	empty path	празен път
-@msg	file version {0} is newer than this StitchFoundry supports ({VERSION})	версия на файла {0} е по-нова от поддържаната от този StitchFoundry ({VERSION})
+@msg	file version {0} is newer than this ScreenFoundry supports ({VERSION})	версия на файла {0} е по-нова от поддържаната от този ScreenFoundry ({VERSION})
 @msg	freeform point {i} needs `at` [x, y] and a valid `color`	свободна точка {i} се нуждае от `at` [x, y] и валиден `color`
 @msg	freeform line {i} must be an array of point indices	свободна линия {i} трябва да бъде масив от индекси на точки
 @msg	give both `start` and `end` [x, y] (or neither)	задайте както `start`, така и `end` [x, y] (или нито едното)
@@ -3849,9 +3849,9 @@ axis	Both	И двете
 @msg	invalid PDF setting: {0}	невалидна настройка за PDF: {0}
 @msg	invalid image data for `{0}`	невалидни данни за изображение за `{0}`
 @msg	invalid parameters for `{cmd}`: {msg}	невалидни параметри за `{cmd}`: {msg}
-@msg	is not an image StitchFoundry reads	не е изображение, което StitchFoundry разчита
-@msg	it uses `{at}`, which StitchFoundry's PostScript reader doesn't know	използва `{at}`, който четецът на PostScript на StitchFoundry не разпознава
-@msg	it uses `{at}`, which StitchFoundry's PostScript reader doesn't know, in {procs}	използва `{at}`, който четецът на PostScript на StitchFoundry не разпознава, в {procs}
+@msg	is not an image ScreenFoundry reads	не е изображение, което ScreenFoundry разчита
+@msg	it uses `{at}`, which ScreenFoundry's PostScript reader doesn't know	използва `{at}`, който четецът на PostScript на ScreenFoundry не разпознава
+@msg	it uses `{at}`, which ScreenFoundry's PostScript reader doesn't know, in {procs}	използва `{at}`, който четецът на PostScript на ScreenFoundry не разпознава, в {procs}
 @msg	its Windows metafile preview was opened instead, which may simplify the art	вместо това беше отворен неговият преглед на Windows метафайл, което може да опрости илюстрацията
 @msg	its preview was placed instead, at screen resolution	вместо това беше поставен неговият преглед с разделителна способност за екран
 @msg	join needs open paths	обединяването изисква отворени пътища
@@ -3959,8 +3959,8 @@ axis	Both	И двете
 @msg	no user workspace `{from}`	няма потребителско работно пространство „{from}“
 @msg	node {_1} is not text	възелът {_1} не е текст
 @msg	not a DXF drawing	не е DXF чертеж
-@msg	not a StitchFoundry file: {0}	не е файл на StitchFoundry: {0}
-@msg	not a StitchFoundry shortcut set (missing `overrides`)	не е набор от клавишни комбинации на StitchFoundry (липсват `overrides`)
+@msg	not a ScreenFoundry file: {0}	не е файл на ScreenFoundry: {0}
+@msg	not a ScreenFoundry shortcut set (missing `overrides`)	не е набор от клавишни комбинации на ScreenFoundry (липсват `overrides`)
 @msg	not a VectorCraft file: {0}	не е файл на VectorCraft: {0}
 @msg	not a VectorCraft shortcut set (missing `overrides`)	не е набор от клавишни комбинации на VectorCraft (липсват `overrides`)
 @msg	not a blend	не е преливане
@@ -4199,11 +4199,11 @@ axis	Both	И двете
 @msg	Sent to {_1}	Изпратено към {_1}
 @msg	{_1} files	{_1} файла
 @msg	The graphics were lost and have been restarted	Графиката беше загубена и рестартирана
-@msg	The graphics processor tried first couldn't show the window, so StitchFoundry started again on {summary}	Първият опит на графичния процесор да покаже прозореца не успя, затова StitchFoundry стартира отново на {summary}
-@msg	The last start of StitchFoundry ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Последното стартиране на StitchFoundry прекъсна на {name}, преди прозорецът да се появи, затова StitchFoundry стартира на {summary}. За да опитате отново с този графичен процесор, променете Настройки › Производителност › Графичен процесор или стартирайте със зададена променлива WGPU_BACKEND
-@msg	The last start of StitchFoundry ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Последното стартиране на StitchFoundry прекъсна, докато се изброяваха графичните процесори, затова StitchFoundry стартира на {summary} само с OpenGL. За да опитате отново другите графични интерфейси, променете Настройки › Производителност › Графичен процесор или стартирайте със зададена променлива WGPU_BACKEND
-@msg	Loading StitchFoundry…	Зареждане на StitchFoundry…
-@msg	StitchFoundry failed to start: {e}	StitchFoundry не успя да стартира: {e}
+@msg	The graphics processor tried first couldn't show the window, so ScreenFoundry started again on {summary}	Първият опит на графичния процесор да покаже прозореца не успя, затова ScreenFoundry стартира отново на {summary}
+@msg	The last start of ScreenFoundry ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Последното стартиране на ScreenFoundry прекъсна на {name}, преди прозорецът да се появи, затова ScreenFoundry стартира на {summary}. За да опитате отново с този графичен процесор, променете Настройки › Производителност › Графичен процесор или стартирайте със зададена променлива WGPU_BACKEND
+@msg	The last start of ScreenFoundry ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Последното стартиране на ScreenFoundry прекъсна, докато се изброяваха графичните процесори, затова ScreenFoundry стартира на {summary} само с OpenGL. За да опитате отново другите графични интерфейси, променете Настройки › Производителност › Графичен процесор или стартирайте със зададена променлива WGPU_BACKEND
+@msg	Loading ScreenFoundry…	Зареждане на ScreenFoundry…
+@msg	ScreenFoundry failed to start: {e}	ScreenFoundry не успя да стартира: {e}
 @msg	A browser with WebGPU or WebGL2 is required.	Изисква се браузър с поддръжка на WebGPU или WebGL2.
 @msg	The graphics were lost and couldn't be restarted.	Графиката беше загубена и не можа да бъде рестартирана.
 @msg	Your unsaved changes are kept in this browser: reload the page to get them back.	Незаписаните ви промени се пазят в този браузър: презаредете страницата, за да ги си върнете.
@@ -4225,25 +4225,25 @@ axis	Both	И двете
 @msg	it has more than {MAX_NODES} objects	той има повече от {MAX_NODES} обекта
 @msg	it has no layers	той няма слоеве
 @msg	it has too many values in a row	той има твърде много стойности на ред
-@msg	it has {_1}, which StitchFoundry doesn't read from it yet	той съдържа {_1}, който StitchFoundry все още не може да разчете
+@msg	it has {_1}, which ScreenFoundry doesn't read from it yet	той съдържа {_1}, който ScreenFoundry все още не може да разчете
 @msg	its objects are nested too deeply	обектите му са вложени твърде дълбоко
 @msg	its section ending with `%{end}` doesn't end	разделът му, завършващ на `%{end}`, няма край
 @msg	objects with several fills or strokes, effects or brushes came in as their drawn look ({_1}): their appearance isn't editable yet	обектите с множество запълвания или щрихове, ефекти или четки се появиха във вид на изрисувания си изглед ({_1}): тяхната поява все още не подлежи на редактиране
 @msg	gradient “{name}” isn't defined in the file: a plain colour stands in for it	градиентът „{name}“ не е дефиниран във файла: заменен е с обикновен цвят
-@msg	an image StitchFoundry can't read was left out	изображение, което StitchFoundry не може да разчете, беше пропуснато
+@msg	an image ScreenFoundry can't read was left out	изображение, което ScreenFoundry не може да разчете, беше пропуснато
 @msg	an image whose data is cut short was left out	изображение с непълни данни беше пропуснато
 @msg	linked pictures show the low-resolution preview saved in the file until their files are found: relink them in the Links panel	свързаните картини показват записания във файла предварителен преглед с ниска резолюция, докато файловете им бъдат намерени: презакачете ги в панела „Връзки“
 @msg	area type in frames too short for a line of the font it shows in got taller frames ({_1}): their type wouldn't show otherwise	текстовите рамки за област в редове, твърде къси за шрифта, в който се показват, получиха по-високи рамки ({_1}): текстът им иначе нямаше да се види
 @msg	its editing data doesn't say where its art is	данните му за редактиране не посочват къде се намира неговата графика
 @msg	this file was saved without PDF compatibility, and its editing data can't be read ({why})	този файл е записан без съвместимост с PDF и данните му за редактиране не могат да бъдат прочетени ({why})
 @msg	No fonts are missing in this document	В този документ няма липсващи шрифтове
-@msg	StitchFoundry doesn't search other apps' or the system's folders: {path}	StitchFoundry не търси в папките на други приложения или на системата: {path}
-@msg	StitchFoundry doesn't search the Shared or Public folder in Users: {path}	StitchFoundry не търси в папките Shared или Public в Users: {path}
+@msg	ScreenFoundry doesn't search other apps' or the system's folders: {path}	ScreenFoundry не търси в папките на други приложения или на системата: {path}
+@msg	ScreenFoundry doesn't search the Shared or Public folder in Users: {path}	ScreenFoundry не търси в папките Shared или Public в Users: {path}
 @msg	{path} is not a folder	{path} не е папка
 @msg	the search couldn't start: try again in a moment	търсенето не можа да стартира: опитайте отново след малко
 @msg	searching a folder isn't available on the web	търсенето в папка не е достъпно в уеб версията
 @msg	every search thread stopped on an internal error (please report this bug)	всяка нишка за търсене спря поради вътрешна грешка (моля, докладвайте този бъг)
-@msg	StitchFoundry's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	Папката със шрифтове на StitchFoundry не е зададена тук: десктоп приложението и vectorcraft-cli я задават
+@msg	ScreenFoundry's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	Папката със шрифтове на ScreenFoundry не е зададена тук: десктоп приложението и vectorcraft-cli я задават
 @msg	choose the font files to add	изберете шрифтовите файлове за добавяне
 @msg	{n} font file(s) are now in {folder}	{n} шрифтов(и) файл(а) вече са в {folder}
 @msg	{n} font file(s) are now in {folder}; {failed} couldn't be added: {reason}	{n} шрифтов(и) файл(а) вече са в {folder}; {failed} не можаха да бъдат добавени: {reason}
@@ -4258,7 +4258,7 @@ axis	Both	И двете
 @msg	No linked files to look for	Няма свързани файлове за търсене
 @msg	Relinked {n} image(s); {name} couldn't be relinked: {reason}	Превързани са {n} изображения; {name} не можа да бъде превързан: {reason}
 	Services	Услуги
-	Hide StitchFoundry	Скриване на StitchFoundry
+	Hide ScreenFoundry	Скриване на ScreenFoundry
 	Zoom	Мащабиране
 	Bring All to Front	Извеждане на всички отпред
 	Settings	Настройки
@@ -4266,7 +4266,7 @@ axis	Both	И двете
 	On: one locked object showing the document, updated when it changes.	Вкл.: един заключен обект, показващ документа, който се обновява при промяна.
 	Off: an editable copy of its art, embedded in this document.	Изкл.: редактируемо копие на неговата графика, вградено в този документ.
 	Images: link to the file instead of only embedding it.	Изображения: връзка към файла вместо само вграждане.
-	StitchFoundry documents: one locked object, updated when the file changes.	Документи на StitchFoundry: един заключен обект, който се обновява при промяна на файла.
+	ScreenFoundry documents: one locked object, updated when the file changes.	Документи на ScreenFoundry: един заключен обект, който се обновява при промяна на файла.
 	A file dialog is open: choose there first	Диалоговият прозорец за файл е отворен: изберете първо там
 	The document was closed while its file dialog was open	Документът беше затворен, докато диалоговият му прозорец за файл беше отворен
 	The dialog was closed before its file dialog answered	Диалоговият прозорец беше затворен, преди диалоговият прозорец за файл да отговори
@@ -4508,7 +4508,7 @@ lighting	Light	Светлина
 	Edge Intensity	Интензивност на ръбовете
 	Posterization	Постеризация
 	Highlight Area	Зона на осветяване
-@msg	the compressed file unpacks to more than StitchFoundry reads ({_1} MB of document, {_2} MB per image)	компресираният файл се разпакетира до повече, отколкото StitchFoundry чете ({_1} МБ документ, {_2} МБ на изображение)
+@msg	the compressed file unpacks to more than ScreenFoundry reads ({_1} MB of document, {_2} MB per image)	компресираният файл се разпакетира до повече, отколкото ScreenFoundry чете ({_1} МБ документ, {_2} МБ на изображение)
 @msg	the document is too large to save compressed ({0}): save it with Use Compression off	документът е твърде голям за запазване в компресиран вид ({0}): запазете го с изключена опция „Използване на компресия“
 @msg	the file stopped being read (please report this bug)	четенето на файла беше прекъснато (моля, докладвайте тази грешка)
 	Concentric Dividers:	Концентрични делители:
@@ -4656,7 +4656,7 @@ lighting	Light	Светлина
 	DWG (use DXF)	DWG (използване на DXF)
 	Default Graphic Style	Стил на графика по подразбиране
 	Diamond (open)	Диамант (отворен)
-	Differences from StitchFoundry Default:	Разлики от настройките по подразбиране на StitchFoundry:
+	Differences from ScreenFoundry Default:	Разлики от настройките по подразбиране на ScreenFoundry:
 	Differences from [Default]:	Разлики от [По подразбиране]:
 	Diffusion	Дифузия
 	Direct Selection	Директно избиране
@@ -4724,7 +4724,7 @@ lighting	Light	Светлина
 	Inserting, deleting and rotating pages	Вмъкване, изтриване и завъртане на страници
 	Joins:	Съединения:
 	Justify	Двустранно подравняване
-	Keeps the document editable: StitchFoundry reopens the PDF with nothing lost. For files you'll edit again.	Запазва документа редактируем: StitchFoundry отваря PDF файла отново без загуба на данни. За файлове, които ще редактирате отново.
+	Keeps the document editable: ScreenFoundry reopens the PDF with nothing lost. For files you'll edit again.	Запазва документа редактируем: ScreenFoundry отваря PDF файла отново без загуба на данни. За файлове, които ще редактирате отново.
 	Keyboard Shortcuts	Клавишни комбинации
 	Kite	Хвърчило
 	LF (macOS, Linux)	LF (macOS, Linux)
@@ -4911,10 +4911,10 @@ lighting	Light	Светлина
 	Up (right reading)	Нагоре (четливо отдясно)
 	Use Default	Използване по подразбиране
 	Variation	Вариант
-	StitchFoundry Default	По подразбиране за StitchFoundry
-	StitchFoundry Defaults	Стандартни настройки на StitchFoundry
-	StitchFoundry Generic CMYK (SWOP-like)	Общ CMYK за StitchFoundry (подобен на SWOP)
-	StitchFoundry Swatches (.vcswatches)	Образци на StitchFoundry (.vcswatches)
+	ScreenFoundry Default	По подразбиране за ScreenFoundry
+	ScreenFoundry Defaults	Стандартни настройки на ScreenFoundry
+	ScreenFoundry Generic CMYK (SWOP-like)	Общ CMYK за ScreenFoundry (подобен на SWOP)
+	ScreenFoundry Swatches (.vcswatches)	Образци на ScreenFoundry (.vcswatches)
 	Vertical Align	Вертикално подравняване
 	Vertical Area Type	Вертикално въвеждане в област
 	Vertical Type	Вертикален текст
@@ -4951,7 +4951,7 @@ lighting	Light	Светлина
 	[PDF/X-4:2010]	[PDF/X-4:2010]
 	[Press Quality]	[Качество за печат]
 	[Smallest File Size]	[Най-малък размер на файл]
-	[StitchFoundry Default]	[По подразбиране за StitchFoundry]
+	[ScreenFoundry Default]	[По подразбиране за ScreenFoundry]
 	of	от
 	sRGB IEC61966-2.1	sRGB IEC61966-2.1
 	x Height	Височина на x
@@ -4979,7 +4979,7 @@ file-filter	Print presets	Предварителни настройки за п�
 file-filter	SVG Compressed	Компресиран SVG
 file-filter	Swatch libraries	Библиотеки с образци
 file-filter	Templates	Шаблони
-file-filter	StitchFoundry Template	Шаблон на StitchFoundry
+file-filter	ScreenFoundry Template	Шаблон на ScreenFoundry
 gradient-kind	Radial	Радиален
 mark-style	Japanese	Японски
 theme	Appearance	Външен вид
@@ -5020,7 +5020,7 @@ theme	Appearance	Външен вид
 	Printing and Proofing	Печат и пробно отпечатване
 	Tracing	Трасиране
 	Typography	Типография
-	StitchFoundry	StitchFoundry
+	ScreenFoundry	ScreenFoundry
 	Web	Уеб
 	[1P-High View]	[Висок изглед (1P)]
 	[1P-Low View]	[Нисък изглед (1P)]
@@ -5162,7 +5162,7 @@ theme	Appearance	Външен вид
 @msg	name is empty	името е празно
 @msg	no symbol named `{n}`	няма символ с име `{n}`
 
-# StitchFoundry: the embroidery strings (drafted with AI assistance from the English meaning;
+# ScreenFoundry: the embroidery strings (drafted with AI assistance from the English meaning;
 # not yet reviewed by a native speaker)
 	Mode	Режим
 	Blur Mode	Режим на размазване
@@ -5177,7 +5177,7 @@ theme	Appearance	Външен вид
 @msg	the screen color sampler is already open	инструментът за вземане на цвят от екрана вече е отворен
 @msg	this system has no screen color sampler	тази система няма инструмент за вземане на цвят от екрана
 	VectorCraft documents: one locked object, updated when the file changes.	Документи на VectorCraft: един заключен обект, който се обновява при промяна на файла.
-	Opening it left out what StitchFoundry can't read yet ({what}): replacing it loses that for good. Save under another name to keep it.	Отварянето му пропусна това, което StitchFoundry все още не може да прочете ({what}): замяната му го губи завинаги. Запазете под друго име, за да го запазите.
+	Opening it left out what ScreenFoundry can't read yet ({what}): replacing it loses that for good. Save under another name to keep it.	Отварянето му пропусна това, което ScreenFoundry все още не може да прочете ({what}): замяната му го губи завинаги. Запазете под друго име, за да го запазите.
 	Report a Bug…	Докладване на грешка…
 	Add Inclination Line	Добавяне на линия на наклона
 	After the selection	След селекцията
@@ -5488,10 +5488,10 @@ machine	Stop	Спиране
 	Size (longest side):	Размер (по-дългата страна):
 	Anthropic API key:	API ключ за Anthropic:
 	Remember the key on this computer	Запомняне на ключа на този компютър
-	Claude draws the artwork with your own Anthropic API key, billed to your Anthropic account; StitchFoundry then digitizes it. Check the stitches before you sew.	Claude рисува илюстрацията с вашия собствен API ключ за Anthropic, като разходите се начисляват по вашия акаунт в Anthropic; след това StitchFoundry я дигитализира. Проверете бодовете, преди да шиете.
+	Claude draws the artwork with your own Anthropic API key, billed to your Anthropic account; ScreenFoundry then digitizes it. Check the stitches before you sew.	Claude рисува илюстрацията с вашия собствен API ключ за Anthropic, като разходите се начисляват по вашия акаунт в Anthropic; след това ScreenFoundry я дигитализира. Проверете бодовете, преди да шиете.
 	Get a key	Вземете ключ
 	Drawing the design…	Рисуване на дизайна…
-	Describe a design and Claude draws artwork for it, then StitchFoundry digitizes it	Опишете дизайн и Claude ще нарисува илюстрация за него, след което StitchFoundry ще я дигитализира
+	Describe a design and Claude draws artwork for it, then ScreenFoundry digitizes it	Опишете дизайн и Claude ще нарисува илюстрация за него, след което ScreenFoundry ще я дигитализира
 	Place Artwork as Embroidery	Поставяне на илюстрация като бродерия
 	Place Artwork	Поставяне на илюстрация
 @plural	Design placed: {n} stitched object|Design placed: {n} stitched objects	Дизайнът е поставен: {n} бродиран обект|Дизайнът е поставен: {n} бродирани обекта
@@ -5518,9 +5518,9 @@ machine	Stop	Спиране
 	Redraw Image with Claude	Прерисуване на изображението с Claude
 	What to change (optional):	Какво да се промени (по избор):
 	Only redraw artwork you own or have permission to use.	Прерисувайте само илюстрации, които притежавате или имате разрешение да използвате.
-	Claude redraws the image as flat-colour art with your own Anthropic API key, billed to your Anthropic account; StitchFoundry then digitizes it. Check the stitches before you sew.	Claude прерисува изображението като илюстрация с плътни цветове с вашия собствен API ключ за Anthropic, като разходите се начисляват по вашия акаунт в Anthropic; след това StitchFoundry я дигитализира. Проверете бодовете, преди да шиете.
+	Claude redraws the image as flat-colour art with your own Anthropic API key, billed to your Anthropic account; ScreenFoundry then digitizes it. Check the stitches before you sew.	Claude прерисува изображението като илюстрация с плътни цветове с вашия собствен API ключ за Anthropic, като разходите се начисляват по вашия акаунт в Anthropic; след това ScreenFoundry я дигитализира. Проверете бодовете, преди да шиете.
 	Redraw with Claude…	Прерисуване с Claude…
-	Claude redraws the image as clean flat-colour art, then StitchFoundry digitizes it	Claude прерисува изображението като изчистена илюстрация с плътни цветове, след което StitchFoundry я дигитализира
+	Claude redraws the image as clean flat-colour art, then ScreenFoundry digitizes it	Claude прерисува изображението като изчистена илюстрация с плътни цветове, след което ScreenFoundry я дигитализира
 @msg	select an image to redraw	изберете изображение за прерисуване
 @msg	the image couldn't be read	изображението не може да бъде прочетено
 @msg	The image is too large to send: crop it, or place a smaller copy.	Изображението е твърде голямо за изпращане: изрежете го или поставете по-малко копие.
@@ -6029,7 +6029,7 @@ machine	Stop	Спиране
 	Square loop	Квадратна примка
 	Foil	Фолио
 	Shown with the design, not sewn	Показва се с дизайна, не се шие
-	StitchFoundry Help	Помощ за StitchFoundry
+	ScreenFoundry Help	Помощ за ScreenFoundry
 	Tips	Съвети
 	Search help	Търсене в помощта
 	Nothing found	Нищо не е намерено
@@ -6408,7 +6408,7 @@ machine	Stop	Спиране
 	To follow a line of your own, draw it first, select it, then Add Words.	За да следвате собствена линия, първо я начертайте, изберете я и след това „Добавяне на думи“.
 	Ask About Embroidery…	Питане за бродерия…
 	Ask About Embroidery	Питане за бродерия
-	Ask anything about machine embroidery or StitchFoundry: which stabilizer to use, why thread breaks, how to make letters sew cleaner, where a feature is. Claude can also change your design when you ask, after you allow it.	Питайте каквото и да е за машинната бродерия или StitchFoundry: кой стабилизатор да използвате, защо се къса конецът, как буквите да се шият по-чисто, къде се намира дадена функция. Claude може и да промени дизайна ви, когато поискате, след като му разрешите.
+	Ask anything about machine embroidery or ScreenFoundry: which stabilizer to use, why thread breaks, how to make letters sew cleaner, where a feature is. Claude can also change your design when you ask, after you allow it.	Питайте каквото и да е за машинната бродерия или ScreenFoundry: кой стабилизатор да използвате, защо се къса конецът, как буквите да се шият по-чисто, къде се намира дадена функция. Claude може и да промени дизайна ви, когато поискате, след като му разрешите.
 	Thinking…	Мисля…
 	Type your question, then press Enter	Въведете въпроса си и натиснете Enter
 	Ask	Питане
@@ -6434,7 +6434,7 @@ machine	Stop	Спиране
 	Digitizing	Дигитализиране
 	Embroidery Basics	Основи на бродерията
 
-# Embroidery (StitchFoundry): cross-stitch fill, colour replace, fabric count and chart
+# Embroidery (ScreenFoundry): cross-stitch fill, colour replace, fabric count and chart
 	Fill a patch	Запълване на област
 	Click a square to fill every touching square like it; hold Alt to clear them	Щракнете върху квадратче, за да запълните всички съседни еднакви квадратчета; със задържан Alt ги изчиствате
 	With the Thread Colour	С цвета на конеца
@@ -6465,7 +6465,7 @@ machine	Stop	Спиране
 	Structured cap	Твърда шапка
 	Silk / lightweight	Коприна / лек плат
 
-# Embroidery (StitchFoundry): Check My Sew-out
+# Embroidery (ScreenFoundry): Check My Sew-out
 	Check My Sew-out…	Проверка на бродерията…
 	Check My Sew-out	Проверка на бродерията
 	About the sewing	За бродирането
@@ -6490,7 +6490,7 @@ machine	Stop	Спиране
 	While it sewed:	По време на бродирането:
 	e.g. 75/11 ballpoint	напр. 75/11 със сферичен връх
 
-# Embroidery (StitchFoundry): Foundry Account
+# Embroidery (ScreenFoundry): Foundry Account
 	A check costs {n} credits; free checks come back next month.	Една проверка струва {n} кредита; безплатните проверки се връщат следващия месец.
 	Account	Акаунт
 	Buy credits	Купуване на кредити
@@ -6499,15 +6499,15 @@ machine	Stop	Спиране
 	Delete My Shared Sew-out Checks	Изтриване на споделените ми проверки
 	Email	Имейл
 	Free sew-out checks left this month: {n}	Оставащи безплатни проверки този месец: {n}
-	Leave it empty for StitchFoundry's own service.	Оставете празно за собствената услуга на StitchFoundry.
+	Leave it empty for ScreenFoundry's own service.	Оставете празно за собствената услуга на ScreenFoundry.
 	Paid with Foundry credits ({n} left).	Платено с кредити на Foundry (остават {n}).
 	Paid with Foundry credits.	Платено с кредити на Foundry.
 	Pay for the AI features with my Foundry credits	Плащане на функциите с ИИ с моите кредити на Foundry
 	Pay with Foundry credits instead	Плащане с кредити на Foundry вместо това
-	Payment is on Stripe's secure page, in your browser; your card never reaches StitchFoundry.	Плащането става на защитената страница на Stripe в браузъра ви; картата ви никога не стига до StitchFoundry.
+	Payment is on Stripe's secure page, in your browser; your card never reaches ScreenFoundry.	Плащането става на защитената страница на Stripe в браузъра ви; картата ви никога не стига до ScreenFoundry.
 	Reading your credits…	Четене на кредитите…
 	Server	Сървър
-	Share this check to help improve StitchFoundry (kept private; delete it any time in Foundry Account)	Споделяне на тази проверка, за да се подобри StitchFoundry (остава лична; изтрийте я по всяко време в акаунта на Foundry)
+	Share this check to help improve ScreenFoundry (kept private; delete it any time in Foundry Account)	Споделяне на тази проверка, за да се подобри ScreenFoundry (остава лична; изтрийте я по всяко време в акаунта на Foundry)
 	Sign In	Вход
 	Sign Out	Изход
 	Sign in, or make an account, to pay for the AI features with Foundry credits instead of your own Anthropic API key. A new account starts with free credits.	Влезте или създайте акаунт, за да плащате функциите с ИИ с кредити на Foundry вместо със собствения си API ключ на Anthropic. Новият акаунт започва с безплатни кредити.
@@ -6548,7 +6548,7 @@ machine	Stop	Спиране
 	Enable Guides for 9-Slice Scaling	Включване на водачи за 9-slice мащабиране
 	Persistent	Постоянна
 	Library Panel Options	Опции на панела с библиотека
-# Embroidery (StitchFoundry): undo steps
+# Embroidery (ScreenFoundry): undo steps
 	Auto-Digitize	Автоматично дигитализиране
 	Backstitch Line	Линия с бод назад
 	Close Appliqué Outlines	Затваряне на контурите на апликацията
@@ -6556,7 +6556,7 @@ machine	Stop	Спиране
 	Erase Cross Stitches	Изтриване на кръстати бодове
 	Move Stitches	Преместване на бодове
 	Overlap where shapes touch	Застъпване, където формите се допират
-# Embroidery (StitchFoundry): picture services
+# Embroidery (ScreenFoundry): picture services
 	Picture made by	Картината се прави от
 	Claude (draws the shapes itself)	Claude (сам рисува формите)
 	{name} API key:	API ключ за {name}:
@@ -6593,26 +6593,26 @@ machine	Stop	Спиране
 	A new design: a hoopful of patches, each colour sewn once for all of them	Нов дизайн: гергеф, пълен с емблеми, всеки цвят се бродира веднъж за всички
 	Every hoopful as a machine file, and a list of the names in each	Всеки пълен гергеф като машинен файл и списък с имената във всеки
 	The open design repeated across its hoop, sorted so each colour is sewn once	Отвореният дизайн, повторен по гергефа и подреден така, че всеки цвят да се бродира веднъж
-# Report to StitchFoundry (ui.reportSewout)
+# Report to ScreenFoundry (ui.reportSewout)
 	Anything you'd like to add (optional)	Искате ли да добавите нещо? (по желание)
 	Claude is writing the report…	Claude пише доклада…
 	Have Claude Write It	Нека Claude го напише
-	Help make StitchFoundry better	Помогнете StitchFoundry да стане по-добър
-	I agree to send this to SiteSentrix, the maker of StitchFoundry, to improve the software. It won't be shared with anyone else.	Съгласен съм да изпратя това на SiteSentrix, създателя на StitchFoundry, за подобряване на програмата. Няма да бъде споделено с никого другиго.
+	Help make ScreenFoundry better	Помогнете ScreenFoundry да стане по-добър
+	I agree to send this to SiteSentrix, the maker of ScreenFoundry, to improve the software. It won't be shared with anyone else.	Съгласен съм да изпратя това на SiteSentrix, създателя на ScreenFoundry, за подобряване на програмата. Няма да бъде споделено с никого другиго.
 	Include a summary of the design	Прилагане на обобщение на дизайна
 	Include the conversation with Claude	Прилагане на разговора с Claude
 	Include the photos ({n})	Прилагане на снимките ({n})
-	Report to StitchFoundry	Доклад до StitchFoundry
-	Report to StitchFoundry…	Доклад до StitchFoundry…
+	Report to ScreenFoundry	Доклад до ScreenFoundry
+	Report to ScreenFoundry…	Доклад до ScreenFoundry…
 	Send Report	Изпращане на доклада
-	Send this sew-out and Claude's idea of what StitchFoundry could do better to its makers	Изпратете тази бродерия и идеята на Claude какво StitchFoundry би могъл да прави по-добре на създателите му
-	Send this sew-out to the people who make StitchFoundry, with Claude's idea of what the software could do better. We use it only to improve StitchFoundry: we never share, sell or publish it, and you can have it deleted at any time (Foundry Account › Delete My Shared Sew-out Checks).	Изпратете тази бродерия на създателите на StitchFoundry, с идеята на Claude какво програмата би могла да прави по-добре. Използваме я само за подобряване на StitchFoundry: никога не я споделяме, продаваме или публикуваме и можете да поискате изтриването ѝ по всяко време (Акаунт в Foundry › Изтриване на споделените ми проверки).
+	Send this sew-out and Claude's idea of what ScreenFoundry could do better to its makers	Изпратете тази бродерия и идеята на Claude какво ScreenFoundry би могъл да прави по-добре на създателите му
+	Send this sew-out to the people who make ScreenFoundry, with Claude's idea of what the software could do better. We use it only to improve ScreenFoundry: we never share, sell or publish it, and you can have it deleted at any time (Foundry Account › Delete My Shared Sew-out Checks).	Изпратете тази бродерия на създателите на ScreenFoundry, с идеята на Claude какво програмата би могла да прави по-добре. Използваме я само за подобряване на ScreenFoundry: никога не я споделяме, продаваме или публикуваме и можете да поискате изтриването ѝ по всяко време (Акаунт в Foundry › Изтриване на споделените ми проверки).
 	Sign in to Foundry Account to send a report.	Влезте в акаунта в Foundry, за да изпратите доклад.
 @msg	Sign in to Foundry Account to send a report.	Влезте в акаунта в Foundry, за да изпратите доклад.
 	Thank you: your report was sent.	Благодарим: докладът ви е изпратен.
 	Title	Заглавие
-	What went wrong, and what StitchFoundry could do better	Какво се обърка и какво StitchFoundry би могъл да прави по-добре
-	Write a report about this sew-out for the people who make StitchFoundry.	Напиши доклад за тази бродерия за създателите на StitchFoundry.
+	What went wrong, and what ScreenFoundry could do better	Какво се обърка и какво ScreenFoundry би могъл да прави по-добре
+	Write a report about this sew-out for the people who make ScreenFoundry.	Напиши доклад за тази бродерия за създателите на ScreenFoundry.
 @msg	Check a sew-out first: the report goes with its photos and Claude's answer	Първо проверете бродерия: докладът се изпраща с нейните снимки и отговора на Claude
 @msg	Tick the box to agree to send it first.	Първо отметнете полето, за да се съгласите с изпращането.
 @msg	Write what went wrong first, or have Claude write it.	Първо напишете какво се обърка или оставете Claude да го напише.

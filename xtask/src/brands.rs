@@ -1,6 +1,6 @@
 //! `cargo xtask brands`: no other vendor's product or company names in what users and agents read.
 //!
-//! StitchFoundry (like VectorCraft before it) names its own features; where a comparison is needed, text says "the reference
+//! ScreenFoundry (like VectorCraft before it) names its own features; where a comparison is needed, text says "the reference
 //! app". Scanned:
 //! * string literals in Rust sources (command labels and params docs, `UI_COMMANDS`, menus, panels,
 //!   MCP tool definitions…). Comments and test code (`tests*.rs`, `*_tests.rs`, `tests/` and
@@ -32,7 +32,7 @@ const DENY: &[&str] = &[
     "myriad",
     "pantone",
     "aicb",
-    // VectorCraft's makers: StitchFoundry, a modified version, must not carry their name (their
+    // VectorCraft's makers: ScreenFoundry, a modified version, must not carry their name (their
     // brand licence); the plain-text credit in the About box says `brand-ok`.
     "artcraft",
     "getartcraft",
@@ -49,7 +49,7 @@ const CURSOR_MANIFEST: &str = "crates/tools/src/cursors.toml";
 
 /// Packaging files whose comments take whole lines (a desktop entry has no end-of-line comments):
 /// in these, a `#` line marked `brand-ok` also covers the line just below it.
-const MARK_ABOVE: &[&str] = &["packaging/linux/com.stitchwright.stitchfoundry.desktop"];
+const MARK_ABOVE: &[&str] = &["packaging/linux/com.stitchwright.screenfoundry.desktop"];
 
 /// A denied name found in a file.
 #[derive(Debug, PartialEq)]

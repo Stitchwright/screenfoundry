@@ -1,6 +1,6 @@
 ---
 name: debug
-description: Systematic debugging workflow (reproduce, probe, examine, fix) for StitchFoundry. Use when a design sews or renders wrong, an import or export misbehaves, a test or `cargo xtask ci` fails for an unclear reason, a change "should have helped" and didn't, or any bug resists the obvious approaches. Based on Kuhlmann, The Book of Debugging (No Starch Press); chapter numbers refer to it.
+description: Systematic debugging workflow (reproduce, probe, examine, fix) for ScreenFoundry. Use when a design sews or renders wrong, an import or export misbehaves, a test or `cargo xtask ci` fails for an unclear reason, a change "should have helped" and didn't, or any bug resists the obvious approaches. Based on Kuhlmann, The Book of Debugging (No Starch Press); chapter numbers refer to it.
 ---
 
 # Debugging workflow
@@ -83,7 +83,7 @@ The owner's detailed notes on the book are in bwattendorf/autolayout, branch `m7
   offending piece compared against the old one (ch. 29), or a changed requirement (ch. 30). Don't
   stop at the workaround; record what remains.
 
-## This project (StitchFoundry)
+## This project (ScreenFoundry)
 
 - **Fast loops, not the full CI.** `cargo xtask ci` takes about an hour: it's the gate before a
   commit, never the debugging loop. Run the one failing test (`cargo test -p <crate> --lib <name>`,

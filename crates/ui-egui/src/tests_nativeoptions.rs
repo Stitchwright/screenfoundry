@@ -104,6 +104,6 @@ fn the_web_save_as_dialog_shows_the_native_options() {
     let names: Vec<String> = written.borrow().iter().map(|(p, _)| p.clone()).collect();
     assert_eq!(
         names,
-        ["Untitled-1.stitchfoundry", "Untitled-1-Artboard-1.stitchfoundry", "Untitled-1-B.stitchfoundry", "Untitled-1-C.stitchfoundry"]
+        ["Untitled-1.screenfoundry", "Untitled-1-Artboard-1.screenfoundry", "Untitled-1-B.screenfoundry", "Untitled-1-C.screenfoundry"]
     );
 }

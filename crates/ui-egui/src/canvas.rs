@@ -2884,7 +2884,7 @@ fn home(app: &mut VectorcraftApp, ui: &mut Ui, rect: egui::Rect) {
 /// The Home screen's column: welcome, New / Open, Recent Files, presets and community links.
 fn home_body(app: &mut VectorcraftApp, ui: &mut Ui) {
     let t = Tokens::get(ui.ctx());
-    ui.label(egui::RichText::new(tl!("Welcome to StitchFoundry")).font(theme::semibold(26.0)).color(t.text));
+    ui.label(egui::RichText::new(tl!("Welcome to ScreenFoundry")).font(theme::semibold(26.0)).color(t.text));
     ui.add_space(22.0);
     ui.horizontal(|ui| {
         if widgets::primary_button(ui, tl!("New file")).clicked() {

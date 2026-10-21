@@ -10,7 +10,7 @@ use crate::{
 };
 
 /// The built-in preset every PDF export starts from.
-pub const DEFAULT_PRESET: &str = "StitchFoundry Default";
+pub const DEFAULT_PRESET: &str = "ScreenFoundry Default";
 /// The default preset's name before the rebrand: still accepted.
 pub const LEGACY_DEFAULT_PRESET: &str = "VectorCraft Default";
 
@@ -60,7 +60,7 @@ pub fn builtin_presets() -> Vec<PdfPreset> {
     vec![
         preset(
             DEFAULT_PRESET,
-            "Keeps the document editable: StitchFoundry reopens the PDF with nothing lost. For files you'll edit again.",
+            "Keeps the document editable: ScreenFoundry reopens the PDF with nothing lost. For files you'll edit again.",
             PdfSettings { preserve_editing: true, ..Default::default() },
         ),
         preset("High Quality Print", "For desktop printers and proofs: images stay at print resolution.", print(ImageCodec::Auto, false)),

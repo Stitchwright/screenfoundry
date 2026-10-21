@@ -102,7 +102,7 @@
 	A new preset starting from the selected one	Thiết lập sẵn mới bắt đầu từ thiết lập đang chọn
 	A saved copy of the selected preset	Bản sao đã lưu của thiết lập đang chọn
 	About	Giới thiệu
-	About StitchFoundry	Giới thiệu StitchFoundry
+	About ScreenFoundry	Giới thiệu ScreenFoundry
 	above	phía trên
 	Above Text	Phía trên văn bản
 	Absolute	Tuyệt đối
@@ -217,7 +217,7 @@
 	Appearance of Black	Diện mạo màu đen
 	Appearance Panel	Bảng Diện mạo
 	Appearance panel	Bảng diện mạo
-	Applies the next time StitchFoundry starts.	Áp dụng vào lần tiếp theo StitchFoundry khởi động.
+	Applies the next time ScreenFoundry starts.	Áp dụng vào lần tiếp theo ScreenFoundry khởi động.
 	Applies when the linked file is relinked or updated.	Áp dụng khi tệp liên kết được liên kết lại hoặc cập nhật.
 	Apply	Áp dụng
 	Apply Brush	Áp dụng cọ
@@ -450,7 +450,7 @@
 	Check Script	Kiểm tra script
 	Check Script…	Kiểm tra script…
 	Copy Report	Sao chép báo cáo
-	StitchFoundry read this script without running it.	StitchFoundry đã đọc script này mà không chạy nó.
+	ScreenFoundry read this script without running it.	ScreenFoundry đã đọc script này mà không chạy nó.
 	Needs nothing beyond plain JavaScript	Chỉ cần JavaScript thông thường
 	Needs the script language's own objects or directives	Cần các đối tượng hoặc chỉ thị riêng của ngôn ngữ script
 	Needs the document model	Cần mô hình tài liệu
@@ -1320,7 +1320,7 @@ file-filter	PDF presets	Thiết lập sẵn PDF
 file-filter	Print presets	Thiết lập sẵn in
 file-filter	SVG Compressed	SVG nén
 file-filter	PDF-compatible .ai	.ai tương thích PDF
-file-filter	StitchFoundry Template	Mẫu StitchFoundry
+file-filter	ScreenFoundry Template	Mẫu ScreenFoundry
 file-filter	Templates	Mẫu
 	Flattener Preview	Xem trước làm phẳng
 	Flip	Lật
@@ -1535,7 +1535,7 @@ file-filter	Templates	Mẫu
 	Hide Thumbnail	Ẩn hình thu nhỏ
 	Hide Thumbnails	Ẩn các hình thu nhỏ
 	Hide Transparency Grid	Ẩn lưới trong suốt
-	Hide StitchFoundry	Ẩn StitchFoundry
+	Hide ScreenFoundry	Ẩn ScreenFoundry
 	High	Cao
 	High (300 ppi)	Cao (300 ppi)
 	High Performance (discrete)	Hiệu suất cao (rời rạc)
@@ -1711,7 +1711,7 @@ file-filter	Templates	Mẫu
 # Import Shortcut Set (Keyboard Shortcuts › Import…, File › Open of a .kys file) and its commands.
 	Import Shortcut Set	Nhập bộ phím tắt
 	Import Shortcut Set…	Nhập bộ phím tắt…
-	Each entry of the file is matched to a StitchFoundry tool, command or panel. Check the matches and answer what is left.	Mỗi mục trong tệp được ghép với một công cụ, lệnh hoặc bảng của StitchFoundry. Hãy kiểm tra các cặp ghép và trả lời những mục còn lại.
+	Each entry of the file is matched to a ScreenFoundry tool, command or panel. Check the matches and answer what is left.	Mỗi mục trong tệp được ghép với một công cụ, lệnh hoặc bảng của ScreenFoundry. Hãy kiểm tra các cặp ghép và trả lời những mục còn lại.
 	Keys	Phím
 	The file writes keys and modifiers as codes. Check the proposed meanings and answer the codes that are not known yet.	Tệp ghi phím và phím bổ trợ dưới dạng mã. Hãy kiểm tra các nghĩa được đề xuất và trả lời những mã chưa biết.
 	Click, then press the key this code stands for (Esc cancels)	Bấm, rồi nhấn phím mà mã này biểu thị (Esc để hủy)
@@ -1722,7 +1722,7 @@ file-filter	Templates	Mẫu
 	Shortcuts	Phím tắt
 	Shortcut	Phím tắt
 	In the File	Trong tệp
-	In StitchFoundry	Trong StitchFoundry
+	In ScreenFoundry	Trong ScreenFoundry
 	Needs Attention Only	Chỉ mục cần chú ý
 	Ready	Sẵn sàng
 	Needs a choice	Cần chọn
@@ -1731,7 +1731,7 @@ file-filter	Templates	Mẫu
 	Tools take a single key (optionally with Shift)	Công cụ chỉ nhận một phím đơn (tùy chọn với Shift)
 	A later row takes this shortcut	Một hàng phía sau dùng phím tắt này
 	Same item as a later row	Cùng mục với một hàng phía sau
-	Start from StitchFoundry Defaults	Bắt đầu từ mặc định StitchFoundry
+	Start from ScreenFoundry Defaults	Bắt đầu từ mặc định ScreenFoundry
 	Add to the Current Shortcuts	Thêm vào phím tắt hiện tại
 	Remember My Choices	Ghi nhớ lựa chọn của tôi
 	{ready} of {total} ready	Sẵn sàng {ready} trong {total}
@@ -2396,7 +2396,7 @@ file-filter	Templates	Mẫu
 	Open Swatch Library	Mở thư viện mẫu màu
 	Open the URL in the web browser	Mở URL trong trình duyệt web
 	Opened with {} note(s): {}	Mở với {} ghi chú: {}
-	Opening it left out what StitchFoundry can't read yet ({what}), so replacing it loses that for good. Save under another name to keep it.	Khi mở, những phần StitchFoundry chưa đọc được ({what}) đã bị bỏ qua, nên thay thế sẽ mất chúng vĩnh viễn. Hãy lưu với tên khác để giữ lại.
+	Opening it left out what ScreenFoundry can't read yet ({what}), so replacing it loses that for good. Save under another name to keep it.	Khi mở, những phần ScreenFoundry chưa đọc được ({what}) đã bị bỏ qua, nên thay thế sẽ mất chúng vĩnh viễn. Hãy lưu với tên khác để giữ lại.
 	Opening it left out what VectorCraft can't read yet ({what}), so replacing it loses that for good. Save under another name to keep it.	Khi mở, những phần VectorCraft chưa đọc được ({what}) đã bị bỏ qua, nên thay thế sẽ mất chúng vĩnh viễn. Hãy lưu với tên khác để giữ lại.
 	“{name}” already exists. Replace it?	“{name}” đã tồn tại. Thay thế tệp này?
 	The name in the save panel was “{typed}”; VectorCraft added the file type's extension. Replacing the file overwrites its contents.	Tên trong bảng lưu là “{typed}”, và VectorCraft đã thêm phần mở rộng của loại tệp. Thay thế tệp sẽ ghi đè nội dung của tệp.
@@ -2682,7 +2682,7 @@ mark-style	Japanese	Kiểu Nhật
 	Quarter Space	Khoảng cách một phần tư
 	Quick Actions	Hành động nhanh
 	Quickly start a new file	Tạo nhanh tệp mới
-	Quit StitchFoundry	Thoát StitchFoundry
+	Quit ScreenFoundry	Thoát ScreenFoundry
 	Radar Graph Tool	Công cụ Biểu đồ radar
 	Radial	Hướng tâm
 	Radial Blur	Mờ hướng tâm
@@ -3813,11 +3813,11 @@ mark-style	Japanese	Kiểu Nhật
 	Vector Halftone	Halftone vector
 	Vector Halftone…	Halftone vector…
 	Vector illustration — fast, open, scriptable.	Minh họa vector — nhanh, mở, có thể lập trình.
-	StitchFoundry copies the fonts to {folder}.	StitchFoundry sao chép phông chữ vào {folder}.
-	StitchFoundry didn't quit normally last time. These documents had unsaved changes:	StitchFoundry không thoát bình thường lần trước. Các tài liệu này có thay đổi chưa lưu:
-	StitchFoundry documents: one locked object, updated when the file changes.	Tài liệu StitchFoundry: một đối tượng bị khóa, cập nhật khi tệp thay đổi.
-	StitchFoundry Help…	Trợ giúp StitchFoundry…
-	StitchFoundry on GitHub	StitchFoundry trên GitHub
+	ScreenFoundry copies the fonts to {folder}.	ScreenFoundry sao chép phông chữ vào {folder}.
+	ScreenFoundry didn't quit normally last time. These documents had unsaved changes:	ScreenFoundry không thoát bình thường lần trước. Các tài liệu này có thay đổi chưa lưu:
+	ScreenFoundry documents: one locked object, updated when the file changes.	Tài liệu ScreenFoundry: một đối tượng bị khóa, cập nhật khi tệp thay đổi.
+	ScreenFoundry Help…	Trợ giúp ScreenFoundry…
+	ScreenFoundry on GitHub	ScreenFoundry trên GitHub
 	Vectors	Vector
 	Version	Phiên bản
 	Version {version} — open-source vector illustration in pure Rust.	Phiên bản {version} — minh họa vector mã nguồn mở bằng Rust thuần túy.
@@ -3863,7 +3863,7 @@ mark-style	Japanese	Kiểu Nhật
 	Web Snap:	Khớp màu Web:
 	Weight	Độ dày
 	Weight:	Độ dày:
-	Welcome to StitchFoundry	Chào mừng đến với StitchFoundry
+	Welcome to ScreenFoundry	Chào mừng đến với ScreenFoundry
 	When pasting text	Khi dán văn bản
 	White	Trắng
 	White Intensity	Cường độ trắng
@@ -4037,7 +4037,7 @@ theme	Appearance	Giao diện
 @msg	action is required	action là bắt buộc
 @msg	add a format to export	thêm định dạng để xuất
 @msg	already editing a pattern	đang chỉnh sửa họa tiết
-@msg	an image StitchFoundry can't read was left out	một ảnh StitchFoundry không đọc được đã bị bỏ qua
+@msg	an image ScreenFoundry can't read was left out	một ảnh ScreenFoundry không đọc được đã bị bỏ qua
 @msg	an image whose data is cut short was left out	một ảnh bị cắt ngắn dữ liệu đã bị bỏ qua
 @msg	an object can't be read	không thể đọc một đối tượng
 @msg	an object in perspective would leave the edited grid	đối tượng trong phối cảnh sẽ rời khỏi lưới đang chỉnh sửa
@@ -4078,7 +4078,7 @@ theme	Appearance	Giao diện
 @msg	can't encode the document: {0}	không thể mã hóa tài liệu: {0}
 @msg	can't parse shortcut `{c}`	không thể phân tích phím tắt `{c}`
 @msg	can't parse shortcut `{s}` for `{k}`	không thể phân tích phím tắt `{s}` cho `{k}`
-@msg	can't save version {0}: StitchFoundry writes versions {MIN_VERSION} to {VERSION}	không thể lưu phiên bản {0}: StitchFoundry ghi phiên bản {MIN_VERSION} đến {VERSION}
+@msg	can't save version {0}: ScreenFoundry writes versions {MIN_VERSION} to {VERSION}	không thể lưu phiên bản {0}: ScreenFoundry ghi phiên bản {MIN_VERSION} đến {VERSION}
 @msg	can't write .{ext} images	không thể ghi ảnh .{ext}
 @msg	cannot distort a zero-size bounding box	không thể làm méo khung giới hạn kích thước bằng không
 @msg	cannot read PDF: {0}	không thể đọc PDF: {0}
@@ -4146,7 +4146,7 @@ theme	Appearance	Giao diện
 @msg	Exported {what}	Đã xuất {what}
 @msg	Exported {what} with {_1} note(s): {first}	Đã xuất {what} với {_1} ghi chú: {first}
 @msg	Exporting {_1}	Đang xuất {_1}
-@msg	file version {0} is newer than this StitchFoundry supports ({VERSION})	phiên bản tệp {0} mới hơn StitchFoundry hỗ trợ ({VERSION})
+@msg	file version {0} is newer than this ScreenFoundry supports ({VERSION})	phiên bản tệp {0} mới hơn ScreenFoundry hỗ trợ ({VERSION})
 @msg	Flatten Transparency: select objects to flatten	Dẹp phẳng độ trong suốt: hãy chọn đối tượng để dẹp phẳng
 @msg	Flatten Transparency: {e}	Dẹp phẳng độ trong suốt: {e}
 @msg	freeform line {i} must be an array of point indices	đường tự do {i} phải là mảng chỉ mục điểm
@@ -4181,7 +4181,7 @@ theme	Appearance	Giao diện
 @msg	invalid parameters for `{cmd}`: {msg}	tham số không hợp lệ cho `{cmd}`: {msg}
 @msg	invalid PDF setting: {0}	cài đặt PDF không hợp lệ: {0}
 @msg	invalid restored panel group	nhóm bảng được phục hồi không hợp lệ
-@msg	is not an image StitchFoundry reads	không phải ảnh mà StitchFoundry đọc được
+@msg	is not an image ScreenFoundry reads	không phải ảnh mà ScreenFoundry đọc được
 @msg	it ends inside a layer	nó kết thúc bên trong một lớp
 @msg	it has art outside its layers	nó có tác phẩm ngoài các lớp
 @msg	it has more than one artboard	nó có nhiều hơn một bảng vẽ
@@ -4191,9 +4191,9 @@ theme	Appearance	Giao diện
 @msg	it has too many text objects	nó có quá nhiều đối tượng văn bản
 @msg	it has too many values in a row	nó có quá nhiều giá trị liên tiếp
 @msg	it has too much text	nó có quá nhiều văn bản
-@msg	it has {_1}, which StitchFoundry doesn't read from it yet	nó có {_1}, StitchFoundry chưa đọc được từ đó
-@msg	it uses `{at}`, which StitchFoundry's PostScript reader doesn't know	nó dùng `{at}`, trình đọc PostScript của StitchFoundry không hỗ trợ
-@msg	it uses `{at}`, which StitchFoundry's PostScript reader doesn't know, in {procs}	nó dùng `{at}`, trình đọc PostScript của StitchFoundry không hỗ trợ, trong {procs}
+@msg	it has {_1}, which ScreenFoundry doesn't read from it yet	nó có {_1}, ScreenFoundry chưa đọc được từ đó
+@msg	it uses `{at}`, which ScreenFoundry's PostScript reader doesn't know	nó dùng `{at}`, trình đọc PostScript của ScreenFoundry không hỗ trợ
+@msg	it uses `{at}`, which ScreenFoundry's PostScript reader doesn't know, in {procs}	nó dùng `{at}`, trình đọc PostScript của ScreenFoundry không hỗ trợ, trong {procs}
 @msg	its editing data doesn't say where its art is	dữ liệu chỉnh sửa không cho biết vị trí tác phẩm
 @msg	its editing data doesn't say where its artboard is	dữ liệu chỉnh sửa không cho biết vị trí bảng vẽ
 @msg	its editing data has no layers	dữ liệu chỉnh sửa không có lớp
@@ -4219,7 +4219,7 @@ theme	Appearance	Giao diện
 @msg	Live Paint Merge: select a Live Paint group and the paths to add	Hợp nhất tô trực tiếp: chọn nhóm tô trực tiếp và các đường dẫn để thêm
 @msg	Live Paint: select paths or compound paths	Tô trực tiếp: chọn đường dẫn hoặc đường dẫn phức
 @msg	Live Paint: these paths are too degenerate to paint	Tô trực tiếp: các đường dẫn này quá suy biến để tô
-@msg	Loading StitchFoundry…	Đang tải StitchFoundry…
+@msg	Loading ScreenFoundry…	Đang tải ScreenFoundry…
 @msg	Make Guides: select paths	Tạo đường căn: hãy chọn đường dẫn
 @msg	missing `folder`	thiếu `folder`
 @msg	missing `id` (see plugin.list)	thiếu `id` (xem plugin.list)
@@ -4339,10 +4339,10 @@ theme	Appearance	Giao diện
 @msg	not a PSD file	không phải tệp PSD
 @msg	not a stored central record	không phải bản ghi trung tâm đã lưu
 @msg	not a valid plug-in module: {0}	không phải mô-đun plug-in hợp lệ: {0}
-@msg	not a StitchFoundry file: {0}	không phải tệp StitchFoundry: {0}
-@msg	not a StitchFoundry shortcut set (missing `overrides`)	không phải bộ phím tắt StitchFoundry (thiếu `overrides`)
+@msg	not a ScreenFoundry file: {0}	không phải tệp ScreenFoundry: {0}
+@msg	not a ScreenFoundry shortcut set (missing `overrides`)	không phải bộ phím tắt ScreenFoundry (thiếu `overrides`)
 @msg	not a shortcut set: the text doesn't start with a slash name and an opening brace	không phải bộ phím tắt: văn bản không bắt đầu bằng một tên có dấu gạch chéo và một dấu ngoặc nhọn mở
-@msg	This shortcut file is in a form StitchFoundry can't read.	Tệp phím tắt này có dạng mà StitchFoundry không đọc được.
+@msg	This shortcut file is in a form ScreenFoundry can't read.	Tệp phím tắt này có dạng mà ScreenFoundry không đọc được.
 @msg	not an EMF or WMF file	không phải tệp EMF hoặc WMF
 @msg	not found	không tìm thấy
 @msg	not in pattern editing mode	không ở chế độ chỉnh sửa họa tiết
@@ -4495,7 +4495,7 @@ theme	Appearance	Giao diện
 @msg	the file's layers weren't read from its editing data ({_1}): they come from its PDF part	không đọc được các lớp của tệp từ dữ liệu chỉnh sửa ({_1}): chúng được lấy từ phần PDF
 @msg	the artboard to fit must be a positive size up to {_1} pt	bảng vẽ cần khớp phải có kích thước dương tối đa {_1} pt
 @msg	the background worker stopped	tiến trình nền đã dừng
-@msg	the compressed file unpacks to more than StitchFoundry reads ({_1} MB of document, {_2} MB per image)	tệp nén giải nén ra nhiều hơn StitchFoundry đọc ({_1} MB tài liệu, {_2} MB mỗi ảnh)
+@msg	the compressed file unpacks to more than ScreenFoundry reads ({_1} MB of document, {_2} MB per image)	tệp nén giải nén ra nhiều hơn ScreenFoundry đọc ({_1} MB tài liệu, {_2} MB mỗi ảnh)
 @msg	the blend has no spine	đối tượng hòa trộn không có trục
 @msg	the compressed file unpacks to more than VectorCraft reads ({_1} MB of document, {_2} MB per image)	tệp nén giải nén ra nhiều hơn VectorCraft đọc ({_1} MB tài liệu, {_2} MB mỗi ảnh)
 @msg	the compressed file unpacks to more than {_1} MB	tệp nén giải nén ra hơn {_1} MB
@@ -4519,9 +4519,9 @@ theme	Appearance	Giao diện
 @msg	the file was read up to an error ({why}): what follows it was left out	tệp được đọc đến khi gặp lỗi ({why}): phần sau đó bị bỏ qua
 @msg	the file's preview header points outside the file	tiêu đề xem trước của tệp trỏ ra ngoài tệp
 @msg	the files come to more than 1 GB: add fewer at a time	các tệp tổng cộng hơn 1 GB: thêm ít hơn mỗi lần
-@msg	The graphics processor tried first couldn't show the window, so StitchFoundry started again on {summary}	Bộ xử lý đồ họa thử trước không hiển thị được cửa sổ, StitchFoundry đã khởi động lại trên {summary}
-@msg	The last start of StitchFoundry ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Lần khởi động trước của StitchFoundry đã dừng trên {name} trước khi cửa sổ xuất hiện, nên StitchFoundry đã khởi động trên {summary}. Để thử lại bộ xử lý đồ họa đó, hãy đổi Tùy chọn › Hiệu suất › Bộ xử lý đồ họa hoặc khởi động với biến WGPU_BACKEND được đặt
-@msg	The last start of StitchFoundry ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Lần khởi động trước của StitchFoundry đã dừng khi đang liệt kê các bộ xử lý đồ họa, nên StitchFoundry đã khởi động trên {summary} chỉ với OpenGL. Để thử lại các giao diện đồ họa khác, hãy đổi Tùy chọn › Hiệu suất › Bộ xử lý đồ họa hoặc khởi động với biến WGPU_BACKEND được đặt
+@msg	The graphics processor tried first couldn't show the window, so ScreenFoundry started again on {summary}	Bộ xử lý đồ họa thử trước không hiển thị được cửa sổ, ScreenFoundry đã khởi động lại trên {summary}
+@msg	The last start of ScreenFoundry ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Lần khởi động trước của ScreenFoundry đã dừng trên {name} trước khi cửa sổ xuất hiện, nên ScreenFoundry đã khởi động trên {summary}. Để thử lại bộ xử lý đồ họa đó, hãy đổi Tùy chọn › Hiệu suất › Bộ xử lý đồ họa hoặc khởi động với biến WGPU_BACKEND được đặt
+@msg	The last start of ScreenFoundry ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Lần khởi động trước của ScreenFoundry đã dừng khi đang liệt kê các bộ xử lý đồ họa, nên ScreenFoundry đã khởi động trên {summary} chỉ với OpenGL. Để thử lại các giao diện đồ họa khác, hãy đổi Tùy chọn › Hiệu suất › Bộ xử lý đồ họa hoặc khởi động với biến WGPU_BACKEND được đặt
 @msg	The graphics were lost and couldn't be restarted.	Đồ họa đã mất và không thể khởi động lại.
 @msg	The graphics were lost and have been restarted	Đồ họa đã mất và đã được khởi động lại
 @msg	the guide is on a hidden or locked layer	đường căn nằm trên lớp ẩn hoặc bị khóa
@@ -4610,10 +4610,10 @@ theme	Appearance	Giao diện
 @msg	unsupported: {0}	không được hỗ trợ: {0}
 @msg	Updated {_1} image(s)	Đã cập nhật {_1} ảnh
 @msg	Updated {_1} linked file(s) changed on disk	Đã cập nhật {_1} tệp liên kết đã thay đổi trên đĩa
-@msg	StitchFoundry doesn't search other apps' or the system's folders: {path}	StitchFoundry không tìm kiếm trong thư mục của ứng dụng khác hoặc hệ thống: {path}
-@msg	StitchFoundry doesn't search the Shared or Public folder in Users: {path}	StitchFoundry không tìm kiếm thư mục Shared hoặc Public trong Users: {path}
-@msg	StitchFoundry failed to start: {e}	StitchFoundry khởi động thất bại: {e}
-@msg	StitchFoundry's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	Thư mục Phông chữ của StitchFoundry chưa được đặt ở đây: ứng dụng máy tính và vectorcraft-cli đặt nó
+@msg	ScreenFoundry doesn't search other apps' or the system's folders: {path}	ScreenFoundry không tìm kiếm trong thư mục của ứng dụng khác hoặc hệ thống: {path}
+@msg	ScreenFoundry doesn't search the Shared or Public folder in Users: {path}	ScreenFoundry không tìm kiếm thư mục Shared hoặc Public trong Users: {path}
+@msg	ScreenFoundry failed to start: {e}	ScreenFoundry khởi động thất bại: {e}
+@msg	ScreenFoundry's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	Thư mục Phông chữ của ScreenFoundry chưa được đặt ở đây: ứng dụng máy tính và vectorcraft-cli đặt nó
 @msg	variables are locked	biến số bị khóa
 @msg	VectorCraft doesn't search other apps' or the system's folders: {path}	VectorCraft không tìm kiếm trong thư mục của ứng dụng khác hoặc hệ thống: {path}
 @msg	VectorCraft doesn't search the Shared or Public folder in Users: {path}	VectorCraft không tìm kiếm thư mục Shared hoặc Public trong Users: {path}
@@ -4787,13 +4787,13 @@ theme	Appearance	Giao diện
 @msg	name is empty	tên trống
 @msg	no symbol named `{n}`	không có biểu tượng nào tên `{n}`
 
-# StitchFoundry: the embroidery strings (drafted with AI assistance from the English meaning;
+# ScreenFoundry: the embroidery strings (drafted with AI assistance from the English meaning;
 # not yet reviewed by a native speaker)
 effect	Points	Điểm
 @msg	this kind of brush has no options dialog yet	loại cọ này chưa có hộp thoại tùy chọn
 @msg	not a VectorCraft file: {0}	không phải tệp VectorCraft: {0}
 	VectorCraft documents: one locked object, updated when the file changes.	Tài liệu VectorCraft: một đối tượng bị khóa, cập nhật khi tệp thay đổi.
-	Opening it left out what StitchFoundry can't read yet ({what}): replacing it loses that for good. Save under another name to keep it.	Khi mở, những phần StitchFoundry chưa đọc được ({what}) đã bị bỏ qua: thay thế sẽ mất chúng vĩnh viễn. Hãy lưu với tên khác để giữ lại.
+	Opening it left out what ScreenFoundry can't read yet ({what}): replacing it loses that for good. Save under another name to keep it.	Khi mở, những phần ScreenFoundry chưa đọc được ({what}) đã bị bỏ qua: thay thế sẽ mất chúng vĩnh viễn. Hãy lưu với tên khác để giữ lại.
 	Report a Bug…	Báo lỗi…
 	Add Inclination Line	Thêm đường hướng mũi
 	After the selection	Sau vùng chọn
@@ -5111,10 +5111,10 @@ machine	Stop	Dừng máy
 	Size (longest side):	Kích thước (cạnh dài nhất):
 	Anthropic API key:	Khóa API Anthropic:
 	Remember the key on this computer	Ghi nhớ khóa trên máy tính này
-	Claude draws the artwork with your own Anthropic API key, billed to your Anthropic account; StitchFoundry then digitizes it. Check the stitches before you sew.	Claude vẽ tác phẩm bằng khóa API Anthropic của riêng bạn, tính phí vào tài khoản Anthropic của bạn; sau đó StitchFoundry số hóa nó. Hãy kiểm tra mũi thêu trước khi thêu.
+	Claude draws the artwork with your own Anthropic API key, billed to your Anthropic account; ScreenFoundry then digitizes it. Check the stitches before you sew.	Claude vẽ tác phẩm bằng khóa API Anthropic của riêng bạn, tính phí vào tài khoản Anthropic của bạn; sau đó ScreenFoundry số hóa nó. Hãy kiểm tra mũi thêu trước khi thêu.
 	Get a key	Lấy khóa
 	Drawing the design…	Đang vẽ mẫu thêu…
-	Describe a design and Claude draws artwork for it, then StitchFoundry digitizes it	Mô tả một mẫu thêu và Claude sẽ vẽ tác phẩm cho nó, rồi StitchFoundry số hóa nó
+	Describe a design and Claude draws artwork for it, then ScreenFoundry digitizes it	Mô tả một mẫu thêu và Claude sẽ vẽ tác phẩm cho nó, rồi ScreenFoundry số hóa nó
 	Place Artwork as Embroidery	Đặt tác phẩm thành mẫu thêu
 	Place Artwork	Đặt tác phẩm
 @plural	Design placed: {n} stitched object|Design placed: {n} stitched objects	Đã đặt mẫu thêu: {n} đối tượng thêu
@@ -5141,9 +5141,9 @@ machine	Stop	Dừng máy
 	Redraw Image with Claude	Vẽ lại ảnh bằng Claude
 	What to change (optional):	Điều cần thay đổi (tùy chọn):
 	Only redraw artwork you own or have permission to use.	Chỉ vẽ lại tác phẩm bạn sở hữu hoặc được phép sử dụng.
-	Claude redraws the image as flat-colour art with your own Anthropic API key, billed to your Anthropic account; StitchFoundry then digitizes it. Check the stitches before you sew.	Claude vẽ lại ảnh thành tranh màu phẳng bằng khóa API Anthropic của riêng bạn, tính phí vào tài khoản Anthropic của bạn; sau đó StitchFoundry số hóa nó. Hãy kiểm tra mũi thêu trước khi thêu.
+	Claude redraws the image as flat-colour art with your own Anthropic API key, billed to your Anthropic account; ScreenFoundry then digitizes it. Check the stitches before you sew.	Claude vẽ lại ảnh thành tranh màu phẳng bằng khóa API Anthropic của riêng bạn, tính phí vào tài khoản Anthropic của bạn; sau đó ScreenFoundry số hóa nó. Hãy kiểm tra mũi thêu trước khi thêu.
 	Redraw with Claude…	Vẽ lại bằng Claude…
-	Claude redraws the image as clean flat-colour art, then StitchFoundry digitizes it	Claude vẽ lại ảnh thành tranh màu phẳng gọn gàng, rồi StitchFoundry số hóa nó
+	Claude redraws the image as clean flat-colour art, then ScreenFoundry digitizes it	Claude vẽ lại ảnh thành tranh màu phẳng gọn gàng, rồi ScreenFoundry số hóa nó
 @msg	select an image to redraw	hãy chọn một ảnh để vẽ lại
 @msg	the image couldn't be read	không thể đọc ảnh
 @msg	The image is too large to send: crop it, or place a smaller copy.	Ảnh quá lớn để gửi: hãy cắt bớt, hoặc đặt một bản nhỏ hơn.
@@ -5655,7 +5655,7 @@ machine	Stop	Dừng máy
 	Square loop	Vòng vuông
 	Foil	Lá kim loại
 	Shown with the design, not sewn	Hiển thị cùng mẫu thêu, không thêu
-	StitchFoundry Help	Trợ giúp StitchFoundry
+	ScreenFoundry Help	Trợ giúp ScreenFoundry
 	Guide	Hướng dẫn
 	Tips	Mẹo
 	Search help	Tìm trong trợ giúp
@@ -6037,7 +6037,7 @@ machine	Stop	Dừng máy
 	To follow a line of your own, draw it first, select it, then Add Words.	Để chữ theo một đường của riêng bạn, hãy vẽ nó trước, chọn nó, rồi Thêm chữ.
 	Ask About Embroidery…	Hỏi về thêu…
 	Ask About Embroidery	Hỏi về thêu
-	Ask anything about machine embroidery or StitchFoundry: which stabilizer to use, why thread breaks, how to make letters sew cleaner, where a feature is. Claude can also change your design when you ask, after you allow it.	Hỏi bất cứ điều gì về thêu máy hoặc StitchFoundry: dùng mếch nào, vì sao chỉ bị đứt, làm sao để chữ thêu sạch hơn, một tính năng nằm ở đâu. Claude cũng có thể thay đổi mẫu thêu khi bạn yêu cầu, sau khi bạn cho phép.
+	Ask anything about machine embroidery or ScreenFoundry: which stabilizer to use, why thread breaks, how to make letters sew cleaner, where a feature is. Claude can also change your design when you ask, after you allow it.	Hỏi bất cứ điều gì về thêu máy hoặc ScreenFoundry: dùng mếch nào, vì sao chỉ bị đứt, làm sao để chữ thêu sạch hơn, một tính năng nằm ở đâu. Claude cũng có thể thay đổi mẫu thêu khi bạn yêu cầu, sau khi bạn cho phép.
 	Thinking…	Đang suy nghĩ…
 	Type your question, then press Enter	Gõ câu hỏi, rồi nhấn Enter
 	Ask	Hỏi
@@ -6061,7 +6061,7 @@ machine	Stop	Dừng máy
 @msg	This conversation is long: start a New Conversation.	Cuộc trò chuyện này đã dài: hãy bắt đầu Cuộc trò chuyện mới.
 @msg	Claude took too many steps: ask again, more simply.	Claude đã thực hiện quá nhiều bước: hãy hỏi lại, đơn giản hơn.
 
-# Embroidery (StitchFoundry): cross-stitch fill, colour replace, fabric count and chart
+# Embroidery (ScreenFoundry): cross-stitch fill, colour replace, fabric count and chart
 	Fill a patch	Tô một vùng
 	Click a square to fill every touching square like it; hold Alt to clear them	Bấm vào một ô để tô mọi ô giống nó nằm liền kề; giữ Alt để xóa chúng
 	With the Thread Colour	Bằng màu chỉ
@@ -6092,7 +6092,7 @@ machine	Stop	Dừng máy
 	Structured cap	Mũ lưỡi trai cứng
 	Silk / lightweight	Lụa / vải mỏng
 
-# Embroidery (StitchFoundry): Check My Sew-out
+# Embroidery (ScreenFoundry): Check My Sew-out
 	Check My Sew-out…	Kiểm tra bản thêu của tôi…
 	Check My Sew-out	Kiểm tra bản thêu của tôi
 	About the sewing	Về việc thêu
@@ -6117,7 +6117,7 @@ machine	Stop	Dừng máy
 	While it sewed:	Trong khi thêu:
 	e.g. 75/11 ballpoint	vd. 75/11 đầu tròn
 
-# Embroidery (StitchFoundry): Foundry Account
+# Embroidery (ScreenFoundry): Foundry Account
 	A check costs {n} credits; free checks come back next month.	Một lần kiểm tra tốn {n} tín dụng; lượt kiểm tra miễn phí sẽ có lại vào tháng sau.
 	Account	Tài khoản
 	Buy credits	Mua tín dụng
@@ -6126,15 +6126,15 @@ machine	Stop	Dừng máy
 	Delete My Shared Sew-out Checks	Xóa các lần kiểm tra tôi đã chia sẻ
 	Email	Email
 	Free sew-out checks left this month: {n}	Lượt kiểm tra miễn phí còn lại tháng này: {n}
-	Leave it empty for StitchFoundry's own service.	Để trống để dùng dịch vụ của chính StitchFoundry.
+	Leave it empty for ScreenFoundry's own service.	Để trống để dùng dịch vụ của chính ScreenFoundry.
 	Paid with Foundry credits ({n} left).	Trả bằng tín dụng Foundry (còn {n}).
 	Paid with Foundry credits.	Trả bằng tín dụng Foundry.
 	Pay for the AI features with my Foundry credits	Trả tiền tính năng AI bằng tín dụng Foundry của tôi
 	Pay with Foundry credits instead	Trả bằng tín dụng Foundry thay vào đó
-	Payment is on Stripe's secure page, in your browser; your card never reaches StitchFoundry.	Thanh toán diễn ra trên trang bảo mật của Stripe trong trình duyệt; thẻ của bạn không bao giờ đến StitchFoundry.
+	Payment is on Stripe's secure page, in your browser; your card never reaches ScreenFoundry.	Thanh toán diễn ra trên trang bảo mật của Stripe trong trình duyệt; thẻ của bạn không bao giờ đến ScreenFoundry.
 	Reading your credits…	Đang đọc tín dụng…
 	Server	Máy chủ
-	Share this check to help improve StitchFoundry (kept private; delete it any time in Foundry Account)	Chia sẻ lần kiểm tra này để giúp cải thiện StitchFoundry (giữ riêng tư; xóa bất cứ lúc nào trong Tài khoản Foundry)
+	Share this check to help improve ScreenFoundry (kept private; delete it any time in Foundry Account)	Chia sẻ lần kiểm tra này để giúp cải thiện ScreenFoundry (giữ riêng tư; xóa bất cứ lúc nào trong Tài khoản Foundry)
 	Sign In	Đăng nhập
 	Sign Out	Đăng xuất
 	Sign in, or make an account, to pay for the AI features with Foundry credits instead of your own Anthropic API key. A new account starts with free credits.	Đăng nhập, hoặc tạo tài khoản, để trả tiền tính năng AI bằng tín dụng Foundry thay vì khóa API Anthropic của riêng bạn. Tài khoản mới có sẵn tín dụng miễn phí.
@@ -6187,7 +6187,7 @@ machine	Stop	Dừng máy
 @msg	too many library panels were opened in this session	đã mở quá nhiều bảng thư viện trong phiên này
 @msg	The image is {_1} × {_2} pixels, more than {LARGE_TRACE_SIDE} on a side: it is traced, but more slowly. A lower-fidelity preset or a smaller copy of the image traces faster.	Ảnh có kích thước {_1} × {_2} điểm ảnh, hơn {LARGE_TRACE_SIDE} ở một cạnh: ảnh vẫn được dò, nhưng chậm hơn. Một thiết lập sẵn có độ trung thực thấp hơn hoặc một bản sao nhỏ hơn của ảnh sẽ dò nhanh hơn.
 @msg	The image was traced at {_1} × {_2} pixels, scaled down from {_3} × {_4} ({_5} megapixels at most).	Ảnh đã được dò ở {_1} × {_2} điểm ảnh, thu nhỏ từ {_3} × {_4} (tối đa {_5} megapixel).
-# Embroidery (StitchFoundry): undo steps
+# Embroidery (ScreenFoundry): undo steps
 	Auto-Digitize	Số hóa tự động
 	Backstitch Line	Đường mũi đột
 	Close Appliqué Outlines	Khép đường viền đắp vải
@@ -6195,7 +6195,7 @@ machine	Stop	Dừng máy
 	Erase Cross Stitches	Xóa mũi thêu chữ thập
 	Move Stitches	Di chuyển mũi thêu
 	Overlap where shapes touch	Chồng lấn nơi các hình chạm nhau
-# Embroidery (StitchFoundry): picture services
+# Embroidery (ScreenFoundry): picture services
 	Picture made by	Hình do ai tạo
 	Claude (draws the shapes itself)	Claude (tự vẽ các hình)
 	{name} API key:	Khóa API {name}:
@@ -6233,26 +6233,26 @@ machine	Stop	Dừng máy
 	A new design: a hoopful of patches, each colour sewn once for all of them	Thiết kế mới: một khung đầy miếng vá, mỗi màu thêu một lần cho tất cả
 	Every hoopful as a machine file, and a list of the names in each	Mỗi khung đầy thành một tệp máy, kèm danh sách tên trong mỗi khung
 	The open design repeated across its hoop, sorted so each colour is sewn once	Thiết kế đang mở được lặp khắp khung, sắp xếp để mỗi màu chỉ thêu một lần
-# Report to StitchFoundry (ui.reportSewout)
+# Report to ScreenFoundry (ui.reportSewout)
 	Anything you'd like to add (optional)	Bạn có muốn thêm gì không? (không bắt buộc)
 	Claude is writing the report…	Claude đang viết báo cáo…
 	Have Claude Write It	Để Claude viết
-	Help make StitchFoundry better	Giúp StitchFoundry tốt hơn
-	I agree to send this to SiteSentrix, the maker of StitchFoundry, to improve the software. It won't be shared with anyone else.	Tôi đồng ý gửi nội dung này cho SiteSentrix, nhà phát triển StitchFoundry, để cải thiện phần mềm. Nội dung sẽ không được chia sẻ với ai khác.
+	Help make ScreenFoundry better	Giúp ScreenFoundry tốt hơn
+	I agree to send this to SiteSentrix, the maker of ScreenFoundry, to improve the software. It won't be shared with anyone else.	Tôi đồng ý gửi nội dung này cho SiteSentrix, nhà phát triển ScreenFoundry, để cải thiện phần mềm. Nội dung sẽ không được chia sẻ với ai khác.
 	Include a summary of the design	Kèm bản tóm tắt thiết kế
 	Include the conversation with Claude	Kèm cuộc trò chuyện với Claude
 	Include the photos ({n})	Kèm ảnh ({n})
-	Report to StitchFoundry	Báo cáo cho StitchFoundry
-	Report to StitchFoundry…	Báo cáo cho StitchFoundry…
+	Report to ScreenFoundry	Báo cáo cho ScreenFoundry
+	Report to ScreenFoundry…	Báo cáo cho ScreenFoundry…
 	Send Report	Gửi báo cáo
-	Send this sew-out and Claude's idea of what StitchFoundry could do better to its makers	Gửi bản thêu này và ý tưởng của Claude về điều StitchFoundry có thể làm tốt hơn cho những người làm ra nó
-	Send this sew-out to the people who make StitchFoundry, with Claude's idea of what the software could do better. We use it only to improve StitchFoundry: we never share, sell or publish it, and you can have it deleted at any time (Foundry Account › Delete My Shared Sew-out Checks).	Gửi bản thêu này cho những người làm ra StitchFoundry, kèm ý tưởng của Claude về điều phần mềm có thể làm tốt hơn. Chúng tôi chỉ dùng nó để cải thiện StitchFoundry: không bao giờ chia sẻ, bán hay công bố, và bạn có thể yêu cầu xóa bất cứ lúc nào (Tài khoản Foundry › Xóa các lần kiểm tra tôi đã chia sẻ).
+	Send this sew-out and Claude's idea of what ScreenFoundry could do better to its makers	Gửi bản thêu này và ý tưởng của Claude về điều ScreenFoundry có thể làm tốt hơn cho những người làm ra nó
+	Send this sew-out to the people who make ScreenFoundry, with Claude's idea of what the software could do better. We use it only to improve ScreenFoundry: we never share, sell or publish it, and you can have it deleted at any time (Foundry Account › Delete My Shared Sew-out Checks).	Gửi bản thêu này cho những người làm ra ScreenFoundry, kèm ý tưởng của Claude về điều phần mềm có thể làm tốt hơn. Chúng tôi chỉ dùng nó để cải thiện ScreenFoundry: không bao giờ chia sẻ, bán hay công bố, và bạn có thể yêu cầu xóa bất cứ lúc nào (Tài khoản Foundry › Xóa các lần kiểm tra tôi đã chia sẻ).
 	Sign in to Foundry Account to send a report.	Đăng nhập Tài khoản Foundry để gửi báo cáo.
 @msg	Sign in to Foundry Account to send a report.	Đăng nhập Tài khoản Foundry để gửi báo cáo.
 	Thank you: your report was sent.	Cảm ơn: báo cáo của bạn đã được gửi.
 	Title	Tiêu đề
-	What went wrong, and what StitchFoundry could do better	Điều gì đã sai, và StitchFoundry có thể làm tốt hơn ở đâu
-	Write a report about this sew-out for the people who make StitchFoundry.	Hãy viết báo cáo về bản thêu này cho những người làm ra StitchFoundry.
+	What went wrong, and what ScreenFoundry could do better	Điều gì đã sai, và ScreenFoundry có thể làm tốt hơn ở đâu
+	Write a report about this sew-out for the people who make ScreenFoundry.	Hãy viết báo cáo về bản thêu này cho những người làm ra ScreenFoundry.
 @msg	Check a sew-out first: the report goes with its photos and Claude's answer	Hãy kiểm tra một bản thêu trước: báo cáo được gửi kèm ảnh và câu trả lời của Claude
 @msg	Tick the box to agree to send it first.	Hãy đánh dấu ô để đồng ý gửi trước.
 @msg	Write what went wrong first, or have Claude write it.	Hãy viết điều gì đã sai trước, hoặc để Claude viết.

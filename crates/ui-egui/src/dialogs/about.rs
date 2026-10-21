@@ -1,4 +1,4 @@
-//! Help → About StitchFoundry.
+//! Help → About ScreenFoundry.
 
 use crate::VectorcraftApp;
 use crate::theme;
@@ -9,7 +9,7 @@ pub(super) fn show(app: &mut VectorcraftApp, ctx: &egui::Context) {
         return;
     }
     let mut open = true;
-    egui::Window::new(tl!("About StitchFoundry"))
+    egui::Window::new(tl!("About ScreenFoundry"))
         .collapsible(false)
         .resizable(false)
         .open(&mut open)

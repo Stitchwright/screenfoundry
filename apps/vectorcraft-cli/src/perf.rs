@@ -1,4 +1,4 @@
-//! `stitchfoundry-cli perf`: the performance budgets (plan §4) measured on a synthetic document.
+//! `screenfoundry-cli perf`: the performance budgets (plan §4) measured on a synthetic document.
 //!
 //! Each row is the median of several runs. Timings are wall-clock: on a busy machine (a load
 //! average above three quarters of the cores, or on Windows more than three quarters of the
@@ -333,7 +333,7 @@ pub fn run(args: &[String]) -> Result<(), String> {
     let (load, label) = (load_average(), "load average");
     #[cfg(windows)]
     let (load, label) = (busy_cores(cores), "cores busy");
-    outln!("StitchFoundry performance budgets — {n} paths, {cores} cores, {label} {}", load.map_or("?".into(), |l| format!("{l:.1}")));
+    outln!("ScreenFoundry performance budgets — {n} paths, {cores} cores, {label} {}", load.map_or("?".into(), |l| format!("{l:.1}")));
     let noisy = load.is_some_and(|l| l > cores as f64 * 0.75);
     if noisy {
         outln!("WARNING: the machine is busy; wall-clock timings below are not trustworthy.");

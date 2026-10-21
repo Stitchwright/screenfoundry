@@ -1,4 +1,4 @@
-# StitchFoundry builds for every desktop platform and the web, on demand: Actions › Builds › Run
+# ScreenFoundry builds for every desktop platform and the web, on demand: Actions › Builds › Run
 # workflow (any branch), or a push to the `builds` branch. Each platform's files are the run's
 # artifacts, to download from the run's page; a push to `builds` also publishes them on the
 # "Latest build" release (the publish job). Nothing is signed, so Windows shows a SmartScreen
@@ -57,7 +57,7 @@ jobs:
         run: ./packaging/windows/package.ps1 -Arch x64
       - uses: actions/upload-artifact@v7
         with:
-          name: stitchfoundry-windows-x64
+          name: screenfoundry-windows-x64
           path: dist/release/*
           if-no-files-found: error
 
@@ -95,14 +95,14 @@ jobs:
         run: packaging/linux/package.sh
       - name: Check the packages
         run: |
-          dpkg-deb --contents dist/release/*.deb | grep -E 'usr/bin/stitchfoundry$'
+          dpkg-deb --contents dist/release/*.deb | grep -E 'usr/bin/screenfoundry$'
           for appimage in dist/release/*.AppImage; do
             chmod +x "$appimage"
             APPIMAGE_EXTRACT_AND_RUN=1 "$appimage" --version
           done
       - uses: actions/upload-artifact@v7
         with:
-          name: stitchfoundry-linux-x86_64
+          name: screenfoundry-linux-x86_64
           path: dist/release/*
           if-no-files-found: error
 
@@ -130,7 +130,7 @@ jobs:
         run: packaging/macos/package.sh --arch universal
       - uses: actions/upload-artifact@v7
         with:
-          name: stitchfoundry-macos-universal
+          name: screenfoundry-macos-universal
           path: dist/release/*
           if-no-files-found: error
 
@@ -164,7 +164,7 @@ jobs:
         run: packaging/web/package.sh
       - uses: actions/upload-artifact@v7
         with:
-          name: stitchfoundry-web
+          name: screenfoundry-web
           path: dist/release/*
           if-no-files-found: error
 

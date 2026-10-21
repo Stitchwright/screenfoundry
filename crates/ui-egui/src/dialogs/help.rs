@@ -1,4 +1,4 @@
-//! Help › StitchFoundry Help… (F1): the user guide (compiled in; `help.topics`, `help.topic`)
+//! Help › ScreenFoundry Help… (F1): the user guide (compiled in; `help.topics`, `help.topic`)
 //! with its topics, a search and the guide's own links, and Tips: short hints for the tool in
 //! hand first. F1 opens the topic about the active tool (`help.forTool`).
 
@@ -45,7 +45,7 @@ pub(super) fn show(app: &mut VectorcraftApp, ctx: &egui::Context) {
     }
     let mut open = true;
     let mut go: Option<String> = None;
-    egui::Window::new(tl!("StitchFoundry Help"))
+    egui::Window::new(tl!("ScreenFoundry Help"))
         .open(&mut open)
         .default_size([860.0, 600.0])
         .default_pos(ctx.content_rect().center() - egui::vec2(430.0, 300.0))

@@ -371,7 +371,7 @@
 	Check Script	Проверить сценарий
 	Check Script…	Проверить сценарий…
 	Copy Report	Копировать отчёт
-	StitchFoundry read this script without running it.	StitchFoundry прочитал этот сценарий, не запуская его.
+	ScreenFoundry read this script without running it.	ScreenFoundry прочитал этот сценарий, не запуская его.
 	Needs nothing beyond plain JavaScript	Нужен только обычный JavaScript
 	Needs the script language's own objects or directives	Нужны собственные объекты или директивы языка сценариев
 	Needs the document model	Нужна модель документа
@@ -1142,7 +1142,7 @@ file-filter	PDF presets	Наборы PDF
 file-filter	Print presets	Наборы печати
 file-filter	SVG Compressed	Сжатый SVG
 file-filter	PDF-compatible .ai	.ai, совместимый с PDF
-file-filter	StitchFoundry Template	Шаблон StitchFoundry
+file-filter	ScreenFoundry Template	Шаблон ScreenFoundry
 file-filter	Templates	Шаблоны
 	Flattener Preview	Предварительный просмотр объединения
 	Flip Across	Отразить поперёк
@@ -1580,7 +1580,7 @@ file-filter	Templates	Шаблоны
 # Import Shortcut Set (Keyboard Shortcuts › Import…, File › Open of a .kys file) and its commands.
 	Import Shortcut Set	Импорт набора сочетаний клавиш
 	Import Shortcut Set…	Импортировать набор сочетаний клавиш…
-	Each entry of the file is matched to a StitchFoundry tool, command or panel. Check the matches and answer what is left.	Каждая запись файла сопоставляется с инструментом, командой или панелью StitchFoundry. Проверьте сопоставления и ответьте на оставшиеся вопросы.
+	Each entry of the file is matched to a ScreenFoundry tool, command or panel. Check the matches and answer what is left.	Каждая запись файла сопоставляется с инструментом, командой или панелью ScreenFoundry. Проверьте сопоставления и ответьте на оставшиеся вопросы.
 	Keys	Клавиши
 	The file writes keys and modifiers as codes. Check the proposed meanings and answer the codes that are not known yet.	Файл записывает клавиши и модификаторы в виде кодов. Проверьте предложенные значения и укажите коды, которые ещё неизвестны.
 	Click, then press the key this code stands for (Esc cancels)	Щёлкните, затем нажмите клавишу, которую обозначает этот код (Esc отменяет)
@@ -1591,7 +1591,7 @@ file-filter	Templates	Шаблоны
 	Shortcuts	Сочетания клавиш
 	Shortcut	Сочетание клавиш
 	In the File	В файле
-	In StitchFoundry	В StitchFoundry
+	In ScreenFoundry	В ScreenFoundry
 	Needs Attention Only	Только требующие внимания
 	Ready	Готово
 	Needs a choice	Нужен выбор
@@ -1600,7 +1600,7 @@ file-filter	Templates	Шаблоны
 	Tools take a single key (optionally with Shift)	Инструментам назначается одна клавиша (можно с Shift)
 	A later row takes this shortcut	Это сочетание забирает строка ниже
 	Same item as a later row	Тот же элемент, что и в строке ниже
-	Start from StitchFoundry Defaults	Начать со значений StitchFoundry по умолчанию
+	Start from ScreenFoundry Defaults	Начать со значений ScreenFoundry по умолчанию
 	Add to the Current Shortcuts	Добавить к текущим сочетаниям клавиш
 	Remember My Choices	Запомнить мой выбор
 	{ready} of {total} ready	Готово: {ready} из {total}
@@ -3812,7 +3812,7 @@ axis	Both	Оба
 @msg	Split Into Grid: select paths large enough for the grid	Разделение на сетку: выделите контуры, достаточно большие для сетки
 @msg	Targa files are RGB: colorModel rgb	файлы Targa являются RGB: colorModel rgb
 @msg	Text Wrap: select a wrap object	Обтекание текстом: выделите объект обтекания
-@msg	This shortcut file is in a form StitchFoundry can't read.	Этот файл сочетаний клавиш записан в формате, который StitchFoundry не может прочитать.
+@msg	This shortcut file is in a form ScreenFoundry can't read.	Этот файл сочетаний клавиш записан в формате, который ScreenFoundry не может прочитать.
 @msg	`aspect` must be a number (%)	`aspect` должно быть числом (%)
 @msg	`at` must be [x, y]	`at` должно быть [x, y]
 @msg	`color` must be a colour	`color` должно быть цветом
@@ -4299,11 +4299,11 @@ axis	Both	Оба
 @msg	Sent to {_1}	Отправлено в {_1}
 @msg	{_1} files	{_1} файлов
 @msg	The graphics were lost and have been restarted	Графика была потеряна и перезапущена
-@msg	The graphics processor tried first couldn't show the window, so StitchFoundry started again on {summary}	Графический процессор, выбранный первым, не смог показать окно, поэтому StitchFoundry запустился снова на {summary}
-@msg	The last start of StitchFoundry ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Прошлый запуск StitchFoundry завершился на {name} до появления окна, поэтому StitchFoundry запустился на {summary}. Чтобы снова попробовать этот графический процессор, измените Настройки › Производительность › Графический процессор или запустите приложение с заданной переменной WGPU_BACKEND
-@msg	The last start of StitchFoundry ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Прошлый запуск StitchFoundry завершился во время перечисления графических процессоров, поэтому StitchFoundry запустился на {summary} только с OpenGL. Чтобы снова попробовать другие графические интерфейсы, измените Настройки › Производительность › Графический процессор или запустите приложение с заданной переменной WGPU_BACKEND
-@msg	Loading StitchFoundry…	Загрузка StitchFoundry…
-@msg	StitchFoundry failed to start: {e}	StitchFoundry не удалось запустить: {e}
+@msg	The graphics processor tried first couldn't show the window, so ScreenFoundry started again on {summary}	Графический процессор, выбранный первым, не смог показать окно, поэтому ScreenFoundry запустился снова на {summary}
+@msg	The last start of ScreenFoundry ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Прошлый запуск ScreenFoundry завершился на {name} до появления окна, поэтому ScreenFoundry запустился на {summary}. Чтобы снова попробовать этот графический процессор, измените Настройки › Производительность › Графический процессор или запустите приложение с заданной переменной WGPU_BACKEND
+@msg	The last start of ScreenFoundry ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Прошлый запуск ScreenFoundry завершился во время перечисления графических процессоров, поэтому ScreenFoundry запустился на {summary} только с OpenGL. Чтобы снова попробовать другие графические интерфейсы, измените Настройки › Производительность › Графический процессор или запустите приложение с заданной переменной WGPU_BACKEND
+@msg	Loading ScreenFoundry…	Загрузка ScreenFoundry…
+@msg	ScreenFoundry failed to start: {e}	ScreenFoundry не удалось запустить: {e}
 @msg	A browser with WebGPU or WebGL2 is required.	Требуется браузер с WebGPU или WebGL2.
 @msg	The graphics were lost and couldn't be restarted.	Графика была потеряна, и её не удалось перезапустить.
 @msg	Your unsaved changes are kept in this browser: reload the page to get them back.	Ваши несохранённые изменения сохраняются в этом браузере: перезагрузите страницу, чтобы вернуть их.
@@ -4577,30 +4577,30 @@ lighting	Light	Свет
 	X11 (XWayland) When a Pen Is Attached	X11 (XWayland) при подключенном пере
 	If a drawing tablet's pen doesn't draw, choose an X11 (XWayland) option.	Если перо графического планшета не рисует, выберите вариант X11 (XWayland).
 	X11 (XWayland)	X11 (XWayland)
-	About StitchFoundry	О программе StitchFoundry
-	Applies the next time StitchFoundry starts.	Применяется при следующем запуске StitchFoundry.
-	Quit StitchFoundry	Выйти из StitchFoundry
-	StitchFoundry copies the fonts to {folder}.	StitchFoundry копирует шрифты в {folder}.
-	Opening it left out what StitchFoundry can't read yet ({what}): replacing it loses that for good. Save under another name to keep it.	При открытии было пропущено то, что StitchFoundry пока не умеет читать ({what}), поэтому замена файла потеряет это навсегда. Чтобы сохранить это, сохраните документ под другим именем.
-	StitchFoundry didn't quit normally last time. These documents had unsaved changes:	StitchFoundry не завершился нормально в прошлый раз. В этих документах были несохранённые изменения:
-	StitchFoundry Help…	Справка StitchFoundry…
-	StitchFoundry on GitHub	StitchFoundry на GitHub
+	About ScreenFoundry	О программе ScreenFoundry
+	Applies the next time ScreenFoundry starts.	Применяется при следующем запуске ScreenFoundry.
+	Quit ScreenFoundry	Выйти из ScreenFoundry
+	ScreenFoundry copies the fonts to {folder}.	ScreenFoundry копирует шрифты в {folder}.
+	Opening it left out what ScreenFoundry can't read yet ({what}): replacing it loses that for good. Save under another name to keep it.	При открытии было пропущено то, что ScreenFoundry пока не умеет читать ({what}), поэтому замена файла потеряет это навсегда. Чтобы сохранить это, сохраните документ под другим именем.
+	ScreenFoundry didn't quit normally last time. These documents had unsaved changes:	ScreenFoundry не завершился нормально в прошлый раз. В этих документах были несохранённые изменения:
+	ScreenFoundry Help…	Справка ScreenFoundry…
+	ScreenFoundry on GitHub	ScreenFoundry на GitHub
 	Report a Bug…	Сообщить об ошибке…
-	Welcome to StitchFoundry	Добро пожаловать в StitchFoundry
-@msg	can't save version {0}: StitchFoundry writes versions {MIN_VERSION} to {VERSION}	не удалось сохранить версию {0}: StitchFoundry записывает версии от {MIN_VERSION} до {VERSION}
-@msg	file version {0} is newer than this StitchFoundry supports ({VERSION})	версия файла {0} новее, чем поддерживает этот StitchFoundry ({VERSION})
-@msg	is not an image StitchFoundry reads	не является изображением, которое читает StitchFoundry
-@msg	it uses `{at}`, which StitchFoundry's PostScript reader doesn't know	использует `{at}`, которое не знает читатель PostScript в StitchFoundry
-@msg	it uses `{at}`, which StitchFoundry's PostScript reader doesn't know, in {procs}	использует `{at}`, которое не знает читатель PostScript в StitchFoundry, в {procs}
-@msg	not a StitchFoundry shortcut set (missing `overrides`)	не является набором сочетаний клавиш StitchFoundry (отсутствует `overrides`)
-@msg	it has {_1}, which StitchFoundry doesn't read from it yet	в них есть {_1}, которые StitchFoundry пока не читает
-@msg	an image StitchFoundry can't read was left out	изображение, которое StitchFoundry не может прочитать, пропущено
-@msg	StitchFoundry doesn't search other apps' or the system's folders: {path}	StitchFoundry не ищет в папках других приложений и системы: {path}
-@msg	StitchFoundry doesn't search the Shared or Public folder in Users: {path}	StitchFoundry не ищет в папках Shared и Public внутри Users: {path}
-@msg	StitchFoundry's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	Папка Fonts StitchFoundry здесь не задана: её задают настольное приложение и vectorcraft-cli
-	Hide StitchFoundry	Скрыть StitchFoundry
+	Welcome to ScreenFoundry	Добро пожаловать в ScreenFoundry
+@msg	can't save version {0}: ScreenFoundry writes versions {MIN_VERSION} to {VERSION}	не удалось сохранить версию {0}: ScreenFoundry записывает версии от {MIN_VERSION} до {VERSION}
+@msg	file version {0} is newer than this ScreenFoundry supports ({VERSION})	версия файла {0} новее, чем поддерживает этот ScreenFoundry ({VERSION})
+@msg	is not an image ScreenFoundry reads	не является изображением, которое читает ScreenFoundry
+@msg	it uses `{at}`, which ScreenFoundry's PostScript reader doesn't know	использует `{at}`, которое не знает читатель PostScript в ScreenFoundry
+@msg	it uses `{at}`, which ScreenFoundry's PostScript reader doesn't know, in {procs}	использует `{at}`, которое не знает читатель PostScript в ScreenFoundry, в {procs}
+@msg	not a ScreenFoundry shortcut set (missing `overrides`)	не является набором сочетаний клавиш ScreenFoundry (отсутствует `overrides`)
+@msg	it has {_1}, which ScreenFoundry doesn't read from it yet	в них есть {_1}, которые ScreenFoundry пока не читает
+@msg	an image ScreenFoundry can't read was left out	изображение, которое ScreenFoundry не может прочитать, пропущено
+@msg	ScreenFoundry doesn't search other apps' or the system's folders: {path}	ScreenFoundry не ищет в папках других приложений и системы: {path}
+@msg	ScreenFoundry doesn't search the Shared or Public folder in Users: {path}	ScreenFoundry не ищет в папках Shared и Public внутри Users: {path}
+@msg	ScreenFoundry's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	Папка Fonts ScreenFoundry здесь не задана: её задают настольное приложение и vectorcraft-cli
+	Hide ScreenFoundry	Скрыть ScreenFoundry
 
-# Embroidery (StitchFoundry)
+# Embroidery (ScreenFoundry)
 	Add Inclination Line	Добавить линию наклона
 	After the selection	После выделенного
 	Appliqué	Аппликация
@@ -4761,7 +4761,7 @@ lighting	Light	Свет
 	Stitch Lines	Линии стежков
 	Tatami	Татами
 
-# Embroidery (StitchFoundry), phase 1
+# Embroidery (ScreenFoundry), phase 1
 	By SiteSentrix, based on VectorCraft by the ArtCraft team. MIT OR Apache-2.0. Fonts: Source Sans 3, Inter, JetBrains Mono (OFL). Icons: Lucide (ISC) + VectorCraft.	От SiteSentrix, на основе VectorCraft от команды ArtCraft. MIT OR Apache-2.0. Шрифты: Source Sans 3, Inter, JetBrains Mono (OFL). Значки: Lucide (ISC) + VectorCraft.
 	Version {version} — open-source machine embroidery digitizing in pure Rust.	Версия {version} — оцифровка машинной вышивки с открытым исходным кодом на чистом Rust.
 	Machine embroidery digitizing — fast, open, scriptable.	Оцифровка машинной вышивки — быстрая, открытая, программируемая.
@@ -4913,7 +4913,7 @@ machine	Stop	Остановка
 	Tiny object: may not sew cleanly	Крошечный объект: может вышиться неаккуратно
 	Very dense: about {n} layers of thread here	Очень плотно: здесь около {n} слоёв нити
 
-# Embroidery (StitchFoundry): Design from Prompt
+# Embroidery (ScreenFoundry): Design from Prompt
 	Design from Prompt…	Дизайн по описанию…
 	Design from Prompt	Дизайн по описанию
 	Generate	Создать
@@ -4921,10 +4921,10 @@ machine	Stop	Остановка
 	Size (longest side):	Размер (по длинной стороне):
 	Anthropic API key:	Ключ API Anthropic:
 	Remember the key on this computer	Запомнить ключ на этом компьютере
-	Claude draws the artwork with your own Anthropic API key, billed to your Anthropic account; StitchFoundry then digitizes it. Check the stitches before you sew.	Claude создаёт рисунок с помощью вашего собственного ключа API Anthropic, оплата списывается с вашей учётной записи Anthropic; затем StitchFoundry оцифровывает его. Проверьте стежки перед вышиванием.
+	Claude draws the artwork with your own Anthropic API key, billed to your Anthropic account; ScreenFoundry then digitizes it. Check the stitches before you sew.	Claude создаёт рисунок с помощью вашего собственного ключа API Anthropic, оплата списывается с вашей учётной записи Anthropic; затем ScreenFoundry оцифровывает его. Проверьте стежки перед вышиванием.
 	Get a key	Получить ключ
 	Drawing the design…	Рисование дизайна…
-	Describe a design and Claude draws artwork for it, then StitchFoundry digitizes it	Опишите дизайн — Claude создаст для него рисунок, а StitchFoundry его оцифрует
+	Describe a design and Claude draws artwork for it, then ScreenFoundry digitizes it	Опишите дизайн — Claude создаст для него рисунок, а ScreenFoundry его оцифрует
 	Place Artwork as Embroidery	Поместить рисунок как вышивку
 	Place Artwork	Поместить рисунок
 @plural	Design placed: {n} stitched object|Design placed: {n} stitched objects	Дизайн помещён: {n} вышиваемый объект|Дизайн помещён: {n} вышиваемых объекта|Дизайн помещён: {n} вышиваемых объектов
@@ -4948,19 +4948,19 @@ machine	Stop	Остановка
 @msg	the artwork can't be read: {e}	не удаётся прочитать рисунок: {e}
 @msg	The AI won't copy someone else's logo or character: {e}	ИИ не копирует чужие логотипы и персонажей: {e}
 
-# Embroidery (StitchFoundry): Redraw Image with Claude
+# Embroidery (ScreenFoundry): Redraw Image with Claude
 	Redraw Image with Claude…	Перерисовать изображение с помощью Claude…
 	Redraw Image with Claude	Перерисовать изображение с помощью Claude
 	What to change (optional):	Что изменить (необязательно):
 	Only redraw artwork you own or have permission to use.	Перерисовывайте только рисунки, которые принадлежат вам или которые вы вправе использовать.
-	Claude redraws the image as flat-colour art with your own Anthropic API key, billed to your Anthropic account; StitchFoundry then digitizes it. Check the stitches before you sew.	Claude перерисовывает изображение в виде рисунка из однотонных заливок с помощью вашего собственного ключа API Anthropic, оплата списывается с вашей учётной записи Anthropic; затем StitchFoundry оцифровывает его. Проверьте стежки перед вышиванием.
+	Claude redraws the image as flat-colour art with your own Anthropic API key, billed to your Anthropic account; ScreenFoundry then digitizes it. Check the stitches before you sew.	Claude перерисовывает изображение в виде рисунка из однотонных заливок с помощью вашего собственного ключа API Anthropic, оплата списывается с вашей учётной записи Anthropic; затем ScreenFoundry оцифровывает его. Проверьте стежки перед вышиванием.
 	Redraw with Claude…	Перерисовать с помощью Claude…
-	Claude redraws the image as clean flat-colour art, then StitchFoundry digitizes it	Claude перерисует изображение в виде чистого рисунка из однотонных заливок, а StitchFoundry его оцифрует
+	Claude redraws the image as clean flat-colour art, then ScreenFoundry digitizes it	Claude перерисует изображение в виде чистого рисунка из однотонных заливок, а ScreenFoundry его оцифрует
 @msg	select an image to redraw	выделите изображение для перерисовки
 @msg	the image couldn't be read	не удалось прочитать изображение
 @msg	The image is too large to send: crop it, or place a smaller copy.	Изображение слишком большое для отправки: обрежьте его или поместите уменьшенную копию.
 
-# Embroidery (StitchFoundry): fill textures and split lines
+# Embroidery (ScreenFoundry): fill textures and split lines
 	Set Split Lines	Задать линии разделения
 	Carve Split Lines	Выдавить линии разделения
 	Clear Split Lines	Очистить линии разделения
@@ -4974,7 +4974,7 @@ machine	Stop	Остановка
 	Circles	Круги
 	Scales	Чешуя
 
-# Embroidery (StitchFoundry): run and satin effects
+# Embroidery (ScreenFoundry): run and satin effects
 	Hand stitch	Ручной стежок
 	Gap	Промежуток
 	Jagged edges	Рваные края
@@ -4984,7 +4984,7 @@ machine	Stop	Остановка
 	Jag depth	Глубина зубцов
 	Trapunto (travel along the outline)	Трапунто (переходы по контуру)
 
-# Embroidery (StitchFoundry): motifs
+# Embroidery (ScreenFoundry): motifs
 	Place Motif	Разместить мотив
 	Leaf	Лист
 	Loop	Петля
@@ -4994,12 +4994,12 @@ machine	Stop	Остановка
 	Width at end	Ширина в конце
 	Row spacing	Расстояние между рядами
 
-# Embroidery (StitchFoundry): fill types and laydown
+# Embroidery (ScreenFoundry): fill types and laydown
 	E-stitch	Е-стежок
 	Rings (0: all)	Кольца (0: все)
 	Add Laydown	Добавить подложку
 
-# Embroidery (StitchFoundry): spacing profiles and blends
+# Embroidery (ScreenFoundry): spacing profiles and blends
 	Spacing profile	Профиль интервала
 	Accordion	Гармошка
 	Fade out	Затухание
@@ -5007,7 +5007,7 @@ machine	Stop	Остановка
 	Blend into	Переход в
 	Blend Colors	Смешать цвета
 
-# Embroidery (StitchFoundry): outlines and borders
+# Embroidery (ScreenFoundry): outlines and borders
 	Add Outline	Добавить контур
 	Satin Outline	Контур гладью
 	Bean Outline	Контур тройным стежком
@@ -5483,7 +5483,7 @@ machine	Stop	Остановка
 	Square loop	Квадратная петля
 	Foil	Фольга
 	Shown with the design, not sewn	Показано вместе с дизайном, не вышивается
-	StitchFoundry Help	Справка StitchFoundry
+	ScreenFoundry Help	Справка ScreenFoundry
 	Guide	Руководство
 	Tips	Советы
 	Search help	Поиск в справке
@@ -5869,7 +5869,7 @@ machine	Stop	Остановка
 	Edge Intensity	Интенсивность краёв
 	Posterization	Постеризация
 	Highlight Area	Область светов
-@msg	the compressed file unpacks to more than StitchFoundry reads ({_1} MB of document, {_2} MB per image)	сжатый файл распаковывается в объём больше, чем читает StitchFoundry ({_1} МБ документа, {_2} МБ на изображение)
+@msg	the compressed file unpacks to more than ScreenFoundry reads ({_1} MB of document, {_2} MB per image)	сжатый файл распаковывается в объём больше, чем читает ScreenFoundry ({_1} МБ документа, {_2} МБ на изображение)
 @msg	the document is too large to save compressed ({0}): save it with Use Compression off	документ слишком велик для сохранения со сжатием ({0}): сохраните его с выключенным параметром «Использовать сжатие»
 @msg	the file stopped being read (please report this bug)	чтение файла прервалось (пожалуйста, сообщите об этой ошибке)
 	Concentric Dividers:	Концентрические разделители:
@@ -6045,10 +6045,10 @@ machine	Stop	Остановка
 @msg	name is empty	имя пустое
 @msg	no symbol named `{n}`	нет символа с именем `{n}`
 
-# Embroidery (StitchFoundry): Ask About Embroidery
+# Embroidery (ScreenFoundry): Ask About Embroidery
 	Ask About Embroidery…	Вопрос о вышивке…
 	Ask About Embroidery	Вопрос о вышивке
-	Ask anything about machine embroidery or StitchFoundry: which stabilizer to use, why thread breaks, how to make letters sew cleaner, where a feature is. Claude can also change your design when you ask, after you allow it.	Спросите что угодно о машинной вышивке или StitchFoundry: какой стабилизатор выбрать, почему рвётся нить, как вышить буквы аккуратнее, где найти функцию. По вашей просьбе Claude также может изменить дизайн — после вашего разрешения.
+	Ask anything about machine embroidery or ScreenFoundry: which stabilizer to use, why thread breaks, how to make letters sew cleaner, where a feature is. Claude can also change your design when you ask, after you allow it.	Спросите что угодно о машинной вышивке или ScreenFoundry: какой стабилизатор выбрать, почему рвётся нить, как вышить буквы аккуратнее, где найти функцию. По вашей просьбе Claude также может изменить дизайн — после вашего разрешения.
 	Thinking…	Думаю…
 	Type your question, then press Enter	Введите вопрос и нажмите Enter
 	Ask	Спросить
@@ -6072,7 +6072,7 @@ machine	Stop	Остановка
 @msg	This conversation is long: start a New Conversation.	Разговор слишком длинный: начните новый разговор.
 @msg	Claude took too many steps: ask again, more simply.	Claude понадобилось слишком много шагов: спросите ещё раз, попроще.
 
-# Embroidery (StitchFoundry): cross-stitch fill, colour replace, fabric count and chart
+# Embroidery (ScreenFoundry): cross-stitch fill, colour replace, fabric count and chart
 	Fill a patch	Заливка области
 	Click a square to fill every touching square like it; hold Alt to clear them	Щёлкните клетку, чтобы залить все соседние такие же клетки; с Alt — очистить их
 	With the Thread Colour	Цветом нити
@@ -6104,7 +6104,7 @@ machine	Stop	Остановка
 	Structured cap	Жёсткая кепка
 	Silk / lightweight	Шёлк / лёгкая ткань
 
-# Embroidery (StitchFoundry): Check My Sew-out
+# Embroidery (ScreenFoundry): Check My Sew-out
 	Check My Sew-out…	Проверить вышивку…
 	Check My Sew-out	Проверить вышивку
 	About the sewing	О вышивании
@@ -6135,7 +6135,7 @@ machine	Stop	Остановка
 @msg	At most 6 photos: remove one first.	Не больше 6 фото: сначала уберите одно.
 @msg	no files here	здесь нет файлов
 
-# Embroidery (StitchFoundry): Foundry Account
+# Embroidery (ScreenFoundry): Foundry Account
 	A check costs {n} credits; free checks come back next month.	Проверка стоит {n} кредитов; бесплатные проверки вернутся в следующем месяце.
 	Account	Аккаунт
 	Buy credits	Купить кредиты
@@ -6144,15 +6144,15 @@ machine	Stop	Остановка
 	Delete My Shared Sew-out Checks	Удалить мои общие проверки
 	Email	Эл. почта
 	Free sew-out checks left this month: {n}	Бесплатных проверок в этом месяце осталось: {n}
-	Leave it empty for StitchFoundry's own service.	Оставьте пустым для собственного сервиса StitchFoundry.
+	Leave it empty for ScreenFoundry's own service.	Оставьте пустым для собственного сервиса ScreenFoundry.
 	Paid with Foundry credits ({n} left).	Оплачено кредитами Foundry (осталось {n}).
 	Paid with Foundry credits.	Оплачено кредитами Foundry.
 	Pay for the AI features with my Foundry credits	Оплачивать функции ИИ моими кредитами Foundry
 	Pay with Foundry credits instead	Платить кредитами Foundry
-	Payment is on Stripe's secure page, in your browser; your card never reaches StitchFoundry.	Оплата проходит на защищённой странице Stripe в вашем браузере; ваша карта никогда не попадает в StitchFoundry.
+	Payment is on Stripe's secure page, in your browser; your card never reaches ScreenFoundry.	Оплата проходит на защищённой странице Stripe в вашем браузере; ваша карта никогда не попадает в ScreenFoundry.
 	Reading your credits…	Читаем ваши кредиты…
 	Server	Сервер
-	Share this check to help improve StitchFoundry (kept private; delete it any time in Foundry Account)	Поделиться этой проверкой, чтобы помочь улучшить StitchFoundry (останется приватной; удалить можно в любое время в аккаунте Foundry)
+	Share this check to help improve ScreenFoundry (kept private; delete it any time in Foundry Account)	Поделиться этой проверкой, чтобы помочь улучшить ScreenFoundry (останется приватной; удалить можно в любое время в аккаунте Foundry)
 	Sign In	Войти
 	Sign Out	Выйти
 	Sign in, or make an account, to pay for the AI features with Foundry credits instead of your own Anthropic API key. A new account starts with free credits.	Войдите или создайте аккаунт, чтобы оплачивать функции ИИ кредитами Foundry вместо собственного ключа API Anthropic. Новый аккаунт начинается с бесплатными кредитами.
@@ -6167,7 +6167,7 @@ machine	Stop	Остановка
 @msg	Foundry Account needs the desktop app for now	«Аккаунт Foundry» пока требует настольного приложения
 @msg	Type your email address.	Введите адрес эл. почты.
 @msg	A password needs at least 8 characters.	В пароле должно быть не меньше 8 символов.
-@msg	Account made: welcome to StitchFoundry.	Аккаунт создан: добро пожаловать в StitchFoundry.
+@msg	Account made: welcome to ScreenFoundry.	Аккаунт создан: добро пожаловать в ScreenFoundry.
 @msg	Signed in.	Вход выполнен.
 @msg	Pay on the page that opened in your browser, then press Refresh.	Оплатите на странице, открывшейся в браузере, затем нажмите «Обновить».
 @msg	Signed out.	Выход выполнен.
@@ -6176,7 +6176,7 @@ machine	Stop	Остановка
 @msg	Sign in to your Foundry account (Embroidery › Foundry Account…).	Войдите в аккаунт Foundry (Вышивка › Аккаунт Foundry…).
 @msg	Not enough Foundry credits: buy more in Foundry Account.	Недостаточно кредитов Foundry: купите ещё в аккаунте Foundry.
 @msg	An account with that email already exists: sign in instead.	Аккаунт с этой почтой уже есть: войдите в него.
-@msg	The StitchFoundry service can't do this yet: try again later.	Сервис StitchFoundry пока этого не умеет: попробуйте позже.
+@msg	The ScreenFoundry service can't do this yet: try again later.	Сервис ScreenFoundry пока этого не умеет: попробуйте позже.
 	Smudge Stick…	Растушёвка…
 	Smudge Stick	Растушёвка
 	Sponge…	Губка…
@@ -6218,7 +6218,7 @@ machine	Stop	Остановка
 @msg	too many library panels were opened in this session	в этом сеансе открыто слишком много панелей библиотек
 @msg	The image is {_1} × {_2} pixels, more than {LARGE_TRACE_SIDE} on a side: it is traced, but more slowly. A lower-fidelity preset or a smaller copy of the image traces faster.	Изображение {_1} × {_2} пикселей, больше {LARGE_TRACE_SIDE} по одной стороне: трассировка выполняется, но медленнее. Стиль с меньшей точностью или уменьшенная копия изображения трассируются быстрее.
 @msg	The image was traced at {_1} × {_2} pixels, scaled down from {_3} × {_4} ({_5} megapixels at most).	Изображение трассировано в размере {_1} × {_2} пикселей, уменьшенное с {_3} × {_4} (не более {_5} мегапикселей).
-# Embroidery (StitchFoundry): undo steps
+# Embroidery (ScreenFoundry): undo steps
 	Auto-Digitize	Автооцифровка
 	Backstitch Line	Линия стежка назад
 	Close Appliqué Outlines	Замкнуть контуры аппликации
@@ -6226,7 +6226,7 @@ machine	Stop	Остановка
 	Erase Cross Stitches	Стереть крестики
 	Move Stitches	Переместить стежки
 	Overlap where shapes touch	Нахлёст там, где фигуры соприкасаются
-# Embroidery (StitchFoundry): picture services
+# Embroidery (ScreenFoundry): picture services
 	Picture made by	Картинку делает
 	Claude (draws the shapes itself)	Claude (сам рисует фигуры)
 	{name} API key:	Ключ API {name}:
@@ -6267,26 +6267,26 @@ machine	Stop	Остановка
 	A new design: a hoopful of patches, each colour sewn once for all of them	Новый дизайн: пяльцы, полные нашивок, каждый цвет вышивается один раз для всех
 	Every hoopful as a machine file, and a list of the names in each	Каждые пяльцы отдельным файлом для машины и список имён в каждых
 	The open design repeated across its hoop, sorted so each colour is sewn once	Открытый дизайн повторён по пяльцам и отсортирован так, чтобы каждый цвет вышивался один раз
-# Report to StitchFoundry (ui.reportSewout)
+# Report to ScreenFoundry (ui.reportSewout)
 	Anything you'd like to add (optional)	Хотите что-то добавить? (необязательно)
 	Claude is writing the report…	Claude пишет отчёт…
 	Have Claude Write It	Пусть напишет Claude
-	Help make StitchFoundry better	Помогите улучшить StitchFoundry
-	I agree to send this to SiteSentrix, the maker of StitchFoundry, to improve the software. It won't be shared with anyone else.	Я согласен отправить это в SiteSentrix, создателю StitchFoundry, чтобы улучшить программу. Это не будет передано никому другому.
+	Help make ScreenFoundry better	Помогите улучшить ScreenFoundry
+	I agree to send this to SiteSentrix, the maker of ScreenFoundry, to improve the software. It won't be shared with anyone else.	Я согласен отправить это в SiteSentrix, создателю ScreenFoundry, чтобы улучшить программу. Это не будет передано никому другому.
 	Include a summary of the design	Приложить сводку дизайна
 	Include the conversation with Claude	Приложить разговор с Claude
 	Include the photos ({n})	Приложить фото ({n})
-	Report to StitchFoundry	Сообщить в StitchFoundry
-	Report to StitchFoundry…	Сообщить в StitchFoundry…
+	Report to ScreenFoundry	Сообщить в ScreenFoundry
+	Report to ScreenFoundry…	Сообщить в ScreenFoundry…
 	Send Report	Отправить отчёт
-	Send this sew-out and Claude's idea of what StitchFoundry could do better to its makers	Отправить эту вышивку и идею Claude о том, что StitchFoundry мог бы делать лучше, его создателям
-	Send this sew-out to the people who make StitchFoundry, with Claude's idea of what the software could do better. We use it only to improve StitchFoundry: we never share, sell or publish it, and you can have it deleted at any time (Foundry Account › Delete My Shared Sew-out Checks).	Отправьте эту вышивку создателям StitchFoundry вместе с идеей Claude о том, что программа могла бы делать лучше. Мы используем её только для улучшения StitchFoundry: никогда не передаём, не продаём и не публикуем, и вы можете попросить удалить её в любое время (Аккаунт Foundry › Удалить мои общие проверки).
+	Send this sew-out and Claude's idea of what ScreenFoundry could do better to its makers	Отправить эту вышивку и идею Claude о том, что ScreenFoundry мог бы делать лучше, его создателям
+	Send this sew-out to the people who make ScreenFoundry, with Claude's idea of what the software could do better. We use it only to improve ScreenFoundry: we never share, sell or publish it, and you can have it deleted at any time (Foundry Account › Delete My Shared Sew-out Checks).	Отправьте эту вышивку создателям ScreenFoundry вместе с идеей Claude о том, что программа могла бы делать лучше. Мы используем её только для улучшения ScreenFoundry: никогда не передаём, не продаём и не публикуем, и вы можете попросить удалить её в любое время (Аккаунт Foundry › Удалить мои общие проверки).
 	Sign in to Foundry Account to send a report.	Войдите в аккаунт Foundry, чтобы отправить отчёт.
 @msg	Sign in to Foundry Account to send a report.	Войдите в аккаунт Foundry, чтобы отправить отчёт.
 	Thank you: your report was sent.	Спасибо: ваш отчёт отправлен.
 	Title	Заголовок
-	What went wrong, and what StitchFoundry could do better	Что пошло не так и что StitchFoundry мог бы делать лучше
-	Write a report about this sew-out for the people who make StitchFoundry.	Напиши отчёт об этой вышивке для создателей StitchFoundry.
+	What went wrong, and what ScreenFoundry could do better	Что пошло не так и что ScreenFoundry мог бы делать лучше
+	Write a report about this sew-out for the people who make ScreenFoundry.	Напиши отчёт об этой вышивке для создателей ScreenFoundry.
 @msg	Check a sew-out first: the report goes with its photos and Claude's answer	Сначала проверьте вышивку: отчёт отправляется с её фото и ответом Claude
 @msg	Tick the box to agree to send it first.	Сначала отметьте галочку, чтобы согласиться на отправку.
 @msg	Write what went wrong first, or have Claude write it.	Сначала напишите, что пошло не так, или пусть это напишет Claude.

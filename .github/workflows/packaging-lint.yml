@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   lint:
-    # Upstream's CI: skipped in forks such as StitchFoundry.
+    # Upstream's CI: skipped in forks such as ScreenFoundry.
     if: github.repository == 'storytold/vectorcraft'
     timeout-minutes: 15
     runs-on: ubuntu-latest
@@ -54,15 +54,15 @@ jobs:
           if grep -oE '<Icon Id="[^"]*"' packaging/windows/vectorcraft.wxs | grep -vE '\.(ico|exe)"$'; then
             echo "::error::Icon Id must end in .ico or .exe"; exit 1
           fi
-          desktop-file-validate packaging/linux/com.stitchwright.stitchfoundry.desktop
-          sed -e 's/@VERSION@/0.0.0/' -e 's/@DATE@/2026-01-01/' packaging/linux/com.stitchwright.stitchfoundry.metainfo.xml.in >"$RUNNER_TEMP/com.stitchwright.stitchfoundry.metainfo.xml"
-          appstreamcli validate --no-net --explain "$RUNNER_TEMP/com.stitchwright.stitchfoundry.metainfo.xml"
+          desktop-file-validate packaging/linux/com.stitchwright.screenfoundry.desktop
+          sed -e 's/@VERSION@/0.0.0/' -e 's/@DATE@/2026-01-01/' packaging/linux/com.stitchwright.screenfoundry.metainfo.xml.in >"$RUNNER_TEMP/com.stitchwright.screenfoundry.metainfo.xml"
+          appstreamcli validate --no-net --explain "$RUNNER_TEMP/com.stitchwright.screenfoundry.metainfo.xml"
           python3 - <<'EOF'
           import yaml
-          src = yaml.safe_load(open("packaging/linux/flatpak/com.stitchwright.stitchfoundry.yml"))
-          bundle = yaml.safe_load(open("packaging/linux/flatpak/com.stitchwright.stitchfoundry.bundle.yml"))
+          src = yaml.safe_load(open("packaging/linux/flatpak/com.stitchwright.screenfoundry.yml"))
+          bundle = yaml.safe_load(open("packaging/linux/flatpak/com.stitchwright.screenfoundry.bundle.yml"))
           for m in (src, bundle):
-              assert m["id"] == "com.stitchwright.stitchfoundry" and m["command"] == "stitchfoundry", m["id"]
+              assert m["id"] == "com.stitchwright.screenfoundry" and m["command"] == "screenfoundry", m["id"]
           for key in ("runtime", "runtime-version", "sdk", "finish-args"):
               assert src[key] == bundle[key], f"Flatpak manifests disagree on {key}: {src[key]} vs {bundle[key]}"
           print("Flatpak manifests ok")

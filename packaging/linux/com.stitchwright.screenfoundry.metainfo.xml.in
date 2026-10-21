@@ -2,27 +2,27 @@
 <!-- AppStream metadata (software centres, Flathub). Template: package.sh and the Flatpak
      manifest substitute @VERSION@ and @DATE@ from Cargo.toml and the build date. -->
 <component type="desktop-application">
-  <id>com.stitchwright.stitchfoundry</id>
+  <id>com.stitchwright.screenfoundry</id>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>MIT OR Apache-2.0</project_license>
-  <name>StitchFoundry</name>
+  <name>ScreenFoundry</name>
   <summary>Separate artwork into films for screen printing</summary>
   <developer id="com.stitchwright">
     <name>SiteSentrix</name>
   </developer>
   <description>
     <p>
-      StitchFoundry is an open-source screen-printing prepress app built on a full vector editor.
+      ScreenFoundry is an open-source screen-printing prepress app built on a full vector editor.
       Separate artwork into one film per screen, with an underbase, trapping, halftones and
       registration marks. It is based on VectorCraft.
     </p>
   </description>
-  <launchable type="desktop-id">com.stitchwright.stitchfoundry.desktop</launchable>
-  <icon type="stock">com.stitchwright.stitchfoundry</icon>
+  <launchable type="desktop-id">com.stitchwright.screenfoundry.desktop</launchable>
+  <icon type="stock">com.stitchwright.screenfoundry</icon>
   <!-- Only url types known to appstream 0.15 (Ubuntu 22.04, where CI validates): no vcs-browser. -->
-  <url type="homepage">https://github.com/Stitchwright/StitchFoundry</url>
-  <url type="bugtracker">https://github.com/Stitchwright/StitchFoundry/issues</url>
-  <url type="help">https://github.com/Stitchwright/StitchFoundry</url>
+  <url type="homepage">https://github.com/Stitchwright/screenfoundry</url>
+  <url type="bugtracker">https://github.com/Stitchwright/screenfoundry/issues</url>
+  <url type="help">https://github.com/Stitchwright/screenfoundry</url>
   <categories>
     <category>Graphics</category>
     <category>2DGraphics</category>
@@ -47,7 +47,7 @@
     <control>tablet</control>
   </supports>
   <provides>
-    <binary>stitchfoundry</binary>
+    <binary>screenfoundry</binary>
   </provides>
   <content_rating type="oars-1.1"/>
   <releases>

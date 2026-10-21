@@ -1,5 +1,5 @@
 //! Loopback JSON-lines control server: one request per line, one reply per line.
-//! This is the transport the MCP server (`stitchfoundry-cli mcp --connect`) wraps.
+//! This is the transport the MCP server (`screenfoundry-cli mcp --connect`) wraps.
 //!
 //! The server only ever reads requests: a line that is not a JSON object with a string `method`
 //! (an HTTP request line from a browser's cross-origin `fetch`, a stray `nc`, binary junk) gets
@@ -62,11 +62,11 @@ pub fn start(port: u16, ctx: egui::Context) -> Receiver<ControlRequest> {
     let listener = match TcpListener::bind(("127.0.0.1", port)) {
         Ok(l) => l,
         Err(e) => {
-            eprintln!("stitchfoundry: control server failed to bind 127.0.0.1:{port}: {e}");
+            eprintln!("screenfoundry: control server failed to bind 127.0.0.1:{port}: {e}");
             return rx;
         }
     };
-    eprintln!("stitchfoundry: control server listening on 127.0.0.1:{port}");
+    eprintln!("screenfoundry: control server listening on 127.0.0.1:{port}");
     std::thread::spawn(move || accept_loop(listener, tx, ctx));
     rx
 }
@@ -83,7 +83,7 @@ fn accept_loop(listener: TcpListener, tx: Sender<ControlRequest>, ctx: egui::Con
             continue;
         };
         if let Err(e) = spawn_connection(stream, tx.clone(), ctx.clone(), slot, ConnectionTimeouts::default()) {
-            eprintln!("stitchfoundry: control worker failed to start: {e}");
+            eprintln!("screenfoundry: control worker failed to start: {e}");
         }
     }
 }

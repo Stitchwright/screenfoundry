@@ -1,4 +1,4 @@
-# StitchFoundry app icon
+# ScreenFoundry app icon
 
 **Subject:** machine embroidery: a rectangular machine hoop with the bracket that clips onto the
 embroidery arm, the machine's needle and embroidery foot, and a satin-stitched S being sewn.
@@ -15,34 +15,34 @@ embroidery arm, the machine's needle and embroidery foot, and a satin-stitched S
 **Tile:** `viewBox="0 0 512 512"`, a rounded square with `rx=112`, clipped. The macOS files add Apple's
 transparent margin (tile = 824/1024 of the canvas); Windows and Linux use the tile edge to edge.
 
-**Provenance:** original artwork made for StitchFoundry, written by hand as SVG (shapes and a stripe
-pattern, no third-party material). `stitchfoundry.svg` is the canonical artwork; `stitchfoundry-small.svg`
+**Provenance:** original artwork made for ScreenFoundry, written by hand as SVG (shapes and a stripe
+pattern, no third-party material). `screenfoundry.svg` is the canonical artwork; `screenfoundry-small.svg`
 is the same file for `hicolor/scalable`. Licence: see `LICENSE.txt`.
 
 ## Files
 
 | File | What | Used by |
 |---|---|---|
-| `stitchfoundry.svg` | master vector | source for everything below |
-| `stitchfoundry-small.svg` | the same artwork | `hicolor/scalable` |
-| `stitchfoundry-1024.png` | full tile, 1024 px | docs, store listings |
-| `stitchfoundry-macos-512.png` | tile with Apple margin, 512 px | runtime Dock icon (`apps/vectorcraft/src/main.rs`) |
-| `stitchfoundry.icns` | macOS icon set, 16 to 1024 px | `cargo xtask bundle` (`CFBundleIconFile`) |
-| `stitchfoundry.ico` | Windows icon, 16 to 256 px | `apps/vectorcraft/build.rs` (embedded in the `.exe`) |
-| `hicolor/<size>/apps/com.stitchwright.stitchfoundry.png` | Linux theme icons, 16 to 512 px; the 256 one is also the runtime icon on Windows and Linux, the 128 one the brand mark in the app bar and About box (`crates/ui-egui/src/brand.rs`) | `packaging/linux/com.stitchwright.stitchfoundry.desktop` |
-| `hicolor/scalable/apps/com.stitchwright.stitchfoundry.svg` | Linux scalable icon | as above |
+| `screenfoundry.svg` | master vector | source for everything below |
+| `screenfoundry-small.svg` | the same artwork | `hicolor/scalable` |
+| `screenfoundry-1024.png` | full tile, 1024 px | docs, store listings |
+| `screenfoundry-macos-512.png` | tile with Apple margin, 512 px | runtime Dock icon (`apps/vectorcraft/src/main.rs`) |
+| `screenfoundry.icns` | macOS icon set, 16 to 1024 px | `cargo xtask bundle` (`CFBundleIconFile`) |
+| `screenfoundry.ico` | Windows icon, 16 to 256 px | `apps/vectorcraft/build.rs` (embedded in the `.exe`) |
+| `hicolor/<size>/apps/com.stitchwright.screenfoundry.png` | Linux theme icons, 16 to 512 px; the 256 one is also the runtime icon on Windows and Linux, the 128 one the brand mark in the app bar and About box (`crates/ui-egui/src/brand.rs`) | `packaging/linux/com.stitchwright.screenfoundry.desktop` |
+| `hicolor/scalable/apps/com.stitchwright.screenfoundry.svg` | Linux scalable icon | as above |
 
 ## How it reaches each OS
 
 - **macOS:** the app sets the Dock / app-switcher icon at runtime (`ViewportBuilder::with_icon`); the
-  `.app` from `cargo xtask bundle` carries `stitchfoundry.icns`.
-- **Windows:** `build.rs` embeds `stitchfoundry.ico` and VERSIONINFO with `winresource` (taskbar, Start
+  `.app` from `cargo xtask bundle` carries `screenfoundry.icns`.
+- **Windows:** `build.rs` embeds `screenfoundry.ico` and VERSIONINFO with `winresource` (taskbar, Start
   menu, Explorer, Alt-Tab); the runtime icon covers the title bar.
-- **Linux:** install `packaging/linux/com.stitchwright.stitchfoundry.desktop` to `share/applications/`
+- **Linux:** install `packaging/linux/com.stitchwright.screenfoundry.desktop` to `share/applications/`
   and `hicolor/` to `share/icons/`. The app sets its Wayland app ID / X11 class to
-  `com.stitchwright.stitchfoundry`, so the dock matches the window to the launcher.
+  `com.stitchwright.screenfoundry`, so the dock matches the window to the launcher.
 
 ## Regenerate
 
-Edit `stitchfoundry.svg` (and copy it to `stitchfoundry-small.svg`), then run `packaging/icons.sh` (needs
+Edit `screenfoundry.svg` (and copy it to `screenfoundry-small.svg`), then run `packaging/icons.sh` (needs
 `resvg`). It writes every PNG, the `.ico` (`cargo xtask ico`) and the `.icns` (`cargo xtask icns`).

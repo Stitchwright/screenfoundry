@@ -37,7 +37,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "PDF Presets",
             [],
             None,
-            "{} → {presets: [{name, builtIn, supported (the writer produces its standard), description, settings (as document.pdfSettings)}]} the built-in presets (StitchFoundry Default first), then the saved ones; any of these names works as `preset` wherever PDF options are taken",
+            "{} → {presets: [{name, builtIn, supported (the writer produces its standard), description, settings (as document.pdfSettings)}]} the built-in presets (ScreenFoundry Default first), then the saved ones; any of these names works as `preset` wherever PDF options are taken",
             always,
             list
         ),
@@ -46,7 +46,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Save PDF Preset",
             [],
             None,
-            "{name?: (default: a new \"PDF Preset N\"), newName?: rename it, description?, preset?: the preset to start from (default: the saved preset `name`, else StitchFoundry Default), …options of document.exportPdf} create or change a saved preset (built-in presets are read-only; passwords are never stored) → {name, created, settings}",
+            "{name?: (default: a new \"PDF Preset N\"), newName?: rename it, description?, preset?: the preset to start from (default: the saved preset `name`, else ScreenFoundry Default), …options of document.exportPdf} create or change a saved preset (built-in presets are read-only; passwords are never stored) → {name, created, settings}",
             always,
             save
         ),

@@ -12,7 +12,7 @@
 # Clean-room: every entry was written from the plain meaning of the English label using the
 # vector-drawing vocabulary in everyday use in Taiwan (錨點, 路徑, 筆畫, 填色, 工作區域, 路徑管理員 ...).
 # No proprietary localisation resource, string table or product UI was consulted or copied; add
-# entries the same way. Product and technology names (StitchFoundry, VectorCraft, ArtCraft, SVG, OpenType, CMYK,
+# entries the same way. Product and technology names (ScreenFoundry, VectorCraft, ArtCraft, SVG, OpenType, CMYK,
 # Lab ...) and paper sizes (Letter, Tabloid) stay in Latin letters; the trailing "…" of dialog
 # commands is kept. Full-width punctuation (，。：) inside sentences; half-width parentheses and
 # the " · " separators as in the English. Terms shared with PhotoCraft use the same words as its
@@ -342,7 +342,7 @@
 	Check Script	檢查指令碼
 	Check Script…	檢查指令碼…
 	Copy Report	複製報告
-	StitchFoundry read this script without running it.	StitchFoundry 已讀取此指令碼，但沒有執行。
+	ScreenFoundry read this script without running it.	ScreenFoundry 已讀取此指令碼，但沒有執行。
 	Needs nothing beyond plain JavaScript	只需要一般的 JavaScript
 	Needs the script language's own objects or directives	需要指令碼語言本身的物件或指示詞
 	Needs the document model	需要文件模型
@@ -1115,7 +1115,7 @@ file-filter	PDF presets	PDF 預設集
 file-filter	Print presets	列印預設集
 file-filter	SVG Compressed	壓縮 SVG
 file-filter	PDF-compatible .ai	PDF 相容 .ai
-file-filter	StitchFoundry Template	StitchFoundry 範本
+file-filter	ScreenFoundry Template	ScreenFoundry 範本
 file-filter	Templates	範本
 	Flattener Preview	平面化預視
 	Flip Across	跨軸翻轉
@@ -2286,7 +2286,7 @@ file-filter	Templates	範本
 # Import Shortcut Set (Keyboard Shortcuts › Import…, File › Open of a .kys file) and its commands.
 	Import Shortcut Set	匯入快速鍵組
 	Import Shortcut Set…	匯入快速鍵組…
-	Each entry of the file is matched to a StitchFoundry tool, command or panel. Check the matches and answer what is left.	檔案中的每個項目都會對應到 StitchFoundry 的工具、指令或面板。請檢查對應結果，並回答其餘項目。
+	Each entry of the file is matched to a ScreenFoundry tool, command or panel. Check the matches and answer what is left.	檔案中的每個項目都會對應到 ScreenFoundry 的工具、指令或面板。請檢查對應結果，並回答其餘項目。
 	Keys	按鍵
 	The file writes keys and modifiers as codes. Check the proposed meanings and answer the codes that are not known yet.	檔案以代碼記錄按鍵與輔助鍵。請檢查建議的意義，並回答尚未得知的代碼。
 	Click, then press the key this code stands for (Esc cancels)	按一下，然後按下此代碼代表的按鍵 (Esc 取消)
@@ -2297,7 +2297,7 @@ file-filter	Templates	範本
 	Shortcuts	快速鍵
 	Shortcut	快速鍵
 	In the File	檔案中的名稱
-	In StitchFoundry	StitchFoundry 中的對應
+	In ScreenFoundry	ScreenFoundry 中的對應
 	Needs Attention Only	僅顯示需要處理的項目
 	Ready	就緒
 	Needs a choice	需要選擇
@@ -2306,7 +2306,7 @@ file-filter	Templates	範本
 	Tools take a single key (optionally with Shift)	工具只能指定單一按鍵 (可搭配 Shift)
 	A later row takes this shortcut	後面的列會使用此快速鍵
 	Same item as a later row	與後面某一列的項目相同
-	Start from StitchFoundry Defaults	從 StitchFoundry 預設值開始
+	Start from ScreenFoundry Defaults	從 ScreenFoundry 預設值開始
 	Add to the Current Shortcuts	加入目前的快速鍵
 	Remember My Choices	記住我的選擇
 	{ready} of {total} ready	{total} 個中有 {ready} 個就緒
@@ -4659,20 +4659,20 @@ lighting	Light	光源
 	If a drawing tablet's pen doesn't draw, choose an X11 (XWayland) option.	如果繪圖板的筆無法繪圖，請選擇一個 X11 (XWayland) 選項。
 	X11 (XWayland)	X11 (XWayland)
 
-	About StitchFoundry	關於 StitchFoundry
-	Applies the next time StitchFoundry starts.	下次啟動 StitchFoundry 時生效。
-	Quit StitchFoundry	結束 StitchFoundry
-	StitchFoundry copies the fonts to {folder}.	StitchFoundry 會將字體複製到 {folder}。
-	Opening it left out what StitchFoundry can't read yet ({what}): replacing it loses that for good. Save under another name to keep it.	開啟時略過了 StitchFoundry 尚無法讀取的內容（{what}），取代該檔案會永久遺失這些內容。若要保留，請以其他名稱儲存。
-	StitchFoundry	StitchFoundry
-	StitchFoundry didn't quit normally last time. These documents had unsaved changes:	StitchFoundry 上次未正常結束。下列文件有未儲存的變更：
-	StitchFoundry Help…	StitchFoundry 說明…
-	StitchFoundry on GitHub	GitHub 上的 StitchFoundry
+	About ScreenFoundry	關於 ScreenFoundry
+	Applies the next time ScreenFoundry starts.	下次啟動 ScreenFoundry 時生效。
+	Quit ScreenFoundry	結束 ScreenFoundry
+	ScreenFoundry copies the fonts to {folder}.	ScreenFoundry 會將字體複製到 {folder}。
+	Opening it left out what ScreenFoundry can't read yet ({what}): replacing it loses that for good. Save under another name to keep it.	開啟時略過了 ScreenFoundry 尚無法讀取的內容（{what}），取代該檔案會永久遺失這些內容。若要保留，請以其他名稱儲存。
+	ScreenFoundry	ScreenFoundry
+	ScreenFoundry didn't quit normally last time. These documents had unsaved changes:	ScreenFoundry 上次未正常結束。下列文件有未儲存的變更：
+	ScreenFoundry Help…	ScreenFoundry 說明…
+	ScreenFoundry on GitHub	GitHub 上的 ScreenFoundry
 	Report a Bug…	回報錯誤…
-	Welcome to StitchFoundry	歡迎使用 StitchFoundry
-	Hide StitchFoundry	隱藏 StitchFoundry
+	Welcome to ScreenFoundry	歡迎使用 ScreenFoundry
+	Hide ScreenFoundry	隱藏 ScreenFoundry
 
-# Embroidery (StitchFoundry)
+# Embroidery (ScreenFoundry)
 	Add Inclination Line	新增針跡方向線
 	After the selection	所選物件之後
 	Appliqué	貼布繡
@@ -4828,7 +4828,7 @@ lighting	Light	光源
 	Stitch Lines	針跡線
 	Tatami	榻榻米
 
-# Embroidery (StitchFoundry), phase 1
+# Embroidery (ScreenFoundry), phase 1
 	By SiteSentrix, based on VectorCraft by the ArtCraft team. MIT OR Apache-2.0. Fonts: Source Sans 3, Inter, JetBrains Mono (OFL). Icons: Lucide (ISC) + VectorCraft.	由 SiteSentrix 製作，以 ArtCraft 團隊的 VectorCraft 為基礎。MIT OR Apache-2.0。字體：Source Sans 3、Inter、JetBrains Mono (OFL)。圖示：Lucide (ISC) + VectorCraft。
 	Version {version} — open-source machine embroidery digitizing in pure Rust.	版本 {version} — 以純 Rust 打造的開放原始碼電腦刺繡打版軟體。
 	Machine embroidery digitizing — fast, open, scriptable.	電腦刺繡打版：快速、開放、可用指令碼操控。
@@ -4970,7 +4970,7 @@ machine	Stop	停止
 	Tiny object: may not sew cleanly	極小物件：可能無法繡得整齊
 	Very dense: about {n} layers of thread here	過密：此處約有 {n} 層繡線
 
-# Embroidery (StitchFoundry): Design from Prompt
+# Embroidery (ScreenFoundry): Design from Prompt
 	Design from Prompt…	依描述產生圖案…
 	Design from Prompt	依描述產生圖案
 	Generate	產生
@@ -4978,10 +4978,10 @@ machine	Stop	停止
 	Size (longest side):	大小 (最長邊)：
 	Anthropic API key:	Anthropic API 金鑰：
 	Remember the key on this computer	在此電腦上記住金鑰
-	Claude draws the artwork with your own Anthropic API key, billed to your Anthropic account; StitchFoundry then digitizes it. Check the stitches before you sew.	Claude 會使用您自己的 Anthropic API 金鑰繪製圖稿，費用由您的 Anthropic 帳號支付；接著由 StitchFoundry 進行打版。繡製前請檢查針跡。
+	Claude draws the artwork with your own Anthropic API key, billed to your Anthropic account; ScreenFoundry then digitizes it. Check the stitches before you sew.	Claude 會使用您自己的 Anthropic API 金鑰繪製圖稿，費用由您的 Anthropic 帳號支付；接著由 ScreenFoundry 進行打版。繡製前請檢查針跡。
 	Get a key	取得金鑰
 	Drawing the design…	正在繪製圖案…
-	Describe a design and Claude draws artwork for it, then StitchFoundry digitizes it	描述圖案後，Claude 會為其繪製圖稿，再由 StitchFoundry 打版
+	Describe a design and Claude draws artwork for it, then ScreenFoundry digitizes it	描述圖案後，Claude 會為其繪製圖稿，再由 ScreenFoundry 打版
 	Place Artwork as Embroidery	將圖稿作為刺繡置入
 	Place Artwork	置入圖稿
 @plural	Design placed: {n} stitched object|Design placed: {n} stitched objects	圖案已置入：{n} 個刺繡物件
@@ -5005,19 +5005,19 @@ machine	Stop	停止
 @msg	the artwork can't be read: {e}	無法讀取圖稿：{e}
 @msg	The AI won't copy someone else's logo or character: {e}	AI 不會複製他人的標誌或角色：{e}
 
-# Embroidery (StitchFoundry): Redraw Image with Claude
+# Embroidery (ScreenFoundry): Redraw Image with Claude
 	Redraw Image with Claude…	使用 Claude 重繪影像…
 	Redraw Image with Claude	使用 Claude 重繪影像
 	What to change (optional):	要變更的內容 (選填)：
 	Only redraw artwork you own or have permission to use.	只重繪您擁有或已取得使用授權的圖稿。
-	Claude redraws the image as flat-colour art with your own Anthropic API key, billed to your Anthropic account; StitchFoundry then digitizes it. Check the stitches before you sew.	Claude 會使用您自己的 Anthropic API 金鑰將影像重繪為平塗圖稿，費用由您的 Anthropic 帳號支付；接著由 StitchFoundry 進行打版。繡製前請檢查針跡。
+	Claude redraws the image as flat-colour art with your own Anthropic API key, billed to your Anthropic account; ScreenFoundry then digitizes it. Check the stitches before you sew.	Claude 會使用您自己的 Anthropic API 金鑰將影像重繪為平塗圖稿，費用由您的 Anthropic 帳號支付；接著由 ScreenFoundry 進行打版。繡製前請檢查針跡。
 	Redraw with Claude…	使用 Claude 重繪…
-	Claude redraws the image as clean flat-colour art, then StitchFoundry digitizes it	Claude 會將影像重繪為乾淨的平塗圖稿，再由 StitchFoundry 打版
+	Claude redraws the image as clean flat-colour art, then ScreenFoundry digitizes it	Claude 會將影像重繪為乾淨的平塗圖稿，再由 ScreenFoundry 打版
 @msg	select an image to redraw	請選取要重繪的影像
 @msg	the image couldn't be read	無法讀取影像
 @msg	The image is too large to send: crop it, or place a smaller copy.	影像過大，無法傳送：請裁切影像，或置入較小的複本。
 
-# Embroidery (StitchFoundry): fill textures and split lines
+# Embroidery (ScreenFoundry): fill textures and split lines
 	Set Split Lines	設定分割線
 	Carve Split Lines	刻入分割線
 	Clear Split Lines	清除分割線
@@ -5031,7 +5031,7 @@ machine	Stop	停止
 	Circles	圓圈
 	Scales	鱗片
 
-# Embroidery (StitchFoundry): run and satin effects
+# Embroidery (ScreenFoundry): run and satin effects
 	Hand stitch	手縫針跡
 	Gap	間隙
 	Jagged edges	鋸齒邊緣
@@ -5041,7 +5041,7 @@ machine	Stop	停止
 	Jag depth	鋸齒深度
 	Trapunto (travel along the outline)	凸紋繡（沿輪廓走線）
 
-# Embroidery (StitchFoundry): motifs
+# Embroidery (ScreenFoundry): motifs
 	Place Motif	放置圖案
 	Leaf	葉子
 	Loop	圈
@@ -5051,12 +5051,12 @@ machine	Stop	停止
 	Width at end	末端寬度
 	Row spacing	行距
 
-# Embroidery (StitchFoundry): fill types and laydown
+# Embroidery (ScreenFoundry): fill types and laydown
 	E-stitch	E 形針跡
 	Rings (0: all)	圈數（0：全部）
 	Add Laydown	新增鋪底
 
-# Embroidery (StitchFoundry): spacing profiles and blends
+# Embroidery (ScreenFoundry): spacing profiles and blends
 	Spacing profile	間距曲線
 	Accordion	疏密交替
 	Fade out	漸隱
@@ -5064,7 +5064,7 @@ machine	Stop	停止
 	Blend into	漸變到
 	Blend Colors	顏色漸變
 
-# Embroidery (StitchFoundry): outlines and borders
+# Embroidery (ScreenFoundry): outlines and borders
 	Add Outline	新增輪廓
 	Satin Outline	緞紋輪廓
 	Bean Outline	三重針輪廓
@@ -5533,7 +5533,7 @@ machine	Stop	停止
 	Square loop	方形線圈
 	Foil	燙金箔
 	Shown with the design, not sewn	與設計一起顯示，不縫製
-	StitchFoundry Help	StitchFoundry 說明
+	ScreenFoundry Help	ScreenFoundry 說明
 	Guide	指南
 	Tips	提示
 	Search help	搜尋說明
@@ -6050,10 +6050,10 @@ machine	Stop	停止
 @msg	name is empty	名稱為空
 @msg	no symbol named `{n}`	沒有名為 `{n}` 的符號
 
-# Embroidery (StitchFoundry): Ask About Embroidery
+# Embroidery (ScreenFoundry): Ask About Embroidery
 	Ask About Embroidery…	詢問刺繡問題…
 	Ask About Embroidery	詢問刺繡問題
-	Ask anything about machine embroidery or StitchFoundry: which stabilizer to use, why thread breaks, how to make letters sew cleaner, where a feature is. Claude can also change your design when you ask, after you allow it.	可以詢問任何關於機器刺繡或 StitchFoundry 的問題：用哪種襯布、為什麼斷線、怎樣讓字母繡得更整齊、某個功能在哪裡。在您要求並允許後，Claude 也可以修改您的設計。
+	Ask anything about machine embroidery or ScreenFoundry: which stabilizer to use, why thread breaks, how to make letters sew cleaner, where a feature is. Claude can also change your design when you ask, after you allow it.	可以詢問任何關於機器刺繡或 ScreenFoundry 的問題：用哪種襯布、為什麼斷線、怎樣讓字母繡得更整齊、某個功能在哪裡。在您要求並允許後，Claude 也可以修改您的設計。
 	Thinking…	思考中…
 	Type your question, then press Enter	輸入問題，然後按 Enter
 	Ask	提問
@@ -6077,7 +6077,7 @@ machine	Stop	停止
 @msg	This conversation is long: start a New Conversation.	此對話已很長：請開始新對話。
 @msg	Claude took too many steps: ask again, more simply.	Claude 用了太多步驟：請更簡單地再問一次。
 
-# Embroidery (StitchFoundry): cross-stitch fill, colour replace, fabric count and chart
+# Embroidery (ScreenFoundry): cross-stitch fill, colour replace, fabric count and chart
 	Fill a patch	填滿區域
 	Click a square to fill every touching square like it; hold Alt to clear them	按一下一個格子，填滿所有相連的相同格子；按住 Alt 鍵則清除它們
 	With the Thread Colour	為線的顏色
@@ -6108,7 +6108,7 @@ machine	Stop	停止
 	Structured cap	硬挺帽子
 	Silk / lightweight	絲綢 / 輕薄布料
 
-# Embroidery (StitchFoundry): Check My Sew-out
+# Embroidery (ScreenFoundry): Check My Sew-out
 	Check My Sew-out…	檢查我的繡品…
 	Check My Sew-out	檢查我的繡品
 	About the sewing	關於刺繡
@@ -6133,7 +6133,7 @@ machine	Stop	停止
 	While it sewed:	刺繡時：
 	e.g. 75/11 ballpoint	例如 75/11 圓頭針
 
-# Embroidery (StitchFoundry): Foundry Account
+# Embroidery (ScreenFoundry): Foundry Account
 	A check costs {n} credits; free checks come back next month.	一次檢查需 {n} 點數；免費檢查下個月恢復。
 	Account	帳戶
 	Buy credits	購買點數
@@ -6142,15 +6142,15 @@ machine	Stop	停止
 	Delete My Shared Sew-out Checks	刪除我共享的檢查
 	Email	電子郵件
 	Free sew-out checks left this month: {n}	本月剩餘免費檢查：{n}
-	Leave it empty for StitchFoundry's own service.	留空則使用 StitchFoundry 自己的服務。
+	Leave it empty for ScreenFoundry's own service.	留空則使用 ScreenFoundry 自己的服務。
 	Paid with Foundry credits ({n} left).	以 Foundry 點數支付（剩餘 {n}）。
 	Paid with Foundry credits.	以 Foundry 點數支付。
 	Pay for the AI features with my Foundry credits	用我的 Foundry 點數支付 AI 功能
 	Pay with Foundry credits instead	改用 Foundry 點數支付
-	Payment is on Stripe's secure page, in your browser; your card never reaches StitchFoundry.	在瀏覽器中的 Stripe 安全頁面付款；您的信用卡資料絕不會到達 StitchFoundry。
+	Payment is on Stripe's secure page, in your browser; your card never reaches ScreenFoundry.	在瀏覽器中的 Stripe 安全頁面付款；您的信用卡資料絕不會到達 ScreenFoundry。
 	Reading your credits…	正在讀取點數…
 	Server	伺服器
-	Share this check to help improve StitchFoundry (kept private; delete it any time in Foundry Account)	共享這次檢查以協助改進 StitchFoundry（保持私密；可隨時在 Foundry 帳戶中刪除）
+	Share this check to help improve ScreenFoundry (kept private; delete it any time in Foundry Account)	共享這次檢查以協助改進 ScreenFoundry（保持私密；可隨時在 Foundry 帳戶中刪除）
 	Sign In	登入
 	Sign Out	登出
 	Sign in, or make an account, to pay for the AI features with Foundry credits instead of your own Anthropic API key. A new account starts with free credits.	登入或建立帳戶，即可用 Foundry 點數取代您自己的 Anthropic API 金鑰支付 AI 功能。新帳戶附有免費點數。
@@ -6186,7 +6186,7 @@ machine	Stop	停止
 	Enable Guides for 9-Slice Scaling	啟用 9-slice 縮放參考線
 	Persistent	持久
 	Library Panel Options	資料庫面板選項
-# Embroidery (StitchFoundry): undo steps
+# Embroidery (ScreenFoundry): undo steps
 	Auto-Digitize	自動數位化
 	Backstitch Line	回針線
 	Close Appliqué Outlines	封閉貼布輪廓
@@ -6194,7 +6194,7 @@ machine	Stop	停止
 	Erase Cross Stitches	擦除十字繡
 	Move Stitches	移動針跡
 	Overlap where shapes touch	形狀相接處的重疊
-# Embroidery (StitchFoundry): picture services
+# Embroidery (ScreenFoundry): picture services
 	Picture made by	圖片由誰產生
 	Claude (draws the shapes itself)	Claude（自己畫出形狀）
 	{name} API key:	{name} API 金鑰：
@@ -6237,26 +6237,26 @@ machine	Stop	停止
 	A new design: a hoopful of patches, each colour sewn once for all of them	新設計:一整框布章,每種顏色為全部布章只繡一次
 	Every hoopful as a machine file, and a list of the names in each	每一框寫成一個機器檔案,並列出每框中的姓名
 	The open design repeated across its hoop, sorted so each colour is sewn once	將開啟的設計在繡框中重複排列,並排序使每種顏色只繡一次
-# Report to StitchFoundry (ui.reportSewout)
+# Report to ScreenFoundry (ui.reportSewout)
 	Anything you'd like to add (optional)	還有什麼要補充的?(選填)
 	Claude is writing the report…	Claude 正在寫報告…
 	Have Claude Write It	讓 Claude 來寫
-	Help make StitchFoundry better	協助改進 StitchFoundry
-	I agree to send this to SiteSentrix, the maker of StitchFoundry, to improve the software. It won't be shared with anyone else.	我同意將此內容傳送給 StitchFoundry 的開發者 SiteSentrix,用於改進軟體。不會與其他任何人分享。
+	Help make ScreenFoundry better	協助改進 ScreenFoundry
+	I agree to send this to SiteSentrix, the maker of ScreenFoundry, to improve the software. It won't be shared with anyone else.	我同意將此內容傳送給 ScreenFoundry 的開發者 SiteSentrix,用於改進軟體。不會與其他任何人分享。
 	Include a summary of the design	附上設計摘要
 	Include the conversation with Claude	附上與 Claude 的對話
 	Include the photos ({n})	附上照片({n})
-	Report to StitchFoundry	回報給 StitchFoundry
-	Report to StitchFoundry…	回報給 StitchFoundry…
+	Report to ScreenFoundry	回報給 ScreenFoundry
+	Report to ScreenFoundry…	回報給 ScreenFoundry…
 	Send Report	傳送報告
-	Send this sew-out and Claude's idea of what StitchFoundry could do better to its makers	將這次刺繡成品和 Claude 對 StitchFoundry 可改進之處的看法傳給開發者
-	Send this sew-out to the people who make StitchFoundry, with Claude's idea of what the software could do better. We use it only to improve StitchFoundry: we never share, sell or publish it, and you can have it deleted at any time (Foundry Account › Delete My Shared Sew-out Checks).	將這次刺繡成品連同 Claude 對軟體可改進之處的看法傳給 StitchFoundry 的開發者。我們只用它來改進 StitchFoundry:絕不分享、出售或公開,你可以隨時要求刪除(Foundry 帳戶 › 刪除我共享的檢查)。
+	Send this sew-out and Claude's idea of what ScreenFoundry could do better to its makers	將這次刺繡成品和 Claude 對 ScreenFoundry 可改進之處的看法傳給開發者
+	Send this sew-out to the people who make ScreenFoundry, with Claude's idea of what the software could do better. We use it only to improve ScreenFoundry: we never share, sell or publish it, and you can have it deleted at any time (Foundry Account › Delete My Shared Sew-out Checks).	將這次刺繡成品連同 Claude 對軟體可改進之處的看法傳給 ScreenFoundry 的開發者。我們只用它來改進 ScreenFoundry:絕不分享、出售或公開,你可以隨時要求刪除(Foundry 帳戶 › 刪除我共享的檢查)。
 	Sign in to Foundry Account to send a report.	請登入 Foundry 帳戶以傳送報告。
 @msg	Sign in to Foundry Account to send a report.	請登入 Foundry 帳戶以傳送報告。
 	Thank you: your report was sent.	謝謝:你的報告已傳送。
 	Title	標題
-	What went wrong, and what StitchFoundry could do better	哪裡出了問題,以及 StitchFoundry 可以如何改進
-	Write a report about this sew-out for the people who make StitchFoundry.	請為 StitchFoundry 的開發者寫一份關於這次刺繡成品的報告。
+	What went wrong, and what ScreenFoundry could do better	哪裡出了問題,以及 ScreenFoundry 可以如何改進
+	Write a report about this sew-out for the people who make ScreenFoundry.	請為 ScreenFoundry 的開發者寫一份關於這次刺繡成品的報告。
 @msg	Check a sew-out first: the report goes with its photos and Claude's answer	請先檢查一次刺繡成品:報告會附上其照片和 Claude 的回答
 @msg	Tick the box to agree to send it first.	請先勾選同意傳送。
 @msg	Write what went wrong first, or have Claude write it.	請先寫下哪裡出了問題,或讓 Claude 來寫。

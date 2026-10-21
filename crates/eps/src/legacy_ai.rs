@@ -171,7 +171,7 @@ pub fn export_legacy_ai(doc: &Document, o: &LegacyAiOptions) -> Result<LegacyAiO
     let mut s = String::new();
     s.push_str(PS_HEADER);
     s.push('\n');
-    let _ = writeln!(s, "%%Creator: StitchFoundry {}", env!("CARGO_PKG_VERSION"));
+    let _ = writeln!(s, "%%Creator: ScreenFoundry {}", env!("CARGO_PKG_VERSION"));
     let _ = writeln!(s, "%%Title: {}", latin_string(&title));
     if let Some(t) = o.created {
         let [y, mo, d, h, mi, _] = vectorcraft_doc::metadata::civil(t);

@@ -403,7 +403,7 @@ pub struct UiState {
     /// Draw Normal / Behind / Inside.
     pub draw_mode: u8,
     pub about: bool,
-    /// Help › StitchFoundry Help… (F1).
+    /// Help › ScreenFoundry Help… (F1).
     #[serde(skip)]
     pub help: crate::dialogs::help::HelpState,
     /// View › Calibrate Life Size….

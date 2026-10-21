@@ -348,7 +348,7 @@
 	Check Script	Verificar Script
 	Check Script…	Verificar Script…
 	Copy Report	Copiar Relatório
-	StitchFoundry read this script without running it.	O StitchFoundry leu este script sem executá-lo.
+	ScreenFoundry read this script without running it.	O ScreenFoundry leu este script sem executá-lo.
 	Needs nothing beyond plain JavaScript	Precisa apenas de JavaScript simples
 	Needs the script language's own objects or directives	Precisa de objetos ou diretivas próprios da linguagem do script
 	Needs the document model	Precisa do modelo de documento
@@ -3454,7 +3454,7 @@ axis	Both	Ambos
 @msg	can't encode the document: {0}	não foi possível codificar o documento: {0}
 @msg	can't parse shortcut `{c}`	não foi possível interpretar o atalho `{c}`
 @msg	can't parse shortcut `{s}` for `{k}`	não foi possível interpretar o atalho `{s}` de `{k}`
-@msg	can't save version {0}: StitchFoundry writes versions {MIN_VERSION} to {VERSION}	não foi possível salvar a versão {0}: o StitchFoundry grava as versões {MIN_VERSION} a {VERSION}
+@msg	can't save version {0}: ScreenFoundry writes versions {MIN_VERSION} to {VERSION}	não foi possível salvar a versão {0}: o ScreenFoundry grava as versões {MIN_VERSION} a {VERSION}
 @msg	can't write .{ext} images	não é possível gravar imagens .{ext}
 @msg	cannot distort a zero-size bounding box	não é possível distorcer uma caixa delimitadora de tamanho zero
 @msg	cannot read PDF: {0}	não foi possível ler o PDF: {0}
@@ -3480,7 +3480,7 @@ axis	Both	Ambos
 @msg	empty brush stroke	traço de pincel vazio
 @msg	empty cutter	cortador vazio
 @msg	empty path	traçado vazio
-@msg	file version {0} is newer than this StitchFoundry supports ({VERSION})	a versão {0} do arquivo é mais recente do que este StitchFoundry suporta ({VERSION})
+@msg	file version {0} is newer than this ScreenFoundry supports ({VERSION})	a versão {0} do arquivo é mais recente do que este ScreenFoundry suporta ({VERSION})
 @msg	freeform point {i} needs `at` [x, y] and a valid `color`	o ponto {i} de forma livre precisa de `at` [x, y] e de uma `color` válida
 @msg	freeform line {i} must be an array of point indices	a linha {i} de forma livre deve ser uma matriz de índices de pontos
 @msg	give both `start` and `end` [x, y] (or neither)	informe `start` e `end` [x, y] (ou nenhum dos dois)
@@ -3500,9 +3500,9 @@ axis	Both	Ambos
 @msg	invalid PDF setting: {0}	configuração de PDF inválida: {0}
 @msg	invalid image data for `{0}`	dados de imagem inválidos para `{0}`
 @msg	invalid parameters for `{cmd}`: {msg}	parâmetros inválidos para `{cmd}`: {msg}
-@msg	is not an image StitchFoundry reads	não é uma imagem que o StitchFoundry lê
-@msg	it uses `{at}`, which StitchFoundry's PostScript reader doesn't know	usa `{at}`, que o leitor de PostScript do StitchFoundry não conhece
-@msg	it uses `{at}`, which StitchFoundry's PostScript reader doesn't know, in {procs}	usa `{at}`, que o leitor de PostScript do StitchFoundry não conhece, em {procs}
+@msg	is not an image ScreenFoundry reads	não é uma imagem que o ScreenFoundry lê
+@msg	it uses `{at}`, which ScreenFoundry's PostScript reader doesn't know	usa `{at}`, que o leitor de PostScript do ScreenFoundry não conhece
+@msg	it uses `{at}`, which ScreenFoundry's PostScript reader doesn't know, in {procs}	usa `{at}`, que o leitor de PostScript do ScreenFoundry não conhece, em {procs}
 @msg	its Windows metafile preview was opened instead, which may simplify the art	a visualização em metarquivo do Windows foi aberta no lugar, o que pode simplificar a arte
 @msg	its preview was placed instead, at screen resolution	a visualização foi inserida no lugar, em resolução de tela
 @msg	join needs open paths	unir exige traçados abertos
@@ -3611,7 +3611,7 @@ axis	Both	Ambos
 @msg	node {_1} is not text	o nó {_1} não é texto
 @msg	not a DXF drawing	não é um desenho DXF
 @msg	not a VectorCraft file: {0}	não é um arquivo do VectorCraft: {0}
-@msg	not a StitchFoundry shortcut set (missing `overrides`)	não é um conjunto de atalhos do StitchFoundry (falta `overrides`)
+@msg	not a ScreenFoundry shortcut set (missing `overrides`)	não é um conjunto de atalhos do ScreenFoundry (falta `overrides`)
 @msg	not a VectorCraft shortcut set (missing `overrides`)	não é um conjunto de atalhos do VectorCraft (falta `overrides`)
 @msg	not a blend	não é uma mesclagem
 @msg	not a graphic style library (format `{_1}`)	não é uma biblioteca de estilos gráficos (formato `{_1}`)
@@ -3848,11 +3848,11 @@ axis	Both	Ambos
 @msg	Sent to {_1}	Enviado para {_1}
 @msg	{_1} files	{_1} arquivos
 @msg	The graphics were lost and have been restarted	Os gráficos foram perdidos e reiniciados
-@msg	The graphics processor tried first couldn't show the window, so StitchFoundry started again on {summary}	O processador gráfico tentado primeiro não conseguiu exibir a janela, então o StitchFoundry reiniciou em {summary}
-@msg	Loading StitchFoundry…	Carregando o StitchFoundry…
-@msg	StitchFoundry failed to start: {e}	Falha ao iniciar o StitchFoundry: {e}
-@msg	The last start of StitchFoundry ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	A última inicialização do StitchFoundry terminou em {name} antes de a janela aparecer, então o StitchFoundry iniciou em {summary}. Para tentar esse processador gráfico novamente, altere Preferências › Desempenho › Processador Gráfico ou inicie com a variável WGPU_BACKEND definida
-@msg	The last start of StitchFoundry ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	A última inicialização do StitchFoundry terminou enquanto listava os processadores gráficos, então o StitchFoundry iniciou em {summary} apenas com OpenGL. Para tentar as outras interfaces gráficas novamente, altere Preferências › Desempenho › Processador Gráfico ou inicie com a variável WGPU_BACKEND definida
+@msg	The graphics processor tried first couldn't show the window, so ScreenFoundry started again on {summary}	O processador gráfico tentado primeiro não conseguiu exibir a janela, então o ScreenFoundry reiniciou em {summary}
+@msg	Loading ScreenFoundry…	Carregando o ScreenFoundry…
+@msg	ScreenFoundry failed to start: {e}	Falha ao iniciar o ScreenFoundry: {e}
+@msg	The last start of ScreenFoundry ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	A última inicialização do ScreenFoundry terminou em {name} antes de a janela aparecer, então o ScreenFoundry iniciou em {summary}. Para tentar esse processador gráfico novamente, altere Preferências › Desempenho › Processador Gráfico ou inicie com a variável WGPU_BACKEND definida
+@msg	The last start of ScreenFoundry ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	A última inicialização do ScreenFoundry terminou enquanto listava os processadores gráficos, então o ScreenFoundry iniciou em {summary} apenas com OpenGL. Para tentar as outras interfaces gráficas novamente, altere Preferências › Desempenho › Processador Gráfico ou inicie com a variável WGPU_BACKEND definida
 @msg	A browser with WebGPU or WebGL2 is required.	É necessário um navegador com WebGPU ou WebGL2.
 @msg	The graphics were lost and couldn't be restarted.	Os gráficos foram perdidos e não puderam ser reiniciados.
 @msg	Your unsaved changes are kept in this browser: reload the page to get them back.	Suas alterações não salvas ficam neste navegador: recarregue a página para recuperá-las.
@@ -3874,23 +3874,23 @@ axis	Both	Ambos
 @msg	it has more than {MAX_NODES} objects	tem mais de {MAX_NODES} objetos
 @msg	it has no layers	não tem camadas
 @msg	it has too many values in a row	tem valores demais em sequência
-@msg	it has {_1}, which StitchFoundry doesn't read from it yet	tem {_1}, que o StitchFoundry ainda não lê desse arquivo
+@msg	it has {_1}, which ScreenFoundry doesn't read from it yet	tem {_1}, que o ScreenFoundry ainda não lê desse arquivo
 @msg	its objects are nested too deeply	seus objetos estão aninhados com profundidade excessiva
 @msg	its section ending with `%{end}` doesn't end	sua seção que termina com `%{end}` não termina
 @msg	objects with several fills or strokes, effects or brushes came in as their drawn look ({_1}): their appearance isn't editable yet	objetos com vários preenchimentos ou traços, efeitos ou pincéis entraram com a aparência desenhada ({_1}): sua aparência ainda não é editável
 @msg	gradient “{name}” isn't defined in the file: a plain colour stands in for it	o gradiente “{name}” não está definido no arquivo: uma cor sólida o substitui
-@msg	an image StitchFoundry can't read was left out	uma imagem que o StitchFoundry não consegue ler foi omitida
+@msg	an image ScreenFoundry can't read was left out	uma imagem que o ScreenFoundry não consegue ler foi omitida
 @msg	an image whose data is cut short was left out	uma imagem com dados incompletos foi omitida
 @msg	its editing data doesn't say where its art is	seus dados de edição não indicam onde está a arte
 @msg	this file was saved without PDF compatibility, and its editing data can't be read ({why})	este arquivo foi salvo sem compatibilidade com PDF e seus dados de edição não podem ser lidos ({why})
 @msg	No fonts are missing in this document	Nenhuma fonte está ausente neste documento
-@msg	StitchFoundry doesn't search other apps' or the system's folders: {path}	O StitchFoundry não pesquisa pastas de outros aplicativos nem do sistema: {path}
-@msg	StitchFoundry doesn't search the Shared or Public folder in Users: {path}	O StitchFoundry não pesquisa a pasta Compartilhado ou Público em Usuários: {path}
+@msg	ScreenFoundry doesn't search other apps' or the system's folders: {path}	O ScreenFoundry não pesquisa pastas de outros aplicativos nem do sistema: {path}
+@msg	ScreenFoundry doesn't search the Shared or Public folder in Users: {path}	O ScreenFoundry não pesquisa a pasta Compartilhado ou Público em Usuários: {path}
 @msg	{path} is not a folder	{path} não é uma pasta
 @msg	the search couldn't start: try again in a moment	não foi possível iniciar a pesquisa: tente novamente em instantes
 @msg	searching a folder isn't available on the web	pesquisar em uma pasta não está disponível na web
 @msg	every search thread stopped on an internal error (please report this bug)	todos os processos de pesquisa pararam por um erro interno (relate este bug)
-@msg	StitchFoundry's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	A pasta Fontes do StitchFoundry não está definida aqui: o aplicativo para desktop e o vectorcraft-cli a definem
+@msg	ScreenFoundry's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	A pasta Fontes do ScreenFoundry não está definida aqui: o aplicativo para desktop e o vectorcraft-cli a definem
 @msg	choose the font files to add	escolha os arquivos de fonte a adicionar
 @msg	{n} font file(s) are now in {folder}	{n} arquivo(s) de fonte agora está(ão) em {folder}
 @msg	{n} font file(s) are now in {folder}; {failed} couldn't be added: {reason}	{n} arquivo(s) de fonte agora está(ão) em {folder}; {failed} não pôde(puderam) ser adicionado(s): {reason}
@@ -3955,19 +3955,19 @@ axis	Both	Ambos
 @msg	invalid native panel set	conjunto de painéis nativos inválido
 @msg	missing panel layout	layout de painéis ausente
 @msg	unsupported native docking operation	operação de encaixe nativa não suportada
-	About StitchFoundry	Sobre o StitchFoundry
-	Applies the next time StitchFoundry starts.	Aplica na próxima inicialização do StitchFoundry.
-	Quit StitchFoundry	Sair do StitchFoundry
-	StitchFoundry copies the fonts to {folder}.	O StitchFoundry copia as fontes para {folder}.
-	Opening it left out what StitchFoundry can't read yet ({what}): replacing it loses that for good. Save under another name to keep it.	Ao abri-lo, ficou de fora o que o StitchFoundry ainda não consegue ler ({what}), então substituí-lo perde isso para sempre. Salve com outro nome para mantê-lo.
-	StitchFoundry Help…	Ajuda do StitchFoundry…
-	StitchFoundry didn't quit normally last time. These documents had unsaved changes:	O StitchFoundry não fechou normalmente da última vez. Estes documentos tinham alterações não salvas:
-	StitchFoundry on GitHub	StitchFoundry no GitHub
+	About ScreenFoundry	Sobre o ScreenFoundry
+	Applies the next time ScreenFoundry starts.	Aplica na próxima inicialização do ScreenFoundry.
+	Quit ScreenFoundry	Sair do ScreenFoundry
+	ScreenFoundry copies the fonts to {folder}.	O ScreenFoundry copia as fontes para {folder}.
+	Opening it left out what ScreenFoundry can't read yet ({what}): replacing it loses that for good. Save under another name to keep it.	Ao abri-lo, ficou de fora o que o ScreenFoundry ainda não consegue ler ({what}), então substituí-lo perde isso para sempre. Salve com outro nome para mantê-lo.
+	ScreenFoundry Help…	Ajuda do ScreenFoundry…
+	ScreenFoundry didn't quit normally last time. These documents had unsaved changes:	O ScreenFoundry não fechou normalmente da última vez. Estes documentos tinham alterações não salvas:
+	ScreenFoundry on GitHub	ScreenFoundry no GitHub
 	Report a Bug…	Relatar um erro…
-	Welcome to StitchFoundry	Bem-vindo ao StitchFoundry
-	Hide StitchFoundry	Ocultar o StitchFoundry
+	Welcome to ScreenFoundry	Bem-vindo ao ScreenFoundry
+	Hide ScreenFoundry	Ocultar o ScreenFoundry
 
-# Embroidery (StitchFoundry)
+# Embroidery (ScreenFoundry)
 	Embroidery	Bordado
 	Digitizing Widget	Widget de Digitalização
 	Convert Artwork to Embroidery	Converter Arte em Bordado
@@ -4003,7 +4003,7 @@ axis	Both	Ambos
 	Barudan DSB (.dsb)…	Barudan DSB (.dsb)…
 	Brother PEC (.pec)…	Brother PEC (.pec)…
 
-# Embroidery (StitchFoundry), phase 1
+# Embroidery (ScreenFoundry), phase 1
 	Version {version} — open-source machine embroidery digitizing in pure Rust.	Versão {version} — digitalização de bordado à máquina de código aberto em Rust puro.
 	Machine embroidery digitizing — fast, open, scriptable.	Digitalização de bordado à máquina — rápida, aberta, scriptável.
 	Clear Machine Function	Remover função da máquina
@@ -4031,7 +4031,7 @@ axis	Both	Ambos
 	Match Threads to Chart	Combinar Linhas com a Cartela
 machine	Trim	Corte de linha
 
-# Embroidery (StitchFoundry): Design from Prompt
+# Embroidery (ScreenFoundry): Design from Prompt
 	Design from Prompt…	Desenho a Partir de Descrição…
 	Design from Prompt	Desenho a Partir de Descrição
 	Generate	Gerar
@@ -4039,10 +4039,10 @@ machine	Trim	Corte de linha
 	Size (longest side):	Tamanho (lado maior):
 	Anthropic API key:	Chave de API da Anthropic:
 	Remember the key on this computer	Lembrar a chave neste computador
-	Claude draws the artwork with your own Anthropic API key, billed to your Anthropic account; StitchFoundry then digitizes it. Check the stitches before you sew.	O Claude desenha a arte com a sua própria chave de API da Anthropic, cobrada na sua conta Anthropic; depois o StitchFoundry a digitaliza. Confira os pontos antes de bordar.
+	Claude draws the artwork with your own Anthropic API key, billed to your Anthropic account; ScreenFoundry then digitizes it. Check the stitches before you sew.	O Claude desenha a arte com a sua própria chave de API da Anthropic, cobrada na sua conta Anthropic; depois o ScreenFoundry a digitaliza. Confira os pontos antes de bordar.
 	Get a key	Obter uma chave
 	Drawing the design…	Criando o desenho…
-	Describe a design and Claude draws artwork for it, then StitchFoundry digitizes it	Descreva um desenho e o Claude cria a arte; depois o StitchFoundry a digitaliza
+	Describe a design and Claude draws artwork for it, then ScreenFoundry digitizes it	Descreva um desenho e o Claude cria a arte; depois o ScreenFoundry a digitaliza
 	Place Artwork as Embroidery	Colocar Arte como Bordado
 @plural	Design placed: {n} stitched object|Design placed: {n} stitched objects	Desenho colocado: {n} objeto bordado|Desenho colocado: {n} objetos bordados
 @msg	Enter your Anthropic API key first.	Primeiro, informe sua chave de API da Anthropic.
@@ -4065,19 +4065,19 @@ machine	Trim	Corte de linha
 @msg	the artwork can't be read: {e}	não foi possível ler a arte: {e}
 @msg	The AI won't copy someone else's logo or character: {e}	A IA não copia logotipos nem personagens de terceiros: {e}
 
-# Embroidery (StitchFoundry): Redraw Image with Claude
+# Embroidery (ScreenFoundry): Redraw Image with Claude
 	Redraw Image with Claude…	Redesenhar Imagem com o Claude…
 	Redraw Image with Claude	Redesenhar Imagem com o Claude
 	What to change (optional):	O que mudar (opcional):
 	Only redraw artwork you own or have permission to use.	Redesenhe apenas artes que sejam suas ou que você tenha permissão para usar.
-	Claude redraws the image as flat-colour art with your own Anthropic API key, billed to your Anthropic account; StitchFoundry then digitizes it. Check the stitches before you sew.	O Claude redesenha a imagem como arte em cores chapadas com a sua própria chave de API da Anthropic, cobrada na sua conta Anthropic; depois o StitchFoundry a digitaliza. Confira os pontos antes de bordar.
+	Claude redraws the image as flat-colour art with your own Anthropic API key, billed to your Anthropic account; ScreenFoundry then digitizes it. Check the stitches before you sew.	O Claude redesenha a imagem como arte em cores chapadas com a sua própria chave de API da Anthropic, cobrada na sua conta Anthropic; depois o ScreenFoundry a digitaliza. Confira os pontos antes de bordar.
 	Redraw with Claude…	Redesenhar com o Claude…
-	Claude redraws the image as clean flat-colour art, then StitchFoundry digitizes it	O Claude redesenha a imagem como arte limpa em cores chapadas; depois o StitchFoundry a digitaliza
+	Claude redraws the image as clean flat-colour art, then ScreenFoundry digitizes it	O Claude redesenha a imagem como arte limpa em cores chapadas; depois o ScreenFoundry a digitaliza
 @msg	select an image to redraw	selecione uma imagem para redesenhar
 @msg	the image couldn't be read	não foi possível ler a imagem
 @msg	The image is too large to send: crop it, or place a smaller copy.	A imagem é grande demais para enviar: recorte-a ou coloque uma cópia menor.
 
-# Embroidery (StitchFoundry): fill textures and split lines
+# Embroidery (ScreenFoundry): fill textures and split lines
 	Set Split Lines	Definir linhas de divisão
 	Carve Split Lines	Gravar linhas de divisão
 	Clear Split Lines	Limpar linhas de divisão
@@ -4091,7 +4091,7 @@ machine	Trim	Corte de linha
 	Circles	Círculos
 	Scales	Escamas
 
-# Embroidery (StitchFoundry): run and satin effects
+# Embroidery (ScreenFoundry): run and satin effects
 	Hand stitch	Ponto à mão
 	Gap	Espaço
 	Jagged edges	Bordas irregulares
@@ -4101,7 +4101,7 @@ machine	Trim	Corte de linha
 	Jag depth	Profundidade das irregularidades
 	Trapunto (travel along the outline)	Trapunto (deslocamentos pelo contorno)
 
-# Embroidery (StitchFoundry): motifs
+# Embroidery (ScreenFoundry): motifs
 	Place Motif	Inserir motivo
 	Wave	Onda
 	Scallop	Vieira
@@ -4116,13 +4116,13 @@ machine	Trim	Corte de linha
 	Width at end	Largura no final
 	Row spacing	Espaçamento entre fileiras
 
-# Embroidery (StitchFoundry): fill types and laydown
+# Embroidery (ScreenFoundry): fill types and laydown
 	E-stitch	Ponto E
 	Rings (0: all)	Anéis (0: todos)
 	Add Laydown	Adicionar base de assentamento
 	Zigzag	Zigue-zague
 
-# Embroidery (StitchFoundry): spacing profiles and blends
+# Embroidery (ScreenFoundry): spacing profiles and blends
 	Spacing profile	Perfil de espaçamento
 	Even	Igual
 	Accordion	Acordeão
@@ -4131,7 +4131,7 @@ machine	Trim	Corte de linha
 	Blend into	Mesclar com
 	Blend Colors	Mesclar cores
 
-# Embroidery (StitchFoundry): outlines and borders
+# Embroidery (ScreenFoundry): outlines and borders
 	Add Outline	Adicionar contorno
 	Satin Outline	Contorno de cetim
 	Bean Outline	Contorno de ponto triplo
@@ -4612,7 +4612,7 @@ machine	Trim	Corte de linha
 	Square loop	Laço quadrado
 	Foil	Foil
 	Shown with the design, not sewn	Mostrado com o desenho, não costurado
-	StitchFoundry Help	Ajuda do StitchFoundry
+	ScreenFoundry Help	Ajuda do ScreenFoundry
 	Guide	Guia
 	Tips	Dicas
 	Search help	Pesquisar na ajuda
@@ -4908,7 +4908,7 @@ machine	Trim	Corte de linha
 	Posterization	Posterização
 	Grain	Grão
 	Highlight Area	Área de realces
-@msg	the compressed file unpacks to more than StitchFoundry reads ({_1} MB of document, {_2} MB per image)	o arquivo compactado se expande para mais do que o StitchFoundry lê ({_1} MB de documento, {_2} MB por imagem)
+@msg	the compressed file unpacks to more than ScreenFoundry reads ({_1} MB of document, {_2} MB per image)	o arquivo compactado se expande para mais do que o ScreenFoundry lê ({_1} MB de documento, {_2} MB por imagem)
 @msg	the document is too large to save compressed ({0}): save it with Use Compression off	o documento é grande demais para ser salvo compactado ({0}): salve-o com Usar Compressão desativado
 @msg	the file stopped being read (please report this bug)	a leitura do arquivo foi interrompida (informe este erro)
 	Concentric Dividers:	Divisórias concêntricas:
@@ -5138,7 +5138,7 @@ machine	Trim	Corte de linha
 	Keep:	Manter:
 	Import Shortcut Set	Importar Conjunto de Atalhos
 	Import Shortcut Set…	Importar Conjunto de Atalhos…
-	Each entry of the file is matched to a StitchFoundry tool, command or panel. Check the matches and answer what is left.	Cada entrada do arquivo é associada a uma ferramenta, comando ou painel do StitchFoundry. Confira as correspondências e resolva o que sobrar.
+	Each entry of the file is matched to a ScreenFoundry tool, command or panel. Check the matches and answer what is left.	Cada entrada do arquivo é associada a uma ferramenta, comando ou painel do ScreenFoundry. Confira as correspondências e resolva o que sobrar.
 	Keys	Teclas
 	The file writes keys and modifiers as codes. Check the proposed meanings and answer the codes that are not known yet.	O arquivo grava teclas e modificadores como códigos. Confira os significados propostos e informe os códigos que ainda não são conhecidos.
 	Click, then press the key this code stands for (Esc cancels)	Clique e depois pressione a tecla que este código representa (Esc cancela)
@@ -5148,7 +5148,7 @@ machine	Trim	Corte de linha
 	not known yet	ainda não conhecido
 	Shortcuts	Atalhos
 	In the File	No Arquivo
-	In StitchFoundry	No StitchFoundry
+	In ScreenFoundry	No ScreenFoundry
 	Needs Attention Only	Somente os que Precisam de Atenção
 	Ready	Pronto
 	Needs a choice	Precisa de uma escolha
@@ -5157,7 +5157,7 @@ machine	Trim	Corte de linha
 	Tools take a single key (optionally with Shift)	Ferramentas usam uma única tecla (opcionalmente com Shift)
 	A later row takes this shortcut	Uma linha posterior usa este atalho
 	Same item as a later row	Mesmo item de uma linha posterior
-	Start from StitchFoundry Defaults	Começar com os Padrões do StitchFoundry
+	Start from ScreenFoundry Defaults	Começar com os Padrões do ScreenFoundry
 	Add to the Current Shortcuts	Adicionar aos Atalhos Atuais
 	Remember My Choices	Lembrar Minhas Escolhas
 	{ready} of {total} ready	{ready} de {total} prontos
@@ -5407,7 +5407,7 @@ machine	Trim	Corte de linha
 	Joins	Junções
 	Axis	Eixo
 @msg	Copied the script report	Relatório do script copiado
-@msg	This shortcut file is in a form StitchFoundry can't read.	Este arquivo de atalhos está em um formato que o StitchFoundry não consegue ler.
+@msg	This shortcut file is in a form ScreenFoundry can't read.	Este arquivo de atalhos está em um formato que o ScreenFoundry não consegue ler.
 @msg	axis must be "vertical", "horizontal" or an angle in degrees, not `{v}`	axis deve ser "vertical", "horizontal" ou um ângulo em graus, não `{v}`
 @msg	give corners of the path: anchors where its sides meet at an angle	informe os cantos do caminho: pontos de ancoragem onde os lados se encontram em ângulo
 @msg	give horizontal or vertical	informe horizontal ou vertical
@@ -5584,7 +5584,7 @@ effect	Regular	Regular
 	All shortcuts reset to defaults.	Todos os atalhos foram redefinidos para os padrões.
 	Imported. Press OK to keep the imported set.	Importado. Pressione OK para manter o conjunto importado.
 	⚠ {chord} was already used by {names} — it has been removed there.	Atenção: {chord} já era usado por {names}; foi removido de lá.
-	StitchFoundry Defaults	Padrões do StitchFoundry
+	ScreenFoundry Defaults	Padrões do ScreenFoundry
 @plural	{n} shortcut is assigned more than once|{n} shortcuts are assigned more than once	{n} atalho está atribuído mais de uma vez|{n} atalhos estão atribuídos mais de uma vez
 	Simulate prints overprints as Overprint Preview shows them; separations always keep them. A preset flattens transparency before printing (PostScript files always flatten it).	Simular imprime as sobreimpressões como a Visualização de Sobreimpressão as mostra; as separações sempre as mantêm. Um predefinido achata a transparência antes de imprimir (arquivos PostScript sempre a achatam).
 	Preserve	Preservar
@@ -5775,7 +5775,7 @@ file-filter	PDF presets	Predefinidos de PDF
 file-filter	Print presets	Predefinidos de impressão
 file-filter	SVG Compressed	SVG Compactado
 file-filter	PDF-compatible .ai	.ai compatível com PDF
-file-filter	StitchFoundry Template	Modelo do StitchFoundry
+file-filter	ScreenFoundry Template	Modelo do ScreenFoundry
 file-filter	Templates	Modelos
 diagnostics	render	renderização
 diagnostics	ui	interface
@@ -5816,7 +5816,7 @@ mark-style	Japanese	Japonesas
 	High Fidelity Photo	Foto de Alta Fidelidade
 	Image Trace (Make and Expand)	Rastreamento de Imagem (Criar e Expandir)
 	Joins:	Junções:
-	Keeps the document editable: StitchFoundry reopens the PDF with nothing lost. For files you'll edit again.	Mantém o documento editável: o StitchFoundry reabre o PDF sem perder nada. Para arquivos que você vai editar de novo.
+	Keeps the document editable: ScreenFoundry reopens the PDF with nothing lost. For files you'll edit again.	Mantém o documento editável: o ScreenFoundry reabre o PDF sem perder nada. Para arquivos que você vai editar de novo.
 	Lab Spot Colors	Cores Spot Lab
 	Lasso	Laço
 	Length:	Comprimento:
@@ -5855,9 +5855,9 @@ mark-style	Japanese	Japonesas
 	Touch Type	Texto de Toque
 	UTF-16 (Unicode)	UTF-16 (Unicode)
 	Variation	Variação
-	StitchFoundry Default	Padrão do StitchFoundry
-	StitchFoundry Generic CMYK (SWOP-like)	CMYK Genérico do StitchFoundry (tipo SWOP)
-	StitchFoundry Swatches (.vcswatches)	Amostras do StitchFoundry (.vcswatches)
+	ScreenFoundry Default	Padrão do ScreenFoundry
+	ScreenFoundry Generic CMYK (SWOP-like)	CMYK Genérico do ScreenFoundry (tipo SWOP)
+	ScreenFoundry Swatches (.vcswatches)	Amostras do ScreenFoundry (.vcswatches)
 	Vertical Area Type	Texto de Área Vertical
 	Vertical Type	Texto Vertical
 	Vertical Type on a Path	Texto Vertical em um Caminho
@@ -6008,10 +6008,10 @@ mark-style	Japanese	Japonesas
 @msg	name is empty	o nome está vazio
 @msg	no symbol named `{n}`	nenhum símbolo chamado `{n}`
 
-# Embroidery (StitchFoundry): Ask About Embroidery
+# Embroidery (ScreenFoundry): Ask About Embroidery
 	Ask About Embroidery…	Perguntar sobre bordado…
 
-# Embroidery (StitchFoundry): cross-stitch chart
+# Embroidery (ScreenFoundry): cross-stitch chart
 	Print Cross-Stitch Chart…	Imprimir gráfico de ponto cruz…
 	Print Cross-Stitch Chart	Imprimir gráfico de ponto cruz
 	Fill Cross Stitches	Preencher pontos cruz
@@ -6080,7 +6080,7 @@ mark-style	Japanese	Japonesas
 # Select by Color (select.color)
 	Select by Color	Selecionar por Cor
 
-# StitchFoundry (embroidery)
+# ScreenFoundry (embroidery)
 	#	#
 	A border of the selected line	Uma borda da linha selecionada
 	A check costs {n} credits; free checks come back next month.	Uma revisão custa {n} créditos; as revisões grátis voltam no mês que vem.
@@ -6107,7 +6107,7 @@ mark-style	Japanese	Japonesas
 	As the design has it	Como está no desenho
 	Ask	Perguntar
 	Ask About Embroidery	Perguntar sobre bordado
-	Ask anything about machine embroidery or StitchFoundry: which stabilizer to use, why thread breaks, how to make letters sew cleaner, where a feature is. Claude can also change your design when you ask, after you allow it.	Pergunte o que quiser sobre bordado à máquina ou sobre o StitchFoundry: qual entretela usar, por que a linha arrebenta, como deixar as letras mais nítidas, onde fica um recurso. O Claude também pode alterar o seu desenho quando você pedir, depois que você permitir.
+	Ask anything about machine embroidery or ScreenFoundry: which stabilizer to use, why thread breaks, how to make letters sew cleaner, where a feature is. Claude can also change your design when you ask, after you allow it.	Pergunte o que quiser sobre bordado à máquina ou sobre o ScreenFoundry: qual entretela usar, por que a linha arrebenta, como deixar as letras mais nítidas, onde fica um recurso. O Claude também pode alterar o seu desenho quando você pedir, depois que você permitir.
 	Auto Stitch Direction	Direção automática dos pontos
 	Auto spacing	Espaçamento automático
 	Auto split	Divisão automática
@@ -6239,7 +6239,7 @@ mark-style	Japanese	Japonesas
 	Keep these settings in the machine's profile, for new designs	Guardar estes ajustes no perfil da máquina, para novos desenhos
 	Larger than the hoop	Maior que o bastidor
 	Leather / vinyl	Couro / vinil
-	Leave it empty for StitchFoundry's own service.	Deixe vazio para usar o serviço do próprio StitchFoundry.
+	Leave it empty for ScreenFoundry's own service.	Deixe vazio para usar o serviço do próprio ScreenFoundry.
 	Lengths (mm)	Comprimentos (mm)
 	Let sewing start and stop at the closest points again	Voltar a iniciar e terminar o bordado nos pontos mais próximos
 	Lettering only {n} mm tall is hard to sew clearly	Letras com só {n} mm de altura são difíceis de bordar com nitidez
@@ -6298,7 +6298,7 @@ mark-style	Japanese	Japonesas
 	Pause	Pausa
 	Pay for the AI features with my Foundry credits	Pagar os recursos de IA com meus créditos do Foundry
 	Pay with Foundry credits instead	Pagar com créditos do Foundry
-	Payment is on Stripe's secure page, in your browser; your card never reaches StitchFoundry.	O pagamento é feito na página segura da Stripe, no seu navegador; o seu cartão nunca chega ao StitchFoundry.
+	Payment is on Stripe's secure page, in your browser; your card never reaches ScreenFoundry.	O pagamento é feito na página segura da Stripe, no seu navegador; o seu cartão nunca chega ao ScreenFoundry.
 	Photos of your finished sew-out	Fotos do seu bordado pronto
 	Pick a brush, width, density and shape from a dial, then draw on the canvas	Escolha pincel, largura, densidade e forma em um seletor giratório e desenhe na tela
 	Pick, move, add and delete single stitches	Selecionar, mover, adicionar e excluir pontos individuais
@@ -6353,7 +6353,7 @@ mark-style	Japanese	Japonesas
 	Sew later	Bordar depois
 	Sew the objects separately again	Voltar a bordar os objetos separadamente
 	Sewn last	Bordado por último
-	Share this check to help improve StitchFoundry (kept private; delete it any time in Foundry Account)	Compartilhar esta revisão para ajudar a melhorar o StitchFoundry (fica privada; exclua quando quiser em Conta Foundry)
+	Share this check to help improve ScreenFoundry (kept private; delete it any time in Foundry Account)	Compartilhar esta revisão para ajudar a melhorar o ScreenFoundry (fica privada; exclua quando quiser em Conta Foundry)
 	Short stitches on curves	Pontos curtos nas curvas
 	Shortest stitch	Ponto mais curto
 	Show every stitch	Mostrar todos os pontos
@@ -6462,13 +6462,13 @@ mark-style	Japanese	Japonesas
 	{n} credits for {price}	{n} créditos por {price}
 	{n} free checks left this month.	Restam {n} revisões grátis neste mês.
 	{n}-count Aida	Etamine Aida {n} pontos
-# Embroidery (StitchFoundry): picture services
+# Embroidery (ScreenFoundry): picture services
 	Picture made by	Imagem feita por
 	Claude (draws the shapes itself)	Claude (desenha as formas ele mesmo)
 	{name} API key:	Chave de API do {name}:
 	The picture is billed to your account with that service. Claude then redraws it as flat shapes in your thread colors, so it sews with few thread changes.	A imagem é cobrada na sua conta desse serviço. Depois o Claude a redesenha como formas chapadas nas cores das suas linhas, para que borde com poucas trocas de linha.
 	Making the picture…	Criando a imagem…
-# Embroidery (StitchFoundry): undo steps
+# Embroidery (ScreenFoundry): undo steps
 	Auto-Digitize	Digitalizar automaticamente
 	Backstitch Line	Linha de ponto atrás
 	Close Appliqué Outlines	Fechar contornos do aplique
@@ -6491,26 +6491,26 @@ mark-style	Japanese	Japonesas
 	A new design: a hoopful of patches, each colour sewn once for all of them	Um novo desenho: um bastidor cheio de patches, cada cor bordada uma vez para todos
 	Every hoopful as a machine file, and a list of the names in each	Cada bastidor como arquivo de máquina, e uma lista dos nomes de cada um
 	The open design repeated across its hoop, sorted so each colour is sewn once	O desenho aberto repetido por todo o bastidor, ordenado para bordar cada cor uma só vez
-# Report to StitchFoundry (ui.reportSewout)
+# Report to ScreenFoundry (ui.reportSewout)
 	Anything you'd like to add (optional)	Algo mais a acrescentar? (opcional)
 	Claude is writing the report…	O Claude está escrevendo o relatório…
 	Have Claude Write It	Deixar o Claude escrever
-	Help make StitchFoundry better	Ajude a melhorar o StitchFoundry
-	I agree to send this to SiteSentrix, the maker of StitchFoundry, to improve the software. It won't be shared with anyone else.	Concordo em enviar isto à SiteSentrix, criadora do StitchFoundry, para melhorar o programa. Não será compartilhado com mais ninguém.
+	Help make ScreenFoundry better	Ajude a melhorar o ScreenFoundry
+	I agree to send this to SiteSentrix, the maker of ScreenFoundry, to improve the software. It won't be shared with anyone else.	Concordo em enviar isto à SiteSentrix, criadora do ScreenFoundry, para melhorar o programa. Não será compartilhado com mais ninguém.
 	Include a summary of the design	Incluir um resumo do desenho
 	Include the conversation with Claude	Incluir a conversa com o Claude
 	Include the photos ({n})	Incluir as fotos ({n})
-	Report to StitchFoundry	Relatar ao StitchFoundry
-	Report to StitchFoundry…	Relatar ao StitchFoundry…
+	Report to ScreenFoundry	Relatar ao ScreenFoundry
+	Report to ScreenFoundry…	Relatar ao ScreenFoundry…
 	Send Report	Enviar relatório
-	Send this sew-out and Claude's idea of what StitchFoundry could do better to its makers	Enviar este bordado e a ideia do Claude do que o StitchFoundry poderia fazer melhor aos seus criadores
-	Send this sew-out to the people who make StitchFoundry, with Claude's idea of what the software could do better. We use it only to improve StitchFoundry: we never share, sell or publish it, and you can have it deleted at any time (Foundry Account › Delete My Shared Sew-out Checks).	Envie este bordado para quem faz o StitchFoundry, com a ideia do Claude do que o programa poderia fazer melhor. Usamos só para melhorar o StitchFoundry: nunca compartilhamos, vendemos ou publicamos, e você pode pedir para apagar a qualquer momento (Conta Foundry › Excluir minhas revisões compartilhadas).
+	Send this sew-out and Claude's idea of what ScreenFoundry could do better to its makers	Enviar este bordado e a ideia do Claude do que o ScreenFoundry poderia fazer melhor aos seus criadores
+	Send this sew-out to the people who make ScreenFoundry, with Claude's idea of what the software could do better. We use it only to improve ScreenFoundry: we never share, sell or publish it, and you can have it deleted at any time (Foundry Account › Delete My Shared Sew-out Checks).	Envie este bordado para quem faz o ScreenFoundry, com a ideia do Claude do que o programa poderia fazer melhor. Usamos só para melhorar o ScreenFoundry: nunca compartilhamos, vendemos ou publicamos, e você pode pedir para apagar a qualquer momento (Conta Foundry › Excluir minhas revisões compartilhadas).
 	Sign in to Foundry Account to send a report.	Entre na Conta Foundry para enviar um relatório.
 @msg	Sign in to Foundry Account to send a report.	Entre na Conta Foundry para enviar um relatório.
 	Thank you: your report was sent.	Obrigado: seu relatório foi enviado.
 	Title	Título
-	What went wrong, and what StitchFoundry could do better	O que deu errado e o que o StitchFoundry poderia fazer melhor
-	Write a report about this sew-out for the people who make StitchFoundry.	Escreva um relatório sobre este bordado para quem faz o StitchFoundry.
+	What went wrong, and what ScreenFoundry could do better	O que deu errado e o que o ScreenFoundry poderia fazer melhor
+	Write a report about this sew-out for the people who make ScreenFoundry.	Escreva um relatório sobre este bordado para quem faz o ScreenFoundry.
 @msg	Check a sew-out first: the report goes with its photos and Claude's answer	Verifique um bordado primeiro: o relatório vai com as fotos e a resposta do Claude
 @msg	Tick the box to agree to send it first.	Marque a caixa primeiro para concordar em enviar.
 @msg	Write what went wrong first, or have Claude write it.	Escreva primeiro o que deu errado, ou deixe o Claude escrever.

@@ -77,7 +77,7 @@ fn progress_sink(out: SyncSender<String>, msg: &Value) -> Option<cancel::Progres
     }))
 }
 
-const INSTRUCTIONS: &str = "StitchFoundry is a screen-printing prepress app built on a professional vector editor: draw or import \
+const INSTRUCTIONS: &str = "ScreenFoundry is a screen-printing prepress app built on a professional vector editor: draw or import \
 artwork, then separate it into one film per screen with the screen.* commands (screen.palette, screen.separate, \
 screen.halftone, screen.advice). Coordinates are \
 points in document space (y down, origin at the first artboard's top-left; a new document is 612×792). \
@@ -420,7 +420,7 @@ impl Server {
                         "completions": {},
                         "logging": {},
                     },
-                    "serverInfo": {"name": "stitchfoundry", "title": "StitchFoundry", "version": env!("CARGO_PKG_VERSION")},
+                    "serverInfo": {"name": "screenfoundry", "title": "ScreenFoundry", "version": env!("CARGO_PKG_VERSION")},
                     "instructions": format!("{INSTRUCTIONS} Backend: {}.", self.backend.describe()),
                 }))
             }

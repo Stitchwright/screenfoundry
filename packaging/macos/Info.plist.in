@@ -7,13 +7,13 @@
   <key>CFBundleDevelopmentRegion</key>
   <string>en</string>
   <key>CFBundleDisplayName</key>
-  <string>StitchFoundry</string>
+  <string>ScreenFoundry</string>
   <key>CFBundleName</key>
-  <string>StitchFoundry</string>
+  <string>ScreenFoundry</string>
   <key>CFBundleExecutable</key>
-  <string>StitchFoundry</string>
+  <string>ScreenFoundry</string>
   <key>CFBundleIdentifier</key>
-  <string>com.stitchwright.stitchfoundry</string>
+  <string>com.stitchwright.screenfoundry</string>
   <key>CFBundleInfoDictionaryVersion</key>
   <string>6.0</string>
   <key>CFBundlePackageType</key>
@@ -29,7 +29,7 @@
   <key>VectorCraftBuildCommit</key>
   <string>@BUILD_SHA@</string>
   <key>CFBundleIconFile</key>
-  <string>StitchFoundry</string>
+  <string>ScreenFoundry</string>
   <key>LSApplicationCategoryType</key>
   <string>public.app-category.graphics-design</string>
   <!-- Must match MACOSX_DEPLOYMENT_TARGET in package.sh. Big Sur is the first release on
@@ -46,20 +46,20 @@
   <string>Copyright © Bruce Wattendorf (SiteSentrix) and the VectorCraft authors. MIT OR Apache-2.0.</string>
 
   <!-- Every format File › Open reads (OPEN_EXTS in crates/engine/src/cmd/fileio/mod.rs; a test in
-       apps/vectorcraft checks this list), so Finder offers StitchFoundry for them (Open With,
-       double-click, Dock drop). StitchFoundry owns its own formats; for the others it is an
+       apps/vectorcraft checks this list), so Finder offers ScreenFoundry for them (Open With,
+       double-click, Dock drop). ScreenFoundry owns its own formats; for the others it is an
        alternate, so it doesn't take over another app's files. The app isn't NSDocument-based (no
        NSDocumentClass): it opens these files itself (apps/vectorcraft/src/open_documents.rs). -->
   <key>CFBundleDocumentTypes</key>
   <array>
     <dict>
-      <key>CFBundleTypeName</key><string>StitchFoundry Document</string>
-      <key>LSItemContentTypes</key><array><string>com.stitchwright.stitchfoundry.document</string></array>
+      <key>CFBundleTypeName</key><string>ScreenFoundry Document</string>
+      <key>LSItemContentTypes</key><array><string>com.stitchwright.screenfoundry.document</string></array>
       <key>CFBundleTypeRole</key><string>Editor</string>
       <key>LSHandlerRank</key><string>Owner</string>
     </dict>
     <dict>
-      <key>CFBundleTypeName</key><string>StitchFoundry Template</string>
+      <key>CFBundleTypeName</key><string>ScreenFoundry Template</string>
       <key>CFBundleTypeExtensions</key><array><string>vctemplate</string></array>
       <key>CFBundleTypeRole</key><string>Editor</string>
       <key>LSHandlerRank</key><string>Owner</string>
@@ -118,27 +118,27 @@
     </dict>
   </array>
 
-  <!-- The native format: .stitchfoundry, and VectorCraft's .vectorcraft and .drawcraft (its name from before its rename), which open too. -->
+  <!-- The native format: .screenfoundry, and .stitchfoundry (this app's name before), VectorCraft's .vectorcraft and .drawcraft (its name from before its rename), which open too. -->
   <key>UTExportedTypeDeclarations</key>
   <array>
     <dict>
       <key>UTTypeIdentifier</key>
-      <string>com.stitchwright.stitchfoundry.document</string>
+      <string>com.stitchwright.screenfoundry.document</string>
       <key>UTTypeDescription</key>
-      <string>StitchFoundry Document</string>
+      <string>ScreenFoundry Document</string>
       <key>UTTypeConformsTo</key>
       <array>
         <string>public.data</string>
         <string>public.image</string>
       </array>
       <key>UTTypeIconFile</key>
-      <string>StitchFoundry</string>
+      <string>ScreenFoundry</string>
       <key>UTTypeTagSpecification</key>
       <dict>
         <key>public.filename-extension</key>
-        <array><string>stitchfoundry</string><string>vectorcraft</string><string>drawcraft</string></array>
+        <array><string>screenfoundry</string><string>stitchfoundry</string><string>vectorcraft</string><string>drawcraft</string></array>
         <key>public.mime-type</key>
-        <array><string>application/x-stitchfoundry</string><string>application/x-vectorcraft</string></array>
+        <array><string>application/x-screenfoundry</string><string>application/x-vectorcraft</string></array>
       </dict>
     </dict>
   </array>

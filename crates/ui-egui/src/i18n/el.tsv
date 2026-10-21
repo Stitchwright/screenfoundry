@@ -71,7 +71,7 @@
 	A File…	Αρχείο…
 	A new preset starting from the selected one	Νέα προεπιλογή με βάση την επιλεγμένη
 	A saved copy of the selected preset	Αποθηκευμένο αντίγραφο της επιλεγμένης προεπιλογής
-	About StitchFoundry	Σχετικά με το StitchFoundry
+	About ScreenFoundry	Σχετικά με το ScreenFoundry
 	above	παραπάνω
 	Absolute Position	Απόλυτη θέση
 	Accurate	Ακριβές
@@ -173,7 +173,7 @@
 	Appearance of Black	Απεικόνιση του μαύρου
 	Appearance Panel	Πίνακας εμφάνισης
 	Appearance panel	Πίνακας εμφάνισης
-	Applies the next time StitchFoundry starts.	Εφαρμόζεται στην επόμενη εκκίνηση του StitchFoundry.
+	Applies the next time ScreenFoundry starts.	Εφαρμόζεται στην επόμενη εκκίνηση του ScreenFoundry.
 	Apply	Εφαρμογή
 	Apply Brush	Εφαρμογή πινέλου
 	Apply Character Style	Εφαρμογή στυλ χαρακτήρων
@@ -348,7 +348,7 @@
 	Check Script	Έλεγχος σεναρίου
 	Check Script…	Έλεγχος σεναρίου…
 	Copy Report	Αντιγραφή αναφοράς
-	StitchFoundry read this script without running it.	Το StitchFoundry διάβασε αυτό το σενάριο χωρίς να το εκτελέσει.
+	ScreenFoundry read this script without running it.	Το ScreenFoundry διάβασε αυτό το σενάριο χωρίς να το εκτελέσει.
 	Needs nothing beyond plain JavaScript	Απαιτεί μόνο απλή JavaScript
 	Needs the document model	Απαιτεί το μοντέλο εγγράφου
 	Needs files	Απαιτεί πρόσβαση σε αρχεία
@@ -1497,7 +1497,7 @@
 	not known yet	δεν είναι ακόμη γνωστό
 	Shortcuts	Συντομεύσεις
 	In the File	Στο αρχείο
-	In StitchFoundry	Στο StitchFoundry
+	In ScreenFoundry	Στο ScreenFoundry
 	Needs Attention Only	Μόνο όσα απαιτούν προσοχή
 	Ready	Έτοιμο
 	Needs a choice	Απαιτεί επιλογή
@@ -1506,7 +1506,7 @@
 	Tools take a single key (optionally with Shift)	Τα εργαλεία χρησιμοποιούν ένα πλήκτρο (προαιρετικά με Shift)
 	A later row takes this shortcut	Μια επόμενη γραμμή χρησιμοποιεί αυτή τη συντόμευση
 	Same item as a later row	Ίδιο στοιχείο με επόμενη γραμμή
-	Start from StitchFoundry Defaults	Εκκίνηση από τις προεπιλογές του StitchFoundry
+	Start from ScreenFoundry Defaults	Εκκίνηση από τις προεπιλογές του ScreenFoundry
 	Add to the Current Shortcuts	Προσθήκη στις τρέχουσες συντομεύσεις
 	Remember My Choices	Απομνημόνευση των επιλογών μου
 	{ready} of {total} ready	{ready} από {total} έτοιμα
@@ -2082,7 +2082,7 @@ axis	Both	Και τα δύο
 @msg	Split Into Grid: select paths large enough for the grid	Διαίρεση σε πλέγμα: επιλέξτε αρκετά μεγάλες διαδρομές για το πλέγμα
 @msg	Targa files are RGB: colorModel rgb	Τα αρχεία Targa είναι RGB: colorModel rgb
 @msg	Text Wrap: select a wrap object	Αναδίπλωση κειμένου: επιλέξτε αντικείμενο αναδίπλωσης
-@msg	This shortcut file is in a form StitchFoundry can't read.	Αυτό το αρχείο συντομεύσεων έχει μορφή που δεν μπορεί να διαβάσει το StitchFoundry.
+@msg	This shortcut file is in a form ScreenFoundry can't read.	Αυτό το αρχείο συντομεύσεων έχει μορφή που δεν μπορεί να διαβάσει το ScreenFoundry.
 @msg	`aspect` must be a number (%)	Το `aspect` πρέπει να είναι αριθμός (%)
 @msg	`at` must be [x, y]	Το `at` πρέπει να είναι [x, y]
 @msg	`color` must be a colour	Το `color` πρέπει να είναι χρώμα
@@ -2356,7 +2356,7 @@ file-filter	Print presets	Προεπιλογές εκτύπωσης
 file-filter	SVG Compressed	Συμπιεσμένο SVG
 file-filter	Swatch libraries	Βιβλιοθήκες δειγμάτων χρωμάτων
 file-filter	Templates	Πρότυπα
-file-filter	StitchFoundry Template	Πρότυπο StitchFoundry
+file-filter	ScreenFoundry Template	Πρότυπο ScreenFoundry
 gradient-kind	Radial	Ακτινωτό
 mark-style	Japanese	Ιαπωνικά
 theme	Appearance	Εμφάνιση
@@ -2401,7 +2401,7 @@ theme	Appearance	Εμφάνιση
 	Japanese	Ιαπωνικά
 	Keep a link to an image file instead of only embedding it	Διατήρηση συνδέσμου προς το αρχείο εικόνας αντί μόνο της ενσωμάτωσής του
 	Keep the pasted color as a new swatch with a numbered name.	Διατήρηση του επικολλημένου χρώματος ως νέο δείγμα με αριθμημένο όνομα.
-	Each entry of the file is matched to a StitchFoundry tool, command or panel. Check the matches and answer what is left.	Κάθε καταχώριση του αρχείου αντιστοιχίζεται σε εργαλείο, εντολή ή πίνακα του StitchFoundry. Ελέγξτε τις αντιστοιχίσεις και συμπληρώστε όσα απομένουν.
+	Each entry of the file is matched to a ScreenFoundry tool, command or panel. Check the matches and answer what is left.	Κάθε καταχώριση του αρχείου αντιστοιχίζεται σε εργαλείο, εντολή ή πίνακα του ScreenFoundry. Ελέγξτε τις αντιστοιχίσεις και συμπληρώστε όσα απομένουν.
 	The file writes keys and modifiers as codes. Check the proposed meanings and answer the codes that are not known yet.	Το αρχείο αποθηκεύει πλήκτρα και τροποποιητές ως κωδικούς. Ελέγξτε τις προτεινόμενες αντιστοιχίσεις και συμπληρώστε τους άγνωστους κωδικούς.
 	Click, then press the key this code stands for (Esc cancels)	Κάντε κλικ και πατήστε το πλήκτρο που αντιστοιχεί στον κωδικό (Esc για ακύρωση)
 	The file is too large to read in full, so only its first part is listed.	Το αρχείο είναι πολύ μεγάλο για πλήρη ανάγνωση· εμφανίζεται μόνο το αρχικό τμήμα του.
@@ -2921,7 +2921,7 @@ theme	Appearance	Εμφάνιση
 	Quality {quality}	Ποιότητα {quality}
 	Quarter Space	Τεταρτοδιάστημα
 	Quickly start a new file	Γρήγορη δημιουργία νέου αρχείου
-	Quit StitchFoundry	Τερματισμός StitchFoundry
+	Quit ScreenFoundry	Τερματισμός ScreenFoundry
 	Radar Graph Tool	Αραχνοειδές γράφημα (Radar Graph Tool)
 	Radial Glows	Ακτινικές λάμψεις
 	Radius 1	Ακτίνα 1
@@ -3015,7 +3015,7 @@ theme	Appearance	Εμφάνιση
 	{count} folder(s) or file(s) couldn't be read	Δεν ήταν δυνατή η ανάγνωση {count} φακέλων ή αρχείων
 	The search stopped at its limit: search a smaller folder.	Η αναζήτηση έφτασε στο όριό της: επιλέξτε μικρότερο φάκελο.
 	Copy only fonts you own or are licensed to install.	Αντιγράψτε μόνο γραμματοσειρές που σας ανήκουν ή έχετε άδεια να εγκαταστήσετε.
-	StitchFoundry copies the fonts to {folder}.	Το StitchFoundry αντιγράφει τις γραμματοσειρές στον φάκελο {folder}.
+	ScreenFoundry copies the fonts to {folder}.	Το ScreenFoundry αντιγράφει τις γραμματοσειρές στον φάκελο {folder}.
 	Registered Trademark Symbol	Σύμβολο καταχωρισμένου εμπορικού σήματος
 	Registration marks	Σημάδια ευθυγράμμισης
 	Registry name:	Όνομα καταχώρισης:
@@ -3110,7 +3110,7 @@ theme	Appearance	Εμφάνιση
 	Reverse Spine	Αντιστροφή κεντρικής καμπύλης
 	Revert to the saved version of “{name}”?	Επαναφορά στην αποθηκευμένη έκδοση του «{name}»;
 	Replace “{name}”, the file this document was opened from?	Να αντικατασταθεί το «{name}», το αρχικό αρχείο του εγγράφου;
-	Opening it left out what StitchFoundry can't read yet ({what}), so replacing it loses that for good. Save under another name to keep it.	Κατά το άνοιγμα παραλείφθηκαν στοιχεία που το StitchFoundry δεν μπορεί ακόμη να διαβάσει ({what}). Αν αντικαταστήσετε το αρχείο, θα χαθούν οριστικά. Αποθηκεύστε με άλλο όνομα για να τα διατηρήσετε.
+	Opening it left out what ScreenFoundry can't read yet ({what}), so replacing it loses that for good. Save under another name to keep it.	Κατά το άνοιγμα παραλείφθηκαν στοιχεία που το ScreenFoundry δεν μπορεί ακόμη να διαβάσει ({what}). Αν αντικαταστήσετε το αρχείο, θα χαθούν οριστικά. Αποθηκεύστε με άλλο όνομα για να τα διατηρήσετε.
 	Opening it left out what VectorCraft can't read yet ({what}), so replacing it loses that for good. Save under another name to keep it.	Κατά το άνοιγμα παραλείφθηκαν στοιχεία που το VectorCraft δεν μπορεί ακόμη να διαβάσει ({what}). Αν αντικαταστήσετε το αρχείο, θα χαθούν οριστικά. Αποθηκεύστε με άλλο όνομα για να τα διατηρήσετε.
 	“{name}” already exists. Replace it?	Το «{name}» υπάρχει ήδη. Να αντικατασταθεί;
 	The name in the save panel was “{typed}”; VectorCraft added the file type's extension. Replacing the file overwrites its contents.	Το όνομα στο παράθυρο αποθήκευσης ήταν «{typed}» και το VectorCraft πρόσθεσε την επέκταση του τύπου αρχείου. Αν αντικαταστήσετε το αρχείο, τα περιεχόμενά του θα χαθούν.
@@ -3713,9 +3713,9 @@ theme	Appearance	Εμφάνιση
 	Vector Halftone	Διανυσματικός ημιτονισμός
 	Vector Halftone…	Διανυσματικός ημιτονισμός…
 	Vector illustration — fast, open, scriptable.	Διανυσματική σχεδίαση — γρήγορη, ανοιχτή και αυτοματοποιήσιμη.
-	StitchFoundry didn't quit normally last time. These documents had unsaved changes:	Το StitchFoundry δεν τερματίστηκε κανονικά την προηγούμενη φορά. Τα ακόλουθα έγγραφα είχαν μη αποθηκευμένες αλλαγές:
-	StitchFoundry Help…	Βοήθεια StitchFoundry…
-	StitchFoundry on GitHub	StitchFoundry στο GitHub
+	ScreenFoundry didn't quit normally last time. These documents had unsaved changes:	Το ScreenFoundry δεν τερματίστηκε κανονικά την προηγούμενη φορά. Τα ακόλουθα έγγραφα είχαν μη αποθηκευμένες αλλαγές:
+	ScreenFoundry Help…	Βοήθεια ScreenFoundry…
+	ScreenFoundry on GitHub	ScreenFoundry στο GitHub
 	Vectors	Διανύσματα
 	Version {version} — open-source vector illustration in pure Rust.	Έκδοση {version} — διανυσματική σχεδίαση ανοιχτού κώδικα εξ ολοκλήρου σε Rust.
 	Vertical %	Κατακόρυφα %
@@ -3743,7 +3743,7 @@ theme	Appearance	Εμφάνιση
 	Web Safe 216	216 ασφαλή χρώματα ιστού
 	Web Safe RGB	Ασφαλή χρώματα RGB ιστού
 	Web Shift	Μετατόπιση χρωμάτων ιστού
-	Welcome to StitchFoundry	Καλώς ήρθατε στο StitchFoundry
+	Welcome to ScreenFoundry	Καλώς ήρθατε στο ScreenFoundry
 	When pasting text	Κατά την επικόλληση κειμένου
 	Widget Position:	Θέση στοιχείου:
 	Width Point	Σημείο πλάτους
@@ -3859,7 +3859,7 @@ theme	Appearance	Εμφάνιση
 @msg	can't encode the document: {0}	δεν είναι δυνατή η κωδικοποίηση εγγράφου: {0}
 @msg	can't parse shortcut `{c}`	δεν είναι δυνατή η ανάλυση της συντόμευσης `{c}`
 @msg	can't parse shortcut `{s}` for `{k}`	δεν είναι δυνατή η ανάλυση της συντόμευσης `{s}` για `{k}`
-@msg	can't save version {0}: StitchFoundry writes versions {MIN_VERSION} to {VERSION}	δεν είναι δυνατή η αποθήκευση της έκδοσης {0}: το StitchFoundry γράφει εκδόσεις από {MIN_VERSION} έως {VERSION}
+@msg	can't save version {0}: ScreenFoundry writes versions {MIN_VERSION} to {VERSION}	δεν είναι δυνατή η αποθήκευση της έκδοσης {0}: το ScreenFoundry γράφει εκδόσεις από {MIN_VERSION} έως {VERSION}
 @msg	can't write .{ext} images	δεν είναι δυνατή η εγγραφή εικόνων .{ext}
 @msg	cannot distort a zero-size bounding box	δεν είναι δυνατή η παραμόρφωση πλαισίου οριοθέτησης μηδενικού μεγέθους
 @msg	cannot read PDF: {0}	δεν είναι δυνατή η ανάγνωση PDF: {0}
@@ -3885,7 +3885,7 @@ theme	Appearance	Εμφάνιση
 @msg	empty brush stroke	κενό περίγραμμα πινέλου
 @msg	empty cutter	κενό αντικείμενο αποκοπής
 @msg	empty path	κενή διαδρομή
-@msg	file version {0} is newer than this StitchFoundry supports ({VERSION})	η έκδοση αρχείου {0} είναι νεότερη από αυτήν που υποστηρίζει το StitchFoundry ({VERSION})
+@msg	file version {0} is newer than this ScreenFoundry supports ({VERSION})	η έκδοση αρχείου {0} είναι νεότερη από αυτήν που υποστηρίζει το ScreenFoundry ({VERSION})
 @msg	freeform point {i} needs `at` [x, y] and a valid `color`	το σημείο ελεύθερης μορφής {i} χρειάζεται `at` [x, y] και έγκυρο `color`
 @msg	freeform line {i} must be an array of point indices	η γραμμή ελεύθερης μορφής {i} πρέπει να είναι πίνακας δεικτών σημείων
 @msg	give both `start` and `end` [x, y] (or neither)	δώστε και τα δύο `start` και `end` [x, y] (ή κανένα)
@@ -3906,9 +3906,9 @@ theme	Appearance	Εμφάνιση
 @msg	invalid PDF setting: {0}	μη έγκυρη ρύθμιση PDF: {0}
 @msg	invalid image data for `{0}`	μη έγκυρα δεδομένα εικόνας για `{0}`
 @msg	invalid parameters for `{cmd}`: {msg}	μη έγκυρες παράμετροι για `{cmd}`: {msg}
-@msg	is not an image StitchFoundry reads	δεν είναι μορφή εικόνας που μπορεί να διαβάσει το StitchFoundry
-@msg	it uses `{at}`, which StitchFoundry's PostScript reader doesn't know	χρησιμοποιεί το `{at}`, το οποίο δεν αναγνωρίζει ο αναγνώστης PostScript του StitchFoundry
-@msg	it uses `{at}`, which StitchFoundry's PostScript reader doesn't know, in {procs}	χρησιμοποιεί το `{at}`, το οποίο δεν αναγνωρίζει ο αναγνώστης PostScript του StitchFoundry, στις διαδικασίες {procs}
+@msg	is not an image ScreenFoundry reads	δεν είναι μορφή εικόνας που μπορεί να διαβάσει το ScreenFoundry
+@msg	it uses `{at}`, which ScreenFoundry's PostScript reader doesn't know	χρησιμοποιεί το `{at}`, το οποίο δεν αναγνωρίζει ο αναγνώστης PostScript του ScreenFoundry
+@msg	it uses `{at}`, which ScreenFoundry's PostScript reader doesn't know, in {procs}	χρησιμοποιεί το `{at}`, το οποίο δεν αναγνωρίζει ο αναγνώστης PostScript του ScreenFoundry, στις διαδικασίες {procs}
 @msg	its Windows metafile preview was opened instead, which may simplify the art	αντί γι' αυτό ανοίχτηκε η προεπισκόπηση μετααρχείου Windows, η οποία μπορεί να απλοποιεί το σχέδιο
 @msg	its preview was placed instead, at screen resolution	τοποθετήθηκε η προεπισκόπησή του σε ανάλυση οθόνης
 @msg	join needs open paths	η ένωση απαιτεί ανοιχτές διαδρομές
@@ -4016,8 +4016,8 @@ theme	Appearance	Εμφάνιση
 @msg	no user workspace `{from}`	δεν υπάρχει χώρος εργασίας χρήστη `{from}`
 @msg	node {_1} is not text	ο κόμβος {_1} δεν είναι κείμενο
 @msg	not a DXF drawing	δεν είναι σχέδιο DXF
-@msg	not a StitchFoundry file: {0}	δεν είναι αρχείο StitchFoundry: {0}
-@msg	not a StitchFoundry shortcut set (missing `overrides`)	δεν είναι σύνολο συντομεύσεων StitchFoundry (λείπει το `overrides`)
+@msg	not a ScreenFoundry file: {0}	δεν είναι αρχείο ScreenFoundry: {0}
+@msg	not a ScreenFoundry shortcut set (missing `overrides`)	δεν είναι σύνολο συντομεύσεων ScreenFoundry (λείπει το `overrides`)
 @msg	not a VectorCraft file: {0}	δεν είναι αρχείο VectorCraft: {0}
 @msg	not a VectorCraft shortcut set (missing `overrides`)	δεν είναι σύνολο συντομεύσεων VectorCraft (λείπει το `overrides`)
 @msg	not a blend	δεν είναι ανάμειξη
@@ -4257,11 +4257,11 @@ theme	Appearance	Εμφάνιση
 @msg	Sent to {_1}	Στάλθηκε στο {_1}
 @msg	{_1} files	{_1} αρχεία
 @msg	The graphics were lost and have been restarted	Η λειτουργία γραφικών διακόπηκε και επανεκκινήθηκε
-@msg	The graphics processor tried first couldn't show the window, so StitchFoundry started again on {summary}	Ο αρχικός επεξεργαστής γραφικών δεν μπόρεσε να εμφανίσει το παράθυρο και το StitchFoundry επανεκκίνησε στον {summary}
-@msg	The last start of StitchFoundry ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Η τελευταία εκκίνηση του StitchFoundry τερματίστηκε στον {name} πριν εμφανιστεί το παράθυρο, οπότε ξεκίνησε στον {summary}. Για να δοκιμάσετε ξανά αυτόν τον επεξεργαστή γραφικών, αλλάξτε Προτιμήσεις › Επιδόσεις › Επεξεργαστής γραφικών ή ξεκινήστε με ορισμένη τη μεταβλητή WGPU_BACKEND
-@msg	The last start of StitchFoundry ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Η τελευταία εκκίνηση του StitchFoundry τερματίστηκε κατά την απαρίθμηση των επεξεργαστών γραφικών, οπότε ξεκίνησε στον {summary} μόνο με OpenGL. Για να δοκιμάσετε ξανά τα άλλα συστήματα γραφικών, αλλάξτε Προτιμήσεις › Επιδόσεις › Επεξεργαστής γραφικών ή ξεκινήστε με ορισμένη τη μεταβλητή WGPU_BACKEND
-@msg	Loading StitchFoundry…	Φόρτωση StitchFoundry…
-@msg	StitchFoundry failed to start: {e}	Η εκκίνηση του StitchFoundry απέτυχε: {e}
+@msg	The graphics processor tried first couldn't show the window, so ScreenFoundry started again on {summary}	Ο αρχικός επεξεργαστής γραφικών δεν μπόρεσε να εμφανίσει το παράθυρο και το ScreenFoundry επανεκκίνησε στον {summary}
+@msg	The last start of ScreenFoundry ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Η τελευταία εκκίνηση του ScreenFoundry τερματίστηκε στον {name} πριν εμφανιστεί το παράθυρο, οπότε ξεκίνησε στον {summary}. Για να δοκιμάσετε ξανά αυτόν τον επεξεργαστή γραφικών, αλλάξτε Προτιμήσεις › Επιδόσεις › Επεξεργαστής γραφικών ή ξεκινήστε με ορισμένη τη μεταβλητή WGPU_BACKEND
+@msg	The last start of ScreenFoundry ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Η τελευταία εκκίνηση του ScreenFoundry τερματίστηκε κατά την απαρίθμηση των επεξεργαστών γραφικών, οπότε ξεκίνησε στον {summary} μόνο με OpenGL. Για να δοκιμάσετε ξανά τα άλλα συστήματα γραφικών, αλλάξτε Προτιμήσεις › Επιδόσεις › Επεξεργαστής γραφικών ή ξεκινήστε με ορισμένη τη μεταβλητή WGPU_BACKEND
+@msg	Loading ScreenFoundry…	Φόρτωση ScreenFoundry…
+@msg	ScreenFoundry failed to start: {e}	Η εκκίνηση του ScreenFoundry απέτυχε: {e}
 @msg	A browser with WebGPU or WebGL2 is required.	Απαιτείται πρόγραμμα περιήγησης με WebGPU ή WebGL2.
 @msg	The graphics were lost and couldn't be restarted.	Η λειτουργία γραφικών διακόπηκε και δεν ήταν δυνατή η επανεκκίνησή της.
 @msg	Your unsaved changes are kept in this browser: reload the page to get them back.	Οι μη αποθηκευμένες αλλαγές διατηρούνται σε αυτό το πρόγραμμα περιήγησης: ανανεώστε τη σελίδα για ανάκτησή τους.
@@ -4283,25 +4283,25 @@ theme	Appearance	Εμφάνιση
 @msg	it has more than {MAX_NODES} objects	περιέχει περισσότερα από {MAX_NODES} αντικείμενα
 @msg	it has no layers	δεν περιέχει επίπεδα
 @msg	it has too many values in a row	περιέχει υπερβολικά πολλές τιμές σε μία γραμμή
-@msg	it has {_1}, which StitchFoundry doesn't read from it yet	περιέχει {_1}, τα οποία το StitchFoundry δεν μπορεί ακόμη να διαβάσει
+@msg	it has {_1}, which ScreenFoundry doesn't read from it yet	περιέχει {_1}, τα οποία το ScreenFoundry δεν μπορεί ακόμη να διαβάσει
 @msg	its objects are nested too deeply	τα αντικείμενά του έχουν υπερβολικά βαθιά ένθεση
 @msg	its section ending with `%{end}` doesn't end	η ενότητά του που τελειώνει σε `%{end}` δεν τερματίζεται
 @msg	objects with several fills or strokes, effects or brushes came in as their drawn look ({_1}): their appearance isn't editable yet	τα αντικείμενα με πολλαπλά γεμίσματα, περιγράμματα, εφέ ή πινέλα εισήχθησαν ως απεικονίσεις ({_1}): η εμφάνισή τους δεν είναι ακόμη επεξεργάσιμη
 @msg	gradient “{name}” isn't defined in the file: a plain colour stands in for it	το ντεγκραντέ «{name}» δεν ορίζεται στο αρχείο: χρησιμοποιείται στη θέση του ένα συμπαγές χρώμα
-@msg	an image StitchFoundry can't read was left out	παραλείφθηκε εικόνα που δεν μπορεί να διαβάσει το StitchFoundry
+@msg	an image ScreenFoundry can't read was left out	παραλείφθηκε εικόνα που δεν μπορεί να διαβάσει το ScreenFoundry
 @msg	an image whose data is cut short was left out	παραλείφθηκε εικόνα με περικομμένα δεδομένα
 @msg	linked pictures show the low-resolution preview saved in the file until their files are found: relink them in the Links panel	οι συνδεδεμένες εικόνες εμφανίζουν την προεπισκόπηση χαμηλής ανάλυσης που έχει αποθηκευτεί, μέχρι να βρεθούν τα αρχεία τους: επανασυνδέστε τις στον πίνακα Σύνδεσμοι
 @msg	area type in frames too short for a line of the font it shows in got taller frames ({_1}): their type wouldn't show otherwise	οι περιοχές κειμένου με πλαίσια πολύ μικρά για μία γραμμή της γραμματοσειράς τους απέκτησαν μεγαλύτερο ύψος ({_1}), διαφορετικά το κείμενο δεν θα εμφανιζόταν
 @msg	its editing data doesn't say where its art is	τα δεδομένα επεξεργασίας του δεν προσδιορίζουν τη θέση του σχεδίου
 @msg	this file was saved without PDF compatibility, and its editing data can't be read ({why})	το αρχείο αποθηκεύτηκε χωρίς συμβατότητα PDF και τα δεδομένα επεξεργασίας του δεν μπορούν να διαβαστούν ({why})
 @msg	No fonts are missing in this document	Δεν λείπουν γραμματοσειρές από αυτό το έγγραφο
-@msg	StitchFoundry doesn't search other apps' or the system's folders: {path}	Το StitchFoundry δεν αναζητά στους φακέλους άλλων εφαρμογών ή του συστήματος: {path}
-@msg	StitchFoundry doesn't search the Shared or Public folder in Users: {path}	Το StitchFoundry δεν αναζητά στους φακέλους Shared ή Public των Χρηστών: {path}
+@msg	ScreenFoundry doesn't search other apps' or the system's folders: {path}	Το ScreenFoundry δεν αναζητά στους φακέλους άλλων εφαρμογών ή του συστήματος: {path}
+@msg	ScreenFoundry doesn't search the Shared or Public folder in Users: {path}	Το ScreenFoundry δεν αναζητά στους φακέλους Shared ή Public των Χρηστών: {path}
 @msg	{path} is not a folder	το {path} δεν είναι φάκελος
 @msg	the search couldn't start: try again in a moment	η αναζήτηση δεν μπόρεσε να ξεκινήσει: δοκιμάστε ξανά
 @msg	searching a folder isn't available on the web	η αναζήτηση σε φάκελο δεν υποστηρίζεται στο web
 @msg	every search thread stopped on an internal error (please report this bug)	όλα τα νήματα αναζήτησης σταμάτησαν λόγω εσωτερικού σφάλματος (αναφέρετε το πρόβλημα)
-@msg	StitchFoundry's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	ο φάκελος γραμματοσειρών του StitchFoundry δεν έχει καθοριστεί εδώ: τον ορίζουν η εφαρμογή υπολογιστή και το vectorcraft-cli
+@msg	ScreenFoundry's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	ο φάκελος γραμματοσειρών του ScreenFoundry δεν έχει καθοριστεί εδώ: τον ορίζουν η εφαρμογή υπολογιστή και το vectorcraft-cli
 @msg	choose the font files to add	επιλέξτε τα αρχεία γραμματοσειρών που θέλετε να προσθέσετε
 @msg	{n} font file(s) are now in {folder}	{n} αρχεία γραμματοσειρών βρίσκονται πλέον στον φάκελο {folder}
 @msg	{n} font file(s) are now in {folder}; {failed} couldn't be added: {reason}	{n} αρχεία γραμματοσειρών βρίσκονται πλέον στον φάκελο {folder}· δεν ήταν δυνατή η προσθήκη {failed}: {reason}
@@ -4315,13 +4315,13 @@ theme	Appearance	Εμφάνιση
 @msg	every numbered name for {name} is taken in the document's folder	όλα τα αριθμημένα ονόματα για το {name} χρησιμοποιούνται ήδη στον φάκελο εγγράφου
 @msg	No linked files to look for	Δεν υπάρχουν συνδεδεμένα αρχεία για αναζήτηση
 @msg	Relinked {n} image(s); {name} couldn't be relinked: {reason}	Επανασυνδέθηκαν {n} εικόνες· δεν ήταν δυνατή η επανασύνδεση της {name}: {reason}
-	Hide StitchFoundry	Απόκρυψη StitchFoundry
+	Hide ScreenFoundry	Απόκρυψη ScreenFoundry
 	Bring All to Front	Μεταφορά όλων στο προσκήνιο
 	Break Link	Κατάργηση σύνδεσης
 	On: one locked object showing the document, updated when it changes.	Ενεργό: ένα κλειδωμένο αντικείμενο που εμφανίζει το έγγραφο και ενημερώνεται με τις αλλαγές του.
 	Off: an editable copy of its art, embedded in this document.	Ανενεργό: επεξεργάσιμο αντίγραφο του σχεδίου ενσωματωμένο σε αυτό το έγγραφο.
 	Images: link to the file instead of only embedding it.	Εικόνες: σύνδεση με το αρχείο αντί μόνο της ενσωμάτωσης.
-	StitchFoundry documents: one locked object, updated when the file changes.	Έγγραφα StitchFoundry: ένα κλειδωμένο αντικείμενο που ενημερώνεται όταν αλλάζει το αρχείο.
+	ScreenFoundry documents: one locked object, updated when the file changes.	Έγγραφα ScreenFoundry: ένα κλειδωμένο αντικείμενο που ενημερώνεται όταν αλλάζει το αρχείο.
 	A file dialog is open: choose there first	Υπάρχει ανοιχτό παράθυρο αρχείων: ολοκληρώστε πρώτα την επιλογή εκεί
 	The document was closed while its file dialog was open	Το έγγραφο έκλεισε ενώ ήταν ανοιχτό το παράθυρο αρχείων του
 	The dialog was closed before its file dialog answered	Το παράθυρο διαλόγου έκλεισε πριν ολοκληρωθεί το παράθυρο επιλογής αρχείου
@@ -4430,7 +4430,7 @@ theme	Appearance	Εμφάνιση
 	Linux Display Server	Διακομιστής οθόνης Linux
 	Ruler Origin	Αρχή χαράκων
 	Reset Ruler Origin	Επαναφορά αρχής χαράκων
-@msg	the compressed file unpacks to more than StitchFoundry reads ({_1} MB of document, {_2} MB per image)	το αποσυμπιεσμένο αρχείο υπερβαίνει τα όρια ανάγνωσης του StitchFoundry ({_1} MB ανά έγγραφο, {_2} MB ανά εικόνα)
+@msg	the compressed file unpacks to more than ScreenFoundry reads ({_1} MB of document, {_2} MB per image)	το αποσυμπιεσμένο αρχείο υπερβαίνει τα όρια ανάγνωσης του ScreenFoundry ({_1} MB ανά έγγραφο, {_2} MB ανά εικόνα)
 @msg	the document is too large to save compressed ({0}): save it with Use Compression off	το έγγραφο είναι πολύ μεγάλο για συμπιεσμένη αποθήκευση ({0}): αποθηκεύστε το με απενεργοποιημένη τη Χρήση συμπίεσης
 @msg	the file stopped being read (please report this bug)	η ανάγνωση του αρχείου διακόπηκε (αναφέρετε το σφάλμα)
 	Concentric Dividers:	Ομόκεντρα διαχωριστικά:
@@ -4536,7 +4536,7 @@ theme	Appearance	Εμφάνιση
 	DWG (use DXF)	DWG (χρησιμοποιήστε DXF)
 	Default Graphic Style	Προεπιλεγμένο στυλ γραφικών
 	Diamond (open)	Ρόμβος (ανοιχτός)
-	Differences from StitchFoundry Default:	Διαφορές από τις προεπιλογές StitchFoundry:
+	Differences from ScreenFoundry Default:	Διαφορές από τις προεπιλογές ScreenFoundry:
 	Differences from [Default]:	Διαφορές από την [Προεπιλογή]:
 	Do Not Scale	Χωρίς κλιμάκωση
 	Don't include profiles	Να μη συμπεριληφθούν προφίλ
@@ -4587,7 +4587,7 @@ theme	Appearance	Εμφάνιση
 	Include tagged source profiles	Συμπερίληψη προφίλ πηγής με ετικέτα
 	Inserting, deleting and rotating pages	Εισαγωγή, διαγραφή και περιστροφή σελίδων
 	Joins:	Συνδέσεις:
-	Keeps the document editable: StitchFoundry reopens the PDF with nothing lost. For files you'll edit again.	Διατηρεί το έγγραφο επεξεργάσιμο: το StitchFoundry ανοίγει ξανά το PDF χωρίς απώλειες. Για αρχεία που θα επεξεργαστείτε ξανά.
+	Keeps the document editable: ScreenFoundry reopens the PDF with nothing lost. For files you'll edit again.	Διατηρεί το έγγραφο επεξεργάσιμο: το ScreenFoundry ανοίγει ξανά το PDF χωρίς απώλειες. Για αρχεία που θα επεξεργαστείτε ξανά.
 	Kite	Χαρταετός
 	LF (macOS, Linux)	LF (macOS, Linux)
 	Lab Spot Colors	Πλακάτα χρώματα Lab
@@ -4720,10 +4720,10 @@ theme	Appearance	Εμφάνιση
 	Unsorted	Χωρίς ταξινόμηση
 	Up (right reading)	Επάνω (ανάγνωση από δεξιά)
 	Variation	Παραλλαγή
-	StitchFoundry Default	Προεπιλογή StitchFoundry
-	StitchFoundry Defaults	Προεπιλογές StitchFoundry
-	StitchFoundry Generic CMYK (SWOP-like)	Γενικό CMYK του StitchFoundry (τύπου SWOP)
-	StitchFoundry Swatches (.vcswatches)	Δείγματα χρωμάτων StitchFoundry (.vcswatches)
+	ScreenFoundry Default	Προεπιλογή ScreenFoundry
+	ScreenFoundry Defaults	Προεπιλογές ScreenFoundry
+	ScreenFoundry Generic CMYK (SWOP-like)	Γενικό CMYK του ScreenFoundry (τύπου SWOP)
+	ScreenFoundry Swatches (.vcswatches)	Δείγματα χρωμάτων ScreenFoundry (.vcswatches)
 	Vertical Align	Κατακόρυφη στοίχιση
 	Vertical Area Type	Κατακόρυφο κείμενο περιοχής
 	Vertical Type	Κατακόρυφο κείμενο
@@ -4746,7 +4746,7 @@ theme	Appearance	Εμφάνιση
 	[PDF/X-4:2010]	[PDF/X-4:2010]
 	[Press Quality]	[Ποιότητα τυπογραφείου]
 	[Smallest File Size]	[Ελάχιστο μέγεθος αρχείου]
-	[StitchFoundry Default]	[Προεπιλογή StitchFoundry]
+	[ScreenFoundry Default]	[Προεπιλογή ScreenFoundry]
 	of	από
 	x Height	Ύψος x
 	▾ Default Actions	▾ Προεπιλεγμένες ενέργειες
@@ -5142,7 +5142,7 @@ effect	Points	Σημεία
 @msg	name is empty	το όνομα είναι κενό
 @msg	no symbol named `{n}`	κανένα σύμβολο με όνομα `{n}`
 
-# StitchFoundry: the embroidery strings (drafted with AI assistance from the English meaning;
+# ScreenFoundry: the embroidery strings (drafted with AI assistance from the English meaning;
 # not yet reviewed by a native speaker)
 	Mode	Λειτουργία
 	Blur Mode	Λειτουργία θόλωσης
@@ -5150,7 +5150,7 @@ effect	Points	Σημεία
 	Overlay Edge	Επικάλυψη ακμής
 	Path Length	Μήκος διαδρομής
 	VectorCraft documents: one locked object, updated when the file changes.	Έγγραφα VectorCraft: ένα κλειδωμένο αντικείμενο που ενημερώνεται όταν αλλάζει το αρχείο.
-	Opening it left out what StitchFoundry can't read yet ({what}): replacing it loses that for good. Save under another name to keep it.	Κατά το άνοιγμα παραλείφθηκαν στοιχεία που το StitchFoundry δεν μπορεί ακόμη να διαβάσει ({what}): αν αντικαταστήσετε το αρχείο, θα χαθούν οριστικά. Αποθηκεύστε με άλλο όνομα για να τα διατηρήσετε.
+	Opening it left out what ScreenFoundry can't read yet ({what}): replacing it loses that for good. Save under another name to keep it.	Κατά το άνοιγμα παραλείφθηκαν στοιχεία που το ScreenFoundry δεν μπορεί ακόμη να διαβάσει ({what}): αν αντικαταστήσετε το αρχείο, θα χαθούν οριστικά. Αποθηκεύστε με άλλο όνομα για να τα διατηρήσετε.
 	Report a Bug…	Αναφορά σφάλματος…
 	Add Inclination Line	Προσθήκη γραμμής κλίσης
 	After the selection	Μετά την επιλογή
@@ -5461,10 +5461,10 @@ machine	Stop	Στάση
 	Size (longest side):	Μέγεθος (μεγαλύτερη πλευρά):
 	Anthropic API key:	Κλειδί API της Anthropic:
 	Remember the key on this computer	Απομνημόνευση του κλειδιού σε αυτόν τον υπολογιστή
-	Claude draws the artwork with your own Anthropic API key, billed to your Anthropic account; StitchFoundry then digitizes it. Check the stitches before you sew.	Ο Claude σχεδιάζει το σχέδιο με το δικό σας κλειδί API της Anthropic, με χρέωση στον λογαριασμό σας στην Anthropic· έπειτα το StitchFoundry το ψηφιοποιεί. Ελέγξτε τις βελονιές πριν ράψετε.
+	Claude draws the artwork with your own Anthropic API key, billed to your Anthropic account; ScreenFoundry then digitizes it. Check the stitches before you sew.	Ο Claude σχεδιάζει το σχέδιο με το δικό σας κλειδί API της Anthropic, με χρέωση στον λογαριασμό σας στην Anthropic· έπειτα το ScreenFoundry το ψηφιοποιεί. Ελέγξτε τις βελονιές πριν ράψετε.
 	Get a key	Λήψη κλειδιού
 	Drawing the design…	Σχεδίαση του σχεδίου…
-	Describe a design and Claude draws artwork for it, then StitchFoundry digitizes it	Περιγράψτε ένα σχέδιο και ο Claude το σχεδιάζει· έπειτα το StitchFoundry το ψηφιοποιεί
+	Describe a design and Claude draws artwork for it, then ScreenFoundry digitizes it	Περιγράψτε ένα σχέδιο και ο Claude το σχεδιάζει· έπειτα το ScreenFoundry το ψηφιοποιεί
 	Place Artwork as Embroidery	Τοποθέτηση σχεδίου ως κέντημα
 	Place Artwork	Τοποθέτηση σχεδίου
 @plural	Design placed: {n} stitched object|Design placed: {n} stitched objects	Το σχέδιο τοποθετήθηκε: {n} κεντημένο αντικείμενο|Το σχέδιο τοποθετήθηκε: {n} κεντημένα αντικείμενα
@@ -5491,9 +5491,9 @@ machine	Stop	Στάση
 	Redraw Image with Claude	Επανασχεδίαση εικόνας με τον Claude
 	What to change (optional):	Τι να αλλάξει (προαιρετικό):
 	Only redraw artwork you own or have permission to use.	Επανασχεδιάζετε μόνο σχέδια που σας ανήκουν ή έχετε άδεια να χρησιμοποιήσετε.
-	Claude redraws the image as flat-colour art with your own Anthropic API key, billed to your Anthropic account; StitchFoundry then digitizes it. Check the stitches before you sew.	Ο Claude επανασχεδιάζει την εικόνα με επίπεδα χρώματα, με το δικό σας κλειδί API της Anthropic, με χρέωση στον λογαριασμό σας στην Anthropic· έπειτα το StitchFoundry την ψηφιοποιεί. Ελέγξτε τις βελονιές πριν ράψετε.
+	Claude redraws the image as flat-colour art with your own Anthropic API key, billed to your Anthropic account; ScreenFoundry then digitizes it. Check the stitches before you sew.	Ο Claude επανασχεδιάζει την εικόνα με επίπεδα χρώματα, με το δικό σας κλειδί API της Anthropic, με χρέωση στον λογαριασμό σας στην Anthropic· έπειτα το ScreenFoundry την ψηφιοποιεί. Ελέγξτε τις βελονιές πριν ράψετε.
 	Redraw with Claude…	Επανασχεδίαση με τον Claude…
-	Claude redraws the image as clean flat-colour art, then StitchFoundry digitizes it	Ο Claude επανασχεδιάζει την εικόνα με καθαρά επίπεδα χρώματα· έπειτα το StitchFoundry την ψηφιοποιεί
+	Claude redraws the image as clean flat-colour art, then ScreenFoundry digitizes it	Ο Claude επανασχεδιάζει την εικόνα με καθαρά επίπεδα χρώματα· έπειτα το ScreenFoundry την ψηφιοποιεί
 @msg	select an image to redraw	επιλέξτε μια εικόνα για επανασχεδίαση
 @msg	the image couldn't be read	δεν ήταν δυνατή η ανάγνωση της εικόνας
 @msg	The image is too large to send: crop it, or place a smaller copy.	Η εικόνα είναι πολύ μεγάλη για αποστολή: περικόψτε την ή τοποθετήστε ένα μικρότερο αντίγραφο.
@@ -6002,7 +6002,7 @@ machine	Stop	Στάση
 	Square loop	Τετράγωνη θηλιά
 	Foil	Φύλλο μεταλλικό (foil)
 	Shown with the design, not sewn	Εμφανίζεται με το σχέδιο, δεν ράβεται
-	StitchFoundry Help	Βοήθεια StitchFoundry
+	ScreenFoundry Help	Βοήθεια ScreenFoundry
 	Tips	Συμβουλές
 	Search help	Αναζήτηση στη βοήθεια
 	Nothing found	Δεν βρέθηκε τίποτα
@@ -6390,7 +6390,7 @@ machine	Stop	Στάση
 	To follow a line of your own, draw it first, select it, then Add Words.	Για να ακολουθεί μια δική σας γραμμή, σχεδιάστε την πρώτα, επιλέξτε την και μετά Προσθήκη λέξεων.
 	Ask About Embroidery…	Ερώτηση για το κέντημα…
 	Ask About Embroidery	Ερώτηση για το κέντημα
-	Ask anything about machine embroidery or StitchFoundry: which stabilizer to use, why thread breaks, how to make letters sew cleaner, where a feature is. Claude can also change your design when you ask, after you allow it.	Ρωτήστε οτιδήποτε για το μηχανικό κέντημα ή το StitchFoundry: ποιο σταθεροποιητικό να χρησιμοποιήσετε, γιατί σπάει η κλωστή, πώς να ράβονται πιο καθαρά τα γράμματα, πού βρίσκεται μια λειτουργία. Ο Claude μπορεί επίσης να αλλάξει το σχέδιό σας όταν του το ζητήσετε, αφού το επιτρέψετε.
+	Ask anything about machine embroidery or ScreenFoundry: which stabilizer to use, why thread breaks, how to make letters sew cleaner, where a feature is. Claude can also change your design when you ask, after you allow it.	Ρωτήστε οτιδήποτε για το μηχανικό κέντημα ή το ScreenFoundry: ποιο σταθεροποιητικό να χρησιμοποιήσετε, γιατί σπάει η κλωστή, πώς να ράβονται πιο καθαρά τα γράμματα, πού βρίσκεται μια λειτουργία. Ο Claude μπορεί επίσης να αλλάξει το σχέδιό σας όταν του το ζητήσετε, αφού το επιτρέψετε.
 	Thinking…	Σκέφτεται…
 	Type your question, then press Enter	Πληκτρολογήστε την ερώτησή σας και πατήστε Enter
 	Ask	Ερώτηση
@@ -6414,7 +6414,7 @@ machine	Stop	Στάση
 @msg	This conversation is long: start a New Conversation.	Αυτή η συνομιλία είναι μεγάλη: ξεκινήστε μια Νέα συνομιλία.
 @msg	Claude took too many steps: ask again, more simply.	Ο Claude έκανε υπερβολικά πολλά βήματα: ρωτήστε ξανά, πιο απλά.
 
-# Embroidery (StitchFoundry): cross-stitch fill, colour replace, fabric count and chart
+# Embroidery (ScreenFoundry): cross-stitch fill, colour replace, fabric count and chart
 	Fill a patch	Γέμισμα περιοχής
 	Click a square to fill every touching square like it; hold Alt to clear them	Κάντε κλικ σε ένα τετράγωνο για να γεμίσετε όλα τα γειτονικά ίδια τετράγωνα· κρατήστε πατημένο το Alt για να τα καθαρίσετε
 	With the Thread Colour	Με το χρώμα της κλωστής
@@ -6445,7 +6445,7 @@ machine	Stop	Στάση
 	Structured cap	Σκληρό καπέλο
 	Silk / lightweight	Μετάξι / ελαφρύ ύφασμα
 
-# Embroidery (StitchFoundry): Check My Sew-out
+# Embroidery (ScreenFoundry): Check My Sew-out
 	Check My Sew-out…	Έλεγχος του κεντήματός μου…
 	Check My Sew-out	Έλεγχος του κεντήματός μου
 	About the sewing	Σχετικά με το κέντημα
@@ -6470,7 +6470,7 @@ machine	Stop	Στάση
 	While it sewed:	Ενώ κεντούσε:
 	e.g. 75/11 ballpoint	π.χ. 75/11 στρογγυλή μύτη
 
-# Embroidery (StitchFoundry): Foundry Account
+# Embroidery (ScreenFoundry): Foundry Account
 	A check costs {n} credits; free checks come back next month.	Ένας έλεγχος κοστίζει {n} μονάδες· οι δωρεάν έλεγχοι επιστρέφουν τον επόμενο μήνα.
 	Account	Λογαριασμός
 	Buy credits	Αγορά μονάδων
@@ -6479,15 +6479,15 @@ machine	Stop	Στάση
 	Delete My Shared Sew-out Checks	Διαγραφή των κοινόχρηστων ελέγχων μου
 	Email	Email
 	Free sew-out checks left this month: {n}	Δωρεάν έλεγχοι που απομένουν αυτόν τον μήνα: {n}
-	Leave it empty for StitchFoundry's own service.	Αφήστε το κενό για την υπηρεσία του StitchFoundry.
+	Leave it empty for ScreenFoundry's own service.	Αφήστε το κενό για την υπηρεσία του ScreenFoundry.
 	Paid with Foundry credits ({n} left).	Πληρωμή με μονάδες Foundry (απομένουν {n}).
 	Paid with Foundry credits.	Πληρωμή με μονάδες Foundry.
 	Pay for the AI features with my Foundry credits	Πληρωμή των λειτουργιών ΤΝ με τις μονάδες Foundry μου
 	Pay with Foundry credits instead	Πληρωμή με μονάδες Foundry αντί γι' αυτό
-	Payment is on Stripe's secure page, in your browser; your card never reaches StitchFoundry.	Η πληρωμή γίνεται στην ασφαλή σελίδα της Stripe, στο πρόγραμμα περιήγησής σας· η κάρτα σας δεν φτάνει ποτέ στο StitchFoundry.
+	Payment is on Stripe's secure page, in your browser; your card never reaches ScreenFoundry.	Η πληρωμή γίνεται στην ασφαλή σελίδα της Stripe, στο πρόγραμμα περιήγησής σας· η κάρτα σας δεν φτάνει ποτέ στο ScreenFoundry.
 	Reading your credits…	Ανάγνωση των μονάδων σας…
 	Server	Διακομιστής
-	Share this check to help improve StitchFoundry (kept private; delete it any time in Foundry Account)	Κοινοποίηση αυτού του ελέγχου για να βελτιωθεί το StitchFoundry (μένει ιδιωτικός· διαγράψτε τον όποτε θέλετε στον Λογαριασμό Foundry)
+	Share this check to help improve ScreenFoundry (kept private; delete it any time in Foundry Account)	Κοινοποίηση αυτού του ελέγχου για να βελτιωθεί το ScreenFoundry (μένει ιδιωτικός· διαγράψτε τον όποτε θέλετε στον Λογαριασμό Foundry)
 	Sign In	Σύνδεση
 	Sign Out	Αποσύνδεση
 	Sign in, or make an account, to pay for the AI features with Foundry credits instead of your own Anthropic API key. A new account starts with free credits.	Συνδεθείτε ή δημιουργήστε λογαριασμό για να πληρώνετε τις λειτουργίες ΤΝ με μονάδες Foundry αντί για το δικό σας κλειδί API της Anthropic. Ένας νέος λογαριασμός ξεκινά με δωρεάν μονάδες.
@@ -6540,7 +6540,7 @@ machine	Stop	Στάση
 @msg	too many library panels were opened in this session	άνοιξαν πάρα πολλοί πίνακες βιβλιοθηκών σε αυτή τη συνεδρία
 @msg	The image is {_1} × {_2} pixels, more than {LARGE_TRACE_SIDE} on a side: it is traced, but more slowly. A lower-fidelity preset or a smaller copy of the image traces faster.	Η εικόνα είναι {_1} × {_2} εικονοστοιχεία, πάνω από {LARGE_TRACE_SIDE} σε μία πλευρά: ανιχνεύεται, αλλά πιο αργά. Μια προρύθμιση χαμηλότερης πιστότητας ή ένα μικρότερο αντίγραφο της εικόνας ανιχνεύεται γρηγορότερα.
 @msg	The image was traced at {_1} × {_2} pixels, scaled down from {_3} × {_4} ({_5} megapixels at most).	Η εικόνα ανιχνεύτηκε σε {_1} × {_2} εικονοστοιχεία, σμικρυμένη από {_3} × {_4} (το πολύ {_5} megapixel).
-# Embroidery (StitchFoundry): undo steps
+# Embroidery (ScreenFoundry): undo steps
 	Auto-Digitize	Αυτόματη ψηφιοποίηση
 	Backstitch Line	Γραμμή πισωβελονιάς
 	Close Appliqué Outlines	Κλείσιμο περιγραμμάτων απλικέ
@@ -6548,7 +6548,7 @@ machine	Stop	Στάση
 	Erase Cross Stitches	Διαγραφή σταυροβελονιών
 	Move Stitches	Μετακίνηση βελονιών
 	Overlap where shapes touch	Επικάλυψη όπου ακουμπούν τα σχήματα
-# Embroidery (StitchFoundry): picture services
+# Embroidery (ScreenFoundry): picture services
 	Picture made by	Η εικόνα φτιάχνεται από
 	Claude (draws the shapes itself)	Claude (σχεδιάζει μόνο του τα σχήματα)
 	{name} API key:	Κλειδί API {name}:
@@ -6585,26 +6585,26 @@ machine	Stop	Στάση
 	A new design: a hoopful of patches, each colour sewn once for all of them	Νέο σχέδιο: ένα τελάρο γεμάτο σήματα, κάθε χρώμα κεντιέται μία φορά για όλα
 	Every hoopful as a machine file, and a list of the names in each	Κάθε γεμάτο τελάρο ως αρχείο μηχανής, και λίστα με τα ονόματα του καθενός
 	The open design repeated across its hoop, sorted so each colour is sewn once	Το ανοιχτό σχέδιο επαναλαμβάνεται σε όλο το τελάρο, ταξινομημένο ώστε κάθε χρώμα να κεντιέται μία φορά
-# Report to StitchFoundry (ui.reportSewout)
+# Report to ScreenFoundry (ui.reportSewout)
 	Anything you'd like to add (optional)	Θέλετε να προσθέσετε κάτι; (προαιρετικό)
 	Claude is writing the report…	Ο Claude γράφει την αναφορά…
 	Have Claude Write It	Να τη γράψει ο Claude
-	Help make StitchFoundry better	Βοηθήστε να γίνει καλύτερο το StitchFoundry
-	I agree to send this to SiteSentrix, the maker of StitchFoundry, to improve the software. It won't be shared with anyone else.	Συμφωνώ να σταλεί αυτό στη SiteSentrix, τον δημιουργό του StitchFoundry, για τη βελτίωση του προγράμματος. Δεν θα κοινοποιηθεί σε κανέναν άλλο.
+	Help make ScreenFoundry better	Βοηθήστε να γίνει καλύτερο το ScreenFoundry
+	I agree to send this to SiteSentrix, the maker of ScreenFoundry, to improve the software. It won't be shared with anyone else.	Συμφωνώ να σταλεί αυτό στη SiteSentrix, τον δημιουργό του ScreenFoundry, για τη βελτίωση του προγράμματος. Δεν θα κοινοποιηθεί σε κανέναν άλλο.
 	Include a summary of the design	Συμπερίληψη περίληψης του σχεδίου
 	Include the conversation with Claude	Συμπερίληψη της συνομιλίας με τον Claude
 	Include the photos ({n})	Συμπερίληψη των φωτογραφιών ({n})
-	Report to StitchFoundry	Αναφορά στο StitchFoundry
-	Report to StitchFoundry…	Αναφορά στο StitchFoundry…
+	Report to ScreenFoundry	Αναφορά στο ScreenFoundry
+	Report to ScreenFoundry…	Αναφορά στο ScreenFoundry…
 	Send Report	Αποστολή αναφοράς
-	Send this sew-out and Claude's idea of what StitchFoundry could do better to its makers	Στείλτε αυτό το κέντημα και την ιδέα του Claude για το τι θα μπορούσε να κάνει καλύτερα το StitchFoundry στους δημιουργούς του
-	Send this sew-out to the people who make StitchFoundry, with Claude's idea of what the software could do better. We use it only to improve StitchFoundry: we never share, sell or publish it, and you can have it deleted at any time (Foundry Account › Delete My Shared Sew-out Checks).	Στείλτε αυτό το κέντημα στους δημιουργούς του StitchFoundry, με την ιδέα του Claude για το τι θα μπορούσε να κάνει καλύτερα το πρόγραμμα. Το χρησιμοποιούμε μόνο για να βελτιώσουμε το StitchFoundry: δεν το κοινοποιούμε, δεν το πουλάμε και δεν το δημοσιεύουμε ποτέ, και μπορείτε να ζητήσετε τη διαγραφή του οποιαδήποτε στιγμή (Λογαριασμός Foundry › Διαγραφή των κοινόχρηστων ελέγχων μου).
+	Send this sew-out and Claude's idea of what ScreenFoundry could do better to its makers	Στείλτε αυτό το κέντημα και την ιδέα του Claude για το τι θα μπορούσε να κάνει καλύτερα το ScreenFoundry στους δημιουργούς του
+	Send this sew-out to the people who make ScreenFoundry, with Claude's idea of what the software could do better. We use it only to improve ScreenFoundry: we never share, sell or publish it, and you can have it deleted at any time (Foundry Account › Delete My Shared Sew-out Checks).	Στείλτε αυτό το κέντημα στους δημιουργούς του ScreenFoundry, με την ιδέα του Claude για το τι θα μπορούσε να κάνει καλύτερα το πρόγραμμα. Το χρησιμοποιούμε μόνο για να βελτιώσουμε το ScreenFoundry: δεν το κοινοποιούμε, δεν το πουλάμε και δεν το δημοσιεύουμε ποτέ, και μπορείτε να ζητήσετε τη διαγραφή του οποιαδήποτε στιγμή (Λογαριασμός Foundry › Διαγραφή των κοινόχρηστων ελέγχων μου).
 	Sign in to Foundry Account to send a report.	Συνδεθείτε στον λογαριασμό Foundry για να στείλετε αναφορά.
 @msg	Sign in to Foundry Account to send a report.	Συνδεθείτε στον λογαριασμό Foundry για να στείλετε αναφορά.
 	Thank you: your report was sent.	Ευχαριστούμε: η αναφορά σας στάλθηκε.
 	Title	Τίτλος
-	What went wrong, and what StitchFoundry could do better	Τι πήγε στραβά και τι θα μπορούσε να κάνει καλύτερα το StitchFoundry
-	Write a report about this sew-out for the people who make StitchFoundry.	Γράψε μια αναφορά για αυτό το κέντημα για τους δημιουργούς του StitchFoundry.
+	What went wrong, and what ScreenFoundry could do better	Τι πήγε στραβά και τι θα μπορούσε να κάνει καλύτερα το ScreenFoundry
+	Write a report about this sew-out for the people who make ScreenFoundry.	Γράψε μια αναφορά για αυτό το κέντημα για τους δημιουργούς του ScreenFoundry.
 @msg	Check a sew-out first: the report goes with its photos and Claude's answer	Ελέγξτε πρώτα ένα κέντημα: η αναφορά πηγαίνει με τις φωτογραφίες του και την απάντηση του Claude
 @msg	Tick the box to agree to send it first.	Τσεκάρετε πρώτα το πλαίσιο για να συμφωνήσετε στην αποστολή.
 @msg	Write what went wrong first, or have Claude write it.	Γράψτε πρώτα τι πήγε στραβά ή αφήστε τον Claude να το γράψει.

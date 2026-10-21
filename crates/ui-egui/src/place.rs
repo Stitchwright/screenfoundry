@@ -171,7 +171,7 @@ fn open_dialog(app: &mut VectorcraftApp, files: Vec<Value>) {
 /// Is dialog file entry `file` a VectorCraft document on disk (what Link places as one locked
 /// object)?
 fn is_vectorcraft_file(file: &Value) -> bool {
-    let native = ["vectorcraft", vectorcraft_format::LEGACY_EXTENSION, "vctemplate"];
+    let native = ["vectorcraft", vectorcraft_format::PREVIOUS_SAVE_EXTENSION, vectorcraft_format::LEGACY_EXTENSION, "vctemplate"];
     file.get("path").and_then(Value::as_str).is_some_and(|p| native.contains(&fileio::extension(p).as_str()))
 }
 

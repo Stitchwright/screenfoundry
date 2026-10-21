@@ -140,7 +140,7 @@ fn document_formats_write_one_artboard_each() {
     let mut s = session(2);
     let r = export(&mut s, json!({"formats": [{"format": "vectorcraft"}, {"format": "ai"}, {"format": "eps"}]}));
     let n = names(&r);
-    assert_eq!(n, ["Artboard-1.stitchfoundry", "Artboard-1.ai", "Artboard-1.eps", "Artboard-2.stitchfoundry", "Artboard-2.ai", "Artboard-2.eps"]);
+    assert_eq!(n, ["Artboard-1.screenfoundry", "Artboard-1.ai", "Artboard-1.eps", "Artboard-2.screenfoundry", "Artboard-2.ai", "Artboard-2.eps"]);
     let native = &files(&r)[0].1;
     let mut t = Session::new();
     t.execute("document.open", &json!({"name": "a.vectorcraft", "dataBase64": vectorcraft_format::base64_encode(native)})).unwrap();

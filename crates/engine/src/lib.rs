@@ -1027,7 +1027,7 @@ pub struct Prefs {
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub screen_export_presets: Vec<cmd::fileio::ScreenExportPreset>,
     // File Handling (continued)
-    /// Where Save as Template and New from Template start ("" = `Documents/StitchFoundry Templates`).
+    /// Where Save as Template and New from Template start ("" = `Documents/ScreenFoundry Templates`).
     pub templates_folder: String,
     /// Open older native files as "<name> [Converted]" so Save asks for a new name.
     pub append_converted: bool,

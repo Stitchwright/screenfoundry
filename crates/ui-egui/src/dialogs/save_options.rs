@@ -544,8 +544,8 @@ mod tests {
         // The save panel offers every save format, the document's own first.
         let pick = &picks.borrow()[0];
         let labels: Vec<&str> = pick.filters.iter().map(|f| f.0).collect();
-        assert_eq!(labels, ["StitchFoundry", "StitchFoundry Template", "PDF", "SVG", "SVG Compressed", "PDF-compatible .ai"]);
-        assert_eq!(pick.name, "Untitled-1.stitchfoundry");
+        assert_eq!(labels, ["ScreenFoundry", "ScreenFoundry Template", "PDF", "SVG", "SVG Compressed", "PDF-compatible .ai"]);
+        assert_eq!(pick.name, "Untitled-1.screenfoundry");
         let d = dialog(&app);
         assert_eq!((d.kind.as_str(), d.str("path").as_str(), d.str("mode").as_str()), ("svgOptions", "art.svg", "save"));
         assert!(written.borrow().is_empty(), "nothing is written before OK");
@@ -690,7 +690,7 @@ mod tests {
         let folder = vectorcraft_testkit::temp_dir("save-template-dialog");
         app.session.prefs.templates_folder = folder.to_string_lossy().into_owned();
         app.run("file.saveCopy", json!({})).unwrap();
-        assert_eq!(picks.borrow()[0].name, "Untitled-1 copy.stitchfoundry");
+        assert_eq!(picks.borrow()[0].name, "Untitled-1 copy.screenfoundry");
         assert!(app.ui.dialog.is_none(), "the native format has no options");
         assert!(vectorcraft_format::sniff(&written.borrow()[0].1));
         assert!(app.session.active().unwrap().path.is_none() && app.session.active().unwrap().is_dirty());
@@ -698,7 +698,7 @@ mod tests {
         let pick = &picks.borrow()[1];
         assert_eq!(pick.name, "Untitled-1 template.vctemplate");
         assert_eq!(pick.folder.as_deref().map(std::path::Path::new), Some(folder.as_path()));
-        assert_eq!(pick.filters, [("StitchFoundry Template", &["vctemplate"][..]), ("PDF-compatible .ait template", &["ait"][..])]);
+        assert_eq!(pick.filters, [("ScreenFoundry Template", &["vctemplate"][..]), ("PDF-compatible .ait template", &["ait"][..])]);
         assert_eq!(written.borrow()[1].0, "copy.vectorcraft.vctemplate", "the picked name, with the template's extension");
     }
 
@@ -716,7 +716,7 @@ mod tests {
         let (mut app, written) = web();
         app.run("file.saveAsTemplate", json!({})).unwrap();
         assert_eq!((heading(dialog(&app)).as_str(), dialog(&app).str("format").as_str()), ("Save as Template", "template"));
-        assert_eq!(template_labels(), ["StitchFoundry Template", "PDF-compatible .ait template"]);
+        assert_eq!(template_labels(), ["ScreenFoundry Template", "PDF-compatible .ait template"]);
         frame(&mut app, false);
         let mut d = app.ui.dialog.take().unwrap();
         switch_format(&mut app, &mut d, "ait");
@@ -758,7 +758,7 @@ mod tests {
         let (mut app, written) = web();
         app.run("file.saveAs", json!({})).unwrap();
         let d = dialog(&app);
-        assert_eq!((heading(d).as_str(), d.str("path").as_str(), d.str("format").as_str()), ("Save As", "Untitled-1.stitchfoundry", "vectorcraft"));
+        assert_eq!((heading(d).as_str(), d.str("path").as_str(), d.str("format").as_str()), ("Save As", "Untitled-1.screenfoundry", "vectorcraft"));
         frame(&mut app, false);
         let mut d = app.ui.dialog.take().unwrap();
         switch_format(&mut app, &mut d, "pdf");

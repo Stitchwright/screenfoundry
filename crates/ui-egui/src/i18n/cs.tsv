@@ -113,7 +113,7 @@
 # Import Shortcut Set (Keyboard Shortcuts › Import…, File › Open of a .kys file) and its commands.
 	Import Shortcut Set	Importovat sadu klávesových zkratek
 	Import Shortcut Set…	Importovat sadu klávesových zkratek…
-	Each entry of the file is matched to a StitchFoundry tool, command or panel. Check the matches and answer what is left.	Každá položka souboru je přiřazena k nástroji, příkazu nebo panelu StitchFoundryu. Zkontrolujte přiřazení a doplňte, co zbývá.
+	Each entry of the file is matched to a ScreenFoundry tool, command or panel. Check the matches and answer what is left.	Každá položka souboru je přiřazena k nástroji, příkazu nebo panelu ScreenFoundryu. Zkontrolujte přiřazení a doplňte, co zbývá.
 	Keys	Klávesy
 	The file writes keys and modifiers as codes. Check the proposed meanings and answer the codes that are not known yet.	Soubor ukládá klávesy a modifikátory jako kódy. Zkontrolujte navržené významy a doplňte ty, které zatím nejsou známé.
 	Click, then press the key this code stands for (Esc cancels)	Klikněte a stiskněte klávesu, kterou tento kód označuje (Esc zruší)
@@ -123,7 +123,7 @@
 	not known yet	zatím není známo
 	Shortcuts	Zkratky
 	In the File	V souboru
-	In StitchFoundry	Ve StitchFoundryu
+	In ScreenFoundry	Ve ScreenFoundryu
 	Needs Attention Only	Jen řádky vyžadující pozornost
 	Ready	Připraveno
 	Needs a choice	Vyžaduje volbu
@@ -132,7 +132,7 @@
 	Tools take a single key (optionally with Shift)	Nástroje používají jedinou klávesu (volitelně se Shift)
 	A later row takes this shortcut	Tuto zkratku přebírá pozdější řádek
 	Same item as a later row	Stejná položka jako v pozdějším řádku
-	Start from StitchFoundry Defaults	Vycházet z výchozích zkratek StitchFoundryu
+	Start from ScreenFoundry Defaults	Vycházet z výchozích zkratek ScreenFoundryu
 	Add to the Current Shortcuts	Přidat k aktuálním zkratkám
 	Remember My Choices	Zapamatovat si moje volby
 	{ready} of {total} ready	Připraveno {ready} z {total}
@@ -146,7 +146,7 @@
 	Forget Import Matches	Zapomenout přiřazení z importů
 @plural	agrees with {n} default shortcut|agrees with {n} default shortcuts	shoduje se s {n} výchozí zkratkou|shoduje se s {n} výchozími zkratkami|shoduje se s {n} výchozími zkratkami
 @plural	{n} part of the file wasn't read|{n} parts of the file weren't read	{n} část souboru nebyla přečtena|{n} části souboru nebyly přečteny|{n} částí souboru nebylo přečteno
-@msg	This shortcut file is in a form StitchFoundry can't read.	Tento soubor klávesových zkratek je ve formátu, který StitchFoundry neumí přečíst.
+@msg	This shortcut file is in a form ScreenFoundry can't read.	Tento soubor klávesových zkratek je ve formátu, který ScreenFoundry neumí přečíst.
 @msg	not a shortcut set: the text doesn't start with a slash name and an opening brace	nejde o sadu klávesových zkratek: text nezačíná názvem s lomítkem a otevírací složenou závorkou
 	Preferences…	Předvolby…
 	Object	Objekt
@@ -701,7 +701,7 @@
 	Symbol Libraries	Knihovny symbolů
 	Help	Nápověda
 	Search Commands…	Hledat příkazy…
-	StitchFoundry Help…	Nápověda StitchFoundry…
+	ScreenFoundry Help…	Nápověda ScreenFoundry…
 	Auto Color	Automatická barva
 	Automatic	Automaticky
 	Isolate Selected Group	Izolovat vybranou skupinu
@@ -2296,7 +2296,7 @@ lighting	Light	Světlo
 	{count} folder(s) or file(s) couldn't be read	Nepodařilo se přečíst složek nebo souborů: {count}
 	The search stopped at its limit: search a smaller folder.	Hledání se zastavilo na limitu: prohledejte menší složku.
 	Copy only fonts you own or are licensed to install.	Kopírujte jen písma, která vlastníte nebo máte licenci instalovat.
-	StitchFoundry copies the fonts to {folder}.	StitchFoundry zkopíruje písma do {folder}.
+	ScreenFoundry copies the fonts to {folder}.	ScreenFoundry zkopíruje písma do {folder}.
 	Apply to All ({count} more missing)	Použít na všechny (chybí ještě {count})
 	Ignore	Ignorovat
 	Linked File Not Found	Propojený soubor nebyl nalezen
@@ -2516,7 +2516,7 @@ lighting	Light	Světlo
 	3 Color Job	Zakázka se 3 barvami
 	Recover Documents	Obnovit dokumenty
 	Restored documents open unsaved: save them to keep them.	Obnovené dokumenty se otevřou neuložené: pokud je chcete zachovat, uložte je.
-	StitchFoundry didn't quit normally last time. These documents had unsaved changes:	StitchFoundry se minule neukončil normálně. Tyto dokumenty měly neuložené změny:
+	ScreenFoundry didn't quit normally last time. These documents had unsaved changes:	ScreenFoundry se minule neukončil normálně. Tyto dokumenty měly neuložené změny:
 	Do you want to save the changes you made to “{name}”?	Chcete uložit změny provedené v dokumentu „{name}“?
 	Don't Save	Neukládat
 	Your changes will be lost if you don't save them.	Pokud změny neuložíte, budou ztraceny.
@@ -2681,7 +2681,7 @@ lighting	Light	Světlo
 	Selected Swatches Only (0)	Pouze vybrané položky vzorníku (0)
 	User Defined Libraries	Uživatelské knihovny
 	Copy Report	Kopírovat zprávu
-	StitchFoundry read this script without running it.	StitchFoundry tento skript přečetl, aniž by ho spustil.
+	ScreenFoundry read this script without running it.	ScreenFoundry tento skript přečetl, aniž by ho spustil.
 	Needs nothing beyond plain JavaScript	Nepotřebuje nic kromě běžného JavaScriptu
 	Needs the script language's own objects or directives	Potřebuje vlastní objekty nebo direktivy skriptovacího jazyka
 	Needs the document model	Potřebuje model dokumentu
@@ -3727,7 +3727,7 @@ effect	Regular	Pravidelný
 	New file	Nový soubor
 	Open	Otevřít
 	Recent Files	Nedávné soubory
-	Welcome to StitchFoundry	Vítejte ve StitchFoundryu
+	Welcome to ScreenFoundry	Vítejte ve ScreenFoundryu
 	Source code on GitHub	Zdrojový kód na GitHubu
 	All Tools	Všechny nástroje
 	Draw	Kresba
@@ -3783,7 +3783,7 @@ effect	Regular	Pravidelný
 	Dashed Line	Čárkovaná čára
 	Panel menu	Nabídka panelu
 	Unembed…	Zrušit vložení…
-	Applies the next time StitchFoundry starts.	Projeví se při příštím spuštění StitchFoundryu.
+	Applies the next time ScreenFoundry starts.	Projeví se při příštím spuštění ScreenFoundryu.
 	Enable Contextual Task Bar	Povolit kontextový panel úloh
 	Next	Další
 	OK	OK
@@ -4177,7 +4177,7 @@ imageTrace	Outline	Obrys
 @msg	can't encode the document: {0}	dokument nelze zakódovat: {0}
 @msg	can't parse shortcut `{c}`	klávesovou zkratku `{c}` nelze analyzovat
 @msg	can't parse shortcut `{s}` for `{k}`	klávesovou zkratku `{s}` pro `{k}` nelze analyzovat
-@msg	can't save version {0}: StitchFoundry writes versions {MIN_VERSION} to {VERSION}	verzi {0} nelze uložit: StitchFoundry zapisuje verze {MIN_VERSION} až {VERSION}
+@msg	can't save version {0}: ScreenFoundry writes versions {MIN_VERSION} to {VERSION}	verzi {0} nelze uložit: ScreenFoundry zapisuje verze {MIN_VERSION} až {VERSION}
 @msg	can't write .{ext} images	obrázky .{ext} nelze zapisovat
 @msg	cannot distort a zero-size bounding box	ohraničovací rámeček nulové velikosti nelze deformovat
 @msg	cannot read PDF: {0}	PDF nelze přečíst: {0}
@@ -4203,7 +4203,7 @@ imageTrace	Outline	Obrys
 @msg	empty brush stroke	prázdný tah štětcem
 @msg	empty cutter	prázdný řezací objekt
 @msg	empty path	prázdná cesta
-@msg	file version {0} is newer than this StitchFoundry supports ({VERSION})	verze souboru {0} je novější, než tento StitchFoundry podporuje ({VERSION})
+@msg	file version {0} is newer than this ScreenFoundry supports ({VERSION})	verze souboru {0} je novější, než tento ScreenFoundry podporuje ({VERSION})
 @msg	freeform point {i} needs `at` [x, y] and a valid `color`	volný bod {i} potřebuje `at` [x, y] a platnou `color`
 @msg	freeform line {i} must be an array of point indices	volná čára {i} musí být pole indexů bodů
 @msg	give both `start` and `end` [x, y] (or neither)	zadejte `start` i `end` [x, y] (nebo ani jedno)
@@ -4224,9 +4224,9 @@ imageTrace	Outline	Obrys
 @msg	invalid PDF setting: {0}	neplatné nastavení PDF: {0}
 @msg	invalid image data for `{0}`	neplatná obrazová data pro `{0}`
 @msg	invalid parameters for `{cmd}`: {msg}	neplatné parametry pro `{cmd}`: {msg}
-@msg	is not an image StitchFoundry reads	není obraz, který StitchFoundry umí přečíst
-@msg	it uses `{at}`, which StitchFoundry's PostScript reader doesn't know	používá `{at}`, které čtečka PostScriptu ve StitchFoundryu nezná
-@msg	it uses `{at}`, which StitchFoundry's PostScript reader doesn't know, in {procs}	používá `{at}`, které čtečka PostScriptu ve StitchFoundryu nezná, v {procs}
+@msg	is not an image ScreenFoundry reads	není obraz, který ScreenFoundry umí přečíst
+@msg	it uses `{at}`, which ScreenFoundry's PostScript reader doesn't know	používá `{at}`, které čtečka PostScriptu ve ScreenFoundryu nezná
+@msg	it uses `{at}`, which ScreenFoundry's PostScript reader doesn't know, in {procs}	používá `{at}`, které čtečka PostScriptu ve ScreenFoundryu nezná, v {procs}
 @msg	its Windows metafile preview was opened instead, which may simplify the art	místo něj byl otevřen jeho náhled ve formátu Windows metafile, který může kresbu zjednodušit
 @msg	its preview was placed instead, at screen resolution	místo něj byl umístěn jeho náhled v rozlišení obrazovky
 @msg	join needs open paths	spojení vyžaduje otevřené cesty
@@ -4335,7 +4335,7 @@ imageTrace	Outline	Obrys
 @msg	node {_1} is not text	uzel {_1} není text
 @msg	not a DXF drawing	nejde o výkres DXF
 @msg	not a VectorCraft file: {0}	nejde o soubor VectorCraft: {0}
-@msg	not a StitchFoundry shortcut set (missing `overrides`)	nejde o sadu klávesových zkratek StitchFoundry (chybí `overrides`)
+@msg	not a ScreenFoundry shortcut set (missing `overrides`)	nejde o sadu klávesových zkratek ScreenFoundry (chybí `overrides`)
 @msg	not a VectorCraft shortcut set (missing `overrides`)	nejde o sadu klávesových zkratek VectorCraft (chybí `overrides`)
 @msg	not a blend	nejde o prolnutí
 @msg	not a graphic style library (format `{_1}`)	nejde o knihovnu grafických stylů (formát `{_1}`)
@@ -4574,11 +4574,11 @@ imageTrace	Outline	Obrys
 @msg	Sent to {_1}	Odesláno do {_1}
 @msg	{_1} files	Soubory {_1}
 @msg	The graphics were lost and have been restarted	Grafika byla ztracena a byla restartována
-@msg	The graphics processor tried first couldn't show the window, so StitchFoundry started again on {summary}	Grafický procesor zkoušený jako první nedokázal zobrazit okno, proto se StitchFoundry znovu spustil na {summary}
-@msg	Loading StitchFoundry…	Načítání StitchFoundryu…
-@msg	StitchFoundry failed to start: {e}	StitchFoundry se nepodařilo spustit: {e}
-@msg	The last start of StitchFoundry ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Poslední spuštění aplikace StitchFoundry skončilo na {name} dřív, než se zobrazilo okno, proto se spustila na {summary}. Chcete-li tento grafický procesor zkusit znovu, změňte Předvolby › Výkon › Grafický procesor nebo ji spusťte s nastavenou proměnnou WGPU_BACKEND
-@msg	The last start of StitchFoundry ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Poslední spuštění aplikace StitchFoundry skončilo během zjišťování grafických procesorů, proto se spustila na {summary} jen s OpenGL. Chcete-li znovu zkusit ostatní grafická rozhraní, změňte Předvolby › Výkon › Grafický procesor nebo ji spusťte s nastavenou proměnnou WGPU_BACKEND
+@msg	The graphics processor tried first couldn't show the window, so ScreenFoundry started again on {summary}	Grafický procesor zkoušený jako první nedokázal zobrazit okno, proto se ScreenFoundry znovu spustil na {summary}
+@msg	Loading ScreenFoundry…	Načítání ScreenFoundryu…
+@msg	ScreenFoundry failed to start: {e}	ScreenFoundry se nepodařilo spustit: {e}
+@msg	The last start of ScreenFoundry ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Poslední spuštění aplikace ScreenFoundry skončilo na {name} dřív, než se zobrazilo okno, proto se spustila na {summary}. Chcete-li tento grafický procesor zkusit znovu, změňte Předvolby › Výkon › Grafický procesor nebo ji spusťte s nastavenou proměnnou WGPU_BACKEND
+@msg	The last start of ScreenFoundry ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	Poslední spuštění aplikace ScreenFoundry skončilo během zjišťování grafických procesorů, proto se spustila na {summary} jen s OpenGL. Chcete-li znovu zkusit ostatní grafická rozhraní, změňte Předvolby › Výkon › Grafický procesor nebo ji spusťte s nastavenou proměnnou WGPU_BACKEND
 @msg	A browser with WebGPU or WebGL2 is required.	Je potřeba prohlížeč s WebGPU nebo WebGL2.
 @msg	The graphics were lost and couldn't be restarted.	Grafika byla ztracena a nepodařilo se ji restartovat.
 @msg	Your unsaved changes are kept in this browser: reload the page to get them back.	Vaše neuložené změny zůstávají v tomto prohlížeči: obnovte stránku a získáte je zpět.
@@ -4600,25 +4600,25 @@ imageTrace	Outline	Obrys
 @msg	it has more than {MAX_NODES} objects	má více než {MAX_NODES} objektů
 @msg	it has no layers	nemá žádné vrstvy
 @msg	it has too many values in a row	má příliš mnoho hodnot v řadě
-@msg	it has {_1}, which StitchFoundry doesn't read from it yet	obsahuje {_1}, což z něj StitchFoundry zatím nečte
+@msg	it has {_1}, which ScreenFoundry doesn't read from it yet	obsahuje {_1}, což z něj ScreenFoundry zatím nečte
 @msg	its objects are nested too deeply	jeho objekty jsou vnořené příliš hluboko
 @msg	its section ending with `%{end}` doesn't end	jeho oddíl končící `%{end}` nemá konec
 @msg	objects with several fills or strokes, effects or brushes came in as their drawn look ({_1}): their appearance isn't editable yet	objekty s více výplněmi nebo tahy, efekty či štětci byly načteny jako vykreslený vzhled ({_1}): jejich vzhled zatím nelze upravovat
 @msg	gradient “{name}” isn't defined in the file: a plain colour stands in for it	přechod „{name}“ není v souboru definován: zastupuje ho plná barva
-@msg	an image StitchFoundry can't read was left out	obrázek, který StitchFoundry neumí přečíst, byl vynechán
+@msg	an image ScreenFoundry can't read was left out	obrázek, který ScreenFoundry neumí přečíst, byl vynechán
 @msg	an image whose data is cut short was left out	obrázek s useknutými daty byl vynechán
 @msg	linked pictures show the low-resolution preview saved in the file until their files are found: relink them in the Links panel	propojené obrázky se zobrazují jako náhled v nízkém rozlišení uložený v souboru, dokud se nenajdou jejich soubory: znovu je propojte v panelu Propojení
 @msg	area type in frames too short for a line of the font it shows in got taller frames ({_1}): their type wouldn't show otherwise	text v oblasti v rámcích příliš nízkých pro řádek písma, ve kterém se zde zobrazuje, dostal vyšší rámce ({_1}): jinak by nebyl vidět
 @msg	its editing data doesn't say where its art is	z jeho dat pro úpravy není zřejmé, kde je kresba
 @msg	this file was saved without PDF compatibility, and its editing data can't be read ({why})	tento soubor byl uložen bez kompatibility s PDF a jeho data pro úpravy nelze přečíst ({why})
 @msg	No fonts are missing in this document	V tomto dokumentu nechybí žádná písma
-@msg	StitchFoundry doesn't search other apps' or the system's folders: {path}	StitchFoundry neprohledává složky jiných aplikací ani systému: {path}
-@msg	StitchFoundry doesn't search the Shared or Public folder in Users: {path}	StitchFoundry neprohledává složku Shared ani Public ve složce Users: {path}
+@msg	ScreenFoundry doesn't search other apps' or the system's folders: {path}	ScreenFoundry neprohledává složky jiných aplikací ani systému: {path}
+@msg	ScreenFoundry doesn't search the Shared or Public folder in Users: {path}	ScreenFoundry neprohledává složku Shared ani Public ve složce Users: {path}
 @msg	{path} is not a folder	{path} není složka
 @msg	the search couldn't start: try again in a moment	hledání nelze spustit: zkuste to za chvíli znovu
 @msg	searching a folder isn't available on the web	prohledávání složky není na webu k dispozici
 @msg	every search thread stopped on an internal error (please report this bug)	všechna vlákna hledání se zastavila na vnitřní chybě (nahlaste prosím tuto chybu)
-@msg	StitchFoundry's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	složka Fonts StitchFoundryu zde není nastavena: nastavuje ji desktopová aplikace a vectorcraft-cli
+@msg	ScreenFoundry's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	složka Fonts ScreenFoundryu zde není nastavena: nastavuje ji desktopová aplikace a vectorcraft-cli
 @msg	choose the font files to add	vyberte soubory písem, které chcete přidat
 @msg	{n} font file(s) are now in {folder}	soubory písem ({n}) jsou nyní ve složce {folder}
 @msg	{n} font file(s) are now in {folder}; {failed} couldn't be added: {reason}	soubory písem ({n}) jsou nyní ve složce {folder}; nepodařilo se přidat {failed}: {reason}
@@ -4682,13 +4682,13 @@ imageTrace	Outline	Obrys
 @msg	missing panel layout	chybí rozložení panelů
 @msg	unsupported native docking operation	nepodporovaná nativní operace ukotvení
 @msg	this kind of brush has no options dialog yet	tento druh štětce zatím nemá dialogové okno možností
-	About StitchFoundry	O aplikaci StitchFoundry
-	Quit StitchFoundry	Ukončit StitchFoundry
-	StitchFoundry on GitHub	StitchFoundry na GitHubu
+	About ScreenFoundry	O aplikaci ScreenFoundry
+	Quit ScreenFoundry	Ukončit ScreenFoundry
+	ScreenFoundry on GitHub	ScreenFoundry na GitHubu
 	Report a Bug…	Nahlásit chybu…
-	Hide StitchFoundry	Skrýt StitchFoundry
+	Hide ScreenFoundry	Skrýt ScreenFoundry
 
-# Embroidery (StitchFoundry)
+# Embroidery (ScreenFoundry)
 	Embroidery	Výšivka
 	Digitizing Widget	Ovladač digitalizace
 	Convert Artwork to Embroidery	Převést kresbu na výšivku
@@ -4724,7 +4724,7 @@ imageTrace	Outline	Obrys
 	Barudan DSB (.dsb)…	Barudan DSB (.dsb)…
 	Brother PEC (.pec)…	Brother PEC (.pec)…
 
-# Embroidery (StitchFoundry), phase 1
+# Embroidery (ScreenFoundry), phase 1
 	Clear Machine Function	Odstranit funkci stroje
 	Insert Machine Function	Vložit funkci stroje
 	Object Stitches	Stehy objektu
@@ -4753,8 +4753,8 @@ machine	Trim	Odstřih
 @plural	{n} trim|{n} trims	{n} odstřih|{n} odstřihy|{n} odstřihů
 machine	Stop	Zastavení
 
-# Embroidery (StitchFoundry): the strings added when Czech became complete (2026-10-11)
-	Opening it left out what StitchFoundry can't read yet ({what}): replacing it loses that for good. Save under another name to keep it.	Při otevření tohoto souboru bylo vynecháno to, co StitchFoundry zatím neumí přečíst ({what}): jeho nahrazením o to natrvalo přijdete. Chcete-li to zachovat, uložte dokument pod jiným názvem.
+# Embroidery (ScreenFoundry): the strings added when Czech became complete (2026-10-11)
+	Opening it left out what ScreenFoundry can't read yet ({what}): replacing it loses that for good. Save under another name to keep it.	Při otevření tohoto souboru bylo vynecháno to, co ScreenFoundry zatím neumí přečíst ({what}): jeho nahrazením o to natrvalo přijdete. Chcete-li to zachovat, uložte dokument pod jiným názvem.
 	Add Inclination Line	Přidat čáru směru stehu
 	After the selection	Za výběrem
 	Apply Fabric	Použít látku
@@ -5004,7 +5004,7 @@ machine	Stop	Zastavení
 	Tiny object: may not sew cleanly	Drobný objekt: nemusí se vyšít čistě
 	Very dense: about {n} layers of thread here	Velmi husté místo: asi {n} vrstvy nití
 
-# Embroidery (StitchFoundry): Design from Prompt
+# Embroidery (ScreenFoundry): Design from Prompt
 	Design from Prompt…	Motiv podle popisu…
 	Design from Prompt	Motiv podle popisu
 	Generate	Generovat
@@ -5012,10 +5012,10 @@ machine	Stop	Zastavení
 	Size (longest side):	Velikost (delší strana):
 	Anthropic API key:	Klíč API Anthropic:
 	Remember the key on this computer	Zapamatovat si klíč v tomto počítači
-	Claude draws the artwork with your own Anthropic API key, billed to your Anthropic account; StitchFoundry then digitizes it. Check the stitches before you sew.	Kresbu vytvoří Claude pomocí vašeho vlastního klíče API Anthropic a zaplatíte ji ze svého účtu Anthropic; StitchFoundry ji pak digitalizuje. Před vyšíváním zkontrolujte stehy.
+	Claude draws the artwork with your own Anthropic API key, billed to your Anthropic account; ScreenFoundry then digitizes it. Check the stitches before you sew.	Kresbu vytvoří Claude pomocí vašeho vlastního klíče API Anthropic a zaplatíte ji ze svého účtu Anthropic; ScreenFoundry ji pak digitalizuje. Před vyšíváním zkontrolujte stehy.
 	Get a key	Získat klíč
 	Drawing the design…	Kreslí se motiv…
-	Describe a design and Claude draws artwork for it, then StitchFoundry digitizes it	Popište motiv a Claude k němu vytvoří kresbu, kterou pak StitchFoundry digitalizuje
+	Describe a design and Claude draws artwork for it, then ScreenFoundry digitizes it	Popište motiv a Claude k němu vytvoří kresbu, kterou pak ScreenFoundry digitalizuje
 	Place Artwork as Embroidery	Umístit kresbu jako výšivku
 	Place Artwork	Umístit kresbu
 @plural	Design placed: {n} stitched object|Design placed: {n} stitched objects	Motiv umístěn: {n} vyšívaný objekt|Motiv umístěn: {n} vyšívané objekty|Motiv umístěn: {n} vyšívaných objektů
@@ -5039,19 +5039,19 @@ machine	Stop	Zastavení
 @msg	the artwork can't be read: {e}	kresbu nelze přečíst: {e}
 @msg	The AI won't copy someone else's logo or character: {e}	AI nekopíruje cizí loga ani postavy: {e}
 
-# Embroidery (StitchFoundry): Redraw Image with Claude
+# Embroidery (ScreenFoundry): Redraw Image with Claude
 	Redraw Image with Claude…	Překreslit obraz pomocí Claude…
 	Redraw Image with Claude	Překreslit obraz pomocí Claude
 	What to change (optional):	Co změnit (nepovinné):
 	Only redraw artwork you own or have permission to use.	Překreslujte jen kresby, které vlastníte nebo které máte svolení používat.
-	Claude redraws the image as flat-colour art with your own Anthropic API key, billed to your Anthropic account; StitchFoundry then digitizes it. Check the stitches before you sew.	Claude obraz překreslí na kresbu z jednobarevných ploch pomocí vašeho vlastního klíče API Anthropic a zaplatíte ji ze svého účtu Anthropic; StitchFoundry ji pak digitalizuje. Před vyšíváním zkontrolujte stehy.
+	Claude redraws the image as flat-colour art with your own Anthropic API key, billed to your Anthropic account; ScreenFoundry then digitizes it. Check the stitches before you sew.	Claude obraz překreslí na kresbu z jednobarevných ploch pomocí vašeho vlastního klíče API Anthropic a zaplatíte ji ze svého účtu Anthropic; ScreenFoundry ji pak digitalizuje. Před vyšíváním zkontrolujte stehy.
 	Redraw with Claude…	Překreslit pomocí Claude…
-	Claude redraws the image as clean flat-colour art, then StitchFoundry digitizes it	Claude obraz překreslí na čistou kresbu z jednobarevných ploch, kterou pak StitchFoundry digitalizuje
+	Claude redraws the image as clean flat-colour art, then ScreenFoundry digitizes it	Claude obraz překreslí na čistou kresbu z jednobarevných ploch, kterou pak ScreenFoundry digitalizuje
 @msg	select an image to redraw	vyberte obraz k překreslení
 @msg	the image couldn't be read	obraz nelze přečíst
 @msg	The image is too large to send: crop it, or place a smaller copy.	Obraz je příliš velký na odeslání: ořízněte ho nebo umístěte menší kopii.
 
-# Embroidery (StitchFoundry): fill textures and split lines
+# Embroidery (ScreenFoundry): fill textures and split lines
 	Set Split Lines	Nastavit dělicí čáry
 	Carve Split Lines	Vtlačit dělicí čáry
 	Clear Split Lines	Vymazat dělicí čáry
@@ -5065,7 +5065,7 @@ machine	Stop	Zastavení
 	Circles	Kruhy
 	Scales	Šupiny
 
-# Embroidery (StitchFoundry): run and satin effects
+# Embroidery (ScreenFoundry): run and satin effects
 	Hand stitch	Ruční steh
 	Gap	Mezera
 	Jagged edges	Zubaté okraje
@@ -5075,7 +5075,7 @@ machine	Stop	Zastavení
 	Jag depth	Hloubka zubů
 	Trapunto (travel along the outline)	Trapunto (přejezdy podél obrysu)
 
-# Embroidery (StitchFoundry): motifs
+# Embroidery (ScreenFoundry): motifs
 	Place Motif	Vložit motiv
 	Leaf	List
 	Loop	Smyčka
@@ -5085,12 +5085,12 @@ machine	Stop	Zastavení
 	Width at end	Šířka na konci
 	Row spacing	Rozestup řad
 
-# Embroidery (StitchFoundry): fill types and laydown
+# Embroidery (ScreenFoundry): fill types and laydown
 	E-stitch	Steh E
 	Rings (0: all)	Kruhy (0: všechny)
 	Add Laydown	Přidat podkladovou vrstvu
 
-# Embroidery (StitchFoundry): spacing profiles and blends
+# Embroidery (ScreenFoundry): spacing profiles and blends
 	Spacing profile	Profil rozestupů
 	Even	Stejné velikosti
 	Accordion	Harmonika
@@ -5099,7 +5099,7 @@ machine	Stop	Zastavení
 	Blend into	Prolnout do
 	Blend Colors	Prolnout barvy
 
-# Embroidery (StitchFoundry): outlines and borders
+# Embroidery (ScreenFoundry): outlines and borders
 	Add Outline	Přidat obrys
 	Satin Outline	Saténový obrys
 	Bean Outline	Trojitý obrys
@@ -5576,7 +5576,7 @@ machine	Stop	Zastavení
 	Square loop	Čtvercová smyčka
 	Foil	Fólie
 	Shown with the design, not sewn	Zobrazeno s motivem, nešije se
-	StitchFoundry Help	Nápověda StitchFoundry
+	ScreenFoundry Help	Nápověda ScreenFoundry
 	Guide	Vodítko
 	Tips	Tipy
 	Search help	Hledat v nápovědě
@@ -6013,7 +6013,7 @@ machine	Stop	Zastavení
 	All shortcuts reset to defaults.	Všechny zkratky byly obnoveny na výchozí hodnoty.
 	Imported. Press OK to keep the imported set.	Importováno. Importovanou sadu zachováte stisknutím OK.
 	⚠ {chord} was already used by {names} — it has been removed there.	Pozor: zkratka {chord} už byla použita pro {names} — tam byla odebrána.
-	StitchFoundry Defaults	Výchozí StitchFoundry
+	ScreenFoundry Defaults	Výchozí ScreenFoundry
 @plural	{n} shortcut is assigned more than once|{n} shortcuts are assigned more than once	{n} zkratka je přiřazena více než jednou|{n} zkratky jsou přiřazeny více než jednou|{n} zkratek je přiřazeno více než jednou
 	Simulate prints overprints as Overprint Preview shows them; separations always keep them. A preset flattens transparency before printing (PostScript files always flatten it).	Možnost Simulovat vytiskne přetisky tak, jak je ukazuje Náhled přetisků; separace je vždy zachovávají. Přednastavení před tiskem sloučí průhlednost (soubory PostScript ji sloučí vždy).
 	Preserve	Zachovat
@@ -6230,7 +6230,7 @@ file-filter	PDF presets	Přednastavení PDF
 file-filter	Print presets	Přednastavení tisku
 file-filter	SVG Compressed	Komprimované SVG
 file-filter	PDF-compatible .ai	.ai kompatibilní s PDF
-file-filter	StitchFoundry Template	Šablona StitchFoundry
+file-filter	ScreenFoundry Template	Šablona ScreenFoundry
 file-filter	Templates	Šablony
 diagnostics	render	vykreslení
 diagnostics	ui	rozhraní
@@ -6241,7 +6241,7 @@ diagnostics	ui	rozhraní
 @plural	{n} commit|{n} commits	{n} commit|{n} commity|{n} commitů
 gradient-kind	Radial	Kruhový
 mark-style	Japanese	Japonské
-@msg	the compressed file unpacks to more than StitchFoundry reads ({_1} MB of document, {_2} MB per image)	komprimovaný soubor se rozbalí na více, než StitchFoundry přečte ({_1} MB dokumentu, {_2} MB na obrázek)
+@msg	the compressed file unpacks to more than ScreenFoundry reads ({_1} MB of document, {_2} MB per image)	komprimovaný soubor se rozbalí na více, než ScreenFoundry přečte ({_1} MB dokumentu, {_2} MB na obrázek)
 @msg	the document is too large to save compressed ({0}): save it with Use Compression off	dokument je příliš velký pro komprimované uložení ({0}): uložte ho s vypnutou volbou Použít kompresi
 @msg	the file stopped being read (please report this bug)	čtení souboru se přerušilo (nahlaste prosím tuto chybu)
 	Concentric Dividers:	Soustředné dělicí čáry:
@@ -6411,10 +6411,10 @@ mark-style	Japanese	Japonské
 @msg	name is empty	název je prázdný
 @msg	no symbol named `{n}`	žádný symbol s názvem `{n}`
 
-# Embroidery (StitchFoundry): Ask About Embroidery
+# Embroidery (ScreenFoundry): Ask About Embroidery
 	Ask About Embroidery…	Zeptat se na vyšívání…
 	Ask About Embroidery	Zeptat se na vyšívání
-	Ask anything about machine embroidery or StitchFoundry: which stabilizer to use, why thread breaks, how to make letters sew cleaner, where a feature is. Claude can also change your design when you ask, after you allow it.	Zeptejte se na cokoli o strojovém vyšívání nebo o StitchFoundry: jaký stabilizátor použít, proč se trhá nit, jak vyšít čistší písmena, kde najít funkci. Claude může na vaše přání také změnit váš vzor, až to povolíte.
+	Ask anything about machine embroidery or ScreenFoundry: which stabilizer to use, why thread breaks, how to make letters sew cleaner, where a feature is. Claude can also change your design when you ask, after you allow it.	Zeptejte se na cokoli o strojovém vyšívání nebo o ScreenFoundry: jaký stabilizátor použít, proč se trhá nit, jak vyšít čistší písmena, kde najít funkci. Claude může na vaše přání také změnit váš vzor, až to povolíte.
 	Thinking…	Přemýšlí…
 	Type your question, then press Enter	Napište otázku a stiskněte Enter
 	Ask	Zeptat se
@@ -6438,7 +6438,7 @@ mark-style	Japanese	Japonské
 @msg	This conversation is long: start a New Conversation.	Tato konverzace je dlouhá: začněte novou konverzaci.
 @msg	Claude took too many steps: ask again, more simply.	Claude potřeboval příliš mnoho kroků: zeptejte se znovu a jednodušeji.
 
-# Embroidery (StitchFoundry): cross-stitch fill, colour replace, fabric count and chart
+# Embroidery (ScreenFoundry): cross-stitch fill, colour replace, fabric count and chart
 	Fill a patch	Vyplnit plochu
 	Click a square to fill every touching square like it; hold Alt to clear them	Klepnutím na čtverec vyplníte všechny sousední stejné čtverce; s klávesou Alt je vymažete
 	With the Thread Colour	Barvou nitě
@@ -6470,7 +6470,7 @@ mark-style	Japanese	Japonské
 	Structured cap	Pevná kšiltovka
 	Silk / lightweight	Hedvábí / lehká látka
 
-# Embroidery (StitchFoundry): Check My Sew-out
+# Embroidery (ScreenFoundry): Check My Sew-out
 	Check My Sew-out…	Zkontrolovat výšivku…
 	Check My Sew-out	Zkontrolovat výšivku
 	About the sewing	O vyšívání
@@ -6501,7 +6501,7 @@ mark-style	Japanese	Japonské
 @msg	At most 6 photos: remove one first.	Nejvýš 6 fotek: nejdřív jednu odeberte.
 @msg	no files here	tady nejsou žádné soubory
 
-# Embroidery (StitchFoundry): Foundry Account
+# Embroidery (ScreenFoundry): Foundry Account
 	A check costs {n} credits; free checks come back next month.	Kontrola stojí {n} kreditů; bezplatné kontroly se vrátí příští měsíc.
 	Account	Účet
 	Buy credits	Koupit kredity
@@ -6510,15 +6510,15 @@ mark-style	Japanese	Japonské
 	Delete My Shared Sew-out Checks	Smazat mé sdílené kontroly
 	Email	E-mail
 	Free sew-out checks left this month: {n}	Bezplatné kontroly zbývající tento měsíc: {n}
-	Leave it empty for StitchFoundry's own service.	Nechte prázdné pro vlastní službu StitchFoundry.
+	Leave it empty for ScreenFoundry's own service.	Nechte prázdné pro vlastní službu ScreenFoundry.
 	Paid with Foundry credits ({n} left).	Placeno kredity Foundry (zbývá {n}).
 	Paid with Foundry credits.	Placeno kredity Foundry.
 	Pay for the AI features with my Foundry credits	Platit funkce AI mými kredity Foundry
 	Pay with Foundry credits instead	Platit raději kredity Foundry
-	Payment is on Stripe's secure page, in your browser; your card never reaches StitchFoundry.	Platí se na zabezpečené stránce Stripe ve vašem prohlížeči; vaše karta se do StitchFoundry nikdy nedostane.
+	Payment is on Stripe's secure page, in your browser; your card never reaches ScreenFoundry.	Platí se na zabezpečené stránce Stripe ve vašem prohlížeči; vaše karta se do ScreenFoundry nikdy nedostane.
 	Reading your credits…	Načítají se kredity…
 	Server	Server
-	Share this check to help improve StitchFoundry (kept private; delete it any time in Foundry Account)	Sdílet tuto kontrolu a pomoci zlepšit StitchFoundry (zůstane soukromá; kdykoli ji smažete v Účtu Foundry)
+	Share this check to help improve ScreenFoundry (kept private; delete it any time in Foundry Account)	Sdílet tuto kontrolu a pomoci zlepšit ScreenFoundry (zůstane soukromá; kdykoli ji smažete v Účtu Foundry)
 	Sign In	Přihlásit se
 	Sign Out	Odhlásit se
 	Sign in, or make an account, to pay for the AI features with Foundry credits instead of your own Anthropic API key. A new account starts with free credits.	Přihlaste se nebo si vytvořte účet a plaťte funkce AI kredity Foundry místo vlastního klíče API Anthropic. Nový účet začíná s bezplatnými kredity.
@@ -6533,7 +6533,7 @@ mark-style	Japanese	Japonské
 @msg	Foundry Account needs the desktop app for now	Účet Foundry zatím vyžaduje desktopovou aplikaci
 @msg	Type your email address.	Napište svou e-mailovou adresu.
 @msg	A password needs at least 8 characters.	Heslo musí mít aspoň 8 znaků.
-@msg	Account made: welcome to StitchFoundry.	Účet vytvořen: vítejte ve StitchFoundry.
+@msg	Account made: welcome to ScreenFoundry.	Účet vytvořen: vítejte ve ScreenFoundry.
 @msg	Signed in.	Přihlášeno.
 @msg	Pay on the page that opened in your browser, then press Refresh.	Zaplaťte na stránce otevřené v prohlížeči a pak stiskněte Obnovit.
 @msg	Signed out.	Odhlášeno.
@@ -6542,7 +6542,7 @@ mark-style	Japanese	Japonské
 @msg	Sign in to your Foundry account (Embroidery › Foundry Account…).	Přihlaste se ke svému účtu Foundry (Výšivka › Účet Foundry…).
 @msg	Not enough Foundry credits: buy more in Foundry Account.	Málo kreditů Foundry: kupte další v Účtu Foundry.
 @msg	An account with that email already exists: sign in instead.	Účet s tímto e-mailem už existuje: raději se přihlaste.
-@msg	The StitchFoundry service can't do this yet: try again later.	Služba StitchFoundry to zatím neumí: zkuste to později.
+@msg	The ScreenFoundry service can't do this yet: try again later.	Služba ScreenFoundry to zatím neumí: zkuste to později.
 	Smudge Stick…	Rozmazávací tyčinka…
 	Smudge Stick	Rozmazávací tyčinka
 	Sponge…	Houba…
@@ -6584,7 +6584,7 @@ mark-style	Japanese	Japonské
 @msg	too many library panels were opened in this session	v této relaci bylo otevřeno příliš mnoho panelů knihoven
 @msg	The image is {_1} × {_2} pixels, more than {LARGE_TRACE_SIDE} on a side: it is traced, but more slowly. A lower-fidelity preset or a smaller copy of the image traces faster.	Obraz má {_1} × {_2} pixelů, na jedné straně více než {LARGE_TRACE_SIDE}: vektorizuje se, ale pomaleji. Rychleji se vektorizuje s předvolbou nižší věrnosti nebo menší kopie obrazu.
 @msg	The image was traced at {_1} × {_2} pixels, scaled down from {_3} × {_4} ({_5} megapixels at most).	Obraz byl vektorizován v rozlišení {_1} × {_2} pixelů, zmenšený z {_3} × {_4} (nejvýše {_5} megapixelů).
-# Embroidery (StitchFoundry): undo steps
+# Embroidery (ScreenFoundry): undo steps
 	Auto-Digitize	Automaticky digitalizovat
 	Backstitch Line	Linie stehu zpět
 	Close Appliqué Outlines	Uzavřít obrysy aplikace
@@ -6592,7 +6592,7 @@ mark-style	Japanese	Japonské
 	Erase Cross Stitches	Smazat křížkové stehy
 	Move Stitches	Přesunout stehy
 	Overlap where shapes touch	Přesah, kde se tvary dotýkají
-# Embroidery (StitchFoundry): picture services
+# Embroidery (ScreenFoundry): picture services
 	Picture made by	Obrázek vytvoří
 	Claude (draws the shapes itself)	Claude (tvary nakreslí sám)
 	{name} API key:	Klíč API {name}:
@@ -6632,26 +6632,26 @@ mark-style	Japanese	Japonské
 	A new design: a hoopful of patches, each colour sewn once for all of them	Nový návrh: rámeček plný nášivek, každá barva vyšita jednou pro všechny
 	Every hoopful as a machine file, and a list of the names in each	Každý rámeček jako soubor pro stroj a seznam jmen v každém
 	The open design repeated across its hoop, sorted so each colour is sewn once	Otevřený návrh opakovaný přes celý rámeček, seřazený tak, aby se každá barva vyšívala jednou
-# Report to StitchFoundry (ui.reportSewout)
+# Report to ScreenFoundry (ui.reportSewout)
 	Anything you'd like to add (optional)	Chcete něco doplnit? (nepovinné)
 	Claude is writing the report…	Claude píše zprávu…
 	Have Claude Write It	Ať to napíše Claude
-	Help make StitchFoundry better	Pomozte vylepšit StitchFoundry
-	I agree to send this to SiteSentrix, the maker of StitchFoundry, to improve the software. It won't be shared with anyone else.	Souhlasím s odesláním tohoto společnosti SiteSentrix, výrobci StitchFoundry, za účelem vylepšení programu. Nebude sdíleno s nikým dalším.
+	Help make ScreenFoundry better	Pomozte vylepšit ScreenFoundry
+	I agree to send this to SiteSentrix, the maker of ScreenFoundry, to improve the software. It won't be shared with anyone else.	Souhlasím s odesláním tohoto společnosti SiteSentrix, výrobci ScreenFoundry, za účelem vylepšení programu. Nebude sdíleno s nikým dalším.
 	Include a summary of the design	Přiložit souhrn návrhu
 	Include the conversation with Claude	Přiložit konverzaci s Claudem
 	Include the photos ({n})	Přiložit fotky ({n})
-	Report to StitchFoundry	Nahlásit StitchFoundry
-	Report to StitchFoundry…	Nahlásit StitchFoundry…
+	Report to ScreenFoundry	Nahlásit ScreenFoundry
+	Report to ScreenFoundry…	Nahlásit ScreenFoundry…
 	Send Report	Odeslat zprávu
-	Send this sew-out and Claude's idea of what StitchFoundry could do better to its makers	Poslat tuto výšivku a Claudův nápad, co by StitchFoundry mohl dělat lépe, jeho tvůrcům
-	Send this sew-out to the people who make StitchFoundry, with Claude's idea of what the software could do better. We use it only to improve StitchFoundry: we never share, sell or publish it, and you can have it deleted at any time (Foundry Account › Delete My Shared Sew-out Checks).	Pošlete tuto výšivku tvůrcům StitchFoundry spolu s Claudovým nápadem, co by program mohl dělat lépe. Používáme ji jen ke zlepšení StitchFoundry: nikdy ji nesdílíme, neprodáváme ani nezveřejňujeme a kdykoli můžete požádat o její smazání (Účet Foundry › Smazat mé sdílené kontroly).
+	Send this sew-out and Claude's idea of what ScreenFoundry could do better to its makers	Poslat tuto výšivku a Claudův nápad, co by ScreenFoundry mohl dělat lépe, jeho tvůrcům
+	Send this sew-out to the people who make ScreenFoundry, with Claude's idea of what the software could do better. We use it only to improve ScreenFoundry: we never share, sell or publish it, and you can have it deleted at any time (Foundry Account › Delete My Shared Sew-out Checks).	Pošlete tuto výšivku tvůrcům ScreenFoundry spolu s Claudovým nápadem, co by program mohl dělat lépe. Používáme ji jen ke zlepšení ScreenFoundry: nikdy ji nesdílíme, neprodáváme ani nezveřejňujeme a kdykoli můžete požádat o její smazání (Účet Foundry › Smazat mé sdílené kontroly).
 	Sign in to Foundry Account to send a report.	Přihlaste se k účtu Foundry, abyste mohli odeslat zprávu.
 @msg	Sign in to Foundry Account to send a report.	Přihlaste se k účtu Foundry, abyste mohli odeslat zprávu.
 	Thank you: your report was sent.	Děkujeme: vaše zpráva byla odeslána.
 	Title	Název
-	What went wrong, and what StitchFoundry could do better	Co se pokazilo a co by StitchFoundry mohl dělat lépe
-	Write a report about this sew-out for the people who make StitchFoundry.	Napiš zprávu o této výšivce pro tvůrce StitchFoundry.
+	What went wrong, and what ScreenFoundry could do better	Co se pokazilo a co by ScreenFoundry mohl dělat lépe
+	Write a report about this sew-out for the people who make ScreenFoundry.	Napiš zprávu o této výšivce pro tvůrce ScreenFoundry.
 @msg	Check a sew-out first: the report goes with its photos and Claude's answer	Nejdřív zkontrolujte výšivku: zpráva jde s jejími fotkami a Claudovou odpovědí
 @msg	Tick the box to agree to send it first.	Nejdřív zaškrtněte políčko, že s odesláním souhlasíte.
 @msg	Write what went wrong first, or have Claude write it.	Nejdřív napište, co se pokazilo, nebo to nechte napsat Clauda.

@@ -62,7 +62,7 @@ fn two_links_and_a_font_are_collected_and_relinked() {
     let out = dir.file("out");
     let r = run(&mut s, "file.package", json!({"folder": out}));
     let files: Vec<&str> = r["files"].as_array().unwrap().iter().map(|f| f.as_str().unwrap()).collect();
-    assert_eq!(files, ["poster.stitchfoundry", "Links/red.png", "Links/blue.png", "Fonts/SourceSans3-Regular.ttf", "poster Report.txt"]);
+    assert_eq!(files, ["poster.screenfoundry", "Links/red.png", "Links/blue.png", "Fonts/SourceSans3-Regular.ttf", "poster Report.txt"]);
     assert_eq!((r["links"].as_u64(), r["fonts"].as_u64(), r["missingLinks"].clone()), (Some(2), Some(1), json!([])));
     let root = std::path::Path::new(&out).join("poster Folder");
     assert_eq!(std::path::Path::new(r["folder"].as_str().unwrap()), root);
@@ -81,7 +81,7 @@ fn two_links_and_a_font_are_collected_and_relinked() {
     assert!(link(&s).iter().all(|l| l.path.contains("art")));
     // The packaged one opens with the copies, even with the originals gone.
     std::fs::remove_dir_all(dir.0.join("art")).unwrap();
-    let r = open(&mut s, &root.join("poster.stitchfoundry").to_string_lossy());
+    let r = open(&mut s, &root.join("poster.screenfoundry").to_string_lossy());
     assert_eq!(r["missingLinks"], json!([]), "{r}");
     for l in link(&s) {
         assert!(std::path::Path::new(&l.path).starts_with(root.join("Links")), "{l:?}");
@@ -111,7 +111,7 @@ fn without_a_folder_the_zip_has_the_same_files() {
     assert_eq!(zip.keys().cloned().collect::<Vec<_>>(), want_sorted);
     assert_eq!(zip["Poster Kit/Links/blue.png"], png(300, 300, BLUE));
     // The packaged document links to the files beside it.
-    let doc = vectorcraft_format::load(&zip["Poster Kit/poster.stitchfoundry"]).unwrap();
+    let doc = vectorcraft_format::load(&zip["Poster Kit/poster.screenfoundry"]).unwrap();
     let mut rel = vec![];
     doc.visit_images(|_, im| rel.push(im.link.clone().unwrap().relative.unwrap()));
     rel.sort();
@@ -129,16 +129,16 @@ fn options_leave_out_links_fonts_and_the_report() {
     let dir = Folder::new("package-options");
     let mut s = poster(&dir);
     let r = run(&mut s, "file.package", json!({"linksFolder": false, "copyFonts": false, "report": false}));
-    assert_eq!(r["files"], json!(["poster.stitchfoundry", "red.png", "blue.png"]));
+    assert_eq!(r["files"], json!(["poster.screenfoundry", "red.png", "blue.png"]));
     let r = run(&mut s, "file.package", json!({"copyLinks": false}));
-    assert_eq!(r["files"], json!(["poster.stitchfoundry", "Fonts/SourceSans3-Regular.ttf", "poster Report.txt"]));
+    assert_eq!(r["files"], json!(["poster.screenfoundry", "Fonts/SourceSans3-Regular.ttf", "poster Report.txt"]));
     let zip = unzip(&vectorcraft_format::base64_decode(r["dataBase64"].as_str().unwrap()).unwrap());
-    let doc = vectorcraft_format::load(&zip["poster Folder/poster.stitchfoundry"]).unwrap();
+    let doc = vectorcraft_format::load(&zip["poster Folder/poster.screenfoundry"]).unwrap();
     doc.visit_images(|_, im| assert!(im.link.as_ref().unwrap().path.contains("art"), "not relinked: the originals"));
     let r = run(&mut s, "file.package", json!({"relink": false}));
     let zip = unzip(&vectorcraft_format::base64_decode(r["dataBase64"].as_str().unwrap()).unwrap());
     assert!(zip.contains_key("poster Folder/Links/red.png"), "copied");
-    let doc = vectorcraft_format::load(&zip["poster Folder/poster.stitchfoundry"]).unwrap();
+    let doc = vectorcraft_format::load(&zip["poster Folder/poster.screenfoundry"]).unwrap();
     doc.visit_images(|_, im| assert!(im.link.as_ref().unwrap().path.contains("art"), "not relinked"));
     assert!(s.execute("file.package", &json!({"name": "../up"})).is_err());
 }
@@ -148,8 +148,8 @@ fn a_package_never_replaces_its_source_or_its_links() {
     let dir = Folder::new("package-overwrite");
     let mut s = poster(&dir);
     // (saved under the name a package gives it: packaging beside it would replace it)
-    save(&mut s, &dir.file("poster.stitchfoundry"));
-    let doc = dir.file("poster.stitchfoundry");
+    save(&mut s, &dir.file("poster.screenfoundry"));
+    let doc = dir.file("poster.screenfoundry");
     let (saved, red) = (std::fs::read(&doc).unwrap(), std::fs::read(dir.file("art/red.png")).unwrap());
     let parent = dir.0.parent().unwrap();
     let name = dir.0.file_name().unwrap().to_string_lossy().into_owned();
@@ -268,7 +268,7 @@ fn poster_with_placed_document(dir: &Folder) -> Session {
 /// Every link must point to a packaged copy, including links inside a linked
 /// VectorCraft file. Validate after original assets have been removed.
 fn verify_portable_nested_package(folder: &std::path::Path) {
-    let main = folder.join("poster.stitchfoundry");
+    let main = folder.join("poster.screenfoundry");
     let part = folder.join("Links/part.vectorcraft");
     let image = folder.join("Links/photo.png");
     assert!(main.is_file() && part.is_file() && image.is_file());
@@ -346,13 +346,13 @@ fn package_keeps_distinct_linked_documents_with_colliding_file_names() {
         .unwrap()
         .iter()
         .filter_map(Value::as_str)
-        .filter(|name| name.ends_with(".vectorcraft") || name.ends_with(".stitchfoundry"))
+        .filter(|name| name.ends_with(".vectorcraft") || name.ends_with(".screenfoundry"))
         .collect();
     assert_eq!(packaged.len(), 3, "both nested documents must be retained: {packaged:?}");
     std::fs::remove_dir_all(dir.0.join("art1")).unwrap();
     std::fs::remove_dir_all(dir.0.join("art2")).unwrap();
     let mut check = session();
-    assert_eq!(open(&mut check, &folder.join("poster.stitchfoundry").to_string_lossy())["missingLinks"], json!([]));
+    assert_eq!(open(&mut check, &folder.join("poster.screenfoundry").to_string_lossy())["missingLinks"], json!([]));
     for name in packaged.into_iter().filter(|n| n.starts_with("Links/")) {
         let mut inner = session();
         let result = open(&mut inner, &folder.join(name).to_string_lossy());
@@ -515,7 +515,7 @@ fn circular_placed_links_copy_each_document_once_and_warn() {
     assert_eq!(result["missingLinks"], json!([]), "{result}");
     assert!(result["warnings"].as_array().unwrap().iter().any(|w| w.as_str().unwrap().contains("circular placed-document link")), "{result}");
     let packaged = dir.0.join("delivery/root Folder");
-    let root_doc = vectorcraft_format::load(&std::fs::read(packaged.join("root.stitchfoundry")).unwrap()).unwrap();
+    let root_doc = vectorcraft_format::load(&std::fs::read(packaged.join("root.screenfoundry")).unwrap()).unwrap();
     let child_doc = vectorcraft_format::load(&std::fs::read(packaged.join("Links/child.vectorcraft")).unwrap()).unwrap();
     let mut direct = Vec::new();
     root_doc.visit_placed(|_, p| direct.push(p.link.relative.clone()));
@@ -524,7 +524,7 @@ fn circular_placed_links_copy_each_document_once_and_warn() {
     child_doc.visit_placed(|_, p| {
         back.push((p.link.relative.clone(), p.link.hash.clone(), p.link.size));
     });
-    assert_eq!(back, [(Some("../root.stitchfoundry".into()), None, None)]);
+    assert_eq!(back, [(Some("../root.screenfoundry".into()), None, None)]);
     let report = std::fs::read_to_string(packaged.join("root Report.txt")).unwrap();
     assert!(report.lines().any(|line| line == "LINKED FILES"), "{report}");
     assert!(report.contains("stopped following the cycle"), "{report}");

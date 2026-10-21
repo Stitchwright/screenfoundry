@@ -135,7 +135,7 @@ fn serve_loop_writes_one_line_per_request() {
     let lines: Vec<Value> = String::from_utf8(out).unwrap().lines().map(|l| serde_json::from_str(l).unwrap()).collect();
     assert_eq!(lines.len(), 2);
     assert_eq!(lines[0]["result"]["protocolVersion"], PROTOCOL_VERSION);
-    assert_eq!(lines[0]["result"]["serverInfo"]["name"], "stitchfoundry");
+    assert_eq!(lines[0]["result"]["serverInfo"]["name"], "screenfoundry");
     assert!(lines[0]["result"]["capabilities"]["tools"].is_object());
     assert!(lines[0]["result"]["capabilities"]["resources"].is_object());
     assert!(lines[1]["result"]["tools"].as_array().unwrap().len() >= 19);
@@ -455,7 +455,7 @@ fn add_text_sets_writing_direction_for_every_kind() {
 fn save_file_describes_the_formats_it_writes() {
     let tools = tool_definitions();
     let d = tools.iter().find(|t| t["name"] == "save_file").and_then(|t| t["description"].as_str()).unwrap();
-    for ext in [".stitchfoundry", ".vctemplate", ".pdf", ".svg", ".svgz", ".ai"] {
+    for ext in [".screenfoundry", ".vctemplate", ".pdf", ".svg", ".svgz", ".ai"] {
         assert!(d.contains(ext), "{ext}: {d}");
     }
     assert!(d.contains("its own format"), "{d}");

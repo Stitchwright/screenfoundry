@@ -1,13 +1,13 @@
 // Integration tests: unwrapping and panicking on failure is fine here, unlike in shipped code (AGENTS.md › Robustness).
 #![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
-//! `stitchfoundry --help` prints the usage and exits before the app starts (#2110): run from a
+//! `screenfoundry --help` prints the usage and exits before the app starts (#2110): run from a
 //! terminal, SSH or an agent's shell it used to open the window (or hang without a display).
 
 use std::process::{Command, Output, Stdio};
 use std::time::{Duration, Instant};
 
-const BIN: &str = env!("CARGO_BIN_EXE_stitchfoundry");
+const BIN: &str = env!("CARGO_BIN_EXE_screenfoundry");
 
 /// Runs the desktop binary without a display, so a regression fails instead of opening a window.
 fn run(args: &[&str], env: &[(&str, &str)]) -> Output {
@@ -40,12 +40,12 @@ fn prints_usage(args: &[&str], env: &[(&str, &str)]) {
     let stdout = String::from_utf8(out.stdout).unwrap();
     assert!(out.status.success(), "{args:?}: {}", String::from_utf8_lossy(&out.stderr));
     assert!(out.stderr.is_empty(), "{args:?}: {}", String::from_utf8_lossy(&out.stderr));
-    assert!(stdout.starts_with("Usage: stitchfoundry "), "{args:?}: {stdout}");
+    assert!(stdout.starts_with("Usage: screenfoundry "), "{args:?}: {stdout}");
     for flag in ["--control", "--automation-read-root", "--automation-write-root", "--in-window-menus", "--version", "--help"] {
         assert!(stdout.contains(flag), "{args:?}: usage doesn't mention {flag}: {stdout}");
     }
     // Headless work is the CLI's: the usage says where to go.
-    assert!(stdout.contains("stitchfoundry-cli"), "{args:?}: {stdout}");
+    assert!(stdout.contains("screenfoundry-cli"), "{args:?}: {stdout}");
 }
 
 #[test]

@@ -4,10 +4,10 @@ version.workspace = true
 edition.workspace = true
 license.workspace = true
 publish = false
-description = "StitchFoundry command line: MCP server (stdio) and headless batch runs"
+description = "ScreenFoundry command line: MCP server (stdio) and headless batch runs"
 
 [[bin]]
-name = "stitchfoundry-cli"
+name = "screenfoundry-cli"
 path = "src/main.rs"
 
 [lints]

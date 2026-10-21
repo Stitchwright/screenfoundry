@@ -34,7 +34,7 @@ commands:
   corpus [--download] [--affinity]
                   show where test corpora live; --download fetches PngSuite into corpus/pngsuite,
                   --affinity the pinned public Affinity documents into corpus/affinity
-  bundle          build dist/StitchFoundry.app (macOS) with assets/app-icon/stitchfoundry.icns
+  bundle          build dist/ScreenFoundry.app (macOS) with assets/app-icon/screenfoundry.icns
   ico <out.ico> <png>...
                   pack PNGs into a Windows .ico (used by packaging/icons.sh)
   icns <out.icns> <png>...

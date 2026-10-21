@@ -3,14 +3,15 @@
      MimeType line. The desktop entry lists these types with the shared ones; a test in
      apps/vectorcraft/src/main.rs checks both files. -->
 <mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
-  <mime-type type="application/x-stitchfoundry">
-    <comment>StitchFoundry document</comment>
-    <icon name="com.stitchwright.stitchfoundry"/>
+  <mime-type type="application/x-screenfoundry">
+    <comment>ScreenFoundry document</comment>
+    <icon name="com.stitchwright.screenfoundry"/>
+    <glob pattern="*.screenfoundry"/>
     <glob pattern="*.stitchfoundry"/>
   </mime-type>
   <mime-type type="application/x-vectorcraft">
     <comment>VectorCraft document</comment>
-    <icon name="com.stitchwright.stitchfoundry"/>
+    <icon name="com.stitchwright.screenfoundry"/>
     <glob pattern="*.vectorcraft"/>
     <glob pattern="*.drawcraft"/>
   </mime-type>

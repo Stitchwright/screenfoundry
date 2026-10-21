@@ -4689,7 +4689,7 @@ file-filter	PDF presets	PDF-forudindstillinger
 file-filter	Print presets	Printforudindstillinger
 file-filter	SVG Compressed	Komprimeret SVG
 file-filter	PDF-compatible .ai	PDF-kompatibel .ai
-file-filter	StitchFoundry Template	StitchFoundry-skabelon
+file-filter	ScreenFoundry Template	ScreenFoundry-skabelon
 file-filter	Templates	Skabeloner
 diagnostics	render	Gengivelse
 diagnostics	ui	Brugerflade
@@ -5190,7 +5190,7 @@ swatch	Bright Violet	Kraftig violet
 	Persistent	Vedvarende
 	Library Panel Options	Indstillinger for bibliotekspanel
 
-# StitchFoundry (embroidery)
+# ScreenFoundry (embroidery)
 	#	#
 	3D Puff	3D-puff
 	3D effect	3D-effekt
@@ -5223,7 +5223,7 @@ swatch	Bright Violet	Kraftig violet
 	A sheet of the designs found, to print or save as PDF	Et ark med de fundne designs, til udskrivning eller til at gemme som PDF
 	A smoothed copy of the image in these colours, its specks cleaned, to digitize or click to stitch	En udglattet kopi af billedet i disse farver, renset for prikker, til digitalisering eller klik for at brodere
 	A thread chart of your own from a CSV file (code, name and colour a thread) or a GIMP palette (.gpl)	Dit eget trådkort fra en CSV-fil (kode, navn og farve for hver tråd) eller en GIMP-palet (.gpl)
-	About StitchFoundry	Om StitchFoundry
+	About ScreenFoundry	Om ScreenFoundry
 	About the library	Om biblioteket
 	About the sewing	Om syningen
 	Accordion	Harmonika
@@ -5266,7 +5266,7 @@ swatch	Bright Violet	Kraftig violet
 	Answers come from Claude with your own Anthropic API key, billed to your Anthropic account. They can be wrong: try a test sew before an important piece.	Svarene kommer fra Claude med din egen Anthropic API-nøgle og faktureres til din Anthropic-konto. De kan være forkerte: lav en prøvesyning før et vigtigt stykke.
 	Anthropic API key:	Anthropic API-nøgle:
 	Anything else? For example: a gap above the bumper	Andet? For eksempel: et mellemrum over kofangeren
-	Applies the next time StitchFoundry starts.	Træder i kraft næste gang StitchFoundry starter.
+	Applies the next time ScreenFoundry starts.	Træder i kraft næste gang ScreenFoundry starter.
 	Appliqué	Applikation
 	Appliqué letters	Applikationsbogstaver
 	Appliqué star	Applikationsstjerne
@@ -5288,7 +5288,7 @@ swatch	Bright Violet	Kraftig violet
 	Ask	Spørg
 	Ask About Embroidery	Spørg om broderi
 	Ask About Embroidery…	Spørg om broderi…
-	Ask anything about machine embroidery or StitchFoundry: which stabilizer to use, why thread breaks, how to make letters sew cleaner, where a feature is. Claude can also change your design when you ask, after you allow it.	Spørg om alt inden for maskinbroderi eller StitchFoundry: hvilken stabilisering du skal bruge, hvorfor tråden knækker, hvordan bogstaver syes pænere, hvor en funktion findes. Claude kan også ændre dit design, når du beder om det, efter at du har tilladt det.
+	Ask anything about machine embroidery or ScreenFoundry: which stabilizer to use, why thread breaks, how to make letters sew cleaner, where a feature is. Claude can also change your design when you ask, after you allow it.	Spørg om alt inden for maskinbroderi eller ScreenFoundry: hvilken stabilisering du skal bruge, hvorfor tråden knækker, hvordan bogstaver syes pænere, hvor en funktion findes. Claude kan også ændre dit design, når du beder om det, efter at du har tilladt det.
 	Assign to Glyph	Tildel til glyf
 	At each point	Ved hvert punkt
 	Auto Direction	Automatisk retning
@@ -5399,10 +5399,10 @@ swatch	Bright Violet	Kraftig violet
 	Choose the photos in the browser's window…	Vælg fotoene i browserens vindue…
 	Chord length	Kordelængde
 	Circles	Cirkler
-	Claude draws the artwork with your own Anthropic API key, billed to your Anthropic account; StitchFoundry then digitizes it. Check the stitches before you sew.	Claude tegner grafikken med din egen Anthropic API-nøgle, faktureret til din Anthropic-konto; derefter digitaliserer StitchFoundry den. Tjek stingene, før du syr.
+	Claude draws the artwork with your own Anthropic API key, billed to your Anthropic account; ScreenFoundry then digitizes it. Check the stitches before you sew.	Claude tegner grafikken med din egen Anthropic API-nøgle, faktureret til din Anthropic-konto; derefter digitaliserer ScreenFoundry den. Tjek stingene, før du syr.
 	Claude looks at the photos with your own Anthropic API key, billed to your Anthropic account. It can be wrong: try a fix on a scrap of the same fabric first.	Claude ser på fotoene med din egen Anthropic API-nøgle, faktureret til din Anthropic-konto. Det kan tage fejl: prøv en rettelse på en stofrest af samme stof først.
-	Claude redraws the image as clean flat-colour art, then StitchFoundry digitizes it	Claude tegner billedet om som ren grafik i flade farver, og derefter digitaliserer StitchFoundry det
-	Claude redraws the image as flat-colour art with your own Anthropic API key, billed to your Anthropic account; StitchFoundry then digitizes it. Check the stitches before you sew.	Claude tegner billedet om som grafik i flade farver med din egen Anthropic API-nøgle, faktureret til din Anthropic-konto; derefter digitaliserer StitchFoundry det. Tjek stingene, før du syr.
+	Claude redraws the image as clean flat-colour art, then ScreenFoundry digitizes it	Claude tegner billedet om som ren grafik i flade farver, og derefter digitaliserer ScreenFoundry det
+	Claude redraws the image as flat-colour art with your own Anthropic API key, billed to your Anthropic account; ScreenFoundry then digitizes it. Check the stitches before you sew.	Claude tegner billedet om som grafik i flade farver med din egen Anthropic API-nøgle, faktureret til din Anthropic-konto; derefter digitaliserer ScreenFoundry det. Tjek stingene, før du syr.
 	Claude wants to change your design:	Claude vil ændre dit design:
 	Clear Default	Ryd standard
 	Clear Export History	Ryd eksporthistorik
@@ -5516,7 +5516,7 @@ swatch	Bright Violet	Kraftig violet
 	Density	Tæthed
 	Density Map	Tæthedskort
 	Density map	Tæthedskort
-	Describe a design and Claude draws artwork for it, then StitchFoundry digitizes it	Beskriv et design, så tegner Claude grafik til det, og derefter digitaliserer StitchFoundry det
+	Describe a design and Claude draws artwork for it, then ScreenFoundry digitizes it	Beskriv et design, så tegner Claude grafik til det, og derefter digitaliserer ScreenFoundry det
 	Describe the design:	Beskriv designet:
 	Design	Design
 	Design Catalogue	Designkatalog
@@ -5699,7 +5699,7 @@ swatch	Bright Violet	Kraftig violet
 	Hexagons	Sekskanter
 	Hidden (not sewn)	Skjult (syes ikke)
 	Hide Digitizing Widget	Skjul digitaliseringswidget
-	Hide StitchFoundry	Skjul StitchFoundry
+	Hide ScreenFoundry	Skjul ScreenFoundry
 	Hold a ruler, or a bank card, against the screen and change the size until the marks match. Actual Size then shows designs life size.	Hold en lineal eller et betalingskort op mod skærmen, og ændr størrelsen, indtil mærkerne passer. Faktisk størrelse viser derefter designs i naturlig størrelse.
 	Honeycomb	Bikube
 	Hoodie	Hættetrøje
@@ -5716,7 +5716,7 @@ swatch	Bright Violet	Kraftig violet
 	Import Chart…	Importér kort…
 	Import Names…	Importér navne…
 	Import Thread Chart	Importér trådkort
-	In StitchFoundry	I StitchFoundry
+	In ScreenFoundry	I ScreenFoundry
 	In a line	På en linje
 	In production	I produktion
 	In the hoop	I broderirammen
@@ -5766,7 +5766,7 @@ swatch	Bright Violet	Kraftig violet
 	Learn how	Lær hvordan
 	Leather / vinyl	Læder / vinyl
 	Leave Kiosk	Forlad kiosk
-	Leave it empty for StitchFoundry's own service.	Lad det være tomt for at bruge StitchFoundrys egen tjeneste.
+	Leave it empty for ScreenFoundry's own service.	Lad det være tomt for at bruge ScreenFoundrys egen tjeneste.
 	Leaves	Blade
 	Leaving the kiosk will take this PIN	For at forlade kiosken skal denne PIN-kode bruges
 	Left to right	Venstre mod højre
@@ -5922,7 +5922,7 @@ swatch	Bright Violet	Kraftig violet
 	Open a document to see its stitch sequence.	Åbn et dokument for at se dets stingrækkefølge.
 	Open a document to see its stitches.	Åbn et dokument for at se dets sting.
 	Open or create a document to digitize embroidery.	Åbn eller opret et dokument for at digitalisere broderi.
-	Opening it left out what StitchFoundry can't read yet ({what}): replacing it loses that for good. Save under another name to keep it.	Ved åbningen blev det udeladt, som StitchFoundry ikke kan læse endnu ({what}): hvis du erstatter filen, mistes det for altid. Gem under et andet navn for at beholde det.
+	Opening it left out what ScreenFoundry can't read yet ({what}): replacing it loses that for good. Save under another name to keep it.	Ved åbningen blev det udeladt, som ScreenFoundry ikke kan læse endnu ({what}): hvis du erstatter filen, mistes det for altid. Gem under et andet navn for at beholde det.
 	Ornament	Ophængspynt
 	Outline Around	Kontur rundt om
 	Output Profiles	Outputprofiler
@@ -5949,7 +5949,7 @@ swatch	Bright Violet	Kraftig violet
 	Paw Print	Poteaftryk
 	Pay for the AI features with my Foundry credits	Betal for AI-funktionerne med mine Foundry-kreditter
 	Pay with Foundry credits instead	Betal med Foundry-kreditter i stedet
-	Payment is on Stripe's secure page, in your browser; your card never reaches StitchFoundry.	Betalingen sker på Stripes sikre side i din browser; dit kort når aldrig StitchFoundry.
+	Payment is on Stripe's secure page, in your browser; your card never reaches ScreenFoundry.	Betalingen sker på Stripes sikre side i din browser; dit kort når aldrig ScreenFoundry.
 	Pebbles	Småsten
 	Per 1000 stitches	Pr. 1000 sting
 	Pfaff PCS (.pcs)…	Pfaff PCS (.pcs)…
@@ -6009,7 +6009,7 @@ swatch	Bright Violet	Kraftig violet
 	Quilt height	Quiltens højde
 	Quilt width	Quiltens bredde
 	Quilting for a tile	Quiltning til et felt
-	Quit StitchFoundry	Slut StitchFoundry
+	Quit ScreenFoundry	Slut ScreenFoundry
 	Radial Fill	Radialt fyld
 	Randomness	Tilfældighed
 	Read Team Names	Læs holdnavne
@@ -6151,7 +6151,7 @@ swatch	Bright Violet	Kraftig violet
 	Sews well at	Syes godt ved
 	Sews well from	Syes godt fra
 	Sews well up to	Syes godt op til
-	Share this check to help improve StitchFoundry (kept private; delete it any time in Foundry Account)	Del dette tjek for at hjælpe med at forbedre StitchFoundry (holdes privat; slet det når som helst under Foundry-konto)
+	Share this check to help improve ScreenFoundry (kept private; delete it any time in Foundry Account)	Del dette tjek for at hjælpe med at forbedre ScreenFoundry (holdes privat; slet det når som helst under Foundry-konto)
 	Shell	Muslingeskal
 	Shield	Skjold
 	Short fill stitches under	Korte fyldsting under
@@ -6215,7 +6215,7 @@ swatch	Bright Violet	Kraftig violet
 	Start and End on the Edges	Start og slut på kanterne
 	Start and stop	Start og stop
 	Start at	Start ved
-	Start from StitchFoundry Defaults	Start fra StitchFoundrys standarder
+	Start from ScreenFoundry Defaults	Start fra ScreenFoundrys standarder
 	Stem Stitch	Stilksting
 	Stem stitch	Stilksting
 	Step by step: words, a shape, appliqué, a picture or a sample	Trin for trin: ord, en figur, applikation, et billede eller en prøve
@@ -6238,16 +6238,16 @@ swatch	Bright Violet	Kraftig violet
 	Stitch in the Ditch	Sy i sømmen
 	Stitch length	Stinglængde
 	Stitch type	Stingtype
-	StitchFoundry	StitchFoundry
+	ScreenFoundry	ScreenFoundry
 	Foundry Account	Foundry-konto
 	Foundry Account…	Foundry-konto…
-	StitchFoundry Help	StitchFoundry Hjælp
-	StitchFoundry Help…	StitchFoundry Hjælp…
+	ScreenFoundry Help	ScreenFoundry Hjælp
+	ScreenFoundry Help…	ScreenFoundry Hjælp…
 	Foundry accounts aren't open yet. Until then, the AI features work with your own Anthropic API key.	Foundry-konti er ikke åbnet endnu. Indtil da virker AI-funktionerne med din egen Anthropic API-nøgle.
-	StitchFoundry copies the fonts to {folder}.	StitchFoundry kopierer skrifttyperne til {folder}.
-	StitchFoundry didn't quit normally last time. These documents had unsaved changes:	StitchFoundry blev ikke afsluttet normalt sidste gang. Disse dokumenter havde ændringer, der ikke var gemt:
-	StitchFoundry on GitHub	StitchFoundry på GitHub
-	StitchFoundry read this script without running it.	StitchFoundry læste dette script uden at køre det.
+	ScreenFoundry copies the fonts to {folder}.	ScreenFoundry kopierer skrifttyperne til {folder}.
+	ScreenFoundry didn't quit normally last time. These documents had unsaved changes:	ScreenFoundry blev ikke afsluttet normalt sidste gang. Disse dokumenter havde ændringer, der ikke var gemt:
+	ScreenFoundry on GitHub	ScreenFoundry på GitHub
+	ScreenFoundry read this script without running it.	ScreenFoundry læste dette script uden at køre det.
 	Stitches	Sting
 	Stitches edited by hand: the shape no longer changes them.	Sting redigeret manuelt: figuren ændrer dem ikke længere.
 	Stitches over 7 mm	Sting over 7 mm
@@ -6398,7 +6398,7 @@ swatch	Bright Violet	Kraftig violet
 	Watch the design sew with the stitch player in Stitch Sequence before you send it.	Se designet blive syet med stingafspilleren i Stingrækkefølge, før du sender det.
 	Wave	Bølge
 	Waves	Bølger
-	Welcome to StitchFoundry	Velkommen til StitchFoundry
+	Welcome to ScreenFoundry	Velkommen til ScreenFoundry
 	What fabric will you sew it on?	Hvilket stof vil du sy det på?
 	What should it say?	Hvad skal der stå?
 	What size is the tile?	Hvor stort er feltet?
@@ -6463,13 +6463,13 @@ swatch	Bright Violet	Kraftig violet
 	{n} free checks left this month.	{n} gratis tjek tilbage denne måned.
 	{n} very short stitches can break the thread	{n} meget korte sting kan få tråden til at knække
 	{n}-count Aida	Aida med {n} tern pr. tomme
-# Embroidery (StitchFoundry): picture services
+# Embroidery (ScreenFoundry): picture services
 	Picture made by	Billede lavet af
 	Claude (draws the shapes itself)	Claude (tegner selv formerne)
 	{name} API key:	API-nøgle til {name}:
 	The picture is billed to your account with that service. Claude then redraws it as flat shapes in your thread colors, so it sews with few thread changes.	Billedet betales over din konto hos den tjeneste. Claude tegner det derefter om som flade former i dine trådfarver, så det broderes med få trådskift.
 	Making the picture…	Laver billedet…
-# Embroidery (StitchFoundry): undo steps
+# Embroidery (ScreenFoundry): undo steps
 	Auto-Digitize	Digitalisér automatisk
 	Backstitch Line	Tilbagestingslinje
 	Close Appliqué Outlines	Luk applikationens konturer
@@ -6507,26 +6507,26 @@ swatch	Bright Violet	Kraftig violet
 	A new design: a hoopful of patches, each colour sewn once for all of them	Et nyt design: en ramme fuld af mærker, hver farve broderet én gang for dem alle
 	Every hoopful as a machine file, and a list of the names in each	Hver fuld ramme som maskinfil og en liste over navnene i hver
 	The open design repeated across its hoop, sorted so each colour is sewn once	Det åbne design gentaget hen over rammen, sorteret så hver farve broderes én gang
-# Report to StitchFoundry (ui.reportSewout)
+# Report to ScreenFoundry (ui.reportSewout)
 	Anything you'd like to add (optional)	Noget at tilføje? (valgfrit)
 	Claude is writing the report…	Claude skriver rapporten…
 	Have Claude Write It	Lad Claude skrive den
-	Help make StitchFoundry better	Hjælp med at gøre StitchFoundry bedre
-	I agree to send this to SiteSentrix, the maker of StitchFoundry, to improve the software. It won't be shared with anyone else.	Jeg accepterer at sende dette til SiteSentrix, som laver StitchFoundry, for at forbedre programmet. Det deles ikke med andre.
+	Help make ScreenFoundry better	Hjælp med at gøre ScreenFoundry bedre
+	I agree to send this to SiteSentrix, the maker of ScreenFoundry, to improve the software. It won't be shared with anyone else.	Jeg accepterer at sende dette til SiteSentrix, som laver ScreenFoundry, for at forbedre programmet. Det deles ikke med andre.
 	Include a summary of the design	Medtag et resumé af designet
 	Include the conversation with Claude	Medtag samtalen med Claude
 	Include the photos ({n})	Medtag billederne ({n})
-	Report to StitchFoundry	Rapportér til StitchFoundry
-	Report to StitchFoundry…	Rapportér til StitchFoundry…
+	Report to ScreenFoundry	Rapportér til ScreenFoundry
+	Report to ScreenFoundry…	Rapportér til ScreenFoundry…
 	Send Report	Send rapport
-	Send this sew-out and Claude's idea of what StitchFoundry could do better to its makers	Send denne syprøve og Claudes idé om, hvad StitchFoundry kunne gøre bedre, til dem, der laver det
-	Send this sew-out to the people who make StitchFoundry, with Claude's idea of what the software could do better. We use it only to improve StitchFoundry: we never share, sell or publish it, and you can have it deleted at any time (Foundry Account › Delete My Shared Sew-out Checks).	Send denne syprøve til dem, der laver StitchFoundry, med Claudes idé om, hvad programmet kunne gøre bedre. Vi bruger den kun til at forbedre StitchFoundry: vi deler, sælger eller offentliggør den aldrig, og du kan få den slettet når som helst (Foundry-konto › Slet mine delte syprøvetjek).
+	Send this sew-out and Claude's idea of what ScreenFoundry could do better to its makers	Send denne syprøve og Claudes idé om, hvad ScreenFoundry kunne gøre bedre, til dem, der laver det
+	Send this sew-out to the people who make ScreenFoundry, with Claude's idea of what the software could do better. We use it only to improve ScreenFoundry: we never share, sell or publish it, and you can have it deleted at any time (Foundry Account › Delete My Shared Sew-out Checks).	Send denne syprøve til dem, der laver ScreenFoundry, med Claudes idé om, hvad programmet kunne gøre bedre. Vi bruger den kun til at forbedre ScreenFoundry: vi deler, sælger eller offentliggør den aldrig, og du kan få den slettet når som helst (Foundry-konto › Slet mine delte syprøvetjek).
 	Sign in to Foundry Account to send a report.	Log ind på Foundry-kontoen for at sende en rapport.
 @msg	Sign in to Foundry Account to send a report.	Log ind på Foundry-kontoen for at sende en rapport.
 	Thank you: your report was sent.	Tak: din rapport er sendt.
 	Title	Titel
-	What went wrong, and what StitchFoundry could do better	Hvad gik galt, og hvad kunne StitchFoundry gøre bedre
-	Write a report about this sew-out for the people who make StitchFoundry.	Skriv en rapport om denne syprøve til dem, der laver StitchFoundry.
+	What went wrong, and what ScreenFoundry could do better	Hvad gik galt, og hvad kunne ScreenFoundry gøre bedre
+	Write a report about this sew-out for the people who make ScreenFoundry.	Skriv en rapport om denne syprøve til dem, der laver ScreenFoundry.
 @msg	Check a sew-out first: the report goes with its photos and Claude's answer	Tjek en syprøve først: rapporten sendes med dens billeder og Claudes svar
 @msg	Tick the box to agree to send it first.	Sæt først flueben for at acceptere at sende den.
 @msg	Write what went wrong first, or have Claude write it.	Skriv først, hvad der gik galt, eller lad Claude skrive det.

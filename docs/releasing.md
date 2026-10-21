@@ -8,7 +8,7 @@ installers for macOS, Windows, Linux (including Flatpak bundles and a RISC-V tar
 publishes it.
 
 User-facing names say **VectorCraft**. Files, binaries and ids stay lowercase
-(`stitchfoundry-<version>-<platform>-<arch>.<ext>`, `com.stitchwright.stitchfoundry`).
+(`screenfoundry-<version>-<platform>-<arch>.<ext>`, `com.stitchwright.screenfoundry`).
 
 ## Cutting a release
 
@@ -44,19 +44,19 @@ and no draft release is created.
 
 **Windows build to try:** *Actions › Windows build › Run workflow*, or a push to the
 `windows-build` branch (`.github/workflows/windows-build.yml`), builds the x64 MSI and portable
-zip, unsigned, as the run's artifact `stitchfoundry-windows-x64`. It drafts no release.
+zip, unsigned, as the run's artifact `screenfoundry-windows-x64`. It drafts no release.
 
 **Builds for every platform to try:** *Actions › Builds › Run workflow* (any branch), or a push to
 the `builds` branch (`.github/workflows/builds.yml`), builds Windows x64 (MSI and portable zip),
 Linux x86_64 (AppImage, deb, rpm, tar.gz), macOS universal (DMG and CLI zip, ad-hoc signed, not
 notarized) and the web app zip, each its own artifact on the run's page
-(`stitchfoundry-windows-x64`, `-linux-x86_64`, `-macos-universal`, `-web`). Standard GitHub-hosted
+(`screenfoundry-windows-x64`, `-linux-x86_64`, `-macos-universal`, `-web`). Standard GitHub-hosted
 runners only, so it is free for the public repository. Nothing is signed: Windows shows a
 SmartScreen warning (*More info › Run anyway*), and on macOS the first start is right-click ›
 *Open* (or *System Settings › Privacy & Security › Open Anyway*). It drafts no release.
 
 **The web app online:** every push to `main` runs `.github/workflows/pages.yml`, which builds the
-web app and publishes it on GitHub Pages at <https://stitchwright.github.io/StitchFoundry/>
+web app and publishes it on GitHub Pages at <https://stitchwright.github.io/ScreenFoundry/>
 (free for a public repository; also *Actions › Web app › Run workflow*). One-time setting by the
 repository owner: *Settings › Pages › Build and deployment › Source: GitHub Actions*.
 
@@ -64,7 +64,7 @@ repository owner: *Settings › Pages › Build and deployment › Source: GitHu
 
 | Platform | Artifacts | Built on |
 |---|---|---|
-| macOS 11+ (universal: Apple silicon and Intel) | `vectorcraft-<v>-macos-universal.dmg`, `stitchfoundry-cli-<v>-macos-universal.zip` | `macos-15` |
+| macOS 11+ (universal: Apple silicon and Intel) | `vectorcraft-<v>-macos-universal.dmg`, `screenfoundry-cli-<v>-macos-universal.zip` | `macos-15` |
 | Windows x64 | `vectorcraft-<v>-windows-x64.msi`, `vectorcraft-<v>-windows-x64-portable.zip` | `windows-latest` |
 | Windows x86 (32-bit) | `vectorcraft-<v>-windows-x86.msi`, `vectorcraft-<v>-windows-x86-portable.zip` | `windows-latest` |
 | Windows on ARM64 | `vectorcraft-<v>-windows-arm64.msi`, `vectorcraft-<v>-windows-arm64-portable.zip` | `windows-latest` (cross-compiled) |
@@ -74,9 +74,9 @@ repository owner: *Settings › Pages › Build and deployment › Source: GitHu
 | Linux AppImage updates | `vectorcraft-<v>-linux-{x86_64,aarch64}.AppImage.zsync` | with the AppImages |
 | Flatpak x86_64, aarch64 | `vectorcraft-<v>-linux-{x86_64,aarch64}.flatpak` | `ubuntu-24.04`, `ubuntu-24.04-arm` (repackages the Linux tarball) |
 | FreeBSD 14 x86_64 | `vectorcraft-<v>-freebsd-x86_64.tar.gz` | a FreeBSD 14.3 VM on `ubuntu-latest` |
-| Web | `stitchfoundry-web-<v>.zip`, a static site (see [`packaging/web/README.md`](../packaging/web/README.md)) | `ubuntu-latest` |
+| Web | `screenfoundry-web-<v>.zip`, a static site (see [`packaging/web/README.md`](../packaging/web/README.md)) | `ubuntu-latest` |
 
-`stitchfoundry --version` and `stitchfoundry-cli --version` print the version from `Cargo.toml`.
+`screenfoundry --version` and `screenfoundry-cli --version` print the version from `Cargo.toml`.
 
 **Fonts.** Every build job checks out [craft-fonts](https://github.com/storytold/craft-fonts) at a
 pinned commit (the `ref:` of its craft-fonts checkout step) and builds with `CRAFT_FONTS_DIR` and
@@ -91,9 +91,9 @@ The rules are in craftrules `standards/fonts.md`, the build option in
 `packaging/macos/package.sh` builds `aarch64-apple-darwin` and `x86_64-apple-darwin` with
 `MACOSX_DEPLOYMENT_TARGET=11.0`, joins them with `lipo` and assembles `VectorCraft.app`:
 
-- `Info.plist` is generated from `Info.plist.in` (bundle id `com.stitchwright.stitchfoundry`,
+- `Info.plist` is generated from `Info.plist.in` (bundle id `com.stitchwright.screenfoundry`,
   `LSMinimumSystemVersion` 11.0, the version and the build commit). The icon is
-  `assets/app-icon/stitchfoundry.icns`. `cargo xtask bundle` fills in the same template for its
+  `assets/app-icon/screenfoundry.icns`. `cargo xtask bundle` fills in the same template for its
   development app.
 - **Document types:** `Info.plist.in` declares every format File › Open reads, so Finder opens
   them with VectorCraft (double-click, Open With, a drop on the Dock icon). VectorCraft owns its own
@@ -110,7 +110,7 @@ The rules are in craftrules `standards/fonts.md`, the build option in
   `codesign --verify --strict --deep` (#1085). Its Finder window (background, icon size and positions) comes from
   [`packaging/macos/dmg/`](../packaging/macos/dmg/README.md), and its volume is named `VectorCraft`
   without the version, which the window's background needs; the DMG file name keeps the version.
-- **CLI:** the universal `stitchfoundry-cli` is signed the same way, zipped, and the zip is
+- **CLI:** the universal `screenfoundry-cli` is signed the same way, zipped, and the zip is
   notarized. A bare executable can't hold a stapled ticket, so Gatekeeper looks the CLI's ticket up
   online the first time a downloaded copy runs.
 
@@ -129,24 +129,24 @@ so neither the MSI nor the portable zip needs the Visual C++ redistributable. Th
 to the target triple, so host build scripts aren't affected.
 
 - Before packaging, the script checks each binary's PE machine type against `-Arch` (an x64 build
-  can never ship labelled arm64), that `stitchfoundry.exe` is a GUI program (no console window) and
-  that `stitchfoundry-cli.exe` is a console program.
-- **Portable zip:** it ships `packaging/windows/portable.txt` beside `stitchfoundry.exe`. That
-  marker (or a `StitchFoundry.portable` file) switches on portable mode: `ui.json` and the folders
-  next to it (Swatches, Graphic Styles, Fonts, Data Recovery, logs…) go to `StitchFoundryData\`
-  next to the exe instead of `%APPDATA%\StitchFoundry`. The first time `StitchFoundryData` is
-  created, the settings already in `%APPDATA%\StitchFoundry` are copied into it (the originals
+  can never ship labelled arm64), that `screenfoundry.exe` is a GUI program (no console window) and
+  that `screenfoundry-cli.exe` is a console program.
+- **Portable zip:** it ships `packaging/windows/portable.txt` beside `screenfoundry.exe`. That
+  marker (or a `ScreenFoundry.portable` file) switches on portable mode: `ui.json` and the folders
+  next to it (Swatches, Graphic Styles, Fonts, Data Recovery, logs…) go to `ScreenFoundryData\`
+  next to the exe instead of `%APPDATA%\ScreenFoundry`. The first time `ScreenFoundryData` is
+  created, the settings already in `%APPDATA%\ScreenFoundry` are copied into it (the originals
   stay), so someone updating a portable zip from before the marker keeps their settings. If that
   folder isn't writable the app logs a warning and uses `%APPDATA%`. Deleting `portable.txt` returns
-  settings to the user profile (the `StitchFoundryData` folder is left as it is). The MSI has no
+  settings to the user profile (the `ScreenFoundryData` folder is left as it is). The MSI has no
   marker. `VECTORCRAFT_CONFIG_DIR` still wins, `VECTORCRAFT_NO_PREFS` never looks for the marker,
   and a portable copy skips the one-time read of VectorCraft's settings. The logic is in
   `apps/vectorcraft/src/profile.rs`. On the other platforms the marker goes where the user sees the
-  app, never inside it: on macOS next to `StitchFoundry.app`, for an AppImage next to the
+  app, never inside it: on macOS next to `ScreenFoundry.app`, for an AppImage next to the
   `.AppImage` file (`$APPIMAGE`). Flatpak isn't supported: `/app` is read-only, so a Flatpak install
   always uses its own config folder.
 - `vectorcraft.wxs` (WiX) is a per-machine install into Program Files with a Start Menu shortcut
-  and an App Paths entry (Win+R `stitchfoundry`). Same-version upgrades are allowed, so release
+  and an App Paths entry (Win+R `screenfoundry`). Same-version upgrades are allowed, so release
   candidates replace each other.
 - Double-clicking the MSI opens a setup wizard (WixUI_InstallDir without the licence page):
   Welcome, install folder (remembered for upgrades in `HKLM\Software\VectorCraft\InstallDir`),
@@ -158,7 +158,7 @@ to the target triple, so host build scripts aren't affected.
   extensions: `wix extension add -g WixToolset.UI.wixext/5.0.2 WixToolset.Util.wixext/5.0.2`.
 - The ARM64 build is cross-compiled on the x64 runner. `.github/workflows/windows-arm64.yml`
   installs that MSI on a Windows 11 ARM64 runner, checks that both installed programs are ARM64,
-  runs `stitchfoundry-cli --version` natively and uninstalls.
+  runs `screenfoundry-cli --version` natively and uninstalls.
 - **Signing:** `packaging/windows/sign.ps1` signs both `.exe` files and then the `.msi` with
   `signtool` (SHA-256, RFC 3161 timestamp), using whichever material is present:
   1. a `.pfx` certificate (`WINDOWS_CERTIFICATE`, base64, and `WINDOWS_CERTIFICATE_PASSWORD`), or
@@ -208,10 +208,10 @@ Before publishing a Linux release:
 **RISC-V.** The `linux-riscv64` job cross-compiles `riscv64gc-unknown-linux-gnu` on `ubuntu-24.04`
 against riscv64 libraries from ports.ubuntu.com (so the floor there is glibc 2.39) and runs
 `package.sh --formats tar` with `CROSS_ARCH`, `CROSS_TARGET`, `CROSS_COMPILE` and
-`EMULATOR=qemu-riscv64` set: a `.tar.gz` only, with `stitchfoundry-cli --version` run under QEMU.
+`EMULATOR=qemu-riscv64` set: a `.tar.gz` only, with `screenfoundry-cli --version` run under QEMU.
 
 **AppImage updates.** Each AppImage embeds the update information
-`gh-releases-zsync|Stitchwright|StitchFoundry|latest|stitchfoundry-*-linux-<arch>.AppImage.zsync`
+`gh-releases-zsync|Stitchwright|ScreenFoundry|latest|screenfoundry-*-linux-<arch>.AppImage.zsync`
 (appimagetool `-u`), and `package.sh` writes the matching `.zsync` beside it when `zsyncmake` (the
 `zsync` package) is installed. [AppImageUpdate](https://github.com/AppImageCommunity/AppImageUpdate)
 and AppImageLauncher then download only the changed blocks from the newest published,
@@ -219,10 +219,10 @@ non-pre-release release. The job checks both are there.
 
 **Flatpak.** The `flatpak` jobs (x86_64 on `ubuntu-24.04`, aarch64 on `ubuntu-24.04-arm`) take the
 Linux job's tarball and repackage it with `packaging/linux/flatpak-bundle.sh` and
-`packaging/linux/flatpak/com.stitchwright.stitchfoundry.bundle.yml` into a single-file bundle
+`packaging/linux/flatpak/com.stitchwright.screenfoundry.bundle.yml` into a single-file bundle
 (`flatpak install --user vectorcraft-<v>-linux-<arch>.flatpak`), then install it and run
-`stitchfoundry-cli --version` in the sandbox. No Rust build happens there, so the bundle carries the
-same binaries as the AppImage. `packaging/linux/flatpak/com.stitchwright.stitchfoundry.yml` is the
+`screenfoundry-cli --version` in the sandbox. No Rust build happens there, so the bundle carries the
+same binaries as the AppImage. `packaging/linux/flatpak/com.stitchwright.screenfoundry.yml` is the
 from-source manifest for a Flathub submission (its header says how to build it); packaging-lint
 keeps the runtime and sandbox permissions of the two manifests identical.
 
@@ -231,7 +231,7 @@ keeps the runtime and sandbox permissions of the two manifests identical.
 GitHub has no FreeBSD runners, so the job builds in a FreeBSD 14.3 VM on `ubuntu-latest` (the same
 image as `.github/workflows/freebsd.yml`). `packaging/freebsd/package.sh` writes a
 `/usr/local`-style tree; users install it with
-`tar -xzf stitchfoundry-*-freebsd-x86_64.tar.gz --strip-components 1 -C /usr/local`.
+`tar -xzf screenfoundry-*-freebsd-x86_64.tar.gz --strip-components 1 -C /usr/local`.
 
 ### Web
 
@@ -255,7 +255,7 @@ signing secrets. The other jobs get no secrets. A missing secret produces unsign
 warning, never a failed build.
 
 `release` is the standard environment for **every SiteSentrix and Stitchwright repository that
-signs** (StitchFoundry, LaserFoundry, PatternFoundry, …): the same name, limited to the `release`
+signs** (ScreenFoundry, LaserFoundry, PatternFoundry, …): the same name, limited to the `release`
 branch, with these same 12 secrets, so one signing setup serves them all. Set up 2026-10-20:
 
 | Secret | Used for |

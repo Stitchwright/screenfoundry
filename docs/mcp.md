@@ -1,6 +1,6 @@
-# StitchFoundry MCP server
+# ScreenFoundry MCP server
 
-`stitchfoundry-cli mcp` runs a [Model Context Protocol](https://modelcontextprotocol.io) server on stdio
+`screenfoundry-cli mcp` runs a [Model Context Protocol](https://modelcontextprotocol.io) server on stdio
 (newline-delimited JSON-RPC 2.0; see [Protocol](#protocol) for version negotiation). Agents use it to
 draw, inspect and look at VectorCraft documents.
 
@@ -8,8 +8,8 @@ It has two backends:
 
 | Mode | How | What works |
 |---|---|---|
-| **Remote** | `stitchfoundry-cli mcp --connect 127.0.0.1:7979` (the app must run with `stitchfoundry --control 7979`) | Everything. Tool calls are forwarded over the [control protocol](control-protocol.md), so you watch the app change live. |
-| **Headless** | `stitchfoundry-cli mcp --headless` | An in-process engine session with a CPU renderer. Everything except the UI-only tools (`inspect_ui`, `type_text`, `open_panel`, `screenshot {window:true}`). |
+| **Remote** | `screenfoundry-cli mcp --connect 127.0.0.1:7979` (the app must run with `screenfoundry --control 7979`) | Everything. Tool calls are forwarded over the [control protocol](control-protocol.md), so you watch the app change live. |
+| **Headless** | `screenfoundry-cli mcp --headless` | An in-process engine session with a CPU renderer. Everything except the UI-only tools (`inspect_ui`, `type_text`, `open_panel`, `screenshot {window:true}`). |
 
 With no flag, the server tries `127.0.0.1:7979` and falls back to headless. Logs go to stderr; stdout carries
 only protocol messages.
@@ -22,11 +22,11 @@ From the repository root, with Rust 1.95+ and the platform's source-build prereq
 cargo install --path apps/vectorcraft-cli --locked
 # POSIX shells, for Cargo's default install location:
 export PATH="${CARGO_HOME:-$HOME/.cargo}/bin:$PATH"
-stitchfoundry-cli --help
-claude mcp add stitchfoundry -- stitchfoundry-cli mcp
+screenfoundry-cli --help
+claude mcp add screenfoundry -- screenfoundry-cli mcp
 # or pin a mode:
-claude mcp add stitchfoundry-headless -- stitchfoundry-cli mcp --headless
-claude mcp add stitchfoundry-app -- stitchfoundry-cli mcp --connect 127.0.0.1:7979
+claude mcp add screenfoundry-headless -- screenfoundry-cli mcp --headless
+claude mcp add screenfoundry-app -- screenfoundry-cli mcp --connect 127.0.0.1:7979
 ```
 
 Cargo installs a binary, not a symlink into `target/`, so it survives `cargo clean`.
@@ -40,11 +40,11 @@ the client after changing its environment. Installing does not start or register
 Other clients use the same command in their JSON config:
 
 ```json
-{"mcpServers": {"stitchfoundry": {"command": "stitchfoundry-cli", "args": ["mcp"]}}}
+{"mcpServers": {"screenfoundry": {"command": "screenfoundry-cli", "args": ["mcp"]}}}
 ```
 
 If a client reports `ENOENT` or "Executable not found in $PATH", verify the install with
-`command -v stitchfoundry-cli` (PowerShell: `Get-Command stitchfoundry-cli`) in the client's
+`command -v screenfoundry-cli` (PowerShell: `Get-Command screenfoundry-cli`) in the client's
 environment. If that environment cannot be changed, set JSON `command` to the absolute
 installed binary path, not a literal `~` or `$HOME` expression. Avoid symlinks into
 `target/release`: cleaning the build directory breaks them. A source build alone does
@@ -54,29 +54,29 @@ For a live session, start the app first: `cargo run --release -p vectorcraft -- 
 
 ### From an installed release
 
-The release packages ship `stitchfoundry-cli` alongside the desktop app, so no build is needed:
+The release packages ship `screenfoundry-cli` alongside the desktop app, so no build is needed:
 
 | Install | CLI |
 |---|---|
-| Windows (MSI) | `C:\Program Files\StitchFoundry\stitchfoundry-cli.exe` by default (wherever you installed it otherwise), not on `PATH` |
-| Linux (deb, rpm) | `/usr/bin/stitchfoundry-cli` |
-| macOS | the separate `stitchfoundry-cli-<version>-macos-<arch>.zip` release asset (the `.app` holds only the desktop app) |
+| Windows (MSI) | `C:\Program Files\ScreenFoundry\screenfoundry-cli.exe` by default (wherever you installed it otherwise), not on `PATH` |
+| Linux (deb, rpm) | `/usr/bin/screenfoundry-cli` |
+| macOS | the separate `screenfoundry-cli-<version>-macos-<arch>.zip` release asset (the `.app` holds only the desktop app) |
 
 ```sh
 # Windows, default install folder
-claude mcp add stitchfoundry -- "C:\Program Files\StitchFoundry\stitchfoundry-cli.exe" mcp
+claude mcp add screenfoundry -- "C:\Program Files\ScreenFoundry\screenfoundry-cli.exe" mcp
 # Linux, or macOS with the CLI unzipped onto PATH
-claude mcp add stitchfoundry -- stitchfoundry-cli mcp
+claude mcp add screenfoundry -- screenfoundry-cli mcp
 ```
 
 ## Confining file access
 
 ```sh
-stitchfoundry-cli mcp --automation-read-root /work/project --automation-write-root /work/project/out
+screenfoundry-cli mcp --automation-read-root /work/project --automation-write-root /work/project/out
 ```
 
 ```json
-{"mcpServers": {"stitchfoundry": {"command": "stitchfoundry-cli",
+{"mcpServers": {"screenfoundry": {"command": "screenfoundry-cli",
   "args": ["mcp", "--automation-read-root", "/work/project", "--automation-write-root", "/work/project/out"]}}}
 ```
 
@@ -114,7 +114,7 @@ the suite) keep the agent to the folders you give it:
 
 The flags confine the headless server and imply `--headless`; `--connect` with them is an error, since
 the server would otherwise talk to an app that isn't confined. A running app confines itself: start it
-with the same flags, `stitchfoundry --control 7979 --automation-read-root <dir> --automation-write-root
+with the same flags, `screenfoundry --control 7979 --automation-read-root <dir> --automation-write-root
 <dir>`, and connect as usual (see [Control protocol](control-protocol.md#confining-file-access)). The
 server then writes nothing itself: `screenshot {path}` asks the app to write the file.
 
@@ -174,7 +174,7 @@ arguments filled in. A missing required argument is `-32602`.
 
 ```sh
 echo '{"jsonrpc":"2.0","id":1,"method":"prompts/get","params":{"name":"poster","arguments":{"brief":"a jazz festival"}}}' \
-  | stitchfoundry-cli mcp --headless
+  | screenfoundry-cli mcp --headless
 ```
 
 ### Resource templates
@@ -240,7 +240,7 @@ place. From then on the engine's own `log` records arrive as `notifications/mess
 `logger` and `data`. A `null` level turns it back off. Nothing is sent before the client asks, and
 records queued at the old level are dropped rather than replayed at the new one.
 
-Installing the logger that receives those records is `stitchfoundry-cli`'s job, not the library's: a
+Installing the logger that receives those records is `screenfoundry-cli`'s job, not the library's: a
 crate that installed one would override whatever logger an embedder had already set up. Embedding
 `vectorcraft-mcp` directly means calling `vectorcraft_mcp::logging::install()` yourself if you want
 log records to reach your client.
@@ -800,17 +800,17 @@ printf '%s\n' \
   '{"jsonrpc":"2.0","method":"notifications/initialized"}' \
   '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"draw_shape","arguments":{"shape":"ellipse","x":10,"y":10,"width":100,"height":80,"fill":"#ff0000"}}}' \
   '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"inspect_document","arguments":{}}}' \
-  | target/release/stitchfoundry-cli mcp --headless
+  | target/release/screenfoundry-cli mcp --headless
 ```
 
 ## Headless batch CLI
 
 ```sh
-stitchfoundry-cli commands                          # command catalogue (JSON)
-stitchfoundry-cli run --in in.svg \
+screenfoundry-cli commands                          # command catalogue (JSON)
+screenfoundry-cli run --in in.svg \
   --cmd select.all --cmd paint.setFill --params '{"color":"#ff0000"}' \
   --export out.svg --export out.png --scale 2
-stitchfoundry-cli run --cmd file.new --params '{"width":800,"height":600}' \
+screenfoundry-cli run --cmd file.new --params '{"width":800,"height":600}' \
   --cmd shape.star --params '{"cx":400,"cy":300,"radius1":200,"radius2":90}' \
   --export star.vectorcraft
 ```
@@ -818,7 +818,7 @@ stitchfoundry-cli run --cmd file.new --params '{"width":800,"height":600}' \
 `run` prints one JSON line per step (`open`, `cmd`, `export`) and exits non-zero on the first failure. `--params`
 applies to the `--cmd` just before it. `run` also accepts the host commands `file.open`, `file.save`, `file.export`,
 `file.exportForScreens` and `tool.select`. `run --in`, `convert` and `info` read every format `document.open` reads
-(`stitchfoundry-cli --help` lists them).
+(`screenfoundry-cli --help` lists them).
 
 ### What a headless session remembers
 
@@ -948,7 +948,7 @@ open isn't a step), and `$last…` from the step before. A path goes into object
 reference that names no value fails the step, so a command never runs with one left in it:
 
 ```sh
-stitchfoundry-cli run --cmd file.new --params '{"width":600,"height":200}'   --cmd text.create --params '{"x":10,"y":60,"text":"plain and bold words","size":30}'   --cmd text.setRangeStyle --params '{"id":"$1.id","start":10,"end":14,"style":"Bold"}'
+screenfoundry-cli run --cmd file.new --params '{"width":600,"height":200}'   --cmd text.create --params '{"x":10,"y":60,"text":"plain and bold words","size":30}'   --cmd text.setRangeStyle --params '{"id":"$1.id","start":10,"end":14,"style":"Bold"}'
 ```
 
 ## Checking scripts written for the reference app
@@ -2349,7 +2349,7 @@ The Selection & Anchor Display and General preferences apply to `pointer_gesture
 {"name":"pointer_gesture","arguments":{"tool":"selection","mods":{"cmd":true},"events":[{"kind":"down","x":175,"y":125},{"kind":"up","x":175,"y":125}]}}
 ```
 
-The preferences for the view need the desktop app (`stitchfoundry-cli mcp --connect`): `zoomWithMouseWheel` (the
+The preferences for the view need the desktop app (`screenfoundry-cli mcp --connect`): `zoomWithMouseWheel` (the
 wheel zooms about the pointer, Shift-wheel scrolls up and down, Cmd/Ctrl-wheel sideways; the control channel's
 `ui.wheel` turns the wheel), `trackpadRotateView` (on by default: a two-finger rotation on a Mac trackpad, in the
 macOS app or in Safari, turns the view about the pointer once it reaches 5°; with it off, the gesture does not turn
@@ -4042,16 +4042,16 @@ art that can't be decoded is sampled as blank (no dots, or full dots with `inver
 
 Type can use the bundled fonts, fonts added to the session and the fonts installed on the system (none on the web):
 the system's and the user's font folders (Windows: `Fonts` and `%LOCALAPPDATA%\Microsoft\Windows\Fonts`, plus fonts
-registered outside them, such as fonts installed as shortcuts, and in the desktop app and `stitchfoundry-cli` (MCP
+registered outside them, such as fonts installed as shortcuts, and in the desktop app and `screenfoundry-cli` (MCP
 included) the fonts in DirectWrite's system font collection, such as those Adobe Fonts activates while Creative Cloud runs; macOS: `/System/Library/Fonts`, `/Library/Fonts`,
-`/Network/Library/Fonts`, `~/Library/Fonts` and downloaded system fonts, plus in the desktop app and `stitchfoundry-cli`
+`/Network/Library/Fonts`, `~/Library/Fonts` and downloaded system fonts, plus in the desktop app and `screenfoundry-cli`
 the fonts CoreText's font manager lists outside them, such as those apps and font managers register from their own
 folders; Linux and BSD: `/usr/share/fonts`,
 `/usr/local/share/fonts`, `~/.fonts` and the XDG data folders' `fonts`, `~/.local/share/fonts` among them, in a
 Flatpak sandbox the host's fonts, and the folders fontconfig's configuration lists (`<dir>` in `/etc/fonts/fonts.conf`
 and the files it includes: where packages add theirs, such as TeX fonts under `/usr/share/texmf/fonts`)). Faces without outlines VectorCraft draws (no `glyf`, `CFF`, `CFF2` or `VARC` table, such
 as bitmap-only fonts) are left out. The scan also reads the folder the `fontsFolder` preference names (Preferences › Type ›
-Additional Fonts Folder) with its subfolders and, in the desktop app and `stitchfoundry-cli`, VectorCraft's own `Fonts` folder
+Additional Fonts Folder) with its subfolders and, in the desktop app and `screenfoundry-cli`, VectorCraft's own `Fonts` folder
 next to the preferences: `~/Library/Application Support/VectorCraft/Fonts` on macOS, `%APPDATA%\VectorCraft\Fonts` on
 Windows, and `$XDG_CONFIG_HOME/vectorcraft/Fonts` or `~/.config/vectorcraft/Fonts` on Linux and BSD. `text.addFontFiles`
 copies fonts into that folder. The installed fonts are cataloged once per session (in the background when the app starts, else on the first lookup
@@ -4110,7 +4110,7 @@ and `.woff2` files and suitcase fonts (with their resource fork), at most 256 MB
 other file in `skipped`. It never replaces a file: the names `Name.otf`, `Name 2.otf` up to `Name 99.otf` are tried in
 turn until one is free, which gets the copy, or is a file with the same contents, which is kept (`kept`).
 Copy only fonts you own or are licensed to install. `command.batch` returns before a search ends; later requests over MCP or the control channel poll
-`text.findFontFiles {}`. `stitchfoundry-cli run` stops the search when its last step ends. The web build has no Fonts
+`text.findFontFiles {}`. `screenfoundry-cli run` stops the search when its last step ends. The web build has no Fonts
 folder and no folder search.
 
 ```json
@@ -4432,7 +4432,7 @@ entry, listed with its `name`, its `section` (the names of the blocks around it)
 (`key`, `modifiers`, `context`, `represent`) and its `line`. `codes` counts the entries that use each key and modifier
 code, and `unread` lists the tokens the reader skipped, with their lines. The reader stops at 4 MiB, 16 open blocks,
 20,000 entries and 8 MiB of names over the entries and their sections, cuts names at 1,024 bytes, and sets `truncated` when it reaches one of these limits. An XML shortcut
-file fails with "This shortcut file is in a form StitchFoundry can't read."
+file fails with "This shortcut file is in a form ScreenFoundry can't read."
 
 The import matches record what the names and codes in such files stand for in VectorCraft. They are kept with the
 preferences, and resetting the preferences keeps them. `importMatches.set {matches: [{kind, name, target, label?}]}`

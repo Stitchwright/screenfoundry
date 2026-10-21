@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# Build and package StitchFoundry for FreeBSD:
+# Build and package ScreenFoundry for FreeBSD:
 #
-#   $DIST/stitchfoundry-<version>-freebsd-x86_64.tar.gz   a /usr/local-style tree:
-#       stitchfoundry-<version>-freebsd-x86_64/{bin, share/applications, share/icons, share/mime,
-#       share/metainfo, share/doc/stitchfoundry}
+#   $DIST/screenfoundry-<version>-freebsd-x86_64.tar.gz   a /usr/local-style tree:
+#       screenfoundry-<version>-freebsd-x86_64/{bin, share/applications, share/icons, share/mime,
+#       share/metainfo, share/doc/screenfoundry}
 #
 # Install by copying the tree's contents into /usr/local, e.g.
-#   tar -xzf stitchfoundry-*-freebsd-x86_64.tar.gz --strip-components 1 -C /usr/local
+#   tar -xzf screenfoundry-*-freebsd-x86_64.tar.gz --strip-components 1 -C /usr/local
 #
 # Usage: packaging/freebsd/package.sh [--skip-build]
 #
@@ -16,7 +16,7 @@ set -euo pipefail
 # shellcheck source=../env.sh
 . "$(dirname "${BASH_SOURCE[0]}")/../env.sh"
 LINUX="$ROOT/packaging/linux"
-APP_ID=com.stitchwright.stitchfoundry
+APP_ID=com.stitchwright.screenfoundry
 
 SKIP_BUILD=0
 while [ $# -gt 0 ]; do
@@ -33,9 +33,9 @@ case "$(uname -m)" in
   arm64 | aarch64) ARCH=aarch64 ;;
   *) echo "unsupported architecture $(uname -m)" >&2; exit 2 ;;
 esac
-BASENAME="stitchfoundry-$VERSION-freebsd-$ARCH"
+BASENAME="screenfoundry-$VERSION-freebsd-$ARCH"
 
-echo "==> StitchFoundry $VERSION for FreeBSD $ARCH"
+echo "==> ScreenFoundry $VERSION for FreeBSD $ARCH"
 
 if [ "$SKIP_BUILD" = 0 ]; then
   (cd "$ROOT" && cargo build --release --locked -p vectorcraft -p vectorcraft-cli)
@@ -47,24 +47,24 @@ rm -rf "$WORK"
 
 # ---- stage a /usr/local-style tree ---------------------------------------------------------------
 mkdir -p "$STAGE/bin" "$STAGE/share/applications" "$STAGE/share/mime/packages" "$STAGE/share/metainfo" \
-  "$STAGE/share/icons" "$STAGE/share/doc/stitchfoundry"
-install -m 755 "$BIN/stitchfoundry" "$BIN/stitchfoundry-cli" "$STAGE/bin/"
-strip "$STAGE/bin/stitchfoundry" "$STAGE/bin/stitchfoundry-cli" 2>/dev/null || true
+  "$STAGE/share/icons" "$STAGE/share/doc/screenfoundry"
+install -m 755 "$BIN/screenfoundry" "$BIN/screenfoundry-cli" "$STAGE/bin/"
+strip "$STAGE/bin/screenfoundry" "$STAGE/bin/screenfoundry-cli" 2>/dev/null || true
 # The desktop entry, MIME type and metainfo are the freedesktop files the Linux packages use.
 install -m 644 "$LINUX/$APP_ID.desktop" "$STAGE/share/applications/$APP_ID.desktop"
 install -m 644 "$LINUX/$APP_ID.mime.xml" "$STAGE/share/mime/packages/$APP_ID.xml"
 sed -e "s/@VERSION@/$VERSION/g" -e "s/@DATE@/$VECTORCRAFT_BUILD_DATE/g" \
   "$LINUX/$APP_ID.metainfo.xml.in" >"$STAGE/share/metainfo/$APP_ID.metainfo.xml"
 cp -R "$ROOT/assets/app-icon/hicolor" "$STAGE/share/icons/"
-copy_docs "$STAGE/share/doc/stitchfoundry"
+copy_docs "$STAGE/share/doc/screenfoundry"
 for f in NOTICE ASSETS.md; do
-  if [ -f "$ROOT/$f" ]; then cp "$ROOT/$f" "$STAGE/share/doc/stitchfoundry/"; fi
+  if [ -f "$ROOT/$f" ]; then cp "$ROOT/$f" "$STAGE/share/doc/screenfoundry/"; fi
 done
 
 # ---- .tar.gz -------------------------------------------------------------------------------------
 tar -C "$WORK" -czf "$DIST/$BASENAME.tar.gz" "$BASENAME"
 echo "wrote $DIST/$BASENAME.tar.gz"
 
-"$STAGE/bin/stitchfoundry-cli" --version
+"$STAGE/bin/screenfoundry-cli" --version
 echo "==> done"
 ls -lh "$DIST"

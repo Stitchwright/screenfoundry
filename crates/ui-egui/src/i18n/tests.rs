@@ -865,7 +865,7 @@ fn cs() -> Lang {
 
 /// Languages whose catalogs leave [`MENU_KEEP_AS_IS`] in English.
 const KEEPS_MENU_NAMES: [&str; 17] = ["cs", "de", "el", "es", "fr", "hu", "it", "ja", "ka", "ko", "pl", "pt-br", "ru", "sv", "uk", "vi", "fi"];
-/// StitchFoundry: the languages VectorCraft completed that wait for the embroidery strings here
+/// ScreenFoundry: the languages VectorCraft completed that wait for the embroidery strings here
 /// (none now). Their catalogs are VectorCraft's complete ones, so they hold strings this app
 /// doesn't show.
 const COMPLETE_UPSTREAM: [&str; 0] = [];
@@ -874,7 +874,7 @@ const COMPLETE_UPSTREAM: [&str; 0] = [];
 /// names and the perspective grid presets (names, shown untranslated wherever else they appear).
 /// Each language's own name in the Language menu is left alone too.
 const MENU_KEEP_AS_IS: &[&str] = &[
-    "StitchFoundry",
+    "ScreenFoundry",
     "OpenType",
     "Essentials",
     "Essentials Classic",
@@ -1226,7 +1226,7 @@ fn pt_br() -> Lang {
 #[test]
 fn brazilian_portuguese_reads_as_portuguese() {
     assert_eq!(pt_br().name(), "Português (Brasil)");
-    // StitchFoundry: the embroidery strings too.
+    // ScreenFoundry: the embroidery strings too.
     assert!(pt_br().complete_menus());
     assert_eq!(Lang::from_pref("pt-br"), pt_br());
     assert_eq!(Lang::from_pref("pt-BR"), pt_br());
@@ -1890,7 +1890,7 @@ fn shared_param_check_errors_are_translated() {
 }
 
 /// Languages whose catalogs cover every status and error message.
-/// (StitchFoundry: the languages VectorCraft added in October 2026 (el, fi, hu, ko, pl, pt-br, sv, vi
+/// (ScreenFoundry: the languages VectorCraft added in October 2026 (el, fi, hu, ko, pl, pt-br, sv, vi
 /// and bg) and Simplified Chinese (zh-hans, complete upstream since) wait for translations of the
 /// embroidery messages.)
 const COMPLETE_MESSAGES: &[&str] = &["cs", "de", "es", "fr", "it", "ja", "ru", "uk"];
@@ -2002,12 +2002,12 @@ fn czech_render_site_follow_up() {
         ("All placeable files", "Všechny soubory pro umístění"),
         ("SVG Compressed", "Komprimované SVG"),
         ("PDF-compatible .ai", ".ai kompatibilní s PDF"),
-        ("StitchFoundry Template", "Šablona StitchFoundry"),
+        ("ScreenFoundry Template", "Šablona ScreenFoundry"),
     ] {
         assert_eq!(tr_ctx(cs(), "file-filter", source), expected);
         assert_eq!(tr_ctx(Lang::EN, "file-filter", source), source);
     }
-    for source in ["SVG", "PNG", "StitchFoundry", "unregistered filter"] {
+    for source in ["SVG", "PNG", "ScreenFoundry", "unregistered filter"] {
         assert_eq!(tr_ctx(cs(), "file-filter", source), source);
     }
     assert_eq!(tr_ctx(cs(), "diagnostics", "render"), "vykreslení");
@@ -2057,7 +2057,7 @@ const RENDER_SITE_ROWS: &[(&str, &str)] = &[
     ("file-filter", "Print presets"),
     ("file-filter", "SVG Compressed"),
     ("file-filter", "PDF-compatible .ai"),
-    ("file-filter", "StitchFoundry Template"),
+    ("file-filter", "ScreenFoundry Template"),
     ("file-filter", "Templates"),
     ("diagnostics", "render"),
     ("diagnostics", "ui"),

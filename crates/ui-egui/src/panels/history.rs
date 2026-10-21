@@ -18,7 +18,7 @@ pub fn steps_to(current: usize, target: usize) -> i64 {
 pub fn step_name(lang: crate::i18n::Lang, label: &str) -> Option<String> {
     use crate::i18n::{has, tr};
     // the menu command's own row first: a plain row of the same words can name something else
-    // (StitchFoundry's Feather motif, not the Feather effect)
+    // (ScreenFoundry's Feather motif, not the Feather effect)
     let dotted = format!("{label}…");
     if has(lang, &dotted) {
         return Some(tr(lang, &dotted).trim_end_matches('…').to_string());

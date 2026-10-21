@@ -6,7 +6,7 @@ use std::process::Command;
 
 use serde_json::Value;
 
-const BIN: &str = env!("CARGO_BIN_EXE_stitchfoundry-cli");
+const BIN: &str = env!("CARGO_BIN_EXE_screenfoundry-cli");
 
 /// Returns the path of `name` in `vectorcraft-cli-fileio-<pid>` in the temp folder. The first call
 /// removes that folder and creates it again empty.
@@ -87,14 +87,14 @@ fn images_open_at_their_pixel_size() {
 #[test]
 fn help_lists_readable_formats() {
     let out = ok(&["--help"]);
-    assert!(out.contains("Readable formats: .stitchfoundry") && out.contains(".ait") && out.contains(".webp"), "{out}");
+    assert!(out.contains("Readable formats: .screenfoundry") && out.contains(".ait") && out.contains(".webp"), "{out}");
 }
 
 #[test]
 fn help_lists_perf_deep() {
     let out = ok(&["--help"]);
     assert!(
-        out.contains("stitchfoundry-cli perf [--paths N] [--deep]") && out.contains("--deep also times") && out.contains("with the peak so far on"),
+        out.contains("screenfoundry-cli perf [--paths N] [--deep]") && out.contains("--deep also times") && out.contains("with the peak so far on"),
         "{out}"
     );
 }

@@ -1,8 +1,8 @@
-StitchFoundry app icon (stitchfoundry.svg, stitchfoundry-small.svg and every file derived from them in this
-directory: stitchfoundry-1024.png, stitchfoundry-macos-512.png, stitchfoundry.icns, stitchfoundry.ico, hicolor/).
+ScreenFoundry app icon (screenfoundry.svg, screenfoundry-small.svg and every file derived from them in this
+directory: screenfoundry-1024.png, screenfoundry-macos-512.png, screenfoundry.icns, screenfoundry.ico, hicolor/).
 
-Original artwork made for StitchFoundry by SiteSentrix (no third-party material). Licensed like the
-rest of StitchFoundry, under either of
+Original artwork made for ScreenFoundry by SiteSentrix (no third-party material). Licensed like the
+rest of ScreenFoundry, under either of
 
   * Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0)
   * MIT license (https://opensource.org/licenses/MIT)

@@ -217,7 +217,7 @@ fn home_scrolls_in_a_short_window() {
     let size = (800.0, 300.0);
     let has = |texts: &[(String, egui::Rect)], s: &str| texts.iter().any(|(t, _)| t == s);
     let texts = visible_home_texts(&mut app, &ctx, size, 0.0, vec![]);
-    assert!(has(&texts, "Welcome to StitchFoundry"), "{texts:?}");
+    assert!(has(&texts, "Welcome to ScreenFoundry"), "{texts:?}");
     assert!(!has(&texts, "Community"), "below the fold at first");
     let at = egui::pos2(400.0, 150.0);
     let wheel = egui::Event::MouseWheel {
@@ -232,5 +232,5 @@ fn home_scrolls_in_a_short_window() {
         texts = visible_home_texts(&mut app, &ctx, size, f64::from(i) * 0.1, vec![]);
     }
     assert!(has(&texts, "Community"), "the wheel reaches the bottom: {texts:?}");
-    assert!(!has(&texts, "Welcome to StitchFoundry"), "the top scrolled away");
+    assert!(!has(&texts, "Welcome to ScreenFoundry"), "the top scrolled away");
 }

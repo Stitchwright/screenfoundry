@@ -2,7 +2,7 @@
 
 > **Last updated:** 2026-10-13 · **Change:** synthetic input budgets (#1709); bounded transport waits (#1726).
 
-`stitchfoundry --control <port>` listens on `127.0.0.1:<port>` (loopback only). The port must be a number
+`screenfoundry --control <port>` listens on `127.0.0.1:<port>` (loopback only). The port must be a number
 from 1 to 65535 (`--control=<port>` works too), given once; otherwise the app prints an error and exits
 before it starts. One JSON request per line:
 `{"id": 1, "method": "ui.inspect", "params": {}}` → `{"id": 1, "ok": true, "result": {...}}` or `{"id":1,"ok":false,"error":"..."}`.
@@ -56,12 +56,12 @@ retrying.
 ## Confining file access
 
 ```sh
-stitchfoundry --control 7979 --automation-read-root /work/project --automation-write-root /work/project/out
+screenfoundry --control 7979 --automation-read-root /work/project --automation-write-root /work/project/out
 ```
 
 `--automation-read-root <dir>` and `--automation-write-root <dir>` (or `VECTORCRAFT_AUTOMATION_READ_ROOT` /
 `VECTORCRAFT_AUTOMATION_WRITE_ROOT`; `--flag=<dir>` works too) confine what the control channel reads and
-writes, with the same flags as `stitchfoundry-cli mcp` and the other Craft apps. Every path a request reads
+writes, with the same flags as `screenfoundry-cli mcp` and the other Craft apps. Every path a request reads
 (open, place, relink, library and profile loads, plug-ins…) must lie inside the read root, every path it
 writes (save, export, package, captures, library saves…) inside the write root; anything else is an
 ordinary error reply. Paths are made absolute against the app's working directory, links are followed

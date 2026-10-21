@@ -105,8 +105,8 @@ fn save_panels_show_the_file_type_they_write() {
 fn saves_add_the_format_extension_to_a_bare_name() {
     let (mut app, w) = saving_app("/tmp/Untitled-1");
     app.run("file.save", json!({})).unwrap();
-    assert_eq!(last(&w), "/tmp/Untitled-1.stitchfoundry");
-    assert_eq!(app.session.active().unwrap().path.as_deref(), Some("/tmp/Untitled-1.stitchfoundry"));
+    assert_eq!(last(&w), "/tmp/Untitled-1.screenfoundry");
+    assert_eq!(app.session.active().unwrap().path.as_deref(), Some("/tmp/Untitled-1.screenfoundry"));
     let (mut app, w) = saving_app("/tmp/copy");
     app.run("file.saveCopy", json!({"format": "svg", "svg": {}})).unwrap();
     assert_eq!(last(&w), "/tmp/copy.svg");
@@ -147,13 +147,13 @@ fn saved_from(app: &mut VectorcraftApp, shown: &crate::tests_picks::Shown, writt
 fn the_file_type_picked_in_the_save_dialog_decides_the_format() {
     for (answer, expected) in [
         (&["/art/poster", "ai"][..], "/art/poster.ai"),
-        (&["/art/Untitled-1.stitchfoundry", "ai"], "/art/Untitled-1.ai"),
+        (&["/art/Untitled-1.screenfoundry", "ai"], "/art/Untitled-1.ai"),
         (&["/art/poster.SVG", "ai"], "/art/poster.SVG"),
         (&["/art/poster.foo", "ai"], "/art/poster.foo.ai"),
         (&["/art/poster.ai", "vectorcraft"], "/art/poster.ai"),
         (&["/art/poster", "svg"], "/art/poster.svg"),
         // A dialog that doesn't say, as on Windows and macOS: the default format's extension.
-        (&["/art/poster"], "/art/poster.stitchfoundry"),
+        (&["/art/poster"], "/art/poster.screenfoundry"),
     ] {
         let (mut app, shown, written) = portal_app();
         assert_eq!(saved_from(&mut app, &shown, &written, "file.save", answer), expected, "{answer:?}");
@@ -177,9 +177,9 @@ fn a_document_in_another_format_saves_as_the_type_picked() {
     let (mut app, shown, written) = portal_app();
     app.run("file.saveAs", json!({"path": "/art/a.ai", "options": {}})).unwrap();
     assert_eq!(*written.borrow(), ["/art/a.ai"]);
-    assert_eq!(saved_from(&mut app, &shown, &written, "file.saveAs", &["/art/poster", "vectorcraft"]), "/art/poster.stitchfoundry");
+    assert_eq!(saved_from(&mut app, &shown, &written, "file.saveAs", &["/art/poster", "vectorcraft"]), "/art/poster.screenfoundry");
     dialogs::cancel(&mut app);
-    assert_eq!(saved_from(&mut app, &shown, &written, "file.saveAs", &["/art/a.ai", "vectorcraft"]), "/art/a.stitchfoundry");
+    assert_eq!(saved_from(&mut app, &shown, &written, "file.saveAs", &["/art/a.ai", "vectorcraft"]), "/art/a.screenfoundry");
     dialogs::cancel(&mut app);
     assert_eq!(saved_from(&mut app, &shown, &written, "file.saveCopy", &["/art/copy", "svg"]), "/art/copy.svg");
     dialogs::cancel(&mut app);
@@ -231,18 +231,18 @@ fn on_disk(tag: &str, typed: &str) -> (VectorcraftApp, std::path::PathBuf) {
     (app, dir)
 }
 
-/// `card` typed in the save panel becomes `card.stitchfoundry`, a file the panel did not ask about:
+/// `card` typed in the save panel becomes `card.screenfoundry`, a file the panel did not ask about:
 /// Save asks before replacing it, Cancel leaves it as it was, and OK replaces it.
 #[test]
 fn a_name_given_its_extension_asks_before_replacing_a_file_there() {
     let (mut app, dir) = on_disk("ask", "card");
-    let card = dir.join("card.stitchfoundry");
+    let card = dir.join("card.screenfoundry");
     let path = card.to_string_lossy().into_owned();
     std::fs::write(&card, b"the old card").unwrap();
     assert!(app.run("file.save", json!({})).is_err(), "nothing is saved while it asks");
-    let d = app.ui.dialog.clone().expect("Save asks before replacing card.stitchfoundry");
+    let d = app.ui.dialog.clone().expect("Save asks before replacing card.screenfoundry");
     assert_eq!((d.kind.as_str(), d.str("path")), (dialogs::confirm::REPLACE, path.clone()));
-    assert!(d.str("message").contains("card.stitchfoundry") && d.str("detail").contains("card"), "{d:?}");
+    assert!(d.str("message").contains("card.screenfoundry") && d.str("detail").contains("card"), "{d:?}");
     dialogs::cancel(&mut app);
     assert!(app.ui.dialog.is_none());
     assert_eq!(std::fs::read(&card).unwrap(), b"the old card", "Cancel leaves the file as it was");
@@ -260,7 +260,7 @@ fn a_name_given_its_extension_asks_before_replacing_a_file_there() {
 #[test]
 fn the_enter_that_closed_the_save_panel_does_not_replace_the_file() {
     let (mut app, dir) = on_disk("enter", "card");
-    let card = dir.join("card.stitchfoundry");
+    let card = dir.join("card.screenfoundry");
     std::fs::write(&card, b"the old card").unwrap();
     assert!(app.run("file.save", json!({})).is_err());
     let ctx = egui::Context::default();
@@ -287,13 +287,13 @@ fn a_name_given_its_extension_writes_at_once_when_no_file_is_there() {
     let (mut app, dir) = on_disk("fresh", "fresh");
     app.run("file.save", json!({})).unwrap();
     assert!(app.ui.dialog.is_none());
-    assert!(dir.join("fresh.stitchfoundry").exists());
+    assert!(dir.join("fresh.screenfoundry").exists());
     let _ = std::fs::remove_dir_all(&dir);
-    let (mut app, dir) = on_disk("typed", "card.stitchfoundry");
-    std::fs::write(dir.join("card.stitchfoundry"), b"the old card").unwrap();
+    let (mut app, dir) = on_disk("typed", "card.screenfoundry");
+    std::fs::write(dir.join("card.screenfoundry"), b"the old card").unwrap();
     app.run("file.save", json!({})).unwrap();
     assert!(app.ui.dialog.is_none());
-    assert_ne!(std::fs::read(dir.join("card.stitchfoundry")).unwrap(), b"the old card");
+    assert_ne!(std::fs::read(dir.join("card.screenfoundry")).unwrap(), b"the old card");
     let _ = std::fs::remove_dir_all(&dir);
 }
 

@@ -129,9 +129,9 @@ impl App {
             // eframe can't give a window a new device: the user saves and starts again.
             self.graphics_lost = self.app.graphics_lost(&why);
             self.app.status(if self.graphics_lost {
-                "The graphics device was lost: unsaved changes are kept for Data Recovery. Save your documents and restart StitchFoundry"
+                "The graphics device was lost: unsaved changes are kept for Data Recovery. Save your documents and restart ScreenFoundry"
             } else {
-                "The graphics device was lost: save your documents and restart StitchFoundry"
+                "The graphics device was lost: save your documents and restart ScreenFoundry"
             });
         }
         if self.graphics_lost && ctx.input(|i| i.viewport().close_requested()) {
@@ -179,7 +179,7 @@ fn end_before_teardown(frames: u64) {
 fn open_files(app: &mut VectorcraftApp, files: Vec<String>) {
     for f in files {
         if let Err(e) = vectorcraft_ui_egui::io::open_reporting(app, &f) {
-            eprintln!("stitchfoundry: {f}: {e}");
+            eprintln!("screenfoundry: {f}: {e}");
         }
     }
 }
@@ -195,17 +195,22 @@ fn discard_marked_text() {
     }
 }
 
-/// Where UI preferences live: ~/Library/Application Support/StitchFoundry (macOS),
-/// %APPDATA%\StitchFoundry (Windows), $XDG_CONFIG_HOME or ~/.config/stitchfoundry (Linux). Its own
-/// folder, so StitchFoundry and VectorCraft keep their settings, libraries and recovery copies apart.
+/// Where UI preferences live: ~/Library/Application Support/ScreenFoundry (macOS),
+/// %APPDATA%\ScreenFoundry (Windows), $XDG_CONFIG_HOME or ~/.config/screenfoundry (Linux). Its own
+/// folder, so ScreenFoundry and VectorCraft keep their settings, libraries and recovery copies apart.
 fn prefs_path() -> Option<std::path::PathBuf> {
-    prefs_dir::prefs_path_for("StitchFoundry", "stitchfoundry")
+    prefs_dir::prefs_path_for("ScreenFoundry", "screenfoundry")
 }
 
-/// VectorCraft's preferences (StitchFoundry is based on it): read once if there are no StitchFoundry
+/// VectorCraft's preferences (ScreenFoundry is based on it): read once if there are no ScreenFoundry
 /// preferences yet, so a VectorCraft user's settings come along.
 fn legacy_prefs_path() -> Option<std::path::PathBuf> {
     prefs_dir::prefs_path_for("VectorCraft", "vectorcraft")
+}
+
+/// The preferences of this app's former name, StitchFoundry: tried before VectorCraft's.
+fn previous_name_prefs_path() -> Option<std::path::PathBuf> {
+    prefs_dir::previous_name_prefs_path()
 }
 
 /// Where the log files live: `logs` in the preferences folder (see `logging`).
@@ -223,7 +228,10 @@ fn read_prefs() -> Option<vectorcraft_ui_egui::UiState> {
     if !prefs_enabled() {
         return None;
     }
-    let bytes = prefs_path().and_then(|p| std::fs::read(p).ok()).or_else(|| legacy_prefs_path().and_then(|p| std::fs::read(p).ok()))?;
+    let bytes = prefs_path()
+        .and_then(|p| std::fs::read(p).ok())
+        .or_else(|| previous_name_prefs_path().and_then(|p| std::fs::read(p).ok()))
+        .or_else(|| legacy_prefs_path().and_then(|p| std::fs::read(p).ok()))?;
     decode_saved_prefs(&bytes)
 }
 
@@ -601,12 +609,12 @@ fn open_file(path: &str) -> Result<(), String> {
 
 /// The window, Dock, taskbar and app-switcher icon (`assets/app-icon/`, see its README). macOS gets
 /// the version with Apple's transparent margin; elsewhere the full-bleed tile. The app ID matches
-/// `packaging/linux/com.stitchwright.stitchfoundry.desktop` so Wayland docks find the launcher icon.
+/// `packaging/linux/com.stitchwright.screenfoundry.desktop` so Wayland docks find the launcher icon.
 fn app_icon() -> egui::IconData {
     #[cfg(target_os = "macos")]
-    let png: &[u8] = include_bytes!("../../../assets/app-icon/stitchfoundry-macos-512.png");
+    let png: &[u8] = include_bytes!("../../../assets/app-icon/screenfoundry-macos-512.png");
     #[cfg(not(target_os = "macos"))]
-    let png: &[u8] = include_bytes!("../../../assets/app-icon/hicolor/256x256/apps/com.stitchwright.stitchfoundry.png");
+    let png: &[u8] = include_bytes!("../../../assets/app-icon/hicolor/256x256/apps/com.stitchwright.screenfoundry.png");
     eframe::icon_data::from_png_bytes(png).unwrap_or_default()
 }
 
@@ -642,7 +650,7 @@ fn custom_titlebar(saved: Option<&vectorcraft_ui_egui::UiState>) -> bool {
 fn native_options(custom_titlebar: bool) -> eframe::NativeOptions {
     eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
-            .with_title("StitchFoundry")
+            .with_title("ScreenFoundry")
             .with_inner_size(window::DEFAULT_SIZE)
             .with_min_inner_size(window::MIN_SIZE)
             .with_drag_and_drop(true)
@@ -651,18 +659,18 @@ fn native_options(custom_titlebar: bool) -> eframe::NativeOptions {
             .with_titlebar_shown(false)
             .with_title_shown(false)
             .with_icon(app_icon())
-            .with_app_id("com.stitchwright.stitchfoundry"),
+            .with_app_id("com.stitchwright.screenfoundry"),
         #[cfg(feature = "windows7")]
         renderer: eframe::Renderer::Glow,
         ..Default::default()
     }
 }
 
-/// `stitchfoundry --help`. Headless work (convert, run, MCP) is `stitchfoundry-cli`'s.
+/// `screenfoundry --help`. Headless work (convert, run, MCP) is `screenfoundry-cli`'s.
 const USAGE: &str = "\
-Usage: stitchfoundry [options] [files…]
+Usage: screenfoundry [options] [files…]
 
-Opens the StitchFoundry desktop app with the given files.
+Opens the ScreenFoundry desktop app with the given files.
 
 Options:
   --control <port>               Start the localhost JSON-lines control server on <port>
@@ -674,8 +682,8 @@ Options:
   --version                      Print the version and exit
   -h, --help                     Print this help and exit
 
-Without a window (converting, scripting, the MCP server), use stitchfoundry-cli:
-  stitchfoundry-cli --help
+Without a window (converting, scripting, the MCP server), use screenfoundry-cli:
+  screenfoundry-cli --help
 ";
 
 fn main() -> std::process::ExitCode {
@@ -696,14 +704,14 @@ fn main() -> std::process::ExitCode {
             Ok(true) => continue,
             Ok(false) => {}
             Err(e) => {
-                eprintln!("stitchfoundry: {e}");
+                eprintln!("screenfoundry: {e}");
                 return std::process::ExitCode::FAILURE;
             }
         }
         match a.as_str() {
             "--in-window-menus" => in_window_menus = true,
             "--version" => {
-                println!("stitchfoundry {}", env!("CARGO_PKG_VERSION"));
+                println!("screenfoundry {}", env!("CARGO_PKG_VERSION"));
                 return std::process::ExitCode::SUCCESS;
             }
             // Before anything starts, like `--version`: from a terminal or an agent's shell the app
@@ -724,7 +732,7 @@ fn main() -> std::process::ExitCode {
         None => match automation_args::env_control_port(std::env::var_os("VECTORCRAFT_CONTROL_PORT")) {
             Ok(port) => port,
             Err(e) => {
-                eprintln!("stitchfoundry: {e}");
+                eprintln!("screenfoundry: {e}");
                 return std::process::ExitCode::FAILURE;
             }
         },
@@ -746,7 +754,7 @@ fn main() -> std::process::ExitCode {
     if let Some(logger) = logger {
         match log_dir().filter(|_| prefs_enabled()) {
             Some(dir) => match logger.attach_dir(&dir) {
-                Ok(path) => log::info!("StitchFoundry {}, log file {}", env!("CARGO_PKG_VERSION"), path.display()),
+                Ok(path) => log::info!("ScreenFoundry {}, log file {}", env!("CARGO_PKG_VERSION"), path.display()),
                 // Standard error only by now (`attach_dir` gave up on the file); unlike `eprintln!`, never panics.
                 Err(e) => log::warn!("no log file: {e}"),
             },
@@ -765,7 +773,7 @@ fn main() -> std::process::ExitCode {
             Ok(roots) => roots,
             Err(e) => {
                 log::error!("{e}");
-                eprintln!("stitchfoundry: {e}");
+                eprintln!("screenfoundry: {e}");
                 return std::process::ExitCode::FAILURE;
             }
         }
@@ -879,7 +887,7 @@ fn main() -> std::process::ExitCode {
     // A panic that ends the window (egui-wgpu's own, #502) is caught here: never a crash.
     let outcome = vectorcraft_engine::guard::catch_panic(|| {
         eframe::run_native(
-            "StitchFoundry",
+            "ScreenFoundry",
             options,
             Box::new(move |cc| {
                 let mut session = Session::new();
@@ -930,7 +938,7 @@ fn main() -> std::process::ExitCode {
                             ""
                         };
                         app.status(format!(
-                            "The graphics processor tried first couldn't show the window, so StitchFoundry started again on {summary}{hint}"
+                            "The graphics processor tried first couldn't show the window, so ScreenFoundry started again on {summary}{hint}"
                         ));
                     } else if let Some(crash) = &crash {
                         app.status(match crash {
@@ -988,7 +996,7 @@ fn main() -> std::process::ExitCode {
     match outcome {
         Ok(()) => std::process::ExitCode::SUCCESS,
         Err(e) => {
-            log::error!("StitchFoundry stopped: {e}");
+            log::error!("ScreenFoundry stopped: {e}");
             std::process::ExitCode::FAILURE
         }
     }
@@ -1093,10 +1101,11 @@ mod tests {
     }
 
     /// The MIME types a Linux desktop gives each extension in `OPEN_EXTS` but `UNASSOCIATED_EXTS`
-    /// (one row per type): shared-mime-info's, or one that `com.stitchwright.stitchfoundry.mime.xml`
+    /// (one row per type): shared-mime-info's, or one that `com.stitchwright.screenfoundry.mime.xml`
     /// declares.
     const LINUX_TYPES: &[(&str, &str)] = &[
-        ("stitchfoundry", "application/x-stitchfoundry"),
+        ("screenfoundry", "application/x-screenfoundry"),
+        ("stitchfoundry", "application/x-screenfoundry"),
         ("vectorcraft", "application/x-vectorcraft"),
         ("drawcraft", "application/x-vectorcraft"),
         ("svg", "image/svg+xml"),
@@ -1154,8 +1163,8 @@ mod tests {
     /// have.
     #[test]
     fn the_linux_desktop_entry_opens_every_readable_format() {
-        let desktop = include_str!("../../../packaging/linux/com.stitchwright.stitchfoundry.desktop");
-        let mime = include_str!("../../../packaging/linux/com.stitchwright.stitchfoundry.mime.xml");
+        let desktop = include_str!("../../../packaging/linux/com.stitchwright.screenfoundry.desktop");
+        let mime = include_str!("../../../packaging/linux/com.stitchwright.screenfoundry.mime.xml");
         let listed: Vec<&str> =
             desktop.lines().find_map(|l| l.strip_prefix("MimeType=")).unwrap_or_default().split(';').filter(|t| !t.is_empty()).collect();
         // Each type the MIME package declares, with the extensions of its globs and its `<magic>`

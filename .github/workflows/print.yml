@@ -18,7 +18,7 @@ env:
   CARGO_INCREMENTAL: 0
 jobs:
   windows:
-    # Upstream's CI: skipped in forks such as StitchFoundry.
+    # Upstream's CI: skipped in forks such as ScreenFoundry.
     if: github.repository == 'storytold/vectorcraft'
     runs-on: windows-2022
     timeout-minutes: 90

@@ -69,7 +69,7 @@ fn find<'a>(bar: &'a MenuBar, command: &str) -> &'a native_menu::Item {
 fn vectorcraft_gets_a_mac_app_menu() {
     let bar = bar(&app(true));
     let titles: Vec<&str> = bar.menus.iter().map(|m| m.title.as_str()).collect();
-    assert_eq!(titles, ["StitchFoundry", "File", "Edit", "Object", "Type", "Select", "Effect", "Screen Print", "View", "Window", "Help"]);
+    assert_eq!(titles, ["ScreenFoundry", "File", "Edit", "Object", "Type", "Select", "Effect", "Screen Print", "View", "Window", "Help"]);
     let app_menu = &bar.menus[0];
     assert_eq!(app_menu.role, MenuRole::App);
     assert_eq!(
@@ -94,10 +94,10 @@ fn vectorcraft_gets_a_mac_app_menu() {
         let it = find(&bar, command);
         (it.label.as_str(), it.shortcut)
     };
-    assert_eq!(shown("help.about"), ("About StitchFoundry", None));
-    assert_eq!(shown("app.quit"), ("Quit StitchFoundry", Some("Cmd+Q")), "Quit is the app's own, so unsaved documents are asked about");
+    assert_eq!(shown("help.about"), ("About ScreenFoundry", None));
+    assert_eq!(shown("app.quit"), ("Quit ScreenFoundry", Some("Cmd+Q")), "Quit is the app's own, so unsaved documents are asked about");
     // ⌘H stays View › Hide Edges (Illustrator's); Hide takes ⌃⌘H.
-    assert_eq!(shown(native_menu::HIDE), ("Hide StitchFoundry", Some("Ctrl+Cmd+H")));
+    assert_eq!(shown(native_menu::HIDE), ("Hide ScreenFoundry", Some("Ctrl+Cmd+H")));
     assert_eq!(shown(native_menu::HIDE_OTHERS), ("Hide Others", Some("Cmd+Alt+H")));
     assert_eq!(find(&bar, "view.edges").shortcut, Some("Cmd+H"));
     assert_eq!(bar.menu(MenuRole::Help).map(|m| m.title.as_str()), Some("Help"));

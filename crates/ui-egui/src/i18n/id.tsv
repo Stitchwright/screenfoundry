@@ -4689,7 +4689,7 @@ file-filter	PDF presets	Preset PDF
 file-filter	Print presets	Preset cetak
 file-filter	SVG Compressed	SVG terkompresi
 file-filter	PDF-compatible .ai	.ai kompatibel PDF
-file-filter	StitchFoundry Template	Templat StitchFoundry
+file-filter	ScreenFoundry Template	Templat ScreenFoundry
 file-filter	Templates	Templat
 diagnostics	render	Render
 diagnostics	ui	UI
@@ -5190,7 +5190,7 @@ swatch	Bright Violet	Violet cerah
 	Persistent	Persisten
 	Library Panel Options	Opsi panel pustaka
 
-# StitchFoundry (embroidery)
+# ScreenFoundry (embroidery)
 	#	#
 	3D Puff	3D puff
 	3D effect	Efek 3D
@@ -5223,7 +5223,7 @@ swatch	Bright Violet	Violet cerah
 	A sheet of the designs found, to print or save as PDF	Lembar berisi desain yang ditemukan, untuk dicetak atau disimpan sebagai PDF
 	A smoothed copy of the image in these colours, its specks cleaned, to digitize or click to stitch	Salinan gambar yang dihaluskan dengan warna-warna ini, bintik-bintiknya dibersihkan, untuk didigitasi atau diklik untuk dijahit
 	A thread chart of your own from a CSV file (code, name and colour a thread) or a GIMP palette (.gpl)	Bagan benang Anda sendiri dari file CSV (kode, nama, dan warna per benang) atau palet GIMP (.gpl)
-	About StitchFoundry	Tentang StitchFoundry
+	About ScreenFoundry	Tentang ScreenFoundry
 	About the library	Tentang pustaka
 	About the sewing	Tentang penjahitan
 	Accordion	Akordeon
@@ -5266,7 +5266,7 @@ swatch	Bright Violet	Violet cerah
 	Answers come from Claude with your own Anthropic API key, billed to your Anthropic account. They can be wrong: try a test sew before an important piece.	Jawaban berasal dari Claude dengan kunci API Anthropic Anda sendiri, ditagihkan ke akun Anthropic Anda. Jawaban bisa salah: coba jahit uji sebelum mengerjakan karya penting.
 	Anthropic API key:	Kunci API Anthropic:
 	Anything else? For example: a gap above the bumper	Ada yang lain? Misalnya: celah di atas bemper
-	Applies the next time StitchFoundry starts.	Berlaku saat StitchFoundry dijalankan lagi.
+	Applies the next time ScreenFoundry starts.	Berlaku saat ScreenFoundry dijalankan lagi.
 	Appliqué	Aplikasi
 	Appliqué letters	Huruf aplikasi
 	Appliqué star	Bintang aplikasi
@@ -5288,7 +5288,7 @@ swatch	Bright Violet	Violet cerah
 	Ask	Tanya
 	Ask About Embroidery	Tanya tentang bordir
 	Ask About Embroidery…	Tanya tentang bordir…
-	Ask anything about machine embroidery or StitchFoundry: which stabilizer to use, why thread breaks, how to make letters sew cleaner, where a feature is. Claude can also change your design when you ask, after you allow it.	Tanyakan apa saja tentang bordir mesin atau StitchFoundry: stabilizer mana yang dipakai, mengapa benang putus, cara membuat huruf terjahit lebih rapi, di mana letak suatu fitur. Claude juga bisa mengubah desain Anda bila Anda memintanya, setelah Anda mengizinkannya.
+	Ask anything about machine embroidery or ScreenFoundry: which stabilizer to use, why thread breaks, how to make letters sew cleaner, where a feature is. Claude can also change your design when you ask, after you allow it.	Tanyakan apa saja tentang bordir mesin atau ScreenFoundry: stabilizer mana yang dipakai, mengapa benang putus, cara membuat huruf terjahit lebih rapi, di mana letak suatu fitur. Claude juga bisa mengubah desain Anda bila Anda memintanya, setelah Anda mengizinkannya.
 	Assign to Glyph	Tetapkan ke glif
 	At each point	Di setiap titik
 	Auto Direction	Arah otomatis
@@ -5399,10 +5399,10 @@ swatch	Bright Violet	Violet cerah
 	Choose the photos in the browser's window…	Pilih foto di jendela peramban…
 	Chord length	Panjang tali busur
 	Circles	Lingkaran
-	Claude draws the artwork with your own Anthropic API key, billed to your Anthropic account; StitchFoundry then digitizes it. Check the stitches before you sew.	Claude menggambar karya seni dengan kunci API Anthropic Anda sendiri, ditagihkan ke akun Anthropic Anda; lalu StitchFoundry mendigitasinya. Periksa jahitannya sebelum Anda menjahit.
+	Claude draws the artwork with your own Anthropic API key, billed to your Anthropic account; ScreenFoundry then digitizes it. Check the stitches before you sew.	Claude menggambar karya seni dengan kunci API Anthropic Anda sendiri, ditagihkan ke akun Anthropic Anda; lalu ScreenFoundry mendigitasinya. Periksa jahitannya sebelum Anda menjahit.
 	Claude looks at the photos with your own Anthropic API key, billed to your Anthropic account. It can be wrong: try a fix on a scrap of the same fabric first.	Claude melihat foto-foto dengan kunci API Anthropic Anda sendiri, ditagihkan ke akun Anthropic Anda. Hasilnya bisa salah: coba perbaikannya dulu pada sisa kain yang sama.
-	Claude redraws the image as clean flat-colour art, then StitchFoundry digitizes it	Claude menggambar ulang gambar menjadi karya warna datar yang bersih, lalu StitchFoundry mendigitasinya
-	Claude redraws the image as flat-colour art with your own Anthropic API key, billed to your Anthropic account; StitchFoundry then digitizes it. Check the stitches before you sew.	Claude menggambar ulang gambar menjadi karya warna datar dengan kunci API Anthropic Anda sendiri, ditagihkan ke akun Anthropic Anda; lalu StitchFoundry mendigitasinya. Periksa jahitannya sebelum Anda menjahit.
+	Claude redraws the image as clean flat-colour art, then ScreenFoundry digitizes it	Claude menggambar ulang gambar menjadi karya warna datar yang bersih, lalu ScreenFoundry mendigitasinya
+	Claude redraws the image as flat-colour art with your own Anthropic API key, billed to your Anthropic account; ScreenFoundry then digitizes it. Check the stitches before you sew.	Claude menggambar ulang gambar menjadi karya warna datar dengan kunci API Anthropic Anda sendiri, ditagihkan ke akun Anthropic Anda; lalu ScreenFoundry mendigitasinya. Periksa jahitannya sebelum Anda menjahit.
 	Claude wants to change your design:	Claude ingin mengubah desain Anda:
 	Clear Default	Hapus default
 	Clear Export History	Hapus riwayat ekspor
@@ -5516,7 +5516,7 @@ swatch	Bright Violet	Violet cerah
 	Density	Kerapatan
 	Density Map	Peta kerapatan
 	Density map	Peta kerapatan
-	Describe a design and Claude draws artwork for it, then StitchFoundry digitizes it	Jelaskan sebuah desain dan Claude menggambar karya seninya, lalu StitchFoundry mendigitasinya
+	Describe a design and Claude draws artwork for it, then ScreenFoundry digitizes it	Jelaskan sebuah desain dan Claude menggambar karya seninya, lalu ScreenFoundry mendigitasinya
 	Describe the design:	Jelaskan desainnya:
 	Design	Desain
 	Design Catalogue	Katalog desain
@@ -5699,7 +5699,7 @@ swatch	Bright Violet	Violet cerah
 	Hexagons	Segi enam
 	Hidden (not sewn)	Tersembunyi (tidak dijahit)
 	Hide Digitizing Widget	Sembunyikan widget digitasi
-	Hide StitchFoundry	Sembunyikan StitchFoundry
+	Hide ScreenFoundry	Sembunyikan ScreenFoundry
 	Hold a ruler, or a bank card, against the screen and change the size until the marks match. Actual Size then shows designs life size.	Tempelkan penggaris, atau kartu bank, ke layar dan ubah ukurannya sampai tandanya cocok. Ukuran sebenarnya lalu menampilkan desain dalam ukuran asli.
 	Honeycomb	Sarang lebah
 	Hoodie	Hoodie
@@ -5716,7 +5716,7 @@ swatch	Bright Violet	Violet cerah
 	Import Chart…	Impor bagan…
 	Import Names…	Impor nama…
 	Import Thread Chart	Impor bagan benang
-	In StitchFoundry	Di StitchFoundry
+	In ScreenFoundry	Di ScreenFoundry
 	In a line	Dalam satu baris
 	In production	Dalam produksi
 	In the hoop	Di dalam ram
@@ -5766,7 +5766,7 @@ swatch	Bright Violet	Violet cerah
 	Learn how	Pelajari caranya
 	Leather / vinyl	Kulit / vinil
 	Leave Kiosk	Keluar dari kios
-	Leave it empty for StitchFoundry's own service.	Kosongkan untuk memakai layanan StitchFoundry sendiri.
+	Leave it empty for ScreenFoundry's own service.	Kosongkan untuk memakai layanan ScreenFoundry sendiri.
 	Leaves	Daun
 	Leaving the kiosk will take this PIN	Keluar dari kios akan memerlukan PIN ini
 	Left to right	Kiri ke kanan
@@ -5922,7 +5922,7 @@ swatch	Bright Violet	Violet cerah
 	Open a document to see its stitch sequence.	Buka dokumen untuk melihat urutan jahitannya.
 	Open a document to see its stitches.	Buka dokumen untuk melihat jahitannya.
 	Open or create a document to digitize embroidery.	Buka atau buat dokumen untuk mendigitasi bordir.
-	Opening it left out what StitchFoundry can't read yet ({what}): replacing it loses that for good. Save under another name to keep it.	Saat dibuka, bagian yang belum dapat dibaca StitchFoundry ({what}) ditinggalkan: menimpanya akan menghilangkan bagian itu selamanya. Simpan dengan nama lain untuk menyimpannya.
+	Opening it left out what ScreenFoundry can't read yet ({what}): replacing it loses that for good. Save under another name to keep it.	Saat dibuka, bagian yang belum dapat dibaca ScreenFoundry ({what}) ditinggalkan: menimpanya akan menghilangkan bagian itu selamanya. Simpan dengan nama lain untuk menyimpannya.
 	Ornament	Hiasan gantung
 	Outline Around	Garis luar di sekeliling
 	Output Profiles	Profil output
@@ -5949,7 +5949,7 @@ swatch	Bright Violet	Violet cerah
 	Paw Print	Jejak tapak
 	Pay for the AI features with my Foundry credits	Bayar fitur AI dengan kredit Foundry saya
 	Pay with Foundry credits instead	Bayar dengan kredit Foundry saja
-	Payment is on Stripe's secure page, in your browser; your card never reaches StitchFoundry.	Pembayaran dilakukan di halaman aman Stripe, di peramban Anda; kartu Anda tidak pernah sampai ke StitchFoundry.
+	Payment is on Stripe's secure page, in your browser; your card never reaches ScreenFoundry.	Pembayaran dilakukan di halaman aman Stripe, di peramban Anda; kartu Anda tidak pernah sampai ke ScreenFoundry.
 	Pebbles	Kerikil
 	Per 1000 stitches	Per 1000 jahitan
 	Pfaff PCS (.pcs)…	Pfaff PCS (.pcs)…
@@ -6009,7 +6009,7 @@ swatch	Bright Violet	Violet cerah
 	Quilt height	Tinggi quilt
 	Quilt width	Lebar quilt
 	Quilting for a tile	Quilting untuk satu ubin
-	Quit StitchFoundry	Keluar dari StitchFoundry
+	Quit ScreenFoundry	Keluar dari ScreenFoundry
 	Radial Fill	Isian radial
 	Randomness	Keacakan
 	Read Team Names	Baca nama tim
@@ -6151,7 +6151,7 @@ swatch	Bright Violet	Violet cerah
 	Sews well at	Bagus dijahit pada
 	Sews well from	Bagus dijahit mulai
 	Sews well up to	Bagus dijahit hingga
-	Share this check to help improve StitchFoundry (kept private; delete it any time in Foundry Account)	Bagikan pemeriksaan ini untuk membantu menyempurnakan StitchFoundry (dijaga privat; hapus kapan saja di Akun Foundry)
+	Share this check to help improve ScreenFoundry (kept private; delete it any time in Foundry Account)	Bagikan pemeriksaan ini untuk membantu menyempurnakan ScreenFoundry (dijaga privat; hapus kapan saja di Akun Foundry)
 	Shell	Kerang
 	Shield	Perisai
 	Short fill stitches under	Jahitan isian pendek di bawah
@@ -6215,7 +6215,7 @@ swatch	Bright Violet	Violet cerah
 	Start and End on the Edges	Mulai dan akhiri di tepi
 	Start and stop	Awal dan akhir
 	Start at	Mulai di
-	Start from StitchFoundry Defaults	Mulai dari default StitchFoundry
+	Start from ScreenFoundry Defaults	Mulai dari default ScreenFoundry
 	Stem Stitch	Tusuk tangkai
 	Stem stitch	Tusuk tangkai
 	Step by step: words, a shape, appliqué, a picture or a sample	Langkah demi langkah: kata, bentuk, aplikasi, gambar, atau contoh
@@ -6238,16 +6238,16 @@ swatch	Bright Violet	Violet cerah
 	Stitch in the Ditch	Jahit di parit (stitch in the ditch)
 	Stitch length	Panjang jahitan
 	Stitch type	Jenis jahitan
-	StitchFoundry	StitchFoundry
+	ScreenFoundry	ScreenFoundry
 	Foundry Account	Akun Foundry
 	Foundry Account…	Akun Foundry…
-	StitchFoundry Help	Bantuan StitchFoundry
-	StitchFoundry Help…	Bantuan StitchFoundry…
+	ScreenFoundry Help	Bantuan ScreenFoundry
+	ScreenFoundry Help…	Bantuan ScreenFoundry…
 	Foundry accounts aren't open yet. Until then, the AI features work with your own Anthropic API key.	Akun Foundry belum dibuka. Sampai saat itu, fitur AI bekerja dengan kunci API Anthropic Anda sendiri.
-	StitchFoundry copies the fonts to {folder}.	StitchFoundry menyalin font ke {folder}.
-	StitchFoundry didn't quit normally last time. These documents had unsaved changes:	StitchFoundry tidak ditutup dengan normal terakhir kali. Dokumen-dokumen ini memiliki perubahan yang belum disimpan:
-	StitchFoundry on GitHub	StitchFoundry di GitHub
-	StitchFoundry read this script without running it.	StitchFoundry membaca skrip ini tanpa menjalankannya.
+	ScreenFoundry copies the fonts to {folder}.	ScreenFoundry menyalin font ke {folder}.
+	ScreenFoundry didn't quit normally last time. These documents had unsaved changes:	ScreenFoundry tidak ditutup dengan normal terakhir kali. Dokumen-dokumen ini memiliki perubahan yang belum disimpan:
+	ScreenFoundry on GitHub	ScreenFoundry di GitHub
+	ScreenFoundry read this script without running it.	ScreenFoundry membaca skrip ini tanpa menjalankannya.
 	Stitches	Jahitan
 	Stitches edited by hand: the shape no longer changes them.	Jahitan diedit secara manual: bentuknya tidak lagi mengubahnya.
 	Stitches over 7 mm	Jahitan di atas 7 mm
@@ -6398,7 +6398,7 @@ swatch	Bright Violet	Violet cerah
 	Watch the design sew with the stitch player in Stitch Sequence before you send it.	Lihat desain dijahit dengan pemutar jahitan di Urutan jahitan sebelum Anda mengirimnya.
 	Wave	Gelombang
 	Waves	Gelombang-gelombang
-	Welcome to StitchFoundry	Selamat datang di StitchFoundry
+	Welcome to ScreenFoundry	Selamat datang di ScreenFoundry
 	What fabric will you sew it on?	Pada kain apa Anda akan menjahitnya?
 	What should it say?	Tulisannya apa?
 	What size is the tile?	Berapa ukuran ubinnya?
@@ -6463,13 +6463,13 @@ swatch	Bright Violet	Violet cerah
 	{n} free checks left this month.	Sisa {n} pemeriksaan gratis bulan ini.
 	{n} very short stitches can break the thread	{n} jahitan yang sangat pendek bisa memutus benang
 	{n}-count Aida	Aida {n}-count
-# Embroidery (StitchFoundry): picture services
+# Embroidery (ScreenFoundry): picture services
 	Picture made by	Gambar dibuat oleh
 	Claude (draws the shapes itself)	Claude (menggambar bentuknya sendiri)
 	{name} API key:	Kunci API {name}:
 	The picture is billed to your account with that service. Claude then redraws it as flat shapes in your thread colors, so it sews with few thread changes.	Gambar ditagihkan ke akun Anda di layanan itu. Lalu Claude menggambarnya ulang sebagai bentuk datar dengan warna benang Anda, sehingga dibordir dengan sedikit pergantian benang.
 	Making the picture…	Membuat gambar…
-# Embroidery (StitchFoundry): undo steps
+# Embroidery (ScreenFoundry): undo steps
 	Auto-Digitize	Digitasi otomatis
 	Backstitch Line	Garis tusuk tikam jejak
 	Close Appliqué Outlines	Tutup garis tepi aplikasi
@@ -6507,26 +6507,26 @@ swatch	Bright Violet	Violet cerah
 	A new design: a hoopful of patches, each colour sewn once for all of them	Desain baru: satu pembidang penuh emblem, setiap warna dijahit sekali untuk semuanya
 	Every hoopful as a machine file, and a list of the names in each	Setiap pembidang penuh sebagai file mesin, dan daftar nama di masing-masing
 	The open design repeated across its hoop, sorted so each colour is sewn once	Desain yang terbuka diulang di seluruh pembidangnya, diurutkan agar setiap warna dijahit sekali
-# Report to StitchFoundry (ui.reportSewout)
+# Report to ScreenFoundry (ui.reportSewout)
 	Anything you'd like to add (optional)	Ada yang ingin ditambahkan? (opsional)
 	Claude is writing the report…	Claude sedang menulis laporan…
 	Have Claude Write It	Biar Claude yang Menulis
-	Help make StitchFoundry better	Bantu jadikan StitchFoundry lebih baik
-	I agree to send this to SiteSentrix, the maker of StitchFoundry, to improve the software. It won't be shared with anyone else.	Saya setuju mengirim ini ke SiteSentrix, pembuat StitchFoundry, untuk memperbaiki perangkat lunaknya. Ini tidak akan dibagikan kepada siapa pun.
+	Help make ScreenFoundry better	Bantu jadikan ScreenFoundry lebih baik
+	I agree to send this to SiteSentrix, the maker of ScreenFoundry, to improve the software. It won't be shared with anyone else.	Saya setuju mengirim ini ke SiteSentrix, pembuat ScreenFoundry, untuk memperbaiki perangkat lunaknya. Ini tidak akan dibagikan kepada siapa pun.
 	Include a summary of the design	Sertakan ringkasan desain
 	Include the conversation with Claude	Sertakan percakapan dengan Claude
 	Include the photos ({n})	Sertakan foto ({n})
-	Report to StitchFoundry	Laporkan ke StitchFoundry
-	Report to StitchFoundry…	Laporkan ke StitchFoundry…
+	Report to ScreenFoundry	Laporkan ke ScreenFoundry
+	Report to ScreenFoundry…	Laporkan ke ScreenFoundry…
 	Send Report	Kirim Laporan
-	Send this sew-out and Claude's idea of what StitchFoundry could do better to its makers	Kirim hasil jahitan ini dan ide Claude tentang apa yang bisa diperbaiki StitchFoundry kepada pembuatnya
-	Send this sew-out to the people who make StitchFoundry, with Claude's idea of what the software could do better. We use it only to improve StitchFoundry: we never share, sell or publish it, and you can have it deleted at any time (Foundry Account › Delete My Shared Sew-out Checks).	Kirim hasil jahitan ini kepada pembuat StitchFoundry, beserta ide Claude tentang apa yang bisa diperbaiki perangkat lunaknya. Kami memakainya hanya untuk memperbaiki StitchFoundry: kami tidak pernah membagikan, menjual, atau menerbitkannya, dan Anda bisa meminta untuk menghapusnya kapan saja (Akun Foundry › Hapus pemeriksaan hasil jahitan yang saya bagikan).
+	Send this sew-out and Claude's idea of what ScreenFoundry could do better to its makers	Kirim hasil jahitan ini dan ide Claude tentang apa yang bisa diperbaiki ScreenFoundry kepada pembuatnya
+	Send this sew-out to the people who make ScreenFoundry, with Claude's idea of what the software could do better. We use it only to improve ScreenFoundry: we never share, sell or publish it, and you can have it deleted at any time (Foundry Account › Delete My Shared Sew-out Checks).	Kirim hasil jahitan ini kepada pembuat ScreenFoundry, beserta ide Claude tentang apa yang bisa diperbaiki perangkat lunaknya. Kami memakainya hanya untuk memperbaiki ScreenFoundry: kami tidak pernah membagikan, menjual, atau menerbitkannya, dan Anda bisa meminta untuk menghapusnya kapan saja (Akun Foundry › Hapus pemeriksaan hasil jahitan yang saya bagikan).
 	Sign in to Foundry Account to send a report.	Masuk ke Akun Foundry untuk mengirim laporan.
 @msg	Sign in to Foundry Account to send a report.	Masuk ke Akun Foundry untuk mengirim laporan.
 	Thank you: your report was sent.	Terima kasih: laporan Anda sudah terkirim.
 	Title	Judul
-	What went wrong, and what StitchFoundry could do better	Apa yang salah, dan apa yang bisa diperbaiki StitchFoundry
-	Write a report about this sew-out for the people who make StitchFoundry.	Tulis laporan tentang hasil jahitan ini untuk pembuat StitchFoundry.
+	What went wrong, and what ScreenFoundry could do better	Apa yang salah, dan apa yang bisa diperbaiki ScreenFoundry
+	Write a report about this sew-out for the people who make ScreenFoundry.	Tulis laporan tentang hasil jahitan ini untuk pembuat ScreenFoundry.
 @msg	Check a sew-out first: the report goes with its photos and Claude's answer	Periksa hasil jahitan dulu: laporan dikirim bersama fotonya dan jawaban Claude
 @msg	Tick the box to agree to send it first.	Centang kotaknya dulu untuk setuju mengirim.
 @msg	Write what went wrong first, or have Claude write it.	Tulis dulu apa yang salah, atau biar Claude yang menulisnya.

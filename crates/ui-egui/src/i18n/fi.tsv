@@ -31,7 +31,7 @@
 	Chop Design	Leikkaa malli
 	Scale Design	Skaalaa malli
 	Glowing Edges…	Hehkuvat reunat…
-	About StitchFoundry	Tietoja StitchFoundryista
+	About ScreenFoundry	Tietoja ScreenFoundryista
 	Align to Path	Tasaa polkuun
 	Cut Path at Selected Anchor Points	Leikkaa polku valituista ankkuripisteistä
 	Language	Kieli
@@ -40,7 +40,7 @@
 	Medium Dark	Keskitumma
 	Medium Light	Keskivaalea
 	Light	Vaalea
-	Quit StitchFoundry	Lopeta StitchFoundry
+	Quit ScreenFoundry	Lopeta ScreenFoundry
 	File	Tiedosto
 	New…	Uusi…
 	New from Template…	Uusi mallipohjasta…
@@ -122,7 +122,7 @@
 	Keyboard Shortcuts…	Pikanäppäimet…
 	Import Shortcut Set	Tuo pikanäppäinjoukko
 	Import Shortcut Set…	Tuo pikanäppäinjoukko…
-	Each entry of the file is matched to a StitchFoundry tool, command or panel. Check the matches and answer what is left.	Tiedoston jokainen merkintä vastaa StitchFoundryin työkalua, komentoa tai paneelia. Tarkista vastaavuudet ja vastaa jäljelle jääviin.
+	Each entry of the file is matched to a ScreenFoundry tool, command or panel. Check the matches and answer what is left.	Tiedoston jokainen merkintä vastaa ScreenFoundryin työkalua, komentoa tai paneelia. Tarkista vastaavuudet ja vastaa jäljelle jääviin.
 	Keys	Näppäimet
 	The file writes keys and modifiers as codes. Check the proposed meanings and answer the codes that are not known yet.	Tiedosto tallentaa näppäimet ja muuntonäppäimet koodeina. Tarkista ehdotetut merkitykset ja vastaa koodeihin, joita ei vielä tunneta.
 	Click, then press the key this code stands for (Esc cancels)	Napsauta ja paina näppäintä, jota tämä koodi tarkoittaa (Esc peruuttaa)
@@ -132,7 +132,7 @@
 	not known yet	ei vielä tiedossa
 	Shortcuts	Pikanäppäimet
 	In the File	Tiedostossa
-	In StitchFoundry	StitchFoundryissa
+	In ScreenFoundry	ScreenFoundryissa
 	Needs Attention Only	Vain huomiota vaativat
 	Ready	Valmis
 	Needs a choice	Vaatii valinnan
@@ -141,7 +141,7 @@
 	Tools take a single key (optionally with Shift)	Työkaluille annetaan yksi näppäin (valinnaisesti Vaihto-näppäimen kanssa)
 	A later row takes this shortcut	Myöhempi rivi käyttää tätä pikanäppäintä
 	Same item as a later row	Sama kohde kuin myöhemmällä rivillä
-	Start from StitchFoundry Defaults	Aloita StitchFoundryin oletuksista
+	Start from ScreenFoundry Defaults	Aloita ScreenFoundryin oletuksista
 	Add to the Current Shortcuts	Lisää nykyisiin pikanäppäimiin
 	Remember My Choices	Muista valintani
 	{ready} of {total} ready	{ready}/{total} valmiina
@@ -155,7 +155,7 @@
 	Forget Import Matches	Unohda tuonnin vastaavuudet
 @plural	agrees with {n} default shortcut|agrees with {n} default shortcuts	vastaa {n} oletuspikanäppäintä|vastaa {n} oletuspikanäppäintä
 @plural	{n} part of the file wasn't read|{n} parts of the file weren't read	{n} tiedoston osa jäi lukematta|{n} tiedoston osaa jäi lukematta
-@msg	This shortcut file is in a form StitchFoundry can't read.	Tämä pikanäppäintiedosto on muodossa, jota StitchFoundry ei pysty lukemaan.
+@msg	This shortcut file is in a form ScreenFoundry can't read.	Tämä pikanäppäintiedosto on muodossa, jota ScreenFoundry ei pysty lukemaan.
 @msg	not a shortcut set: the text doesn't start with a slash name and an opening brace	ei pikanäppäinjoukko: teksti ei ala vinoviivalla alkavalla nimellä ja avaavalla aaltosulkeella
 	Preferences…	Asetukset…
 	Object	Objekti
@@ -493,7 +493,7 @@
 	Working CMYK	Työ-CMYK
 	RGB	RGB
 	sRGB IEC61966-2.1	sRGB IEC61966-2.1
-	StitchFoundry Generic CMYK (SWOP-like)	StitchFoundryin yleinen CMYK (SWOP-tyyppinen)
+	ScreenFoundry Generic CMYK (SWOP-like)	ScreenFoundryin yleinen CMYK (SWOP-tyyppinen)
 	Legacy Macintosh RGB (Gamma 1.8)	Vanha Macintosh RGB (gamma 1.8)
 	Internet Standard RGB (sRGB)	Internetin standardi-RGB (sRGB)
 	Monitor RGB	Näytön RGB
@@ -693,9 +693,9 @@
 	Save Swatch Library…	Tallenna värimallikirjasto…
 	Symbol Libraries	Symbolikirjastot
 	Help	Ohje
-	StitchFoundry on GitHub	StitchFoundry GitHubissa
+	ScreenFoundry on GitHub	ScreenFoundry GitHubissa
 	Search Commands…	Hae komentoja…
-	StitchFoundry Help…	StitchFoundry-ohje…
+	ScreenFoundry Help…	ScreenFoundry-ohje…
 	Auto Color	Automaattinen väri
 	Automatic	Automaattinen
 	Isolate Selected Group	Eristä valittu ryhmä
@@ -745,7 +745,7 @@
 	Dock Panel	Telakoi paneeli
 	Float Tool Group	Kelluta työkaluryhmä
 	Services	Palvelut
-	Hide StitchFoundry	Piilota StitchFoundry
+	Hide ScreenFoundry	Piilota ScreenFoundry
 	Hide Others	Piilota muut
 	Minimize	Pienennä
 	Zoom	Zoomaa
@@ -2255,7 +2255,7 @@ lighting	Light	Valo
 	{count} folder(s) or file(s) couldn't be read	{count} kansiota tai tiedostoa ei voitu lukea
 	The search stopped at its limit: search a smaller folder.	Haku pysähtyi rajaansa: hae pienemmästä kansiosta.
 	Copy only fonts you own or are licensed to install.	Kopioi vain fontteja, jotka omistat tai joiden asentamiseen sinulla on lisenssi.
-	StitchFoundry copies the fonts to {folder}.	StitchFoundry kopioi fontit kansioon {folder}.
+	ScreenFoundry copies the fonts to {folder}.	ScreenFoundry kopioi fontit kansioon {folder}.
 	Apply to All ({count} more missing)	Käytä kaikkiin ({count} muuta puuttuu)
 	Ignore	Ohita
 	Linked File Not Found	Linkitettyä tiedostoa ei löydy
@@ -2344,7 +2344,7 @@ lighting	Light	Valo
 	On: one locked object showing the document, updated when it changes.	Päällä: yksi lukittu objekti, joka näyttää asiakirjan ja päivittyy sen muuttuessa.
 	Off: an editable copy of its art, embedded in this document.	Pois: muokattava kopio sen kuvituksesta upotettuna tähän asiakirjaan.
 	Images: link to the file instead of only embedding it.	Kuvat: linkitä tiedostoon sen sijaan, että se vain upotetaan.
-	StitchFoundry documents: one locked object, updated when the file changes.	StitchFoundry-asiakirjat: yksi lukittu objekti, joka päivittyy tiedoston muuttuessa.
+	ScreenFoundry documents: one locked object, updated when the file changes.	ScreenFoundry-asiakirjat: yksi lukittu objekti, joka päivittyy tiedoston muuttuessa.
 	Alignment:	Tasaus:
 	Applies when the linked file is relinked or updated.	Koskee tilannetta, jossa linkitetty tiedosto linkitetään uudelleen tai päivitetään.
 	Bounds (Fill Proportionally)	Rajat (täytä suhteellisesti)
@@ -2425,7 +2425,7 @@ lighting	Light	Valo
 	A new preset starting from the selected one	Uusi esiasetus valitun pohjalta
 	Differences from {preset}:	Erot esiasetukseen {preset}:
 	Differences from [Default]:	Erot esiasetukseen [Oletus]:
-	Differences from StitchFoundry Default:	Erot esiasetukseen StitchFoundry-oletus:
+	Differences from ScreenFoundry Default:	Erot esiasetukseen ScreenFoundry-oletus:
 	Edit…	Muokkaa…
 	None.	Ei mitään.
 	Presets:	Esiasetukset:
@@ -2475,7 +2475,7 @@ lighting	Light	Valo
 	3 Color Job	3 värin työ
 	Recover Documents	Palauta asiakirjat
 	Restored documents open unsaved: save them to keep them.	Palautetut asiakirjat avautuvat tallentamattomina: tallenna ne, jos haluat säilyttää ne.
-	StitchFoundry didn't quit normally last time. These documents had unsaved changes:	StitchFoundry ei sulkeutunut normaalisti viime kerralla. Näissä asiakirjoissa oli tallentamattomia muutoksia:
+	ScreenFoundry didn't quit normally last time. These documents had unsaved changes:	ScreenFoundry ei sulkeutunut normaalisti viime kerralla. Näissä asiakirjoissa oli tallentamattomia muutoksia:
 	Do you want to save the changes you made to “{name}”?	Haluatko tallentaa asiakirjaan ”{name}” tekemäsi muutokset?
 	Don't Save	Älä tallenna
 	Your changes will be lost if you don't save them.	Muutokset menetetään, jos niitä ei tallenneta.
@@ -2542,7 +2542,7 @@ lighting	Light	Valo
 	Color images	Värikuvat
 	Compatibility:	Yhteensopivuus:
 	PDF 1.7	PDF 1.7
-	StitchFoundry Default	StitchFoundry-oletus
+	ScreenFoundry Default	ScreenFoundry-oletus
 	High Quality Print	Korkealaatuinen tuloste
 	[High Quality Print]	[Korkealaatuinen tuloste]
 	Press Quality	Painolaatu
@@ -2555,7 +2555,7 @@ lighting	Light	Valo
 	[PDF/X-3:2002]	[PDF/X-3:2002]
 	PDF/X-4:2010	PDF/X-4:2010
 	[PDF/X-4:2010]	[PDF/X-4:2010]
-	Keeps the document editable: StitchFoundry reopens the PDF with nothing lost. For files you'll edit again.	Pitää asiakirjan muokattavana: StitchFoundry avaa PDF:n uudelleen ilman menetyksiä. Tiedostoille, joita muokataan uudelleen.
+	Keeps the document editable: ScreenFoundry reopens the PDF with nothing lost. For files you'll edit again.	Pitää asiakirjan muokattavana: ScreenFoundry avaa PDF:n uudelleen ilman menetyksiä. Tiedostoille, joita muokataan uudelleen.
 	Compress text and line art	Pakkaa teksti ja viivapiirrokset
 	Compression	Pakkaus
 	Compression › Color › Above Ppi	Pakkaus › Väri › Yli ppi
@@ -2633,14 +2633,14 @@ lighting	Light	Valo
 	A File…	Tiedosto…
 	GPL palettes keep solid colours only, as RGB.	GPL-paletit säilyttävät vain tasavärit RGB-muodossa.
 	Save Swatch Library	Tallenna värimallikirjasto
-	StitchFoundry Swatches (.vcswatches)	StitchFoundry-värimallit (.vcswatches)
+	ScreenFoundry Swatches (.vcswatches)	ScreenFoundry-värimallit (.vcswatches)
 	Save To:	Tallenna kohteeseen:
 	Saved to User Defined: {}	Tallennettu käyttäjän määrittämiin: {}
 	Selected Swatches Only	Vain valitut värimallit
 	Selected Swatches Only (0)	Vain valitut värimallit (0)
 	User Defined Libraries	Käyttäjän määrittämät kirjastot
 	Copy Report	Kopioi raportti
-	StitchFoundry read this script without running it.	StitchFoundry luki tämän komentosarjan suorittamatta sitä.
+	ScreenFoundry read this script without running it.	ScreenFoundry luki tämän komentosarjan suorittamatta sitä.
 	Needs nothing beyond plain JavaScript	Tarvitsee vain tavallista JavaScriptiä
 	Needs the script language's own objects or directives	Tarvitsee komentosarjakielen omia objekteja tai direktiivejä
 	Needs the document model	Tarvitsee asiakirjamallin
@@ -3562,7 +3562,7 @@ axis	Both	Molemmat
 	Print as Bitmap	Tulosta bittikarttana
 	Draft	Vedos
 	Default	Oletus
-	[StitchFoundry Default]	[StitchFoundry-oletus]
+	[ScreenFoundry Default]	[ScreenFoundry-oletus]
 	Magenta	Magenta
 	Page	Sivu
 	Print Tiling	Tulostuksen ruudutus
@@ -3666,7 +3666,7 @@ effect	Regular	Normaali
 	Quickly start a new file	Aloita uusi tiedosto nopeasti
 	Recent Files	Viimeisimmät tiedostot
 	Vector illustration — fast, open, scriptable.	Vektorikuvitusta – nopea, avoin, skriptattava.
-	Welcome to StitchFoundry	Tervetuloa StitchFoundryiin
+	Welcome to ScreenFoundry	Tervetuloa ScreenFoundryiin
 	Source code on GitHub	Lähdekoodi GitHubissa
 	All Tools	Kaikki työkalut
 	Draw	Piirrä
@@ -3711,7 +3711,7 @@ effect	Regular	Normaali
 	Opened with {} note(s): {}	Avattu, huomautuksia {}: {}
 	Revert to the saved version of “{name}”?	Palautetaanko tiedoston ”{name}” tallennettu versio?
 	Replace “{name}”, the file this document was opened from?	Korvataanko ”{name}”, tiedosto, josta tämä asiakirja avattiin?
-	Opening it left out what StitchFoundry can't read yet ({what}), so replacing it loses that for good. Save under another name to keep it.	Avattaessa jätettiin pois se, mitä StitchFoundry ei vielä osaa lukea ({what}), joten korvaaminen hävittää sen pysyvästi. Säilytä se tallentamalla toisella nimellä.
+	Opening it left out what ScreenFoundry can't read yet ({what}), so replacing it loses that for good. Save under another name to keep it.	Avattaessa jätettiin pois se, mitä ScreenFoundry ei vielä osaa lukea ({what}), joten korvaaminen hävittää sen pysyvästi. Säilytä se tallentamalla toisella nimellä.
 	Opening it left out what VectorCraft can't read yet ({what}), so replacing it loses that for good. Save under another name to keep it.	Avattaessa jätettiin pois se, mitä VectorCraft ei vielä osaa lukea ({what}), joten korvaaminen hävittää sen pysyvästi. Säilytä se tallentamalla toisella nimellä.
 	“{name}” already exists. Replace it?	”{name}” on jo olemassa. Korvataanko se?
 	The name in the save panel was “{typed}”; VectorCraft added the file type's extension. Replacing the file overwrites its contents.	Tallennusikkunan nimi oli ”{typed}”, ja VectorCraft lisäsi tiedostotyypin tunnisteen. Tiedoston korvaaminen kirjoittaa sen sisällön yli.
@@ -3723,7 +3723,7 @@ effect	Regular	Normaali
 	Dashed Line	Katkoviiva
 	Panel menu	Paneelivalikko
 	Unembed…	Poista upotus…
-	Applies the next time StitchFoundry starts.	Tulee voimaan, kun StitchFoundry käynnistetään seuraavan kerran.
+	Applies the next time ScreenFoundry starts.	Tulee voimaan, kun ScreenFoundry käynnistetään seuraavan kerran.
 	Enable Contextual Task Bar	Ota kontekstuaalinen tehtäväpalkki käyttöön
 	Next	Seuraava
 	OK	OK
@@ -4106,7 +4106,7 @@ imageTrace	Outline	Ääriviiva
 @msg	can't encode the document: {0}	asiakirjaa ei voi koodata: {0}
 @msg	can't parse shortcut `{c}`	pikanäppäintä `{c}` ei voi jäsentää
 @msg	can't parse shortcut `{s}` for `{k}`	pikanäppäintä `{s}` kohteelle `{k}` ei voi jäsentää
-@msg	can't save version {0}: StitchFoundry writes versions {MIN_VERSION} to {VERSION}	versiota {0} ei voi tallentaa: StitchFoundry kirjoittaa versioita {MIN_VERSION}–{VERSION}
+@msg	can't save version {0}: ScreenFoundry writes versions {MIN_VERSION} to {VERSION}	versiota {0} ei voi tallentaa: ScreenFoundry kirjoittaa versioita {MIN_VERSION}–{VERSION}
 @msg	can't write .{ext} images	.{ext}-kuvia ei voi kirjoittaa
 @msg	cannot distort a zero-size bounding box	nollakokoista rajausruutua ei voi vääristää
 @msg	cannot read PDF: {0}	ei voi lukea PDF-tiedostoa: {0}
@@ -4132,7 +4132,7 @@ imageTrace	Outline	Ääriviiva
 @msg	empty brush stroke	tyhjä sivellinviiva
 @msg	empty cutter	tyhjä leikkaaja
 @msg	empty path	tyhjä polku
-@msg	file version {0} is newer than this StitchFoundry supports ({VERSION})	tiedostoversio {0} on uudempi kuin tämä StitchFoundry tukee ({VERSION})
+@msg	file version {0} is newer than this ScreenFoundry supports ({VERSION})	tiedostoversio {0} on uudempi kuin tämä ScreenFoundry tukee ({VERSION})
 @msg	freeform point {i} needs `at` [x, y] and a valid `color`	vapaamuotoinen piste {i} tarvitsee arvon `at` [x, y] ja kelvollisen arvon `color`
 @msg	freeform line {i} must be an array of point indices	vapaamuotoisen viivan {i} on oltava pisteindeksien taulukko
 @msg	give both `start` and `end` [x, y] (or neither)	anna sekä `start` että `end` [x, y] (tai ei kumpaakaan)
@@ -4153,9 +4153,9 @@ imageTrace	Outline	Ääriviiva
 @msg	invalid PDF setting: {0}	virheellinen PDF-asetus: {0}
 @msg	invalid image data for `{0}`	virheellinen kuvadata kohteelle `{0}`
 @msg	invalid parameters for `{cmd}`: {msg}	virheelliset parametrit kohteelle `{cmd}`: {msg}
-@msg	is not an image StitchFoundry reads	ei ole kuva, jota StitchFoundry lukee
-@msg	it uses `{at}`, which StitchFoundry's PostScript reader doesn't know	se käyttää kohdetta `{at}`, jota StitchFoundryin PostScript-lukija ei tunne
-@msg	it uses `{at}`, which StitchFoundry's PostScript reader doesn't know, in {procs}	se käyttää kohdetta `{at}`, jota StitchFoundryin PostScript-lukija ei tunne, proseduurissa {procs}
+@msg	is not an image ScreenFoundry reads	ei ole kuva, jota ScreenFoundry lukee
+@msg	it uses `{at}`, which ScreenFoundry's PostScript reader doesn't know	se käyttää kohdetta `{at}`, jota ScreenFoundryin PostScript-lukija ei tunne
+@msg	it uses `{at}`, which ScreenFoundry's PostScript reader doesn't know, in {procs}	se käyttää kohdetta `{at}`, jota ScreenFoundryin PostScript-lukija ei tunne, proseduurissa {procs}
 @msg	its Windows metafile preview was opened instead, which may simplify the art	sen sijaan avattiin sen Windows-metatiedoston esikatselu, mikä voi yksinkertaistaa kuvitusta
 @msg	its preview was placed instead, at screen resolution	sen sijaan sijoitettiin sen esikatselu näytön tarkkuudella
 @msg	join needs open paths	liittäminen vaatii avoimia polkuja
@@ -4263,8 +4263,8 @@ imageTrace	Outline	Ääriviiva
 @msg	no user workspace `{from}`	ei käyttäjän työtilaa `{from}`
 @msg	node {_1} is not text	solmu {_1} ei ole tekstiä
 @msg	not a DXF drawing	ei DXF-piirustus
-@msg	not a StitchFoundry file: {0}	ei StitchFoundry-tiedosto: {0}
-@msg	not a StitchFoundry shortcut set (missing `overrides`)	ei StitchFoundryin pikanäppäinjoukko (`overrides` puuttuu)
+@msg	not a ScreenFoundry file: {0}	ei ScreenFoundry-tiedosto: {0}
+@msg	not a ScreenFoundry shortcut set (missing `overrides`)	ei ScreenFoundryin pikanäppäinjoukko (`overrides` puuttuu)
 @msg	not a VectorCraft file: {0}	ei VectorCraft-tiedosto: {0}
 @msg	not a VectorCraft shortcut set (missing `overrides`)	ei VectorCraftin pikanäppäinjoukko (`overrides` puuttuu)
 @msg	not a blend	ei sulautus
@@ -4502,11 +4502,11 @@ imageTrace	Outline	Ääriviiva
 @msg	Sent to {_1}	Lähetettiin kohteeseen {_1}
 @msg	{_1} files	{_1}-tiedostot
 @msg	The graphics were lost and have been restarted	Grafiikka menetettiin ja se käynnistettiin uudelleen
-@msg	The graphics processor tried first couldn't show the window, so StitchFoundry started again on {summary}	Ensin kokeiltu grafiikkasuoritin ei pystynyt näyttämään ikkunaa, joten StitchFoundry käynnistyi uudelleen: {summary}
-@msg	The last start of StitchFoundry ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	StitchFoundryin edellinen käynnistys päättyi grafiikkasuorittimella {name} ennen kuin sen ikkuna tuli näkyviin, joten se käynnistyi: {summary}. Jos haluat kokeilla tätä grafiikkasuoritinta uudelleen, muuta kohtaa Asetukset › Suorituskyky › Grafiikkasuoritin tai käynnistä WGPU_BACKEND-muuttuja asetettuna
-@msg	The last start of StitchFoundry ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	StitchFoundryin edellinen käynnistys päättyi grafiikkasuorittimien luetteloinnin aikana, joten se käynnistyi pelkällä OpenGL:llä: {summary}. Jos haluat kokeilla muita grafiikkataustoja uudelleen, muuta kohtaa Asetukset › Suorituskyky › Grafiikkasuoritin tai käynnistä WGPU_BACKEND-muuttuja asetettuna
-@msg	Loading StitchFoundry…	Ladataan StitchFoundryia…
-@msg	StitchFoundry failed to start: {e}	StitchFoundryin käynnistys epäonnistui: {e}
+@msg	The graphics processor tried first couldn't show the window, so ScreenFoundry started again on {summary}	Ensin kokeiltu grafiikkasuoritin ei pystynyt näyttämään ikkunaa, joten ScreenFoundry käynnistyi uudelleen: {summary}
+@msg	The last start of ScreenFoundry ended on {name} before its window appeared, so it started on {summary}. To try that graphics processor again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	ScreenFoundryin edellinen käynnistys päättyi grafiikkasuorittimella {name} ennen kuin sen ikkuna tuli näkyviin, joten se käynnistyi: {summary}. Jos haluat kokeilla tätä grafiikkasuoritinta uudelleen, muuta kohtaa Asetukset › Suorituskyky › Grafiikkasuoritin tai käynnistä WGPU_BACKEND-muuttuja asetettuna
+@msg	The last start of ScreenFoundry ended while it listed the graphics processors, so it started on {summary} with OpenGL alone. To try the other graphics backends again, change Preferences › Performance › Graphics Processor or start with WGPU_BACKEND set	ScreenFoundryin edellinen käynnistys päättyi grafiikkasuorittimien luetteloinnin aikana, joten se käynnistyi pelkällä OpenGL:llä: {summary}. Jos haluat kokeilla muita grafiikkataustoja uudelleen, muuta kohtaa Asetukset › Suorituskyky › Grafiikkasuoritin tai käynnistä WGPU_BACKEND-muuttuja asetettuna
+@msg	Loading ScreenFoundry…	Ladataan ScreenFoundryia…
+@msg	ScreenFoundry failed to start: {e}	ScreenFoundryin käynnistys epäonnistui: {e}
 @msg	A browser with WebGPU or WebGL2 is required.	Vaaditaan selain, joka tukee WebGPU:ta tai WebGL2:ta.
 @msg	The graphics were lost and couldn't be restarted.	Grafiikka menetettiin, eikä sitä voitu käynnistää uudelleen.
 @msg	Your unsaved changes are kept in this browser: reload the page to get them back.	Tallentamattomat muutokset säilytetään tässä selaimessa: lataa sivu uudelleen saadaksesi ne takaisin.
@@ -4528,25 +4528,25 @@ imageTrace	Outline	Ääriviiva
 @msg	it has more than {MAX_NODES} objects	siinä on yli {MAX_NODES} objektia
 @msg	it has no layers	siinä ei ole tasoja
 @msg	it has too many values in a row	siinä on liian monta arvoa rivissä
-@msg	it has {_1}, which StitchFoundry doesn't read from it yet	siinä on {_1}, jota StitchFoundry ei vielä lue siitä
+@msg	it has {_1}, which ScreenFoundry doesn't read from it yet	siinä on {_1}, jota ScreenFoundry ei vielä lue siitä
 @msg	its objects are nested too deeply	sen objektit ovat liian syvällä sisäkkäin
 @msg	its section ending with `%{end}` doesn't end	sen `%{end}`-merkintään päättyvä osio ei pääty
 @msg	objects with several fills or strokes, effects or brushes came in as their drawn look ({_1}): their appearance isn't editable yet	objektit, joilla on useita täyttöjä tai viivoja, tehosteita tai siveltimiä, tuotiin piirretyn näköisinä ({_1}): niiden ulkoasua ei voi vielä muokata
 @msg	gradient “{name}” isn't defined in the file: a plain colour stands in for it	liukuväriä “{name}” ei ole määritetty tiedostossa: sen tilalla on tasaväri
-@msg	an image StitchFoundry can't read was left out	kuva, jota StitchFoundry ei voi lukea, jätettiin pois
+@msg	an image ScreenFoundry can't read was left out	kuva, jota ScreenFoundry ei voi lukea, jätettiin pois
 @msg	an image whose data is cut short was left out	kuva, jonka data on katkennut, jätettiin pois
 @msg	linked pictures show the low-resolution preview saved in the file until their files are found: relink them in the Links panel	linkitetyt kuvat näyttävät tiedostoon tallennetun matalan tarkkuuden esikatselun, kunnes niiden tiedostot löytyvät: linkitä ne uudelleen Linkit-paneelissa
 @msg	area type in frames too short for a line of the font it shows in got taller frames ({_1}): their type wouldn't show otherwise	aluetekstin kehykset, jotka olivat liian matalia yhdelle riville niiden fontilla, korotettiin ({_1}): muuten niiden teksti ei näkyisi
 @msg	its editing data doesn't say where its art is	sen muokkaustiedoista ei selviä kuvituksen sijainti
 @msg	this file was saved without PDF compatibility, and its editing data can't be read ({why})	tämä tiedosto tallennettiin ilman PDF-yhteensopivuutta, eikä sen muokkaustietoja voi lukea ({why})
 @msg	No fonts are missing in this document	Tästä asiakirjasta ei puutu fontteja
-@msg	StitchFoundry doesn't search other apps' or the system's folders: {path}	StitchFoundry ei hae muiden sovellusten tai järjestelmän kansioista: {path}
-@msg	StitchFoundry doesn't search the Shared or Public folder in Users: {path}	StitchFoundry ei hae Users-kansion Shared- tai Public-kansiosta: {path}
+@msg	ScreenFoundry doesn't search other apps' or the system's folders: {path}	ScreenFoundry ei hae muiden sovellusten tai järjestelmän kansioista: {path}
+@msg	ScreenFoundry doesn't search the Shared or Public folder in Users: {path}	ScreenFoundry ei hae Users-kansion Shared- tai Public-kansiosta: {path}
 @msg	{path} is not a folder	{path} ei ole kansio
 @msg	the search couldn't start: try again in a moment	hakua ei voitu aloittaa: yritä hetken kuluttua uudelleen
 @msg	searching a folder isn't available on the web	kansion haku ei ole käytettävissä verkossa
 @msg	every search thread stopped on an internal error (please report this bug)	jokainen hakusäie pysähtyi sisäiseen virheeseen (ilmoita tästä virheestä)
-@msg	StitchFoundry's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	StitchFoundryin Fonts-kansiota ei ole määritetty täällä: työpöytäsovellus ja vectorcraft-cli määrittävät sen
+@msg	ScreenFoundry's Fonts folder isn't set here: the desktop app and vectorcraft-cli set it	ScreenFoundryin Fonts-kansiota ei ole määritetty täällä: työpöytäsovellus ja vectorcraft-cli määrittävät sen
 @msg	choose the font files to add	valitse lisättävät fonttitiedostot
 @msg	{n} font file(s) are now in {folder}	{n} fonttitiedosto(a) on nyt kansiossa {folder}
 @msg	{n} font file(s) are now in {folder}; {failed} couldn't be added: {reason}	{n} fonttitiedosto(a) on nyt kansiossa {folder}; {failed} ei voitu lisätä: {reason}
@@ -4681,7 +4681,7 @@ imageTrace	Outline	Ääriviiva
 	All shortcuts reset to defaults.	Kaikki pikanäppäimet palautettiin oletuksiin.
 	Imported. Press OK to keep the imported set.	Tuotu. Säilytä tuotu joukko painamalla OK.
 	⚠ {chord} was already used by {names} — it has been removed there.	Huomio: {chord} oli jo käytössä kohteessa {names} — se on poistettu sieltä.
-	StitchFoundry Defaults	StitchFoundryin oletukset
+	ScreenFoundry Defaults	ScreenFoundryin oletukset
 @plural	{n} shortcut is assigned more than once|{n} shortcuts are assigned more than once	{n} pikanäppäin on määritetty useammin kuin kerran|{n} pikanäppäintä on määritetty useammin kuin kerran
 	Simulate prints overprints as Overprint Preview shows them; separations always keep them. A preset flattens transparency before printing (PostScript files always flatten it).	Simuloi tulostaa päällepainatukset siten kuin päällepainatuksen esikatselu ne näyttää; erottelut säilyttävät ne aina. Esiasetus litistää läpinäkyvyyden ennen tulostusta (PostScript-tiedostoissa se litistetään aina).
 	Preserve	Säilytä
@@ -4909,7 +4909,7 @@ file-filter	PDF presets	PDF-esiasetukset
 file-filter	Print presets	Tulostuksen esiasetukset
 file-filter	SVG Compressed	Pakattu SVG
 file-filter	PDF-compatible .ai	PDF-yhteensopiva .ai
-file-filter	StitchFoundry Template	StitchFoundry-malli
+file-filter	ScreenFoundry Template	ScreenFoundry-malli
 file-filter	Templates	Mallit
 diagnostics	render	renderöinti
 diagnostics	ui	käyttöliittymä
@@ -4920,7 +4920,7 @@ diagnostics	ui	käyttöliittymä
 @plural	{n} commit|{n} commits	{n} commit|{n} commitia
 gradient-kind	Radial	Säteittäinen
 mark-style	Japanese	Japanilainen
-@msg	the compressed file unpacks to more than StitchFoundry reads ({_1} MB of document, {_2} MB per image)	pakattu tiedosto purkautuu suuremmaksi kuin StitchFoundry lukee ({_1} MB asiakirjaa, {_2} MB kuvaa kohden)
+@msg	the compressed file unpacks to more than ScreenFoundry reads ({_1} MB of document, {_2} MB per image)	pakattu tiedosto purkautuu suuremmaksi kuin ScreenFoundry lukee ({_1} MB asiakirjaa, {_2} MB kuvaa kohden)
 @msg	the document is too large to save compressed ({0}): save it with Use Compression off	asiakirja on liian suuri pakattuna tallennettavaksi ({0}): tallenna se Käytä pakkausta -asetus pois päältä
 @msg	the file stopped being read (please report this bug)	tiedoston lukeminen keskeytyi (ilmoita tästä virheestä)
 	Concentric Dividers:	Samankeskiset jakajat:
@@ -5154,7 +5154,7 @@ mark-style	Japanese	Japanilainen
 @msg	name is empty	nimi on tyhjä
 @msg	no symbol named `{n}`	symbolia nimeltä `{n}` ei ole
 
-# StitchFoundry: the embroidery strings (drafted with AI assistance from the English meaning;
+# ScreenFoundry: the embroidery strings (drafted with AI assistance from the English meaning;
 # not yet reviewed by a native speaker)
 	Mode	Tila
 	Blur Mode	Sumennustila
@@ -5162,7 +5162,7 @@ mark-style	Japanese	Japanilainen
 	Overlay Edge	Reuna päällä
 	Path Length	Polun pituus
 	VectorCraft documents: one locked object, updated when the file changes.	VectorCraft-asiakirjat: yksi lukittu objekti, joka päivittyy tiedoston muuttuessa.
-	Opening it left out what StitchFoundry can't read yet ({what}): replacing it loses that for good. Save under another name to keep it.	Avattaessa jätettiin pois se, mitä StitchFoundry ei vielä osaa lukea ({what}): korvaaminen hävittää sen pysyvästi. Säilytä se tallentamalla toisella nimellä.
+	Opening it left out what ScreenFoundry can't read yet ({what}): replacing it loses that for good. Save under another name to keep it.	Avattaessa jätettiin pois se, mitä ScreenFoundry ei vielä osaa lukea ({what}): korvaaminen hävittää sen pysyvästi. Säilytä se tallentamalla toisella nimellä.
 	Report a Bug…	Ilmoita virheestä…
 	Add Inclination Line	Lisää kaltevuusviiva
 	After the selection	Valinnan jälkeen
@@ -5473,10 +5473,10 @@ machine	Stop	Pysäytys
 	Size (longest side):	Koko (pisin sivu):
 	Anthropic API key:	Anthropic API -avain:
 	Remember the key on this computer	Muista avain tällä tietokoneella
-	Claude draws the artwork with your own Anthropic API key, billed to your Anthropic account; StitchFoundry then digitizes it. Check the stitches before you sew.	Claude piirtää kuvituksen omalla Anthropic API -avaimellasi, ja se laskutetaan Anthropic-tililtäsi; sen jälkeen StitchFoundry digitoi sen. Tarkista pistot ennen ompelua.
+	Claude draws the artwork with your own Anthropic API key, billed to your Anthropic account; ScreenFoundry then digitizes it. Check the stitches before you sew.	Claude piirtää kuvituksen omalla Anthropic API -avaimellasi, ja se laskutetaan Anthropic-tililtäsi; sen jälkeen ScreenFoundry digitoi sen. Tarkista pistot ennen ompelua.
 	Get a key	Hanki avain
 	Drawing the design…	Piirretään mallia…
-	Describe a design and Claude draws artwork for it, then StitchFoundry digitizes it	Kuvaile malli, niin Claude piirtää sille kuvituksen ja StitchFoundry digitoi sen
+	Describe a design and Claude draws artwork for it, then ScreenFoundry digitizes it	Kuvaile malli, niin Claude piirtää sille kuvituksen ja ScreenFoundry digitoi sen
 	Place Artwork as Embroidery	Sijoita kuvitus kirjontana
 	Place Artwork	Sijoita kuvitus
 @plural	Design placed: {n} stitched object|Design placed: {n} stitched objects	Malli sijoitettu: {n} ommeltu objekti|Malli sijoitettu: {n} ommeltua objektia
@@ -5503,9 +5503,9 @@ machine	Stop	Pysäytys
 	Redraw Image with Claude	Piirrä kuva uudelleen Claudella
 	What to change (optional):	Mitä muutetaan (valinnainen):
 	Only redraw artwork you own or have permission to use.	Piirrä uudelleen vain kuvitusta, jonka omistat tai jonka käyttöön sinulla on lupa.
-	Claude redraws the image as flat-colour art with your own Anthropic API key, billed to your Anthropic account; StitchFoundry then digitizes it. Check the stitches before you sew.	Claude piirtää kuvan uudelleen tasavärisenä kuvituksena omalla Anthropic API -avaimellasi, ja se laskutetaan Anthropic-tililtäsi; sen jälkeen StitchFoundry digitoi sen. Tarkista pistot ennen ompelua.
+	Claude redraws the image as flat-colour art with your own Anthropic API key, billed to your Anthropic account; ScreenFoundry then digitizes it. Check the stitches before you sew.	Claude piirtää kuvan uudelleen tasavärisenä kuvituksena omalla Anthropic API -avaimellasi, ja se laskutetaan Anthropic-tililtäsi; sen jälkeen ScreenFoundry digitoi sen. Tarkista pistot ennen ompelua.
 	Redraw with Claude…	Piirrä uudelleen Claudella…
-	Claude redraws the image as clean flat-colour art, then StitchFoundry digitizes it	Claude piirtää kuvan uudelleen selkeänä tasavärisenä kuvituksena, ja StitchFoundry digitoi sen
+	Claude redraws the image as clean flat-colour art, then ScreenFoundry digitizes it	Claude piirtää kuvan uudelleen selkeänä tasavärisenä kuvituksena, ja ScreenFoundry digitoi sen
 @msg	select an image to redraw	valitse uudelleen piirrettävä kuva
 @msg	the image couldn't be read	kuvaa ei voitu lukea
 @msg	The image is too large to send: crop it, or place a smaller copy.	Kuva on liian suuri lähetettäväksi: rajaa se tai sijoita pienempi kopio.
@@ -6014,7 +6014,7 @@ machine	Stop	Pysäytys
 	Square loop	Neliösilmukka
 	Foil	Folio
 	Shown with the design, not sewn	Näytetään mallin kanssa, ei ommella
-	StitchFoundry Help	StitchFoundry-ohje
+	ScreenFoundry Help	ScreenFoundry-ohje
 	Tips	Vinkit
 	Search help	Hae ohjeesta
 	Nothing found	Mitään ei löytynyt
@@ -6402,7 +6402,7 @@ machine	Stop	Pysäytys
 	To follow a line of your own, draw it first, select it, then Add Words.	Jos haluat seurata omaa viivaasi, piirrä se ensin, valitse se ja valitse sitten Lisää sanoja.
 	Ask About Embroidery…	Kysy kirjonnasta…
 	Ask About Embroidery	Kysy kirjonnasta
-	Ask anything about machine embroidery or StitchFoundry: which stabilizer to use, why thread breaks, how to make letters sew cleaner, where a feature is. Claude can also change your design when you ask, after you allow it.	Kysy mitä tahansa konekirjonnasta tai StitchFoundrysta: mitä tukikangasta käyttää, miksi lanka katkeaa, miten kirjaimet saa ommeltua siistimmin, missä jokin toiminto on. Claude voi myös muuttaa malliasi pyynnöstäsi, kun olet sallinut sen.
+	Ask anything about machine embroidery or ScreenFoundry: which stabilizer to use, why thread breaks, how to make letters sew cleaner, where a feature is. Claude can also change your design when you ask, after you allow it.	Kysy mitä tahansa konekirjonnasta tai ScreenFoundrysta: mitä tukikangasta käyttää, miksi lanka katkeaa, miten kirjaimet saa ommeltua siistimmin, missä jokin toiminto on. Claude voi myös muuttaa malliasi pyynnöstäsi, kun olet sallinut sen.
 	Thinking…	Mietitään…
 	Type your question, then press Enter	Kirjoita kysymyksesi ja paina Enter
 	Ask	Kysy
@@ -6426,7 +6426,7 @@ machine	Stop	Pysäytys
 @msg	This conversation is long: start a New Conversation.	Tämä keskustelu on pitkä: aloita uusi keskustelu.
 @msg	Claude took too many steps: ask again, more simply.	Claude otti liian monta vaihetta: kysy uudelleen yksinkertaisemmin.
 
-# Embroidery (StitchFoundry): cross-stitch fill, colour replace, fabric count and chart
+# Embroidery (ScreenFoundry): cross-stitch fill, colour replace, fabric count and chart
 	Fill a patch	Täytä alue
 	Click a square to fill every touching square like it; hold Alt to clear them	Napsauta ruutua täyttääksesi kaikki viereiset samanlaiset ruudut; pidä Alt painettuna tyhjentääksesi ne
 	With the Thread Colour	Langan värillä
@@ -6457,7 +6457,7 @@ machine	Stop	Pysäytys
 	Structured cap	Jäykkä lippis
 	Silk / lightweight	Silkki / ohut kangas
 
-# Embroidery (StitchFoundry): Check My Sew-out
+# Embroidery (ScreenFoundry): Check My Sew-out
 	Check My Sew-out…	Tarkista kirjontani…
 	Check My Sew-out	Tarkista kirjontani
 	About the sewing	Kirjonnasta
@@ -6482,7 +6482,7 @@ machine	Stop	Pysäytys
 	While it sewed:	Kirjonnan aikana:
 	e.g. 75/11 ballpoint	esim. 75/11 pallokärki
 
-# Embroidery (StitchFoundry): Foundry Account
+# Embroidery (ScreenFoundry): Foundry Account
 	A check costs {n} credits; free checks come back next month.	Tarkistus maksaa {n} krediittiä; ilmaiset tarkistukset palaavat ensi kuussa.
 	Account	Tili
 	Buy credits	Osta krediittejä
@@ -6491,15 +6491,15 @@ machine	Stop	Pysäytys
 	Delete My Shared Sew-out Checks	Poista jakamani tarkistukset
 	Email	Sähköposti
 	Free sew-out checks left this month: {n}	Ilmaisia tarkistuksia jäljellä tässä kuussa: {n}
-	Leave it empty for StitchFoundry's own service.	Jätä tyhjäksi StitchFoundryn omalle palvelulle.
+	Leave it empty for ScreenFoundry's own service.	Jätä tyhjäksi ScreenFoundryn omalle palvelulle.
 	Paid with Foundry credits ({n} left).	Maksettu Foundry-krediiteillä ({n} jäljellä).
 	Paid with Foundry credits.	Maksettu Foundry-krediiteillä.
 	Pay for the AI features with my Foundry credits	Maksa tekoälytoiminnot Foundry-krediiteilläni
 	Pay with Foundry credits instead	Maksa sen sijaan Foundry-krediiteillä
-	Payment is on Stripe's secure page, in your browser; your card never reaches StitchFoundry.	Maksu tehdään Stripen suojatulla sivulla selaimessasi; korttisi ei koskaan päädy StitchFoundrylle.
+	Payment is on Stripe's secure page, in your browser; your card never reaches ScreenFoundry.	Maksu tehdään Stripen suojatulla sivulla selaimessasi; korttisi ei koskaan päädy ScreenFoundrylle.
 	Reading your credits…	Luetaan krediittejä…
 	Server	Palvelin
-	Share this check to help improve StitchFoundry (kept private; delete it any time in Foundry Account)	Jaa tämä tarkistus StitchFoundryn parantamiseksi (pysyy yksityisenä; poista milloin tahansa Foundry-tilillä)
+	Share this check to help improve ScreenFoundry (kept private; delete it any time in Foundry Account)	Jaa tämä tarkistus ScreenFoundryn parantamiseksi (pysyy yksityisenä; poista milloin tahansa Foundry-tilillä)
 	Sign In	Kirjaudu sisään
 	Sign Out	Kirjaudu ulos
 	Sign in, or make an account, to pay for the AI features with Foundry credits instead of your own Anthropic API key. A new account starts with free credits.	Kirjaudu sisään tai luo tili, niin voit maksaa tekoälytoiminnot Foundry-krediiteillä oman Anthropic API -avaimesi sijaan. Uusi tili saa ilmaisia krediittejä.
@@ -6552,7 +6552,7 @@ machine	Stop	Pysäytys
 @msg	too many library panels were opened in this session	tässä istunnossa on avattu liian monta kirjastopaneelia
 @msg	The image is {_1} × {_2} pixels, more than {LARGE_TRACE_SIDE} on a side: it is traced, but more slowly. A lower-fidelity preset or a smaller copy of the image traces faster.	Kuva on {_1} × {_2} kuvapistettä, yhdeltä sivultaan yli {LARGE_TRACE_SIDE}: se jäljitetään, mutta hitaammin. Pienemmän tarkkuuden esiasetus tai kuvan pienempi kopio jäljittyy nopeammin.
 @msg	The image was traced at {_1} × {_2} pixels, scaled down from {_3} × {_4} ({_5} megapixels at most).	Kuva jäljitettiin kokoon {_1} × {_2} kuvapistettä pienennettynä koosta {_3} × {_4} (enintään {_5} megapikseliä).
-# Embroidery (StitchFoundry): undo steps
+# Embroidery (ScreenFoundry): undo steps
 	Auto-Digitize	Automaattinen digitointi
 	Backstitch Line	Takapistoviiva
 	Close Appliqué Outlines	Sulje applikaation ääriviivat
@@ -6560,7 +6560,7 @@ machine	Stop	Pysäytys
 	Erase Cross Stitches	Pyyhi ristipistot
 	Move Stitches	Siirrä pistoja
 	Overlap where shapes touch	Limitys, missä muodot koskettavat
-# Embroidery (StitchFoundry): picture services
+# Embroidery (ScreenFoundry): picture services
 	Picture made by	Kuvan tekee
 	Claude (draws the shapes itself)	Claude (piirtää muodot itse)
 	{name} API key:	{name}-API-avain:
@@ -6597,26 +6597,26 @@ machine	Stop	Pysäytys
 	A new design: a hoopful of patches, each colour sewn once for all of them	Uusi kuvio: kehyksellinen merkkejä, jokainen väri kirjottu kerran kaikille
 	Every hoopful as a machine file, and a list of the names in each	Jokainen kehyksellinen omana konetiedostonaan ja luettelo kunkin nimistä
 	The open design repeated across its hoop, sorted so each colour is sewn once	Avoin kuvio toistettuna kehyksen yli, järjestettynä niin että jokainen väri kirjotaan kerran
-# Report to StitchFoundry (ui.reportSewout)
+# Report to ScreenFoundry (ui.reportSewout)
 	Anything you'd like to add (optional)	Haluatko lisätä jotain? (valinnainen)
 	Claude is writing the report…	Claude kirjoittaa raporttia…
 	Have Claude Write It	Anna Clauden kirjoittaa
-	Help make StitchFoundry better	Auta tekemään StitchFoundrysta parempi
-	I agree to send this to SiteSentrix, the maker of StitchFoundry, to improve the software. It won't be shared with anyone else.	Hyväksyn tämän lähettämisen SiteSentrixille, StitchFoundryn tekijälle, ohjelman parantamiseksi. Sitä ei jaeta kenellekään muulle.
+	Help make ScreenFoundry better	Auta tekemään ScreenFoundrysta parempi
+	I agree to send this to SiteSentrix, the maker of ScreenFoundry, to improve the software. It won't be shared with anyone else.	Hyväksyn tämän lähettämisen SiteSentrixille, ScreenFoundryn tekijälle, ohjelman parantamiseksi. Sitä ei jaeta kenellekään muulle.
 	Include a summary of the design	Liitä yhteenveto kuviosta
 	Include the conversation with Claude	Liitä keskustelu Clauden kanssa
 	Include the photos ({n})	Liitä kuvat ({n})
-	Report to StitchFoundry	Raportoi StitchFoundrylle
-	Report to StitchFoundry…	Raportoi StitchFoundrylle…
+	Report to ScreenFoundry	Raportoi ScreenFoundrylle
+	Report to ScreenFoundry…	Raportoi ScreenFoundrylle…
 	Send Report	Lähetä raportti
-	Send this sew-out and Claude's idea of what StitchFoundry could do better to its makers	Lähetä tämä kirjontatulos ja Clauden ajatus siitä, mitä StitchFoundry voisi tehdä paremmin, sen tekijöille
-	Send this sew-out to the people who make StitchFoundry, with Claude's idea of what the software could do better. We use it only to improve StitchFoundry: we never share, sell or publish it, and you can have it deleted at any time (Foundry Account › Delete My Shared Sew-out Checks).	Lähetä tämä kirjontatulos StitchFoundryn tekijöille, mukana Clauden ajatus siitä, mitä ohjelma voisi tehdä paremmin. Käytämme sitä vain StitchFoundryn parantamiseen: emme koskaan jaa, myy tai julkaise sitä, ja voit pyytää sen poistamista milloin tahansa (Foundry-tili › Poista jakamani tarkistukset).
+	Send this sew-out and Claude's idea of what ScreenFoundry could do better to its makers	Lähetä tämä kirjontatulos ja Clauden ajatus siitä, mitä ScreenFoundry voisi tehdä paremmin, sen tekijöille
+	Send this sew-out to the people who make ScreenFoundry, with Claude's idea of what the software could do better. We use it only to improve ScreenFoundry: we never share, sell or publish it, and you can have it deleted at any time (Foundry Account › Delete My Shared Sew-out Checks).	Lähetä tämä kirjontatulos ScreenFoundryn tekijöille, mukana Clauden ajatus siitä, mitä ohjelma voisi tehdä paremmin. Käytämme sitä vain ScreenFoundryn parantamiseen: emme koskaan jaa, myy tai julkaise sitä, ja voit pyytää sen poistamista milloin tahansa (Foundry-tili › Poista jakamani tarkistukset).
 	Sign in to Foundry Account to send a report.	Kirjaudu Foundry-tiliin lähettääksesi raportin.
 @msg	Sign in to Foundry Account to send a report.	Kirjaudu Foundry-tiliin lähettääksesi raportin.
 	Thank you: your report was sent.	Kiitos: raporttisi lähetettiin.
 	Title	Otsikko
-	What went wrong, and what StitchFoundry could do better	Mikä meni vikaan, ja mitä StitchFoundry voisi tehdä paremmin
-	Write a report about this sew-out for the people who make StitchFoundry.	Kirjoita raportti tästä kirjontatuloksesta StitchFoundryn tekijöille.
+	What went wrong, and what ScreenFoundry could do better	Mikä meni vikaan, ja mitä ScreenFoundry voisi tehdä paremmin
+	Write a report about this sew-out for the people who make ScreenFoundry.	Kirjoita raportti tästä kirjontatuloksesta ScreenFoundryn tekijöille.
 @msg	Check a sew-out first: the report goes with its photos and Claude's answer	Tarkista ensin kirjontatulos: raportti lähtee sen kuvien ja Clauden vastauksen kanssa
 @msg	Tick the box to agree to send it first.	Rastita ensin ruutu hyväksyäksesi lähettämisen.
 @msg	Write what went wrong first, or have Claude write it.	Kirjoita ensin, mikä meni vikaan, tai anna Clauden kirjoittaa se.

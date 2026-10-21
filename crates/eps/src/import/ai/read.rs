@@ -591,7 +591,7 @@ const SKIPPED: &[(&str, &str)] = &[
 
 /// The note for a `/ForeignObject` (non-native art, the content of a placed PDF, which the editor
 /// shows but doesn't edit) whose PDF can't be read.
-pub const NON_NATIVE_ART_UNREAD: &str = "non-native art (a placed PDF's content) that StitchFoundry can't read is left out";
+pub const NON_NATIVE_ART_UNREAD: &str = "non-native art (a placed PDF's content) that ScreenFoundry can't read is left out";
 /// The name of the group a `/ForeignObject`'s art comes in as.
 pub const NON_NATIVE_ART: &str = "Non-native art";
 
@@ -2048,7 +2048,7 @@ impl<'a> Reader<'a> {
         };
         let (w, h) = (*w as u64, *h as u64);
         if w == 0 || h == 0 || w.saturating_mul(h) > MAX_PIXELS || ![1.0, 8.0].contains(bits) {
-            self.warn("an image StitchFoundry can't read was left out");
+            self.warn("an image ScreenFoundry can't read was left out");
             return Ok(());
         }
         let channels: usize = match space.as_str() {
@@ -2117,7 +2117,7 @@ impl<'a> Reader<'a> {
         };
         let mut png = vec![];
         if img.write_to(&mut std::io::Cursor::new(&mut png), image::ImageFormat::Png).is_err() {
-            self.warn("an image StitchFoundry can't read was left out");
+            self.warn("an image ScreenFoundry can't read was left out");
             return Ok(());
         }
         self.add_raster(ImageBlob::new("image/png", png), None, &m, (w as u32, h as u32))
@@ -2264,11 +2264,11 @@ impl<'a> Reader<'a> {
     fn finish(mut self) -> Result<Structure, String> {
         if !self.unknown.is_empty() {
             let ops: Vec<String> = self.unknown.iter().map(|o| format!("`{o}`")).collect();
-            self.unsupported.insert(format!("operators StitchFoundry doesn't know ({})", ops.join(", ")));
+            self.unsupported.insert(format!("operators ScreenFoundry doesn't know ({})", ops.join(", ")));
         }
         if !self.unsupported.is_empty() {
             let list: Vec<&str> = self.unsupported.iter().map(String::as_str).collect();
-            return Err(format!("it has {}, which StitchFoundry doesn't read from it yet", join_and(&list)));
+            return Err(format!("it has {}, which ScreenFoundry doesn't read from it yet", join_and(&list)));
         }
         if self.doc.layers.is_empty() {
             return Err("it has no layers".into());

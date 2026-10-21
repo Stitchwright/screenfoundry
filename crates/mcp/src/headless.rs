@@ -35,7 +35,7 @@ const HOST_COMMANDS: &[(&str, &str, &str)] = &[
     (
         "file.save",
         "Save",
-        "{…as document.save} = document.save {path?, format?, options?, svg?: {…SVG options}}: .stitchfoundry (or .vectorcraft), .ai (a PDF that reopens editable), .pdf, .svg or .svgz (default: the document's own path and format)",
+        "{…as document.save} = document.save {path?, format?, options?, svg?: {…SVG options}}: .screenfoundry (or .vectorcraft), .ai (a PDF that reopens editable), .pdf, .svg or .svgz (default: the document's own path and format)",
     ),
     ("file.export", "Export…", "{…as document.export} = document.export {path?, format?, artboard?, range?, scale?, …} (no path → dataBase64)"),
     (

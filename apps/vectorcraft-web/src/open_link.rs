@@ -1,4 +1,4 @@
-//! Open in StitchFoundry (OPEN-01): `?open=<address>` opens a design file from another site, so
+//! Open in ScreenFoundry (OPEN-01): `?open=<address>` opens a design file from another site, so
 //! MakerFoundry's design pages can link straight into the web app. Only addresses on the sites in
 //! [`ALLOWED_HOSTS`] are fetched, over HTTPS, without cookies, and at most [`MAX_BYTES`]; the file
 //! then opens as a dropped one does (through the inbox). The site must allow this page's origin

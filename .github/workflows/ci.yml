@@ -1,4 +1,4 @@
-# StitchFoundry's checks: on every push to main and every pull request, the gate contributors run
+# ScreenFoundry's checks: on every push to main and every pull request, the gate contributors run
 # before committing, `cargo xtask ci` (fmt, clippy -D warnings, tests, assets, brands, layers,
 # wasm). The other workflows in this folder are VectorCraft's and only run in its repository.
 name: CI

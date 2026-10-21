@@ -182,7 +182,7 @@ pub const UI_COMMANDS: &[(&str, &str, &str, &str)] = &[
         "shortcuts.preset",
         "Keyboard Shortcut Set",
         "",
-        "{name: \"StitchFoundry Defaults\" | \"Classic Defaults\"} (names of earlier versions are accepted)",
+        "{name: \"ScreenFoundry Defaults\" | \"Classic Defaults\"} (names of earlier versions are accepted)",
     ),
     ("shortcuts.export", "Export Keyboard Shortcuts…", "", "{path?}"),
     ("shortcuts.import", "Import Keyboard Shortcuts…", "", "{path? | data?}"),
@@ -423,7 +423,7 @@ pub const UI_COMMANDS: &[(&str, &str, &str, &str)] = &[
         "",
         "{} opens the Save PDF dialog; with params = document.exportPdf options written to path (asked when missing; viewAfterSaving opens the file) → {path, bytes, warnings}",
     ),
-    ("help.about", "About StitchFoundry", "", "{}"),
+    ("help.about", "About ScreenFoundry", "", "{}"),
     (
         "ui.screenSeparate",
         "Separate Colors…",
@@ -442,9 +442,9 @@ pub const UI_COMMANDS: &[(&str, &str, &str, &str)] = &[
         "",
         "{pointsPerInch?: 40–400} match the screen to a ruler so Actual Size shows designs life size: without a value, a window with a ruler and a bank card to hold your own against; with one, it is kept (prefs screenPointsPerInch) and Display Print Size at 100% Zoom turned on → {pointsPerInch} or {open}",
     ),
-    ("help.show", "StitchFoundry Help…", "F1", "{topic?: a guide topic (help.topics), tips?: bool} the user guide, on the active tool's topic"),
+    ("help.show", "ScreenFoundry Help…", "F1", "{topic?: a guide topic (help.topics), tips?: bool} the user guide, on the active tool's topic"),
     ("help.commandPalette", "Search Commands…", "Cmd+Shift+/", "{}"),
-    ("app.quit", "Quit StitchFoundry", "Cmd+Q", "{}"),
+    ("app.quit", "Quit ScreenFoundry", "Cmd+Q", "{}"),
     (
         "ui.swatchOptions",
         "Swatch Options…",
@@ -762,7 +762,7 @@ pub const UI_COMMANDS: &[(&str, &str, &str, &str)] = &[
         "ui.pdfPresetDialog",
         "PDF Preset",
         "",
-        "{name?: a saved preset to edit | preset?: the preset a new one starts from (default StitchFoundry Default)} open the preset editor (dialog `pdfPreset`: the Save PDF dialog's option fields plus `name` and `description`); OK runs pdf.preset.save and returns to PDF Presets",
+        "{name?: a saved preset to edit | preset?: the preset a new one starts from (default ScreenFoundry Default)} open the preset editor (dialog `pdfPreset`: the Save PDF dialog's option fields plus `name` and `description`); OK runs pdf.preset.save and returns to PDF Presets",
     ),
     ("file.openRecent11", "Open Recent File 11", "", "{}"),
     ("file.openRecent12", "Open Recent File 12", "", "{}"),
@@ -2183,7 +2183,7 @@ pub fn entry<'a>(app: &VectorcraftApp, it: &'a Item) -> Option<Entry<'a>> {
         // a submenu with nothing to show is left out
         Item::Sub(label, children) if children.iter().any(|c| shows(app, c)) => Entry::Sub(t(label), children),
         Item::Sub(..) => return None,
-        // StitchFoundry leaves out what isn't made yet: the menus show only what works
+        // ScreenFoundry leaves out what isn't made yet: the menus show only what works
         Item::Todo(..) => return None,
         Item::Cmd(label, id, p) => {
             let (enabled, checked) = shown_state(app, id, p)?;
@@ -2418,7 +2418,7 @@ pub fn menu_tree_named(english_names: bool) -> Vec<(&'static str, Vec<Item>)> {
             // Quit from File, Language and Appearance synthesized). It stays first: `from_tree`
             // gives the first menu the App role.
             crate::native_menu::APP_NAME,
-            vec![c("About StitchFoundry", "help.about")],
+            vec![c("About ScreenFoundry", "help.about")],
         ),
         (
             "File",
@@ -3084,14 +3084,14 @@ pub fn menu_tree_named(english_names: bool) -> Vec<(&'static str, Vec<Item>)> {
         (
             "Help",
             vec![
-                c("StitchFoundry on GitHub", "help.github"),
+                c("ScreenFoundry on GitHub", "help.github"),
                 c("Report a Bug…", "help.reportBug"),
                 Sep,
                 c("Search Commands…", "help.commandPalette"),
-                c("StitchFoundry Help…", "help.show"),
+                c("ScreenFoundry Help…", "help.show"),
                 cp("Tips", "help.show", json!({ "tips": true })),
                 Sep,
-                c("About StitchFoundry", "help.about"),
+                c("About ScreenFoundry", "help.about"),
             ],
         ),
     ]
@@ -4746,7 +4746,7 @@ mod tests {
         let ctx = egui::Context::default();
         crate::theme::install_fonts(&ctx);
         let tree = menu_tree();
-        // (the longest menu: StitchFoundry's Window menu groups its panels and fits)
+        // (the longest menu: ScreenFoundry's Window menu groups its panels and fits)
         let (_, window) = tree.iter().find(|(t, _)| *t == "Object").unwrap();
         let id = egui::Id::new("test-long-menu");
         let rect = |height: f32| {

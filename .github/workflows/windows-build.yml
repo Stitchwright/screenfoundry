@@ -45,6 +45,6 @@ jobs:
         run: ./packaging/windows/package.ps1 -Arch x64
       - uses: actions/upload-artifact@v7
         with:
-          name: stitchfoundry-windows-x64
+          name: screenfoundry-windows-x64
           path: dist/release/*
           if-no-files-found: error
