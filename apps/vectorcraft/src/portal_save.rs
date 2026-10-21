@@ -437,9 +437,12 @@ mod tests {
             zbus::blocking::connection::Builder::address(address.as_str()).ok()?.name("org.freedesktop.portal.Desktop").ok()?.build().ok()?;
         let seen = Seen::default();
         let log = seen.clone();
+        // Listening starts here, not in the thread: an iterator sees only the messages that come
+        // after it is made, so one made in a slow-starting thread could miss the client's first call.
+        let messages = zbus::blocking::MessageIterator::from(&server);
         std::thread::spawn(move || {
             let mut script = script.into_iter();
-            for msg in zbus::blocking::MessageIterator::from(&server) {
+            for msg in messages {
                 let Ok(msg) = msg else { break };
                 let header = msg.header();
                 if header.message_type() != zbus::message::Type::MethodCall || header.member().map(|m| m.as_str()) != Some("SaveFile") {
