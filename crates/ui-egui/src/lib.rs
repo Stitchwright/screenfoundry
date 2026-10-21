@@ -25,14 +25,12 @@ pub mod cursors;
 pub mod dialogs;
 pub mod dock;
 mod edit_toolbar;
-pub mod embroidery;
 pub mod export_progress;
 pub mod find_font;
 pub mod floating;
 pub mod font_menu;
 mod free_transform;
 pub mod graphics;
-pub mod guide;
 pub mod i18n;
 pub mod icon_data;
 pub mod icons;
@@ -54,7 +52,6 @@ pub mod screen_print;
 mod scrub;
 pub mod shortcut_editor;
 pub mod shortcuts;
-pub mod simple;
 pub mod state;
 pub mod sysclip;
 pub mod theme;
@@ -86,13 +83,10 @@ mod tests_distortkeys;
 #[cfg(test)]
 mod tests_docsetup;
 #[cfg(test)]
-mod tests_embroidery;
 #[cfg(test)]
 mod tests_font_menu;
 #[cfg(test)]
 mod tests_fonts;
-#[cfg(test)]
-mod tests_guide_escape;
 #[cfg(test)]
 mod tests_home;
 #[cfg(test)]
@@ -225,29 +219,6 @@ pub(crate) fn browsable_url(url: &str) -> Result<(), String> {
 /// Shows a file in the system file manager, or opens it in its app.
 pub type RevealFn = Box<dyn FnMut(&str) -> Result<(), String>>;
 
-pub use vectorcraft_embroidery::sf_core::ai::HttpRequest;
-
-/// Sends an HTTPS POST and waits for the answer → (HTTP status, body), or why none came. Called
-/// from a thread of its own.
-pub type HttpPostFn = Arc<dyn Fn(&HttpRequest) -> Result<(u16, String), String> + Send + Sync>;
-
-/// Starts an HTTPS POST and hands the answer → (HTTP status, body), or why none came, to the
-/// callback later, on the UI thread (the web: the browser's fetch).
-pub type HttpPostAsyncFn = std::rc::Rc<dyn Fn(HttpRequest, Box<dyn FnOnce(Result<(u16, String), String>)>)>;
-
-/// Fetches a URL with an HTTPS GET and waits for it → (HTTP status, body, at most `limit` bytes),
-/// or why it didn't come. Called from a thread of its own.
-pub type HttpGetFn = Arc<dyn Fn(&str, u64) -> Result<(u16, Vec<u8>), String> + Send + Sync>;
-
-/// Keeps small secrets (Design from Prompt's API key) out of the settings, which the engine, the
-/// control channel and MCP agents can read.
-pub trait SecretStore {
-    /// The secret `name`, when one is kept.
-    fn load(&self, name: &str) -> Option<String>;
-    /// Keep `value` as the secret `name`; `None` forgets it.
-    fn save(&self, name: &str, value: Option<&str>) -> Result<(), String>;
-}
-
 /// Platform services injected by the host app (desktop or web).
 #[derive(Default)]
 pub struct Services {
@@ -321,17 +292,6 @@ pub struct Services {
     /// [`Self::start_pick`]'s dialogs are sheets on the window (macOS): while one is open the app
     /// neither quits nor closes documents, as under the modal dialog before.
     pub dialogs_are_sheets: bool,
-    /// Send Design from Prompt's request to the AI service (desktop). Without it (the web, for
-    /// now) Design from Prompt is unavailable.
-    pub http_post: Option<HttpPostFn>,
-    /// Send an HTTPS POST without waiting (the web), when there is no [`Services::http_post`].
-    pub http_post_async: Option<HttpPostAsyncFn>,
-    /// Fetch a file over HTTPS (desktop): the embroidery font library downloads with it. Without
-    /// it (the web demo, which has no server to keep fonts on) fonts aren't downloaded.
-    pub http_get: Option<HttpGetFn>,
-    /// Where Design from Prompt keeps the API key (desktop: a private file next to the settings).
-    /// Without it a key lasts the session.
-    pub secrets: Option<Box<dyn SecretStore>>,
     /// The window is on Wayland: the tool cursors are painted into it instead of handed to the
     /// compositor as bitmaps ([`cursors::os_cursors`]).
     pub wayland: bool,
@@ -432,12 +392,6 @@ pub struct VectorcraftApp {
     pub views: Vec<View>,
     pub services: Services,
     pub canvas: CanvasCache,
-    /// Embroidery mode: stitch overlay settings, the stitch player and its mesh.
-    pub embroidery: embroidery::EmbroideryUi,
-    /// Simple mode's open windows (Add Words, the shape picker).
-    pub simple: simple::SimpleState,
-    /// Make a Design: the step-by-step guide.
-    pub guide: guide::GuideState,
     pub perf: Perf,
     /// macOS: the room the app bar keeps at its left for the window buttons over it, in points
     /// (0 where the OS draws no buttons over the app bar).
@@ -587,9 +541,6 @@ impl VectorcraftApp {
                 content_bounds: None,
                 cursors: Default::default(),
             },
-            embroidery: embroidery::EmbroideryUi::default(),
-            simple: simple::SimpleState::default(),
-            guide: guide::GuideState::default(),
             perf: Perf::default(),
             titlebar_inset: 0.0,
             last_effect: None,
@@ -1104,16 +1055,6 @@ impl VectorcraftApp {
         self.services.dialogs_are_sheets && self.file_dialog_open()
     }
 
-    /// The first start on a touch tablet (the web app on an iPad or Android tablet, TB-01): simple
-    /// mode, with its big buttons and Your Design in place of the side panels, unless a way of
-    /// working has been chosen already. Whether it switched.
-    pub fn start_on_tablet(&mut self) -> bool {
-        if self.ui.experience != state::Experience::All {
-            return false;
-        }
-        self.run("window.experience", serde_json::json!({ "level": "beginner" })).is_ok()
-    }
-
     /// Show a transient status message.
     pub fn status(&mut self, s: impl Into<String>) {
         self.ui.status = s.into();
@@ -1330,12 +1271,8 @@ impl VectorcraftApp {
             ctx.copy_text(t);
         }
         self.drain_inbox();
-        // the lettering kiosk: no menus or shortcuts
-        let kiosk = self.session.prefs.embroidery_kiosk.on;
-        if !kiosk {
-            native_menu::run(self, ctx);
-        }
-        if self.fonts_ready && !kiosk {
+        native_menu::run(self, ctx);
+        if self.fonts_ready {
             shortcuts::handle(self, ctx);
         }
         // Native only: the web host reads dropped files asynchronously and feeds the inboxes.
@@ -1501,49 +1438,28 @@ impl VectorcraftApp {
         let t0 = now_ms();
         widgets::set_dialog_open(&ctx, self.ui.dialog.is_some());
         scrub::begin_frame(self, &ctx);
-        embroidery::tick(self, &ctx);
-        // the lettering kiosk: its panel and the design, nothing else
-        if self.session.prefs.embroidery_kiosk.on {
-            embroidery::kiosk::show(self, ui);
-            dialogs::show(self, &ctx);
-            self.ui_fonts.frame(&ctx);
-            scrub::end_frame(self, &ctx);
-            self.perf.frame_ms = now_ms() - t0;
-            return;
-        }
         font_menu::end_stale_preview(self, &ctx);
         floating::track(self, &ctx);
         let t = theme::Tokens::get(&ctx);
-        // simple mode (New to Embroidery): large labelled actions and Your Design in place of the
-        // toolbar, the control bar and the panels
-        let simple = simple::active(self);
         if self.ui.screen_mode < 2 {
             chrome::app_bar(self, ui);
-            if self.ui.control_bar && !simple {
+            if self.ui.control_bar {
                 chrome::control_bar(self, ui);
             }
         }
         if self.ui.status_bar && self.ui.screen_mode < 3 {
             chrome::status_bar(self, ui);
-            // simple mode: no keyboard and modifier hints
-            if !simple {
-                chrome::hint_bar(self, ui);
-            }
+            chrome::hint_bar(self, ui);
         } else {
             // Keeps the previous frame's value valid for menus drawn above, before the bars.
             widgets::set_menu_floor(&ctx, ctx.content_rect().bottom());
         }
         panels::library_panel::tidy(self);
-        if simple && self.ui.screen_mode < 3 {
-            simple::left_bar(self, ui);
-            simple::right_panel(self, ui);
-        } else {
-            if self.ui.toolbar && self.ui.screen_mode < 3 {
-                toolbar::show(self, ui);
-            }
-            if self.ui.dock && self.ui.screen_mode < 3 {
-                dock::show(self, ui);
-            }
+        if self.ui.toolbar && self.ui.screen_mode < 3 {
+            toolbar::show(self, ui);
+        }
+        if self.ui.dock && self.ui.screen_mode < 3 {
+            dock::show(self, ui);
         }
         egui::CentralPanel::default().frame(egui::Frame::NONE.fill(t.pasteboard)).show(ui, |ui| {
             if self.ui.screen_mode < 3 {
@@ -1558,18 +1474,8 @@ impl VectorcraftApp {
                 chrome::isolation_bar(self, ui, area);
             }
         });
-        simple::words_window(self, &ctx);
-        embroidery::ask::window(self, &ctx);
-        embroidery::sewout::window(self, &ctx);
-        embroidery::sewout::report_window(self, &ctx);
-        embroidery::account::window(self, &ctx);
-        embroidery::publish::window(self, &ctx);
-        if simple {
-            simple::windows(self, &ctx);
-        } else {
-            dock::floating_panel(self, &ctx);
-            floating::show(self, &ctx);
-        }
+        dock::floating_panel(self, &ctx);
+        floating::show(self, &ctx);
         dialogs::show(self, &ctx);
         export_progress::show(self, &ctx);
         palette::show(self, &ctx);

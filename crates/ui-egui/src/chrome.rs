@@ -79,32 +79,6 @@ pub fn app_bar(app: &mut VectorcraftApp, ui: &mut Ui) {
             let wresp = wresp.on_hover_text(tl!("Switch workspace"));
             egui::Popup::menu(&wresp).show(|ui| crate::workspaces::popup(app, ui));
             ui.add_space(8.0);
-            // Foundry Account: Sign In, or the credits left (when accounts are open and it fits)
-            if crate::menus::enabled(app, "ui.account")
-                && let Some(label) = crate::embroidery::account::chip_label(app)
-            {
-                let g = ui.painter().layout_no_wrap(label, egui::FontId::proportional(12.0), t.text);
-                let w = g.size().x + 20.0;
-                if room >= ws_w + w + icon + 3.0 * gap + 24.0 {
-                    let (r, resp) = ui.allocate_exact_size(vec2(w, WIDGET_H), Sense::click());
-                    let signed_out = app.embroidery.account.token.is_empty();
-                    let fill = if signed_out {
-                        t.accent
-                    } else if resp.hovered() {
-                        t.hover
-                    } else {
-                        t.panel
-                    };
-                    ui.painter().rect_filled(r, CornerRadius::same(4), fill);
-                    let color = if signed_out { egui::Color32::WHITE } else { t.text };
-                    ui.painter().galley_with_override_text_color(r.center() - g.size() / 2.0, g, color);
-                    if resp.on_hover_text(tl!("Foundry Account")).clicked() {
-                        let create = signed_out;
-                        crate::embroidery::account::show(app, create);
-                    }
-                    ui.add_space(8.0);
-                }
-            }
             // Search → command palette (its shortcut opens it too).
             if search {
                 let tip = match menus::shortcut_of("help.commandPalette") {
@@ -457,12 +431,7 @@ pub fn doc_tabs(app: &mut VectorcraftApp, ui: &mut Ui) {
         .enumerate()
         .map(|(i, d)| {
             let zoom = app.views.get(i).map(|v| v.zoom).unwrap_or(1.0);
-            // simple mode: the design's name, without zoom and colour mode
-            let title = if crate::simple::active(app) {
-                format!("{}{}", d.title(), if d.is_dirty() { "*" } else { "" })
-            } else {
-                tab_title(d, zoom, app.ui.view.outline, app.session.prefs.display_print_size)
-            };
+            let title = tab_title(d, zoom, app.ui.view.outline, app.session.prefs.display_print_size);
             let color = if Some(i) == active { t.text_strong } else { t.text_dim };
             (title.clone(), ui.painter().layout_no_wrap(title, theme::semibold(title_size), color))
         })

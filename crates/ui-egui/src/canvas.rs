@@ -247,7 +247,6 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
         scroll_bars(app, ui, rect, outer, &t);
     }
     let resp = ui.interact(rect, egui::Id::new("canvas"), Sense::click_and_drag());
-    let over_widget = !resp.dragged() && crate::embroidery::widget::contains(app, rect, ui.input(|i| i.pointer.hover_pos()));
     // A press on the canvas while the context menu is open only closes it (a drag too, which egui
     // alone would leave open); the tool doesn't get it.
     if app.ui.dialog.as_ref().is_some_and(crate::dialogs::revolve_gizmo::active) {
@@ -255,8 +254,6 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
         // Do not let a ring drag also move or deselect the editable source path.
     } else if resp.context_menu_opened() && resp.hovered() && ui.input(|i| i.pointer.any_pressed()) {
         egui::Popup::close_all(ui.ctx());
-    } else if over_widget {
-        // The embroidery digitizing widget takes clicks over it.
     } else {
         handle_input(app, ui, &resp, rect);
     }
@@ -472,8 +469,6 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
             }
         }
     }
-    // Embroidery: the stitch plan over the art (TrueView or lines).
-    crate::embroidery::overlay::paint(app, &painter, &xf);
     if let Some(look) = grid_look.filter(|_| !grids_in_back) {
         grid(&painter, &xf, doc.grid.spacing, doc.grid.subdivisions, look);
     }
@@ -582,22 +577,15 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
         rulers(ui, full, &xf, app.hover_doc, app.session.general_unit(), origin_preview.unwrap_or_else(|| app.ruler_origin()), &t);
     }
     // simple mode has its own actions (Your Design); the task bar is not drawn while the Simplify slider shows
-    if app.ui.task_bar
-        && !revolve_edit
-        && !app.session.tool_busy()
-        && app.ui.screen_mode < 3
-        && !crate::simple::active(app)
-        && !crate::dialogs::simplify_slider::showing(app)
-    {
+    if app.ui.task_bar && !revolve_edit && !app.session.tool_busy() && app.ui.screen_mode < 3 && !crate::dialogs::simplify_slider::showing(app) {
         task_bar(app, ui, &xf);
     }
     if app.ui.screen_mode < 3 {
         crate::free_transform::show(app, ui, xf.rect);
-        crate::embroidery::widget::show(app, ui, xf.rect);
     }
     artboard_name_editor(app, ui, &xf);
     // Cursor.
-    if resp.hovered() && !over_widget {
+    if resp.hovered() {
         if opening::long_operation_busy(app) {
             ui.ctx().set_cursor_icon(cursor_icon(Cursor::Busy));
             return;
@@ -2897,16 +2885,9 @@ fn home(app: &mut VectorcraftApp, ui: &mut Ui, rect: egui::Rect) {
 fn home_body(app: &mut VectorcraftApp, ui: &mut Ui) {
     let t = Tokens::get(ui.ctx());
     ui.label(egui::RichText::new(tl!("Welcome to StitchFoundry")).font(theme::semibold(26.0)).color(t.text));
-    ui.add_space(4.0);
-    ui.label(egui::RichText::new(tl!("Machine embroidery digitizing — fast, open, scriptable.")).size(14.0).color(t.text_dim));
     ui.add_space(22.0);
     ui.horizontal(|ui| {
-        // the step-by-step guide first: the easiest way in
-        if widgets::primary_button(ui, tl!("Make a Design, Step by Step")).clicked() {
-            app.run("ui.makeDesign", json!({})).ok();
-        }
-        ui.add_space(8.0);
-        if widgets::secondary_button(ui, tl!("New file")).clicked() {
+        if widgets::primary_button(ui, tl!("New file")).clicked() {
             app.run("file.newDialog", json!({})).ok();
         }
         ui.add_space(8.0);
@@ -2915,73 +2896,7 @@ fn home_body(app: &mut VectorcraftApp, ui: &mut Ui) {
         }
     });
     ui.add_space(18.0);
-    crate::embroidery::account::home_card(app, ui, &t);
-    ui.add_space(14.0);
-    experience_row(app, ui, &t);
     recent(app, ui);
-    ui.add_space(24.0);
-    ui.label(egui::RichText::new(tl!("Start a design for your hoop")).font(theme::semibold(14.0)).color(t.text));
-    ui.add_space(6.0);
-    // My Machine: its name, and its hoops in place of the general ones
-    let mine = app.session.execute("embroidery.myMachine", &json!({})).unwrap_or_default();
-    ui.horizontal_wrapped(|ui| match mine["machine"].as_str() {
-        Some(m) => {
-            ui.label(egui::RichText::new(format!("{} {}", tl!("My machine:"), crate::dialogs::my_machine::machine_name(m))).color(t.text_dim));
-            if ui.link(tl!("Change")).clicked() {
-                app.run("ui.myMachine", json!({})).ok();
-            }
-        }
-        None => {
-            ui.label(egui::RichText::new(tl!("Tell us your machine to see its hoops and save in its format.")).color(t.text_dim));
-            if ui.link(tl!("Choose My Machine")).clicked() {
-                app.run("ui.myMachine", json!({})).ok();
-            }
-        }
-    });
-    ui.add_space(8.0);
-    let hoops = home_hoops(&mine);
-    ui.horizontal_wrapped(|ui| {
-        ui.spacing_mut().item_spacing = vec2(14.0, 14.0);
-        for (label, hoop, w, h) in &hoops {
-            if hoop_card(ui, &t, label, (*w, *h)).clicked() {
-                app.run("embroidery.newDesign", json!({ "hoop": hoop })).ok();
-            }
-        }
-    });
-    ui.add_space(24.0);
-    ui.label(egui::RichText::new(tl!("Your first design")).font(theme::semibold(14.0)).color(t.text));
-    ui.add_space(8.0);
-    let steps = [
-        (tl!("Draw shapes, place a picture or type text."), "quick-start"),
-        (tl!("Choose how each part is stitched: satin, fill, run and more."), "stitch-types"),
-        (tl!("Watch it sew with the stitch player and check it."), "stitch-sequence-and-the-stitch-player"),
-        (tl!("Export the file for your machine."), "machine-files"),
-    ];
-    if ui.link(tl!("New to digitizing? Read the basics")).clicked() {
-        app.run("help.show", json!({ "topic": "digitizing-basics" })).ok();
-    }
-    ui.add_space(4.0);
-    for (i, (step, topic)) in steps.iter().enumerate() {
-        ui.horizontal(|ui| {
-            ui.label(egui::RichText::new(format!("{}", i + 1)).font(theme::semibold(14.0)).color(t.accent));
-            ui.label(egui::RichText::new(*step).color(t.text));
-            if ui.link(tl!("Learn how")).clicked() {
-                app.run("help.show", json!({ "topic": topic })).ok();
-            }
-        });
-    }
-    ui.add_space(24.0);
-    ui.label(egui::RichText::new(tl!("Try a sample")).font(theme::semibold(14.0)).color(t.text));
-    ui.add_space(8.0);
-    let samples = app.session.execute("embroidery.samples", &json!({})).unwrap_or_default();
-    ui.horizontal_wrapped(|ui| {
-        for sm in samples["samples"].as_array().map(Vec::as_slice).unwrap_or_default() {
-            let (Some(id), Some(name)) = (sm["id"].as_str(), sm["name"].as_str()) else { continue };
-            if widgets::secondary_button(ui, sample_name(name)).clicked() {
-                app.run("embroidery.sample", json!({ "id": id })).ok();
-            }
-        }
-    });
     // a tip: a different one as recent files come and go
     let tips = crate::dialogs::help::tips();
     let general: Vec<&str> = tips.iter().filter(|(k, _)| k.is_empty()).map(|(_, x)| *x).collect();
@@ -3000,103 +2915,6 @@ fn home_body(app: &mut VectorcraftApp, ui: &mut Ui) {
     ui.label(egui::RichText::new(tl!("Community")).font(theme::semibold(14.0)).color(t.text));
     ui.add_space(10.0);
     crate::community::links(app, ui);
-}
-
-/// How do you work? (Window › Experience): each level a button, the chosen one lit; it sets how
-/// much the embroidery tools show and the workspace for it.
-fn experience_row(app: &mut VectorcraftApp, ui: &mut Ui, t: &Tokens) {
-    use crate::state::Experience;
-    let levels = [
-        (Experience::Beginner, tl!("New to embroidery"), tl!("The basic tools and everyday sections, nothing more")),
-        (Experience::Digitizer, tl!("I digitize designs"), tl!("Every digitizing tool, rulers and the control bar")),
-        (Experience::Business, tl!("I run an embroidery business"), tl!("Everything, with job orders and batch output")),
-    ];
-    ui.horizontal_wrapped(|ui| {
-        ui.label(egui::RichText::new(tl!("How do you work?")).font(theme::semibold(13.0)).color(t.text));
-        ui.add_space(6.0);
-        for (level, label, hint) in levels {
-            if ui.selectable_label(app.ui.experience == level, label).on_hover_text(hint).clicked() {
-                app.run("window.experience", json!({ "level": level.id() })).ok();
-            }
-        }
-        if app.ui.experience != Experience::All && ui.link(tl!("Show everything")).clicked() {
-            app.run("window.experience", json!({ "level": "all" })).ok();
-        }
-    });
-}
-
-/// The hoops a new design is offered in: My Machine's (`mine`, as `embroidery.myMachine` gives
-/// it), else the usual ones; each label, hoop name, width × height (mm).
-pub(crate) fn home_hoops(mine: &serde_json::Value) -> Vec<(String, String, f64, f64)> {
-    let theirs: Vec<(String, String, f64, f64)> = mine["hoops"]
-        .as_array()
-        .map(Vec::as_slice)
-        .unwrap_or_default()
-        .iter()
-        .filter_map(|h| {
-            let (name, w, ht) = (h["name"].as_str()?, h["width"].as_f64()?, h["height"].as_f64()?);
-            Some((hoop_label(w, ht), name.to_string(), w, ht))
-        })
-        .collect();
-    if !theirs.is_empty() {
-        // the machine's hoops, one's own among them
-        return theirs;
-    }
-    // no machine chosen: the usual sizes, then one's own hoops
-    let own = mine["own"].as_array().map(Vec::as_slice).unwrap_or_default().iter().filter_map(|h| {
-        let (name, w, ht) = (h["name"].as_str()?, h["width"].as_f64()?, h["height"].as_f64()?);
-        Some((hoop_label(w, ht), name.to_string(), w, ht))
-    });
-    HOME_HOOPS.iter().map(|(label, hoop, w, h)| ((*label).to_string(), (*hoop).to_string(), *w, *h)).chain(own).collect()
-}
-
-/// A hoop card's label: its sewing field in millimetres and inches (`240 × 150 mm (9.4 × 5.9″)`).
-fn hoop_label(w: f64, h: f64) -> String {
-    let inch = |mm: f64| {
-        let i = mm / 25.4;
-        if (i - i.round()).abs() < 0.05 { format!("{}", i.round()) } else { format!("{i:.1}") }
-    };
-    format!("{w:.0} × {h:.0} mm ({}×{}″)", inch(w), inch(h))
-}
-
-/// The hoops the Home screen offers a new design for: label, hoop name, width × height (mm).
-const HOME_HOOPS: [(&str, &str, f64, f64); 5] = [
-    ("100 × 100 mm (4×4″)", "Brother 100 × 100 (4×4)", 100.0, 100.0),
-    ("130 × 180 mm (5×7″)", "Brother 130 × 180 (5×7)", 130.0, 180.0),
-    ("160 × 260 mm (6×10″)", "Brother 160 × 260 (6×10)", 160.0, 260.0),
-    ("200 × 200 mm (8×8″)", "Brother 200 × 200 (8×8)", 200.0, 200.0),
-    ("200 × 300 mm (8×12″)", "Brother 200 × 300 (8×12)", 200.0, 300.0),
-];
-
-/// A sample design's name in the UI language.
-pub(crate) fn sample_name(name: &str) -> &str {
-    match name {
-        "Heart patch" => tl!("Heart patch"),
-        "Sun and moon" => tl!("Sun and moon"),
-        "Appliqué star" => tl!("Appliqué star"),
-        other => other,
-    }
-}
-
-/// A Home screen card for a hoop: its field drawn to scale, its size under it.
-pub(crate) fn hoop_card(ui: &mut Ui, t: &Tokens, label: &str, (w, h): (f64, f64)) -> egui::Response {
-    let (rect, resp) = ui.allocate_exact_size(vec2(128.0, 128.0), egui::Sense::click());
-    let hovered = resp.hovered();
-    ui.painter().rect_filled(rect, 6.0, t.panel);
-    ui.painter().rect_stroke(rect, 6.0, egui::Stroke::new(1.0, if hovered { t.accent } else { t.border }), egui::StrokeKind::Inside);
-    // the field, 72 px at most each way, inside the hoop's rounded frame
-    let k = (72.0 / w.max(h).max(1.0)) as f32;
-    let field = egui::Rect::from_center_size(rect.center() - vec2(0.0, 12.0), vec2(w as f32 * k, h as f32 * k));
-    ui.painter().rect_stroke(field.expand(5.0), 8.0, egui::Stroke::new(3.0, t.text_dim), egui::StrokeKind::Middle);
-    ui.painter().rect_filled(field, 2.0, t.panel_darker);
-    ui.painter().text(
-        egui::pos2(rect.center().x, rect.bottom() - 12.0),
-        egui::Align2::CENTER_CENTER,
-        label,
-        egui::FontId::proportional(11.5),
-        t.text,
-    );
-    resp.on_hover_text(tl!("A new design the size of this hoop's sewing field"))
 }
 
 /// The Home screen's Recent Files (#663): the first of File › Open Recent Files, each its name and

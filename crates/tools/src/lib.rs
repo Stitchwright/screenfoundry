@@ -17,7 +17,6 @@ pub mod dimension;
 pub mod direct;
 pub mod distort;
 pub mod draw2;
-pub mod embroidery;
 pub mod extra;
 pub mod guides;
 pub mod intertwine;
@@ -228,12 +227,6 @@ impl ScreenFrame {
 /// Read-only context a tool sees.
 pub struct ToolContext<'a> {
     pub doc: &'a Document,
-    /// Embroidery: start and stop bead (document points) of each selected stitched
-    /// object, from the stitch plan (the Inclination tool drags them).
-    pub embroidery_beads: &'a [(NodeId, Point, Point)],
-    /// Embroidery: the own stitches (document points, sewing order) of each selected
-    /// stitched object, while the Stitch Edit tool is active.
-    pub embroidery_stitches: &'a [(NodeId, Vec<(Point, sf_core::Cmd)>)],
     /// The rulers' zero point with the view's active artboard (see
     /// [`Document::ruler_origin_for`]): where ruler ticks and measured positions count from.
     pub ruler_origin: Point,
@@ -830,7 +823,6 @@ pub fn create(id: &str) -> Box<dyn Tool> {
             .or_else(|| printtiling::create(other))
             .or_else(|| cropimage::create(other))
             .or_else(|| cut::create(other))
-            .or_else(|| embroidery::create(other))
             .or_else(|| intertwine::create(other))
             .or_else(|| objects_on_path::create(other))
             .or_else(|| touchtype::create(other))
@@ -931,8 +923,6 @@ pub(crate) mod testutil {
     pub fn cx<'a>(d: &'a Document, s: &'a Selection, p: &'a PaintDefaults) -> ToolContext<'a> {
         ToolContext {
             doc: d,
-            embroidery_beads: &[],
-            embroidery_stitches: &[],
             ruler_origin: d.ruler_origin_for(0),
             revision: (0, 0),
             selection: s,

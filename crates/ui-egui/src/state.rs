@@ -145,58 +145,6 @@ pub fn all_panels() -> impl Iterator<Item = (&'static str, &'static str)> {
     tabs.chain(ICON_PANELS.iter().map(|&(id, label, _)| (id, label)))
 }
 
-/// How someone works, which sets how much the embroidery tools show (Window › Experience):
-/// everything until one is chosen.
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "lowercase")]
-pub enum Experience {
-    #[default]
-    All,
-    /// New to embroidery: the basic tools, the Embroidery panel's everyday sections.
-    Beginner,
-    /// Digitizes designs: every digitizing tool, no order and batch sections.
-    Digitizer,
-    /// Runs an embroidery business: everything, orders and batches included.
-    Business,
-}
-
-impl Experience {
-    pub const ALL: [Experience; 4] = [Experience::Beginner, Experience::Digitizer, Experience::Business, Experience::All];
-
-    pub fn id(self) -> &'static str {
-        match self {
-            Experience::All => "all",
-            Experience::Beginner => "beginner",
-            Experience::Digitizer => "digitizer",
-            Experience::Business => "business",
-        }
-    }
-
-    pub fn from_id(id: &str) -> Option<Experience> {
-        Experience::ALL.into_iter().find(|e| e.id().eq_ignore_ascii_case(id.trim()))
-    }
-
-    /// The built-in workspace it switches to.
-    pub fn workspace(self) -> &'static str {
-        match self {
-            Experience::All => crate::workspaces::ESSENTIALS,
-            Experience::Beginner => crate::workspaces::EMBROIDERY_BASICS,
-            Experience::Digitizer => crate::workspaces::DIGITIZING,
-            Experience::Business => crate::workspaces::EMBROIDERY_BUSINESS,
-        }
-    }
-
-    /// The Embroidery panel's sections for the tools a beginner doesn't need yet.
-    pub fn advanced(self) -> bool {
-        self != Experience::Beginner
-    }
-
-    /// The Embroidery panel's order and batch sections.
-    pub fn business(self) -> bool {
-        matches!(self, Experience::All | Experience::Business)
-    }
-}
-
 /// Panels that live as collapsed icons in the dock (Essentials Classic).
 pub const ICON_PANELS: &[(&str, &str, &str)] = &[
     ("color", "Color", "palette"),
@@ -238,10 +186,6 @@ pub const ICON_PANELS: &[(&str, &str, &str)] = &[
     (crate::panels::asset_export::ID, "Asset Export", "share-2"),
     (crate::panels::css_properties::ID, "CSS Properties", "globe"),
     (crate::panels::variables::ID, "Variables", "chart-column"),
-    (crate::embroidery::panel::ID, "Embroidery", "waves"),
-    (crate::embroidery::sequence::ID, "Stitch Sequence", "dc-list-view"),
-    (crate::embroidery::stitch_list::ID, "Stitch List", "dc-grid-view"),
-    (crate::embroidery::styles::ID, "Embroidery Styles", "dc-graphic-styles"),
 ];
 
 /// Groups of icon panels separated by dividers in the collapsed column.
@@ -259,7 +203,6 @@ pub const ICON_PANEL_GROUPS: &[&[&str]] = &[
     &["character", "paragraph", "glyphs"],
     &["history", "actions", "info", "navigator"],
     &["variables"],
-    &["embroidery", "stitchSequence", "stitchList", "embroideryStyles"],
 ];
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -466,9 +409,6 @@ pub struct UiState {
     /// View › Calibrate Life Size….
     #[serde(skip)]
     pub life_size: crate::dialogs::life_size::LifeSizeState,
-    /// Embroidery › My Machine….
-    #[serde(skip)]
-    pub my_machine: crate::dialogs::my_machine::MyMachineState,
     /// Recorded actions (Actions panel), persisted with the UI preferences.
     #[serde(default = "crate::panels::actions::default_sets")]
     pub action_sets: Vec<crate::panels::actions::ActionSet>,
@@ -484,9 +424,6 @@ pub struct UiState {
     /// Current workspace (Window → Workspace).
     #[serde(default = "default_workspace")]
     pub workspace: String,
-    /// How much the embroidery tools show (Window › Experience, the Home screen).
-    #[serde(default)]
-    pub experience: Experience,
     /// User-saved workspaces (New Workspace…).
     #[serde(default)]
     pub custom_workspaces: Vec<crate::workspaces::Workspace>,
@@ -872,7 +809,7 @@ impl Default for UiState {
             told: vec![],
             answering_control: false,
             flyout: None,
-            group_tool: vectorcraft_tools::TOOL_GROUPS.iter().map(|g| g[0].id.to_string()).collect(),
+            group_tool: vectorcraft_tools::TOOL_GROUPS.iter().map(|g| g.first().map(|t| t.id.to_string()).unwrap_or_default()).collect(),
             status: String::new(),
             palette_open: false,
             palette_query: String::new(),
@@ -881,13 +818,11 @@ impl Default for UiState {
             about: false,
             help: Default::default(),
             life_size: Default::default(),
-            my_machine: Default::default(),
             action_sets: crate::panels::actions::default_sets(),
             recording: None,
             shortcut_overrides: Default::default(),
             shortcut_set: default_shortcut_set(),
             workspace: default_workspace(),
-            experience: Experience::default(),
             custom_workspaces: vec![],
             recent_files: vec![],
             recent_fonts: vec![],

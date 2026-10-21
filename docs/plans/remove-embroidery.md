@@ -1,5 +1,7 @@
 # Plan: remove embroidery from ScreenFoundry
 
+Progress: stage A done (UI, plus the tools crate and the apps' AI/secret wiring, which turned out to be small and were pulled in); B, C (document model), D and E remain.
+
 Status: approved by the owner 2026-10-21 ("I want the embroidery pulled out"). Executed in the
 stages below, one commit per stage. Task id: **SC-0b**.
 

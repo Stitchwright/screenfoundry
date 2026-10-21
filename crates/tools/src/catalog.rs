@@ -135,15 +135,6 @@ pub const TOOL_GROUPS: &[&[ToolInfo]] = &[
         t("printTiling", "Print Tiling Tool", None, "tool-print-tiling"),
     ],
     &[t("zoom", "Zoom Tool", Some("Z"), "tool-zoom")],
-    &[
-        t("embroideryBrush", "Embroidery Brush Tool", None, "tool-embroidery-brush"),
-        t("embroideryDirection", "Inclination Tool", Some("Shift+I"), "tool-embroidery-direction"),
-        t("embroideryStitches", "Stitch Edit Tool", None, "tool-embroidery-stitches"),
-        t("embroideryColumn", "Column A/B Tool", None, "tool-embroidery-column"),
-        t("embroideryMotif", "Motif Tool", None, "tool-embroidery-motif"),
-        t("embroideryCrossStitch", "Cross Stitch Tool", None, "tool-embroidery-cross"),
-        t("embroideryClick", "Click-to-Stitch Tool", None, "tool-embroidery-click"),
-    ],
 ];
 
 pub fn all_tools() -> impl Iterator<Item = &'static ToolInfo> {
@@ -192,6 +183,14 @@ mod tests {
         sc.dedup();
         assert_eq!(sc.len(), n, "duplicate shortcuts");
         assert!(n > 40);
+    }
+
+    /// Startup takes the first tool of every group, so a group with no tools would crash the app.
+    #[test]
+    fn every_group_has_a_tool() {
+        for (i, g) in TOOL_GROUPS.iter().enumerate() {
+            assert!(!g.is_empty(), "tool group {i} is empty");
+        }
     }
 
     #[test]

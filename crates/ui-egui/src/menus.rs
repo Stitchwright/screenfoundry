@@ -7,7 +7,6 @@
 use serde::Serialize;
 use serde_json::{Value, json};
 
-use vectorcraft_embroidery::sf_core::stamps::Stamp;
 use vectorcraft_engine::cmd::fileio::SaveMode;
 
 use crate::VectorcraftApp;
@@ -44,285 +43,9 @@ fn todos(label: &'static str, sc: &'static str) -> Item {
 fn sub(label: &'static str, items: Vec<Item>) -> Item {
     Item::Sub(label, items)
 }
-/// One entry per machine embroidery format (File › Export, Embroidery menu).
-fn machine_file_items() -> Vec<Item> {
-    let f = |label: &'static str, ext: &'static str| cp(label, "file.export.embroidery", json!({ "format": ext }));
-    vec![
-        f("Tajima DST (.dst)…", "dst"),
-        f("Brother PES (.pes)…", "pes"),
-        f("Janome JEF (.jef)…", "jef"),
-        f("Melco EXP (.exp)…", "exp"),
-        f("Pfaff VP3 (.vp3)…", "vp3"),
-        f("Singer XXX (.xxx)…", "xxx"),
-        f("Barudan U01 (.u01)…", "u01"),
-        f("Barudan DSB (.dsb)…", "dsb"),
-        f("Pfaff PCS (.pcs)…", "pcs"),
-        f("Happy TAP (.tap)…", "tap"),
-        f("Brother PEC (.pec)…", "pec"),
-        Sep,
-        f("Stitch List CSV (.csv)…", "csv"),
-        f("Stitch List JSON (.json)…", "json"),
-        f("G-code (.gcode)…", "gcode"),
-        c("Stitch Image PNG (.png)…", "file.export.stitchImage"),
-    ]
-}
-
-/// Quilt sizes for edge-to-edge rows: label, width × height (mm), from the usual US sizes.
-const QUILT_SIZES: [(&str, f64, f64); 5] = [
-    ("Crib (36 × 52″)", 914.4, 1320.8),
-    ("Throw (50 × 65″)", 1270.0, 1651.0),
-    ("Twin (70 × 90″)", 1778.0, 2286.0),
-    ("Queen (90 × 108″)", 2286.0, 2743.2),
-    ("King (108 × 108″)", 2743.2, 2743.2),
-];
-
-/// Embroidery › Longarm Quilting: continuous lines for longarm machines (Q1–Q7).
-fn quilting_items() -> Vec<Item> {
-    vec![
-        c("Check Continuous Line", "ui.quiltCheck"),
-        c("Join into One Line", "quilt.join"),
-        c("Start and End on the Edges", "quilt.edges"),
-        sub("Edge-to-Edge Rows", QUILT_SIZES.iter().map(|(label, w, h)| cp(label, "quilt.pantograph", json!({ "width": w, "height": h }))).collect()),
-        sub(
-            "Continuous Fill",
-            vec![
-                cp("Stipple", "quilt.fill", json!({ "kind": "stipple" })),
-                cp("Meander", "quilt.fill", json!({ "kind": "meander" })),
-                cp("Echo", "quilt.fill", json!({ "kind": "echo" })),
-                cp("Stitch in the Ditch", "quilt.fill", json!({ "kind": "ditch" })),
-            ],
-        ),
-        sub(
-            "Export Quilting Lines",
-            vec![
-                cp("HP-GL Plot (.plt)…", "file.export.quilt", json!({ "format": "plt" })),
-                cp("DXF Lines (.dxf)…", "file.export.quilt", json!({ "format": "dxf" })),
-                cp("SVG Lines (.svg)…", "file.export.quilt", json!({ "format": "svg" })),
-            ],
-        ),
-    ]
-}
-
 /// Screen Print: separations and films for screen printing (SC-1).
 fn screen_print_menu() -> Vec<Item> {
     vec![c("Separate Colors…", "ui.screenSeparate"), c("Halftone Film…", "ui.screenHalftone")]
-}
-
-/// Embroidery: digitizing, stitch types, stitch direction and the stitch order.
-fn embroidery_menu() -> Vec<Item> {
-    let ty = |label: &'static str, ty: &'static str| cp(label, "embroidery.set", json!({ "type": ty }));
-    let panel = |label: &'static str, id: &'static str| cp(label, "window.panel", json!({ "panel": id }));
-    // The everyday steps first, then the stitching of the selection, then the whole design; the
-    // rest is grouped in submenus so the menu fits on a laptop screen.
-    vec![
-        c("Make a Design…", "ui.makeDesign"),
-        c("Add Words…", "ui.addWords"),
-        c("Save for My Machine", "ui.saveForMyMachine"),
-        c("My Machine…", "ui.myMachine"),
-        c("Ask About Embroidery…", "ui.askAboutEmbroidery"),
-        c("Check My Sew-out…", "ui.checkSewout"),
-        c("Foundry Account…", "ui.account"),
-        Sep,
-        sub(
-            "Create",
-            vec![
-                c("Convert Artwork to Embroidery", "embroidery.convert"),
-                c("Auto-Digitize Image", "embroidery.autoDigitize"),
-                c("Design from Prompt…", "ui.designFromPrompt"),
-                c("Redraw Image with Claude…", "ui.redrawImage"),
-                Sep,
-                c("Digitizing Widget", "ui.embroideryWidget"),
-                sub(
-                    "Cross Stitch",
-                    vec![
-                        c("New Cross-Stitch Pattern…", "embroidery.crossStitch.new"),
-                        c("Cross Stitch from Image…", "embroidery.crossStitch.fromImage"),
-                        c("Print Cross-Stitch Chart…", "embroidery.crossStitch.chart"),
-                    ],
-                ),
-                cp("Lettering Kiosk", "embroidery.kiosk", json!({ "on": true })),
-            ],
-        ),
-        sub(
-            "Stitch Type",
-            vec![
-                ty("Run", "run"),
-                ty("Bean Run", "bean"),
-                ty("Backstitch", "backstitch"),
-                ty("Stem Stitch", "stemstitch"),
-                ty("Blanket", "blanket"),
-                ty("Satin", "satin"),
-                ty("Tatami Fill", "fill"),
-                ty("Satin Fill", "satinfill"),
-                ty("Contour Fill", "contour"),
-                ty("Spiral Fill", "spiral"),
-                ty("Radial Fill", "radial"),
-                ty("Cross Fill", "cross"),
-                ty("Meander Fill", "meander"),
-                ty("Motif Fill", "motiffill"),
-                ty("Appliqué", "applique"),
-                ty("Manual Stitches", "manual"),
-                ty("Sequins", "sequin"),
-                ty("Beads", "bead"),
-                ty("Rhinestones", "stone"),
-                ty("Cord", "cord"),
-                ty("Boring", "boring"),
-                ty("Print", "print"),
-                ty("Foil", "foil"),
-                Sep,
-                ty("No Stitches", "none"),
-            ],
-        ),
-        sub(
-            "Stitch Direction",
-            vec![
-                cp("Inclination Tool", "tool.select", json!({ "tool": "embroideryDirection" })),
-                c("Use Line as Direction", "embroidery.lineAsDirection"),
-                Sep,
-                c("Auto Direction", "embroidery.autoDirection"),
-                c("Reverse Stitch Direction", "embroidery.reverse"),
-                c("Swap Satin Sides", "embroidery.swapSides"),
-                c("Convert to Satin Column", "embroidery.toColumn"),
-                c("Clear Inclination Lines", "embroidery.clearGuides"),
-                Sep,
-                c("Fill Along Lines", "embroidery.fillAlongLines"),
-                c("Clear Flow Lines", "embroidery.clearFlowLines"),
-            ],
-        ),
-        sub(
-            "Split Lines",
-            vec![
-                c("Carve Split Lines", "embroidery.carveSplits"),
-                c("Contour Split Lines", "embroidery.contourSplits"),
-                sub("Carve Stamp", Stamp::ALL.into_iter().map(|s| cp(s.label(), "embroidery.carveStamp", json!({ "stamp": s.id() }))).collect()),
-                c("Clear Split Lines", "embroidery.clearSplits"),
-            ],
-        ),
-        sub(
-            "Motifs",
-            vec![
-                sub(
-                    "Place Motif",
-                    ["Wave", "Scallop", "Diamond", "Cross", "Feather", "Heart", "Star", "Leaf", "Loop", "Zigzag", "E-stitch"]
-                        .into_iter()
-                        .map(|m| cp(m, "embroidery.placeMotif", json!({ "motif": m.to_lowercase() })))
-                        .collect(),
-                ),
-                c("Make Motif", "embroidery.motif.make"),
-                sub(
-                    "Place Ring",
-                    vec![
-                        cp("Satin Ring", "embroidery.placeRing", json!({ "stitch": "satin" })),
-                        cp("Filled Ring", "embroidery.placeRing", json!({ "stitch": "fill" })),
-                        cp("Bean Ring", "embroidery.placeRing", json!({ "stitch": "bean" })),
-                    ],
-                ),
-            ],
-        ),
-        sub(
-            "Add to Design",
-            vec![
-                sub(
-                    "Add Outline",
-                    vec![
-                        cp("Satin Outline", "embroidery.addOutline", json!({ "stitch": "satin" })),
-                        cp("Bean Outline", "embroidery.addOutline", json!({ "stitch": "bean" })),
-                        cp("Rectangle Border", "embroidery.addOutline", json!({ "shape": "rectangle", "offset": 4 })),
-                        cp("Oval Border", "embroidery.addOutline", json!({ "shape": "oval", "offset": 2 })),
-                        cp("Rounded Border", "embroidery.addOutline", json!({ "shape": "rounded", "offset": 4 })),
-                        cp(
-                            "Motif Border",
-                            "embroidery.addOutline",
-                            json!({ "shape": "rounded", "offset": 4, "stitch": "motif", "motif": "scallop", "width": 3 }),
-                        ),
-                    ],
-                ),
-                c("Add Laydown", "embroidery.addLaydown"),
-                sub(
-                    "Add Buttonholes",
-                    vec![
-                        cp("Straight Buttonhole", "embroidery.addButtonholes", json!({ "style": "straight" })),
-                        cp("Rounded Buttonhole", "embroidery.addButtonholes", json!({ "style": "rounded" })),
-                        cp("Keyhole Buttonhole", "embroidery.addButtonholes", json!({ "style": "keyhole" })),
-                    ],
-                ),
-                Sep,
-                cp("Echo Quilting", "embroidery.outlineAround", json!({ "kind": "echo" })),
-                cp("Background Quilting", "embroidery.outlineAround", json!({ "kind": "stipple" })),
-            ],
-        ),
-        sub(
-            "Shape",
-            vec![
-                c("Remove Holes", "embroidery.removeHoles"),
-                c("Fill Holes", "embroidery.fillHoles"),
-                c("Automatic Knife", "embroidery.knife"),
-                Sep,
-                c("Branch", "embroidery.branch"),
-                c("Redwork", "embroidery.redwork"),
-                c("Break Apart", "embroidery.breakApart"),
-            ],
-        ),
-        Sep,
-        sub(
-            "Colors and Order",
-            vec![
-                c("Sort by Thread Color", "embroidery.sortByColor"),
-                c("Match Threads to Chart", "embroidery.matchThreads"),
-                c("Merge Colours", "embroidery.colors.merge"),
-                c("Auto Sequence", "embroidery.autoSequence"),
-            ],
-        ),
-        c("Check Design", "ui.embroideryCheck"),
-        c("Density Map", "ui.embroideryDensity"),
-        c("Compare Designs…", "ui.compareDesigns"),
-        sub(
-            "Stitches",
-            vec![
-                c("Make Properties Current", "embroidery.makeCurrent"),
-                Sep,
-                c("Freeze Stitches", "embroidery.freeze"),
-                c("Regenerate Stitches", "embroidery.regenerate"),
-            ],
-        ),
-        Sep,
-        sub(
-            "Special Machines",
-            vec![
-                sub(
-                    "Chenille",
-                    vec![
-                        cp("Chain", "embroidery.chenille.set", json!({ "stitch": "chain" })),
-                        cp("Moss", "embroidery.chenille.set", json!({ "stitch": "moss" })),
-                        cp("Lockstitch", "embroidery.chenille.set", json!({ "stitch": "none" })),
-                        Sep,
-                        c("Compound Chenille…", "embroidery.chenille.compound"),
-                    ],
-                ),
-                sub("Longarm Quilting", quilting_items()),
-            ],
-        ),
-        sub(
-            "Embroidery Fonts",
-            vec![
-                c("Get Embroidery Fonts…", "ui.fontLibrary"),
-                Sep,
-                c("New Embroidery Font", "embroidery.fontDoc.new"),
-                c("Save Embroidery Font…", "ui.saveEmbroideryFont"),
-            ],
-        ),
-        sub("Export Machine File", machine_file_items()),
-        Sep,
-        sub(
-            "Panels",
-            vec![
-                panel("Embroidery", "embroidery"),
-                panel("Stitch Sequence", "stitchSequence"),
-                panel("Stitch List", "stitchList"),
-                panel("Embroidery Styles", "embroideryStyles"),
-            ],
-        ),
-    ]
 }
 
 /// Window → … Libraries until the code-generated libraries land (disabled entries).
@@ -334,60 +57,6 @@ use Item::Sep;
 
 /// UI-level commands: (id, label, shortcut, params doc).
 pub const UI_COMMANDS: &[(&str, &str, &str, &str)] = &[
-    (
-        "file.export.embroidery",
-        "Export Machine File…",
-        "",
-        "{format?: dst|exp|jef|pes|pec|vp3|xxx|u01|dsb (dst), path?, name?, center?} write the stitch plan as a machine embroidery file (embroidery.export) to path, else a picked file (the web downloads it) → {path}",
-    ),
-    (
-        "file.export.stitchImage",
-        "Export Stitch Image…",
-        "",
-        "{path?, ppmm?, background?, margin?, view?} write the design's stitches as a PNG image (embroidery.exportImage) to path, else a picked file (the web downloads it) → {path}",
-    ),
-    (
-        "ui.embroideryCheck",
-        "Check Design",
-        "",
-        "{} run embroidery.check and list what it finds in the Embroidery panel (click a finding to select its objects) → {count}",
-    ),
-    (
-        "ui.embroideryDensity",
-        "Density Map",
-        "",
-        "{on?: bool} colour the design by how deep the thread lies (embroidery.densityMap): blue one layer, green and yellow deeper, red as deep as Check Design calls dense (toggle) → on",
-    ),
-    (
-        "ui.designFromPrompt",
-        "Design from Prompt…",
-        "",
-        "{prompt?, size?: mm (longest side), colors?: 1-12, picture?: google|openai|fal|openrouter (another service paints a picture first, with your key for it; Claude then redraws it as flat shapes), model?: that service's model id} open Design from Prompt: describe a design and Claude draws flat-colour artwork with your own Anthropic API key (or Foundry credits), which embroidery.placeArt places and digitizes → {open}",
-    ),
-    (
-        "ui.redrawImage",
-        "Redraw Image with Claude…",
-        "",
-        "{prompt?: what to change, size?: mm (longest side), colors?: 1-12} open Redraw Image with Claude for the selected image: Claude redraws it as flat-colour artwork with your own Anthropic API key (redraw only artwork you own or may use), and embroidery.placeArt places it on the image and digitizes it (desktop only) → {open}",
-    ),
-    (
-        "ui.embroideryRepeats",
-        "Show Repeats",
-        "",
-        "{columns?: 1–10, rows?: 1–10, gap?: mm (0–500)} show the whole design repeated in a grid on the canvas, columns across and rows down with a gap between the copies, to preview a repeated layout; nothing more is sewn (1 × 1: once) → {columns, rows, gap}",
-    ),
-    (
-        "ui.saveEmbroideryFont",
-        "Save Embroidery Font…",
-        "",
-        "{folder?} save the font document as an embroidery font folder (embroidery.fontDoc.save) in folder, else a picked one, and load it for lettering → the font",
-    ),
-    (
-        "ui.embroideryWidget",
-        "Digitizing Widget",
-        "",
-        "{} show or hide the embroidery digitizing widget: a dial of brushes, widths, densities, stitch lengths and shapes in the canvas's lower-left corner; showing it picks the Embroidery Brush tool → open",
-    ),
     (
         "app.language",
         "Interface Language",
@@ -715,12 +384,6 @@ pub const UI_COMMANDS: &[(&str, &str, &str, &str)] = &[
     ("window.brightness", "UI Brightness", "", "{brightness: dark|mediumDark|mediumLight|light}"),
     ("window.workspace", "Workspace", "", "{name} switch workspace (Essentials, Essentials Classic, Painting, …)"),
     ("window.workspace.reset", "Reset Essentials", "", "{} reset the current workspace"),
-    (
-        "window.experience",
-        "Experience",
-        "",
-        "{level: beginner|digitizer|business|all} how much the embroidery tools show, and the workspace for it: beginner the basic tools and the Embroidery panel's everyday sections (Embroidery Basics), digitizer every digitizing tool (Digitizing), business everything with orders and batches (Embroidery Business), all everything (Essentials) → {level, workspace}",
-    ),
     ("window.workspace.new", "New Workspace…", "", "{name?} save the current layout"),
     ("window.workspace.manage", "Manage Workspaces…", "", "{}"),
     ("window.workspace.delete", "Delete Workspace", "", "{name}"),
@@ -761,84 +424,6 @@ pub const UI_COMMANDS: &[(&str, &str, &str, &str)] = &[
         "{} opens the Save PDF dialog; with params = document.exportPdf options written to path (asked when missing; viewAfterSaving opens the file) → {path, bytes, warnings}",
     ),
     ("help.about", "About StitchFoundry", "", "{}"),
-    (
-        "ui.makeDesign",
-        "Make a Design…",
-        "",
-        "{} opens Make a Design: a step-by-step guide from words, a shape, appliqué, a picture or a sample through the hoop, thread colours and watching it sew to saving it for My Machine (embroidery.makeDesign) → {open}",
-    ),
-    (
-        "ui.quiltCheck",
-        "Check Continuous Line",
-        "",
-        "{tolerance?} whether the selected lines make one continuous line for a longarm (quilt.check), said in the status bar → as quilt.check",
-    ),
-    (
-        "file.export.quilt",
-        "Export Quilting Lines…",
-        "",
-        "{format?: plt|dxf|svg (plt), path?} the quilting lines (quilt.export: the selected, else all) as a single-stroke file to path, else a picked file (the web downloads it) → {path}",
-    ),
-    (
-        "ui.askAboutEmbroidery",
-        "Ask About Embroidery…",
-        "",
-        "{question?: text (asked at once)} open Ask About Embroidery: questions about machine embroidery or StitchFoundry answered by Claude with your own Anthropic API key (the conversation and a summary of the design open now go along; desktop only) → {open, asking}",
-    ),
-    (
-        "ui.checkSewout",
-        "Check My Sew-out…",
-        "",
-        "{photos?: [path] (added)} open Check My Sew-out: photos of a finished sew-out, the design that was sewn and a few answers about the sewing, looked at by Claude with your own Anthropic API key, which says what went wrong and offers to fix the design (in the Ask About Embroidery window) → {open, photos, error}",
-    ),
-    (
-        "ui.reportSewout",
-        "Report to StitchFoundry…",
-        "",
-        "{title?, report?, note?: text (filled in), consent?: bool, draft?: bool (Claude writes it), send?: bool} open Report to StitchFoundry for the sew-out check in the Ask window: the photos, Claude's idea of what StitchFoundry could do better and your note, sent with your leave to StitchFoundry's makers through Foundry Account, only to improve the software, never shared → {open, signedIn, drafting, sending, sent}",
-    ),
-    (
-        "ui.account",
-        "Foundry Account…",
-        "",
-        "{create?: bool (open on Create Account, else Sign In)} open Foundry Account: make an account or sign in to the StitchFoundry service or make an account, see the credits and buy more (Stripe's page opens in the browser), and choose to pay for the AI features with them instead of your own Anthropic API key (desktop and web) → {open, signedIn, server, credits, payWithCredits}",
-    ),
-    (
-        "embroidery.publishToMakerFoundry",
-        "Publish to MakerFoundry…",
-        "",
-        "{format?: pes|dst|jef|exp|vp3|xxx|pec|u01 (pes), photos?: bool (Check My Sew-out's photos go along; default: when there are some), server?: MakerFoundry's address (empty: makerfoundry.app; https://, or http:// on this computer for testing), send?: bool (send at once)} open Publish to MakerFoundry: the design, written in that format, goes with the photos to MakerFoundry as a draft in your Foundry Account (signed in with its session, which MakerFoundry doesn't keep), and the draft's page opens in the browser, where you add its title, price and licence and publish it (desktop and web) → {open, signedIn, format, photos, server, sending, url, error}",
-    ),
-    (
-        "ui.addWords",
-        "Add Words…",
-        "",
-        "{} opens Add Words: what the words say and how tall they are, sewn as satin in the middle of the design, or along the selected line (embroidery.addWords) → {open, along}",
-    ),
-    (
-        "ui.compareDesigns",
-        "Compare Designs…",
-        "",
-        "{a?, b?: \"design\" (the design open now) or a machine file's path} opens Compare Designs: two designs side by side, a picture of each and their figures with how much the second differs (embroidery.compare) → {open, result}",
-    ),
-    (
-        "ui.fontLibrary",
-        "Get Embroidery Fonts…",
-        "",
-        "{} opens Get Embroidery Fonts (desktop): the fonts of an embroidery font library (Ink/Stitch's, the project's own once published), each downloaded with a click into the Embroidery Fonts folder and loaded for lettering; not in the web demo → {open}",
-    ),
-    (
-        "ui.myMachine",
-        "My Machine…",
-        "",
-        "{} choose your embroidery machine once (embroidery.myMachine.set): its hoops, its file format, inches or millimetres, and the folder or USB stick designs are saved to → {open}",
-    ),
-    (
-        "ui.saveForMyMachine",
-        "Save for My Machine",
-        "",
-        "{folder?} write the design in My Machine's format to its folder or USB stick (embroidery.send); with no machine chosen the My Machine window opens, with no folder (or the USB stick out) one is picked first → {path, format, bytes, stitches}",
-    ),
     (
         "ui.screenSeparate",
         "Separate Colors…",
@@ -1513,89 +1098,6 @@ pub fn run_ui_command(app: &mut VectorcraftApp, id: &str, p: &Value) -> Option<R
     if let Some(result) = crate::panel_docking::command(app, id, p) {
         return Some(result);
     }
-    if id == "file.export.embroidery" {
-        let ext = p.get("format").and_then(Value::as_str).unwrap_or("dst").to_ascii_lowercase();
-        return Some(io::save_command_output(app, "embroidery.export", &ext, p.clone()).map(|path| json!({ "path": path })));
-    }
-    if id == "file.export.quilt" {
-        let ext = p.get("format").and_then(Value::as_str).unwrap_or("plt").to_ascii_lowercase();
-        return Some(io::save_command_output(app, "quilt.export", &ext, p.clone()).map(|path| json!({ "path": path })));
-    }
-    if id == "ui.quiltCheck" {
-        let r = app.run("quilt.check", if p.is_object() { p.clone() } else { json!({}) });
-        if let Ok(v) = &r {
-            let msg = if v["continuous"].as_bool() == Some(true) {
-                tl!("One continuous line, ready for a longarm").to_string()
-            } else {
-                format!(
-                    "{} {} ({} {:.1} mm)",
-                    v["joins"].as_u64().unwrap_or(0),
-                    tl!("joins needed: Join into One Line makes them"),
-                    tl!("longest"),
-                    v["longestJoin"].as_f64().unwrap_or(0.0)
-                )
-            };
-            app.status(msg);
-        }
-        return Some(r);
-    }
-    if id == "file.export.stitchImage" {
-        return Some(
-            io::save_command_output(app, "embroidery.exportImage", "png", if p.is_object() { p.clone() } else { json!({}) })
-                .map(|path| json!({ "path": path })),
-        );
-    }
-    if id == "ui.embroideryCheck" {
-        return Some(crate::embroidery::panel::run_check(app).map(|n| json!({ "count": n })));
-    }
-    if id == "ui.designFromPrompt" {
-        return Some(crate::embroidery::prompt::open(app, p));
-    }
-    if id == "ui.redrawImage" {
-        return Some(crate::embroidery::prompt::open_redraw(app, p));
-    }
-    if id == "ui.embroideryRepeats" {
-        let num = |k: &str, range: std::ops::RangeInclusive<f64>| {
-            p.get(k).and_then(Value::as_f64).filter(|v| v.is_finite()).map(|v| v.clamp(*range.start(), *range.end()))
-        };
-        let e = &mut app.embroidery;
-        if let Some(v) = num("columns", 1.0..=10.0) {
-            e.repeats[0] = v.round() as u32;
-        }
-        if let Some(v) = num("rows", 1.0..=10.0) {
-            e.repeats[1] = v.round() as u32;
-        }
-        if let Some(v) = num("gap", 0.0..=500.0) {
-            e.repeat_gap = v;
-        }
-        return Some(Ok(json!({ "columns": e.repeats[0], "rows": e.repeats[1], "gap": e.repeat_gap })));
-    }
-    if id == "ui.saveEmbroideryFont" {
-        let folder = match p.get("folder").and_then(Value::as_str) {
-            Some(f) => Some(f.to_string()),
-            None => crate::picks::folder(app),
-        };
-        return Some(match folder {
-            Some(folder) => app.run("embroidery.fontDoc.save", json!({ "folder": folder })),
-            None => Err("cancelled".into()),
-        });
-    }
-    if id == "ui.embroideryDensity" {
-        let on = p.get("on").and_then(Value::as_bool).unwrap_or(!app.embroidery.density_map);
-        app.embroidery.density_map = on;
-        return Some(Ok(json!(on)));
-    }
-    if id == "ui.embroideryWidget" {
-        if app.session.active().is_none() {
-            return Some(Err("no document".into()));
-        }
-        let open = !app.embroidery.widget.open;
-        app.embroidery.widget.open = open;
-        if open {
-            crate::embroidery::widget::load(app);
-        }
-        return Some(Ok(json!(open)));
-    }
     if id == "app.language" {
         let lang = p.get("lang").and_then(Value::as_str).unwrap_or("");
         let value = if lang.eq_ignore_ascii_case("auto") {
@@ -2031,17 +1533,6 @@ pub fn run_ui_command(app: &mut VectorcraftApp, id: &str, p: &Value) -> Option<R
         }
         "help.show" => crate::dialogs::help::open(app, p),
         "ui.calibrateLifeSize" => crate::dialogs::life_size::run(app, p),
-        "ui.myMachine" => crate::dialogs::my_machine::open(app),
-        "ui.fontLibrary" => crate::dialogs::font_library::open(app),
-        "ui.compareDesigns" => crate::dialogs::compare::open(app, p),
-        "ui.addWords" => Ok(crate::simple::open_words(app)),
-        "ui.askAboutEmbroidery" => crate::embroidery::ask::open(app, p),
-        "ui.checkSewout" => crate::embroidery::sewout::open(app, p),
-        "ui.account" => crate::embroidery::account::open(app, p),
-        "ui.reportSewout" => crate::embroidery::sewout::open_report(app, p),
-        "embroidery.publishToMakerFoundry" => crate::embroidery::publish::open(app, p),
-        "ui.makeDesign" => crate::guide::open(app),
-        "ui.saveForMyMachine" => crate::dialogs::my_machine::save(app, p),
         "ui.screenSeparate" => crate::screen_print::separate(app, p),
         "ui.screenHalftone" => crate::screen_print::halftone(app, p),
         "help.commandPalette" => {
@@ -2278,12 +1769,6 @@ fn go_to_artboard(app: &mut VectorcraftApp, p: &Value) -> Result<Value, String> 
 
 /// Checked state for toggle items.
 pub fn checked(app: &VectorcraftApp, id: &str, p: &Value) -> Option<bool> {
-    if id == "ui.embroideryDensity" {
-        return Some(app.embroidery.density_map);
-    }
-    if id == "ui.embroideryWidget" {
-        return Some(app.embroidery.widget.open);
-    }
     if id == "app.language" {
         let lang = p.get("lang").and_then(Value::as_str).unwrap_or("");
         let pref = app.session.prefs.interface_language.as_str();
@@ -2365,7 +1850,6 @@ pub fn checked(app: &VectorcraftApp, id: &str, p: &Value) -> Option<bool> {
         }
         "window.collapseDock" => app.ui.dock_collapsed,
         "window.workspace" => p.get("name").and_then(Value::as_str) == Some(app.ui.workspace.as_str()),
-        "window.experience" => p.get("level").and_then(Value::as_str) == Some(app.ui.experience.id()),
         "window.brightness" => p.get("brightness").and_then(Value::as_str).and_then(Brightness::parse) == Some(app.ui.brightness),
         "view.slices.lock" => app.session.slices_locked(),
         "object.slice.clipToArtboard" => app.session.active().is_some_and(|d| d.doc.slices_clip_to_artboard),
@@ -2885,20 +2369,7 @@ pub fn enabled(app: &VectorcraftApp, id: &str) -> bool {
         "ui.placementOptionsDialog" => selected_image(app, |_| true) || selected_placed(app),
         "ui.findLinksInFolder" => crate::picks::can(app, &crate::picks::PickRequest::Folder) && app.session.active().is_some(),
         "ui.packageDialog" | "docInfo.save" => app.session.active().is_some(),
-        "ui.embroideryWidget" | "ui.embroideryCheck" | "ui.saveForMyMachine" | "ui.addWords" => app.session.active().is_some(),
-        "ui.designFromPrompt" => app.session.active().is_some() && crate::embroidery::prompt::available(app),
         "ui.screenSeparate" | "ui.screenHalftone" => crate::picks::can(app, &crate::picks::PickRequest::Folder) && app.session.active().is_some(),
-        "ui.fontLibrary" => crate::dialogs::font_library::available(app),
-        "ui.askAboutEmbroidery" | "ui.checkSewout" | "ui.account" => crate::embroidery::prompt::available(app),
-        "ui.reportSewout" => {
-            crate::embroidery::prompt::available(app)
-                && app.embroidery.ask.mode == crate::embroidery::ask::Mode::SewOut
-                && app.embroidery.ask.last_answer().is_some()
-        }
-        "ui.redrawImage" => crate::embroidery::prompt::available(app) && crate::embroidery::prompt::selected_image(app).is_some(),
-        "embroidery.publishToMakerFoundry" => crate::embroidery::publish::enabled(app),
-        "file.export.embroidery" => app.session.embroidery_plan().is_some_and(|p| !p.is_empty()),
-        "ui.saveEmbroideryFont" => app.session.active().is_some_and(|st| st.doc.embroidery.as_deref().is_some_and(|e| e.font.is_some())),
         "ui.batchDialog" => !app.ui.action_sets.is_empty() && app.ui.action_sets.iter().any(|s| !s.actions.is_empty()),
         "ui.epsOptionsDialog" => app.session.active().is_some(),
         "file.saveForWeb" | "file.saveForWeb.browser" => app.session.active().is_some(),
@@ -2953,7 +2424,6 @@ pub fn menu_tree_named(english_names: bool) -> Vec<(&'static str, Vec<Item>)> {
             "File",
             vec![
                 c("New…", "file.newDialog"),
-                c("Make a Design…", "ui.makeDesign"),
                 c("New from Template…", "file.newFromTemplate"),
                 c("Open…", "file.open"),
                 sub("Open Recent Files", {
@@ -2968,8 +2438,6 @@ pub fn menu_tree_named(english_names: bool) -> Vec<(&'static str, Vec<Item>)> {
                 c("Close All", "file.closeAll"),
                 c("Save", "file.save"),
                 c("Save As…", "file.saveAs"),
-                c("Save for My Machine", "ui.saveForMyMachine"),
-                c("Publish to MakerFoundry…", crate::embroidery::publish::COMMAND),
                 c("Save a Copy…", "file.saveCopy"),
                 c("Save as Template…", "file.saveAsTemplate"),
                 c("Save as PDF…", "file.export.pdf"),
@@ -2985,7 +2453,6 @@ pub fn menu_tree_named(english_names: bool) -> Vec<(&'static str, Vec<Item>)> {
                         c("Export As…", "file.exportAs"),
                         c("Export As SVG…", "file.export.svg"),
                         c("Export As PNG…", "file.export.png"),
-                        sub("Machine Embroidery File", machine_file_items()),
                         c("Save for Web (Legacy)…", "file.saveForWeb"),
                     ],
                 ),
@@ -3379,7 +2846,6 @@ pub fn menu_tree_named(english_names: bool) -> Vec<(&'static str, Vec<Item>)> {
                         c("Symbol Instance", "select.same.symbolInstance"),
                         Sep,
                         c("Thread Color", "select.same.thread"),
-                        c("Stitch Type", "select.same.stitchType"),
                         Sep,
                         c("Font Family", "select.same.fontFamily"),
                         c("Font Family & Style", "select.same.fontFamilyStyle"),
@@ -3418,7 +2884,6 @@ pub fn menu_tree_named(english_names: bool) -> Vec<(&'static str, Vec<Item>)> {
             v
         }),
         ("Effect", effect_menu()),
-        ("Embroidery", embroidery_menu()),
         ("Screen Print", screen_print_menu()),
         (
             "View",
@@ -3533,15 +2998,6 @@ pub fn menu_tree_named(english_names: bool) -> Vec<(&'static str, Vec<Item>)> {
                 sub("Arrange", vec![todo("Cascade"), todo("Tile"), todo("Float in Window"), todo("Consolidate All Windows")]),
                 sub("Workspace", crate::workspaces::menu_items()),
                 sub(
-                    "Experience",
-                    vec![
-                        cp("New to Embroidery", "window.experience", json!({"level": "beginner"})),
-                        cp("Digitizer", "window.experience", json!({"level": "digitizer"})),
-                        cp("Embroidery Business", "window.experience", json!({"level": "business"})),
-                        cp("Everything", "window.experience", json!({"level": "all"})),
-                    ],
-                ),
-                sub(
                     "Toolbars",
                     vec![
                         c("Tools", "window.toolbar"),
@@ -3553,12 +3009,6 @@ pub fn menu_tree_named(english_names: bool) -> Vec<(&'static str, Vec<Item>)> {
                         c("Double Column", "window.toolbarColumns"),
                     ],
                 ),
-                Sep,
-                // StitchFoundry: the embroidery panels first, then the everyday ones; the rest by kind
-                panel("Embroidery", "embroidery"),
-                panel("Stitch Sequence", "stitchSequence"),
-                panel("Stitch List", "stitchList"),
-                panel("Embroidery Styles", "embroideryStyles"),
                 Sep,
                 panel("Layers", "layers"),
                 panel("Properties", "properties"),
@@ -3642,9 +3092,6 @@ pub fn menu_tree_named(english_names: bool) -> Vec<(&'static str, Vec<Item>)> {
                 c("Search Commands…", "help.commandPalette"),
                 c("StitchFoundry Help…", "help.show"),
                 cp("Tips", "help.show", json!({ "tips": true })),
-                c("Ask About Embroidery…", "ui.askAboutEmbroidery"),
-                c("Check My Sew-out…", "ui.checkSewout"),
-                c("Foundry Account…", "ui.account"),
                 Sep,
                 c("About StitchFoundry", "help.about"),
             ],
@@ -3823,42 +3270,6 @@ pub fn ruler_menu_body(app: &VectorcraftApp, ui: &mut egui::Ui, clicked: &mut Op
     });
 }
 
-/// The menus simple mode shows: File, Edit, View and Help with only the commands it keeps
-/// ([`crate::simple::keeps`]), and Help's Show Everything.
-fn simple_tree(tree: Vec<(&'static str, Vec<Item>)>) -> Vec<(&'static str, Vec<Item>)> {
-    fn keep(items: Vec<Item>) -> Vec<Item> {
-        let mut out: Vec<Item> = Vec::new();
-        for it in items {
-            match it {
-                Item::Cmd(_, id, ref p) if crate::simple::keeps(id, p) => out.push(it),
-                Item::Sub(label, kids) => {
-                    let kids = keep(kids);
-                    if !kids.is_empty() {
-                        out.push(Item::Sub(label, kids));
-                    }
-                }
-                Item::Sep if out.last().is_some_and(|l| !matches!(l, Item::Sep)) => out.push(Item::Sep),
-                _ => {}
-            }
-        }
-        while out.last().is_some_and(|l| matches!(l, Item::Sep)) {
-            out.pop();
-        }
-        out
-    }
-    let mut out: Vec<(&'static str, Vec<Item>)> = tree
-        .into_iter()
-        .filter(|(title, _)| matches!(*title, "File" | "Edit" | "View" | "Help"))
-        .map(|(title, items)| (title, keep(items)))
-        .filter(|(_, items)| !items.is_empty())
-        .collect();
-    if let Some((_, help)) = out.iter_mut().find(|(t, _)| *t == "Help") {
-        help.push(Item::Sep);
-        help.push(cp("Show Everything", "window.experience", json!({ "level": "all" })));
-    }
-    out
-}
-
 /// Render the menu bar.
 /// The in-window menu bar. Returns where its titles end (x): the bar itself takes the full width.
 pub fn menu_bar(app: &mut VectorcraftApp, ui: &mut egui::Ui) -> f32 {
@@ -3883,8 +3294,6 @@ pub fn menu_bar(app: &mut VectorcraftApp, ui: &mut egui::Ui) -> f32 {
     // No application menu in the window (as in Illustrator): the bar starts at File on every
     // platform. The app's menu stays in the tree: the native Mac bar takes it from there.
     let tree: Vec<(&str, Vec<Item>)> = tree.into_iter().filter(|(title, _)| *title != crate::native_menu::APP_NAME).collect();
-    // simple mode: the everyday commands of File, Edit, View and Help, nothing more
-    let tree = if crate::simple::active(app) { simple_tree(tree) } else { tree };
     let (end, open) = egui::MenuBar::new()
         .ui(ui, |ui| {
             let mut titles = Vec::with_capacity(tree.len());

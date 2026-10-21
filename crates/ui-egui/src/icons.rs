@@ -20,13 +20,6 @@ pub fn exists(name: &str) -> bool {
 pub fn tool_icon(name: &str) -> &'static str {
     match name {
         "tool-selection" => "dc-selection",
-        "tool-embroidery-brush" => "paintbrush",
-        "tool-embroidery-direction" => "dc-width",
-        "tool-embroidery-stitches" => "dc-direct",
-        "tool-embroidery-column" => "spline-pointer",
-        "tool-embroidery-motif" => "sparkles",
-        "tool-embroidery-cross" => "grid-3x3",
-        "tool-embroidery-click" => "pipette",
         "tool-direct" => "dc-direct",
         "tool-group-select" => "dc-group-select",
         "tool-magic-wand" => "wand-sparkles",

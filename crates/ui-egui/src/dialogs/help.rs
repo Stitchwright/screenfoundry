@@ -34,20 +34,8 @@ pub fn open(app: &mut VectorcraftApp, p: &Value) -> Result<Value, String> {
 
 /// Short hints: the tool they are about ("" for any), the hint.
 pub fn tips() -> Vec<(&'static str, &'static str)> {
-    vec![
-        ("embroideryDirection", tl!("Draw an inclination line across a shape to set its stitch angle; two or more lines make the stitches turn.")),
-        ("embroideryClick", tl!("Click a region of a placed image to stitch it; raise Tolerance to take in more of its shades.")),
-        ("embroideryStitches", tl!("Drag picked needle points to move them, Alt-click a stitch to add one, Delete removes them.")),
-        ("embroideryColumn", tl!("Click on one side of the column, then the other, in turn; Enter or Escape ends it.")),
-        ("embroideryBrush", tl!("The dial in the lower-left corner sets the brush, width, density, length and shape.")),
-        ("type", tl!("Type your text, then choose an embroidery font in the Lettering panel so it sews cleanly.")),
-        ("", tl!("Select art and choose Embroidery › Convert Artwork to Embroidery to digitize it in one step.")),
-        ("", tl!("Satin suits shapes up to about 7 mm wide; wider areas sew better as tatami fill.")),
-        ("", tl!("Choose a hoop in the Embroidery panel to see the sewing field round the design.")),
-        ("", tl!("Check Design in the Embroidery menu finds dense layers, long stitches and text too small to sew.")),
-        ("", tl!("Watch the design sew with the stitch player in Stitch Sequence before you send it.")),
-        ("", tl!("Export with Embroidery › Export Machine File and pick your machine's format.")),
-    ]
+    // No hints yet: the screen-printing ones come with the Separations panel (SC-3).
+    vec![]
 }
 
 /// The Help window, while open.
@@ -370,12 +358,12 @@ mod tests {
     #[test]
     fn markdown_spans_read_bold_code_and_links() {
         assert_eq!(
-            spans("Use **Cut File** (`embroidery.cutFile`), see [Hoops](#hoops)."),
+            spans("Use **Cut File** (`file.cut`), see [Hoops](#hoops)."),
             vec![
                 Span::Text("Use ".into()),
                 Span::Bold("Cut File".into()),
                 Span::Text(" (".into()),
-                Span::Code("embroidery.cutFile".into()),
+                Span::Code("file.cut".into()),
                 Span::Text("), see ".into()),
                 Span::Link("Hoops".into(), "#hoops".into()),
                 Span::Text(".".into()),
@@ -399,12 +387,12 @@ mod tests {
             });
             out.textures_delta.clear();
         }
-        app.select_tool("embroideryClick");
+        app.select_tool("pen");
         open(&mut app, &json!({})).unwrap();
         assert!(app.ui.help.open);
         let want = app.session.execute("help.forTool", &json!({})).unwrap()["id"].as_str().unwrap().to_string();
         assert_eq!(app.ui.help.topic, want);
-        open(&mut app, &json!({"topic": "hoops", "tips": true})).unwrap();
-        assert_eq!((app.ui.help.topic.as_str(), app.ui.help.tips), ("hoops", true));
+        open(&mut app, &json!({"topic": "quick-start", "tips": true})).unwrap();
+        assert_eq!((app.ui.help.topic.as_str(), app.ui.help.tips), ("quick-start", true));
     }
 }

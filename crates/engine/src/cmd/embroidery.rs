@@ -38,45 +38,6 @@ impl EmbroideryState {
     }
 }
 
-/// Start and stop bead (document points) of each selected stitched object: where
-/// its stitches begin and end in the plan.
-pub(crate) fn selection_beads(st: &crate::DocState) -> Vec<(NodeId, Point, Point)> {
-    let stitched: Vec<NodeId> = st.selection.objects.iter().copied().filter(|id| st.doc.node(*id).is_some_and(|n| n.embroidery.is_some())).collect();
-    if stitched.is_empty() {
-        return Vec::new();
-    }
-    let plan = st.embroidery.plan(&st.doc);
-    let pat = plan.pattern();
-    let first_last = |id: NodeId| {
-        let ranges = plan.records_of(id);
-        let mut it = ranges.iter().flat_map(|r| pat.stitches.get(r.clone()).unwrap_or_default().iter()).filter(|s| s.cmd == sf_core::Cmd::Stitch);
-        let first = it.next()?.pos();
-        let last = it.next_back().map_or(first, |s| s.pos());
-        let p = |q: sf_core::Point| vectorcraft_embroidery::pt(q);
-        Some((id, p(first), p(last)))
-    };
-    stitched.into_iter().filter_map(first_last).collect()
-}
-
-/// The own stitches (document points) of each selected stitched object, for the
-/// Stitch Edit tool: its frozen ones, else those its shape generates.
-pub(crate) fn selection_stitches(st: &crate::DocState) -> Vec<(NodeId, Vec<(Point, sf_core::Cmd)>)> {
-    let mut out = Vec::new();
-    let mut plan = None;
-    for id in &st.selection.objects {
-        let Some(e) = st.doc.node(*id).and_then(|n| n.embroidery.as_deref()) else { continue };
-        let list: Vec<(Point, sf_core::Cmd)> = match &e.frozen {
-            Some(f) => f.iter().map(|s| (Point::new(s.x, s.y), s.cmd)).collect(),
-            None => {
-                let plan = plan.get_or_insert_with(|| st.embroidery.plan(&st.doc));
-                plan.own_stitches(*id).iter().map(|s| (vectorcraft_embroidery::pt(s.pos()), s.cmd)).collect()
-            }
-        };
-        out.push((*id, list));
-    }
-    out
-}
-
 impl Session {
     /// The active document's stitch plan.
     pub fn embroidery_plan(&self) -> Option<Arc<StitchPlan>> {

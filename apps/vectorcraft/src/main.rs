@@ -22,7 +22,6 @@ compile_error!("windows7 requires --target x86_64-win7-windows-msvc; the ordinar
 #[cfg(all(target_vendor = "win7", not(feature = "windows7")))]
 compile_error!("the win7 target requires --no-default-features --features windows7");
 
-mod ai_service;
 mod automation_args;
 mod clipboard;
 #[cfg(feature = "wgpu")]
@@ -571,11 +570,6 @@ fn services(parent: Parent, ui: egui::Context) -> Services {
         screen_color: Some(mac_screen_color::sampler(sampled_ui)),
         // File → Print: the system's printers and print queue.
         print: Some(Box::new(printing::SystemPrint)),
-        // Embroidery › Design from Prompt: the request to the AI service, and the API key kept in a
-        // file of its own next to the settings (not kept in runs without preferences).
-        http_post: Some(std::sync::Arc::new(ai_service::post)),
-        http_get: Some(std::sync::Arc::new(ai_service::get)),
-        secrets: Some(Box::new(ai_service::SecretFiles::new(prefs_path().and_then(|p| Some(p.parent()?.to_path_buf())).filter(|_| prefs_enabled())))),
         ..Default::default()
     }
 }
@@ -1126,18 +1120,6 @@ mod tests {
         ("af", "application/x-affinity"),
         ("afdesign", "application/x-affinity"),
         ("afpub", "application/x-affinity"),
-        ("dst", "application/x-embroidery-dst"),
-        ("exp", "application/x-embroidery-exp"),
-        ("jef", "application/x-embroidery-jef"),
-        ("pes", "application/x-embroidery-pes"),
-        ("pec", "application/x-embroidery-pec"),
-        ("vp3", "application/x-embroidery-vp3"),
-        ("xxx", "application/x-embroidery-xxx"),
-        ("u01", "application/x-embroidery-u01"),
-        ("pcs", "application/x-embroidery-pcs"),
-        ("tap", "application/x-embroidery-tap"),
-        ("dsb", "application/x-embroidery-dsb"),
-        ("dsz", "application/x-embroidery-dsz"),
     ];
 
     /// The types in `LINUX_TYPES` that shared-mime-info defines. The MIME package declares every

@@ -16,10 +16,8 @@ pub mod color_balance;
 pub mod color_guide_options;
 mod color_picker;
 mod command;
-pub mod compare;
 pub mod confirm;
 pub mod corners;
-mod design_prompt;
 pub mod dimension;
 mod document_setup;
 pub mod dxf_import;
@@ -37,7 +35,6 @@ pub mod find_links;
 pub mod flare_options;
 pub mod flatten;
 pub mod flattener_presets;
-pub mod font_library;
 mod form;
 pub(crate) mod free_distort;
 pub mod freehand;
@@ -60,7 +57,6 @@ pub mod live_paint_selection;
 pub mod missing_fonts;
 pub mod missing_links;
 pub(crate) mod modal;
-pub mod my_machine;
 pub mod new_color_group;
 mod new_document;
 pub mod new_swatch;
@@ -352,7 +348,6 @@ registry! {
     LayerOptions: [layer_options::KIND] => layer_options::SPEC,
     LayersPanelOptions: [layers_panel_options::KIND] => layers_panel_options::SPEC,
     RearrangeArtboards: [rearrange_artboards::KIND] => rearrange_artboards::SPEC,
-    DesignFromPrompt: [crate::embroidery::prompt::KIND] => design_prompt::SPEC,
     ShortcutImport: [shortcut_import::KIND] => DialogSpec::window(shortcut_import::show, shortcut_import::confirm),
 }
 
@@ -399,10 +394,6 @@ pub fn cancel(app: &mut VectorcraftApp) {
         if spec(&d.kind).preview {
             let _ = app.session.cancel_interaction();
         }
-        // Design from Prompt stops waiting for the drawing on its way.
-        if d.kind == crate::embroidery::prompt::KIND {
-            crate::embroidery::prompt::cancel(app);
-        }
         app.ui.dialog = parent(&d);
     }
     settle(app);
@@ -439,10 +430,6 @@ pub fn show(app: &mut VectorcraftApp, ctx: &egui::Context) {
     about::show(app, ctx);
     help::show(app, ctx);
     life_size::show(app, ctx);
-    my_machine::show(app, ctx);
-    font_library::show(app, ctx);
-    compare::show(app, ctx);
-    crate::guide::show(app, ctx);
     settle(app);
     confirm::show_waiting(app);
     // The kind of dialog shown last frame: a different one (or none) means this one just opened, and
