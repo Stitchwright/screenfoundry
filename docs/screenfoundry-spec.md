@@ -43,7 +43,8 @@ Known simplifications to fix:
   simulated-process (overlapping halftone channels), no index-colour dithering.
 - Trap and choke use one global radius; no per-pair or per-edge control.
 - Film is `Bitmap1` in memory only: no TIFF/PDF export yet.
-- The app shell still carries the StitchFoundry name and icons (the rename task, SC-9).
+- The app icon artwork is still StitchFoundry's (renamed files, old picture): a new original icon is part of SC-9.
+- The bug-report page of the StitchHub still knows this app as `stitchfoundry` (`help.rs`); switch it when the hub has `screenfoundry`.
 
 ## 4. Roadmap
 
@@ -57,7 +58,7 @@ Known simplifications to fix:
 | SC-6 | Index colour with a fixed ink palette and non-overlapping patterns | Palette selection per the research. |
 | SC-7 | Stochastic (FM) and hybrid screening | Check void-and-cluster patent status first. |
 | SC-8 | CTS / DTF / DCS 2.0 output; job-sheet export | After SC-2. |
-| SC-9 | Rename to `screenfoundry`: binaries, window title, About and Home text, icons (original work only), packaging, CI, docs, file extension with a legacy alias | Owner chose the name `screenfoundry`. |
+| SC-9 | Rename to `screenfoundry` | Done 2026-10-21 except the icon artwork (needs a new original icon) and the hub name above. Binaries `screenfoundry` and `screenfoundry-cli`; documents save as `.screenfoundry`; `.stitchfoundry`, `.vectorcraft` and `.drawcraft` still open; settings come from the old StitchFoundry and VectorCraft folders when there are none yet. |
 | SC-10 | Calibration: print-test pages and shop feedback loop to tune the default profiles | The only way to settle the research's open conflicts. |
 
 ## 5. Decisions for the owner
@@ -74,3 +75,4 @@ Decided by the owner on 2026-10-21: remove the embroidery code (done, `docs/plan
 - 2026-10-21: created; `sc-core` separation core landed.
 - 2026-10-21: SC-1 landed: four `screen.*` engine commands, PNG films (1-bit TIFF/PDF is SC-2).
 - 2026-10-21: Screen Print menu (right of Effect) with two folder-picking items; translations for 23 languages are a machine-written first pass and need native review.
+- 2026-10-21: embroidery removed (`docs/plans/remove-embroidery.md`); app renamed to ScreenFoundry (binaries, ids, packaging, catalogs) with the old document extension and settings folder still read.

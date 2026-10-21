@@ -10,8 +10,8 @@ separations and films live in one document, with PhotoCraft-style raster tools t
 
 > [!NOTE]
 > **Pre-release, early.** The separation core (`crates/sc-core`) exists and is tested. The app
-> shell is still the inherited StitchFoundry editor; ScreenFoundry commands and panels are the next
-> milestone. Nothing has been exposed on a real screen yet: test-expose before production runs.
+> is the VectorCraft vector editor with a Screen Print menu; the Separations panel and film export
+> formats are the next milestones. Nothing has been exposed on a real screen yet: test-expose before production runs.
 
 ## What works today (`sc-core`)
 
