@@ -6376,3 +6376,13 @@ machine	Stop	停止
 	Plaster	石膏
 	Note Paper…	ノート用紙…
 	Note Paper	ノート用紙
+
+# ScreenFoundry: Screen Print menu (SC-1). Machine-written first pass, to be checked by a native speaker.
+	Screen Print	スクリーン印刷
+	Separate Colors	色を分解
+	Separate Colors…	色を分解…
+	Halftone Film	ハーフトーンフィルム
+	Halftone Film…	ハーフトーンフィルム…
+	Find Ink Colors	インク色を検出
+	Check Mesh and Line Screen	メッシュとスクリーン線数を確認
+	Films saved to:	フィルムの保存先:

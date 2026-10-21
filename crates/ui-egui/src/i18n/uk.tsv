@@ -6317,3 +6317,13 @@ machine	Stop	Зупинка
 	Plaster	Гіпс
 	Note Paper…	Поштовий папір…
 	Note Paper	Поштовий папір
+
+# ScreenFoundry: Screen Print menu (SC-1). Machine-written first pass, to be checked by a native speaker.
+	Screen Print	Шовкодрук
+	Separate Colors	Розділити кольори
+	Separate Colors…	Розділити кольори…
+	Halftone Film	Растрова плівка
+	Halftone Film…	Растрова плівка…
+	Find Ink Colors	Знайти кольори фарб
+	Check Mesh and Line Screen	Перевірити сітку та лініатуру
+	Films saved to:	Плівки збережено в:

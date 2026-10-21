@@ -6713,3 +6713,13 @@ swatch	Bright Violet	Kirkas violetti
 	Plaster	Kipsi
 	Note Paper…	Kirjepaperi…
 	Note Paper	Kirjepaperi
+
+# ScreenFoundry: Screen Print menu (SC-1). Machine-written first pass, to be checked by a native speaker.
+	Screen Print	Silkkipaino
+	Separate Colors	Erottele värit
+	Separate Colors…	Erottele värit…
+	Halftone Film	Rasterikalvo
+	Halftone Film…	Rasterikalvo…
+	Find Ink Colors	Etsi painovärit
+	Check Mesh and Line Screen	Tarkista seula ja rasteri
+	Films saved to:	Kalvot tallennettu kansioon:

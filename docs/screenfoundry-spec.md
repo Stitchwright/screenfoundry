@@ -49,7 +49,7 @@ Known simplifications to fix:
 
 | Id | Task | Notes |
 |---|---|---|
-| SC-1 (done: commands `screen.palette`, `screen.advice`, `screen.separate`, `screen.halftone`; menu and panel come with SC-3) | Engine commands: `screen.palette`, `screen.separate`, `screen.underbase`, `screen.halftone`, `screen.marks` | Wrap `sc-core`; params documented; tests per command; reachable from MCP and CLI. |
+| SC-1 (done: commands `screen.palette`, `screen.advice`, `screen.separate`, `screen.halftone`; Screen Print menu with Separate Colors… and Halftone Film…; the panel comes with SC-3) | Engine commands: `screen.palette`, `screen.separate`, `screen.underbase`, `screen.halftone`, `screen.marks` | Wrap `sc-core`; params documented; tests per command; reachable from MCP and CLI. |
 | SC-2 | Film export: 1-bit TIFF (CCITT G4) and PDF per screen, at job dpi, with job-sheet page | Use permissive crates only. |
 | SC-3 | Separations panel: palette editor, per-plate preview, ink library, mesh and lpi advice | Panels read engine state only. |
 | SC-4 | Vector-first spot separation: each ink = a layer or object set; overprint/knockout, trap on paths | Uses the vector document directly; no rasterising until output. |
@@ -75,3 +75,4 @@ Known simplifications to fix:
 
 - 2026-10-21: created; `sc-core` separation core landed.
 - 2026-10-21: SC-1 landed: four `screen.*` engine commands, PNG films (1-bit TIFF/PDF is SC-2).
+- 2026-10-21: Screen Print menu (right of Embroidery) with two folder-picking items; translations for 23 languages are a machine-written first pass and need native review.

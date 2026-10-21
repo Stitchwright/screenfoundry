@@ -6300,3 +6300,13 @@ machine	Stop	停止
 	Plaster	塑膠效果
 	Note Paper…	便條紙…
 	Note Paper	便條紙
+
+# ScreenFoundry: Screen Print menu (SC-1). Machine-written first pass, to be checked by a native speaker.
+	Screen Print	絲網印刷
+	Separate Colors	分色
+	Separate Colors…	分色…
+	Halftone Film	半色調底片
+	Halftone Film…	半色調底片…
+	Find Ink Colors	尋找油墨顏色
+	Check Mesh and Line Screen	檢查網目與網線數
+	Films saved to:	底片已儲存至：

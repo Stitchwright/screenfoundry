@@ -6528,3 +6528,13 @@ file-filter	StitchFoundry Template	StitchFoundry-ის შაბლონი
 	Plaster	თაბაშირი
 	Note Paper…	ჩანაწერების ქაღალდი…
 	Note Paper	ჩანაწერების ქაღალდი
+
+# ScreenFoundry: Screen Print menu (SC-1). Machine-written first pass, to be checked by a native speaker.
+	Screen Print	აბრეშუმზე ბეჭდვა
+	Separate Colors	ფერების განცალკევება
+	Separate Colors…	ფერების განცალკევება…
+	Halftone Film	ნახევარტონური ფირი
+	Halftone Film…	ნახევარტონური ფირი…
+	Find Ink Colors	საღებავის ფერების პოვნა
+	Check Mesh and Line Screen	ბადისა და ხაზების სიხშირის შემოწმება
+	Films saved to:	ფირები შენახულია:

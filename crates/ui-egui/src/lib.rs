@@ -50,6 +50,7 @@ pub mod print;
 pub mod recovery;
 pub mod render_worker;
 pub mod screen_color;
+pub mod screen_print;
 mod scrub;
 pub mod shortcut_editor;
 pub mod shortcuts;

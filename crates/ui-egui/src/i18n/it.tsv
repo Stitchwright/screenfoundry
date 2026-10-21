@@ -6337,3 +6337,13 @@ machine	Stop	Arresto
 	Plaster	Gesso
 	Note Paper…	Carta da lettere…
 	Note Paper	Carta da lettere
+
+# ScreenFoundry: Screen Print menu (SC-1). Machine-written first pass, to be checked by a native speaker.
+	Screen Print	Serigrafia
+	Separate Colors	Separa i colori
+	Separate Colors…	Separa i colori…
+	Halftone Film	Pellicola retinata
+	Halftone Film…	Pellicola retinata…
+	Find Ink Colors	Trova i colori dell’inchiostro
+	Check Mesh and Line Screen	Controlla tessuto e retinatura
+	Films saved to:	Pellicole salvate in:

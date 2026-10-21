@@ -37,7 +37,7 @@ pub fn specs() -> Vec<CommandSpec> {
         ),
         cmd!(
             query "screen.advice",
-            "Check Mesh and Screen",
+            "Check Mesh and Line Screen",
             [],
             None,
             "{mesh: threads an inch, lpi: screen lines an inch, angle?: degrees (22.5)} whether the line screen suits the mesh, and whether the angle lines up with the mesh threads → {recommendedLpi: {min, max}, advice: [{code, message}]}",
@@ -194,7 +194,7 @@ fn film_png(b: &Bitmap1) -> Result<Vec<u8>> {
     // Black where ink must reach the garment, white elsewhere.
     let data: Vec<u8> = b.bits().iter().map(|&on| if on { 0 } else { 255 }).collect();
     let img = image::GrayImage::from_raw(b.width() as u32, b.height() as u32, data)
-        .ok_or_else(|| EngineError::Other("film encoding failed: the pixel buffer doesn't match the size".into()))?;
+        .ok_or_else(|| bad("screen", "the film's pixel buffer doesn't match its size"))?;
     let mut out = Vec::new();
     img.write_to(&mut Cursor::new(&mut out), image::ImageFormat::Png).map_err(|e| EngineError::Other(format!("PNG encoding failed: {e}")))?;
     Ok(out)

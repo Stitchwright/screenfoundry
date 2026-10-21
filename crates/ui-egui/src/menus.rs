@@ -103,6 +103,11 @@ fn quilting_items() -> Vec<Item> {
     ]
 }
 
+/// Screen Print: separations and films for screen printing (SC-1).
+fn screen_print_menu() -> Vec<Item> {
+    vec![c("Separate Colors…", "ui.screenSeparate"), c("Halftone Film…", "ui.screenHalftone")]
+}
+
 /// Embroidery: digitizing, stitch types, stitch direction and the stitch order.
 fn embroidery_menu() -> Vec<Item> {
     let ty = |label: &'static str, ty: &'static str| cp(label, "embroidery.set", json!({ "type": ty }));
@@ -833,6 +838,18 @@ pub const UI_COMMANDS: &[(&str, &str, &str, &str)] = &[
         "Save for My Machine",
         "",
         "{folder?} write the design in My Machine's format to its folder or USB stick (embroidery.send); with no machine chosen the My Machine window opens, with no folder (or the USB stick out) one is picked first → {path, format, bytes, stitches}",
+    ),
+    (
+        "ui.screenSeparate",
+        "Separate Colors…",
+        "",
+        "{folder?, ...any screen.separate parameter (dpi 600, colors 4, marks true)} pick a folder (or give one), then write one PNG film a screen for the first artboard: the colours found in the art, trapped, with registration marks (screen.separate) → the screen.separate result",
+    ),
+    (
+        "ui.screenHalftone",
+        "Halftone Film…",
+        "",
+        "{folder?, ...any screen.halftone parameter (dpi 600, marks true)} pick a folder (or give one), then write a halftone film of the first artboard (screen.halftone) → the screen.halftone result",
     ),
     (
         "ui.calibrateLifeSize",
@@ -2025,6 +2042,8 @@ pub fn run_ui_command(app: &mut VectorcraftApp, id: &str, p: &Value) -> Option<R
         "embroidery.publishToMakerFoundry" => crate::embroidery::publish::open(app, p),
         "ui.makeDesign" => crate::guide::open(app),
         "ui.saveForMyMachine" => crate::dialogs::my_machine::save(app, p),
+        "ui.screenSeparate" => crate::screen_print::separate(app, p),
+        "ui.screenHalftone" => crate::screen_print::halftone(app, p),
         "help.commandPalette" => {
             app.ui.palette_open = !app.ui.palette_open;
             app.ui.palette_query.clear();
@@ -2868,6 +2887,7 @@ pub fn enabled(app: &VectorcraftApp, id: &str) -> bool {
         "ui.packageDialog" | "docInfo.save" => app.session.active().is_some(),
         "ui.embroideryWidget" | "ui.embroideryCheck" | "ui.saveForMyMachine" | "ui.addWords" => app.session.active().is_some(),
         "ui.designFromPrompt" => app.session.active().is_some() && crate::embroidery::prompt::available(app),
+        "ui.screenSeparate" | "ui.screenHalftone" => crate::picks::can(app, &crate::picks::PickRequest::Folder) && app.session.active().is_some(),
         "ui.fontLibrary" => crate::dialogs::font_library::available(app),
         "ui.askAboutEmbroidery" | "ui.checkSewout" | "ui.account" => crate::embroidery::prompt::available(app),
         "ui.reportSewout" => {
@@ -3399,6 +3419,7 @@ pub fn menu_tree_named(english_names: bool) -> Vec<(&'static str, Vec<Item>)> {
         }),
         ("Effect", effect_menu()),
         ("Embroidery", embroidery_menu()),
+        ("Screen Print", screen_print_menu()),
         (
             "View",
             vec![

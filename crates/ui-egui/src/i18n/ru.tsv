@@ -6333,3 +6333,13 @@ machine	Stop	Остановка
 	Plaster	Гипс
 	Note Paper…	Почтовая бумага…
 	Note Paper	Почтовая бумага
+
+# ScreenFoundry: Screen Print menu (SC-1). Machine-written first pass, to be checked by a native speaker.
+	Screen Print	Шелкография
+	Separate Colors	Разделить цвета
+	Separate Colors…	Разделить цвета…
+	Halftone Film	Растровая плёнка
+	Halftone Film…	Растровая плёнка…
+	Find Ink Colors	Найти цвета красок
+	Check Mesh and Line Screen	Проверить сетку и линиатуру
+	Films saved to:	Плёнки сохранены в:

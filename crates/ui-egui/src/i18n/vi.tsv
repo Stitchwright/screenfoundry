@@ -6296,3 +6296,13 @@ machine	Stop	Dừng máy
 	Plaster	Thạch cao
 	Note Paper…	Giấy ghi chú…
 	Note Paper	Giấy ghi chú
+
+# ScreenFoundry: Screen Print menu (SC-1). Machine-written first pass, to be checked by a native speaker.
+	Screen Print	In lụa
+	Separate Colors	Tách màu
+	Separate Colors…	Tách màu…
+	Halftone Film	Phim bán sắc
+	Halftone Film…	Phim bán sắc…
+	Find Ink Colors	Tìm màu mực
+	Check Mesh and Line Screen	Kiểm tra lưới và số đường lưới
+	Films saved to:	Phim đã lưu vào:

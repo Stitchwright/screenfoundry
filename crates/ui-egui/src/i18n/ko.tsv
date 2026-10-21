@@ -6292,3 +6292,13 @@ machine	Stop	정지
 	Plaster	석고
 	Note Paper…	메모지…
 	Note Paper	메모지
+
+# ScreenFoundry: Screen Print menu (SC-1). Machine-written first pass, to be checked by a native speaker.
+	Screen Print	스크린 인쇄
+	Separate Colors	색상 분리
+	Separate Colors…	색상 분리…
+	Halftone Film	하프톤 필름
+	Halftone Film…	하프톤 필름…
+	Find Ink Colors	잉크 색상 찾기
+	Check Mesh and Line Screen	메시 및 선수 확인
+	Films saved to:	필름 저장 위치:

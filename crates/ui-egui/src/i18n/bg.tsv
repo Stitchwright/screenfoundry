@@ -6656,3 +6656,13 @@ machine	Stop	Спиране
 	Plaster	Гипс
 	Note Paper…	Хартия за писма…
 	Note Paper	Хартия за писма
+
+# ScreenFoundry: Screen Print menu (SC-1). Machine-written first pass, to be checked by a native speaker.
+	Screen Print	Ситопечат
+	Separate Colors	Разделяне на цветовете
+	Separate Colors…	Разделяне на цветовете…
+	Halftone Film	Филм с растер
+	Halftone Film…	Филм с растер…
+	Find Ink Colors	Намиране на цветовете на мастилото
+	Check Mesh and Line Screen	Проверка на мрежата и растера
+	Films saved to:	Филмите са запазени в:

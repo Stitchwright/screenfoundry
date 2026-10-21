@@ -6303,3 +6303,13 @@ effect	Soft	Weich
 	Plaster	Gipsabdruck
 	Note Paper…	Prägepapier…
 	Note Paper	Prägepapier
+
+# ScreenFoundry: Screen Print menu (SC-1). Machine-written first pass, to be checked by a native speaker.
+	Screen Print	Siebdruck
+	Separate Colors	Farben separieren
+	Separate Colors…	Farben separieren…
+	Halftone Film	Rasterfilm
+	Halftone Film…	Rasterfilm…
+	Find Ink Colors	Druckfarben ermitteln
+	Check Mesh and Line Screen	Gewebe und Raster prüfen
+	Films saved to:	Filme gespeichert in:

@@ -6648,3 +6648,13 @@ machine	Stop	Στάση
 	Plaster	Γύψος
 	Note Paper…	Χαρτί σημειώσεων…
 	Note Paper	Χαρτί σημειώσεων
+
+# ScreenFoundry: Screen Print menu (SC-1). Machine-written first pass, to be checked by a native speaker.
+	Screen Print	Μεταξοτυπία
+	Separate Colors	Διαχωρισμός χρωμάτων
+	Separate Colors…	Διαχωρισμός χρωμάτων…
+	Halftone Film	Φιλμ ημιτόνων
+	Halftone Film…	Φιλμ ημιτόνων…
+	Find Ink Colors	Εύρεση χρωμάτων μελανιού
+	Check Mesh and Line Screen	Έλεγχος πλέγματος και ράστερ
+	Films saved to:	Τα φιλμ αποθηκεύτηκαν στο:

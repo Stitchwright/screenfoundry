@@ -6539,3 +6539,13 @@ machine	Stop	Zatrzymanie
 	Plaster	Gips
 	Note Paper…	Papier listowy…
 	Note Paper	Papier listowy
+
+# ScreenFoundry: Screen Print menu (SC-1). Machine-written first pass, to be checked by a native speaker.
+	Screen Print	Sitodruk
+	Separate Colors	Rozdziel kolory
+	Separate Colors…	Rozdziel kolory…
+	Halftone Film	Film rastrowy
+	Halftone Film…	Film rastrowy…
+	Find Ink Colors	Znajdź kolory farb
+	Check Mesh and Line Screen	Sprawdź siatkę i lineaturę
+	Films saved to:	Filmy zapisano w:

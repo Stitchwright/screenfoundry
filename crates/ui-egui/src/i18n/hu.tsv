@@ -6673,3 +6673,13 @@ machine	Stop	Megállás
 	Plaster	Gipsz
 	Note Paper…	Jegyzetpapír…
 	Note Paper	Jegyzetpapír
+
+# ScreenFoundry: Screen Print menu (SC-1). Machine-written first pass, to be checked by a native speaker.
+	Screen Print	Szitanyomás
+	Separate Colors	Színszétválasztás
+	Separate Colors…	Színszétválasztás…
+	Halftone Film	Raszterfilm
+	Halftone Film…	Raszterfilm…
+	Find Ink Colors	Festékszínek keresése
+	Check Mesh and Line Screen	Szita és raszter ellenőrzése
+	Films saved to:	A filmek mentve ide:
