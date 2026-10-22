@@ -6563,3 +6563,7 @@ machine	Stop	Zatrzymanie
 
 # ScreenFoundry: ink library (SC-3). Machine-written first pass, to be checked by a native speaker.
 	Snap to Library	Dopasuj do biblioteki
+
+# ScreenFoundry: ink library commands (SC-3). Machine-written first pass, to be checked by a native speaker.
+	Ink Library	Biblioteka farb
+	Match Colors to Inks	Dopasuj kolory do farb

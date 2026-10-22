@@ -6737,3 +6737,7 @@ swatch	Bright Violet	Kirkas violetti
 
 # ScreenFoundry: ink library (SC-3). Machine-written first pass, to be checked by a native speaker.
 	Snap to Library	Sovita kirjastoon
+
+# ScreenFoundry: ink library commands (SC-3). Machine-written first pass, to be checked by a native speaker.
+	Ink Library	Painovärikirjasto
+	Match Colors to Inks	Sovita värit painoväreihin

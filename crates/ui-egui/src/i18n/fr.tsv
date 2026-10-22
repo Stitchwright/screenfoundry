@@ -6734,3 +6734,7 @@ theme	Appearance	Apparence
 
 # ScreenFoundry: ink library (SC-3). Machine-written first pass, to be checked by a native speaker.
 	Snap to Library	Aligner sur la bibliothèque
+
+# ScreenFoundry: ink library commands (SC-3). Machine-written first pass, to be checked by a native speaker.
+	Ink Library	Bibliothèque d’encres
+	Match Colors to Inks	Associer les couleurs aux encres

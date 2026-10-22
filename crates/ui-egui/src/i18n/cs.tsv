@@ -6722,3 +6722,7 @@ mark-style	Japanese	Japonské
 
 # ScreenFoundry: ink library (SC-3). Machine-written first pass, to be checked by a native speaker.
 	Snap to Library	Přichytit ke knihovně
+
+# ScreenFoundry: ink library commands (SC-3). Machine-written first pass, to be checked by a native speaker.
+	Ink Library	Knihovna barev
+	Match Colors to Inks	Přiřadit barvy k barvám

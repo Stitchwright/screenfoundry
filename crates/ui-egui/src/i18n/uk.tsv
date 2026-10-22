@@ -6344,3 +6344,7 @@ machine	Stop	Зупинка
 
 # ScreenFoundry: ink library (SC-3). Machine-written first pass, to be checked by a native speaker.
 	Snap to Library	Прив’язати до бібліотеки
+
+# ScreenFoundry: ink library commands (SC-3). Machine-written first pass, to be checked by a native speaker.
+	Ink Library	Бібліотека фарб
+	Match Colors to Inks	Підібрати фарби до кольорів

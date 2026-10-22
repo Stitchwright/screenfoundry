@@ -6676,3 +6676,7 @@ machine	Stop	Stopp
 
 # ScreenFoundry: ink library (SC-3). Machine-written first pass, to be checked by a native speaker.
 	Snap to Library	Anpassa till bibliotek
+
+# ScreenFoundry: ink library commands (SC-3). Machine-written first pass, to be checked by a native speaker.
+	Ink Library	Färgbibliotek
+	Match Colors to Inks	Matcha färger mot tryckfärger

@@ -6697,3 +6697,7 @@ machine	Stop	Megállás
 
 # ScreenFoundry: ink library (SC-3). Machine-written first pass, to be checked by a native speaker.
 	Snap to Library	Igazítás a könyvtárhoz
+
+# ScreenFoundry: ink library commands (SC-3). Machine-written first pass, to be checked by a native speaker.
+	Ink Library	Festékkönyvtár
+	Match Colors to Inks	Színek festékekhez rendelése

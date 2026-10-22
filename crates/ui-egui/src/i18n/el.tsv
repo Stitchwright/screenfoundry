@@ -6672,3 +6672,7 @@ machine	Stop	Στάση
 
 # ScreenFoundry: ink library (SC-3). Machine-written first pass, to be checked by a native speaker.
 	Snap to Library	Προσαρμογή στη βιβλιοθήκη
+
+# ScreenFoundry: ink library commands (SC-3). Machine-written first pass, to be checked by a native speaker.
+	Ink Library	Βιβλιοθήκη μελανιών
+	Match Colors to Inks	Αντιστοίχιση χρωμάτων με μελάνια

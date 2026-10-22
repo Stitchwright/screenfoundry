@@ -6614,3 +6614,7 @@ swatch	Bright Violet	Violet cerah
 
 # ScreenFoundry: ink library (SC-3). Machine-written first pass, to be checked by a native speaker.
 	Snap to Library	Sesuaikan ke pustaka
+
+# ScreenFoundry: ink library commands (SC-3). Machine-written first pass, to be checked by a native speaker.
+	Ink Library	Pustaka tinta
+	Match Colors to Inks	Cocokkan warna dengan tinta

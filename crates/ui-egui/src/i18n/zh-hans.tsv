@@ -6544,3 +6544,7 @@ machine	Stop	停止
 
 # ScreenFoundry: ink library (SC-3). Machine-written first pass, to be checked by a native speaker.
 	Snap to Library	匹配到库
+
+# ScreenFoundry: ink library commands (SC-3). Machine-written first pass, to be checked by a native speaker.
+	Ink Library	油墨库
+	Match Colors to Inks	将颜色匹配到油墨

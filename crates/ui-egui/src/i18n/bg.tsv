@@ -6680,3 +6680,7 @@ machine	Stop	Спиране
 
 # ScreenFoundry: ink library (SC-3). Machine-written first pass, to be checked by a native speaker.
 	Snap to Library	Привързване към библиотеката
+
+# ScreenFoundry: ink library commands (SC-3). Machine-written first pass, to be checked by a native speaker.
+	Ink Library	Библиотека с мастила
+	Match Colors to Inks	Съпоставяне на цветове с мастила

@@ -6578,3 +6578,7 @@ mark-style	Japanese	Japonesas
 
 # ScreenFoundry: ink library (SC-3). Machine-written first pass, to be checked by a native speaker.
 	Snap to Library	Ajustar à biblioteca
+
+# ScreenFoundry: ink library commands (SC-3). Machine-written first pass, to be checked by a native speaker.
+	Ink Library	Biblioteca de tintas
+	Match Colors to Inks	Associar cores às tintas

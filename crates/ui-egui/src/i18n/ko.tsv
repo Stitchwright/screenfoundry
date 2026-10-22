@@ -6319,3 +6319,7 @@ machine	Stop	정지
 
 # ScreenFoundry: ink library (SC-3). Machine-written first pass, to be checked by a native speaker.
 	Snap to Library	라이브러리에 맞추기
+
+# ScreenFoundry: ink library commands (SC-3). Machine-written first pass, to be checked by a native speaker.
+	Ink Library	잉크 라이브러리
+	Match Colors to Inks	색상을 잉크에 맞추기

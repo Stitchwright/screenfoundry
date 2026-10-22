@@ -6552,3 +6552,7 @@ file-filter	ScreenFoundry Template	ScreenFoundry-ის შაბლონი
 
 # ScreenFoundry: ink library (SC-3). Machine-written first pass, to be checked by a native speaker.
 	Snap to Library	ბიბლიოთეკასთან მორგება
+
+# ScreenFoundry: ink library commands (SC-3). Machine-written first pass, to be checked by a native speaker.
+	Ink Library	საღებავების ბიბლიოთეკა
+	Match Colors to Inks	ფერების საღებავებთან შეხამება

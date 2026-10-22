@@ -51,7 +51,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Match Colors to Inks",
             [],
             None,
-            "{colors: [\"#rrggbb\"] (up to 64), maxDeltaE?: how far a match may be, CIE76 (25; 0–150), library?: [{name, color}] your own inks, tried before the built-in ones} the library ink nearest each colour → {matches: [{color, name, library: \"#rrggbb\", deltaE} | null]} (null when none is within maxDeltaE)",
+            "{colors: [\"#rrggbb\"] (up to 64), maxDeltaE?: how far a match may be, CIE76 (25; 0–150), library?: [{name, color}] your own inks (tried before the built-in ones)} the library ink nearest each colour → {matches: [{color, name, library: \"#rrggbb\", deltaE} | null]} (null when none is within maxDeltaE)",
             always,
             match_inks
         ),
