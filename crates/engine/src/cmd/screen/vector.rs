@@ -45,11 +45,16 @@ struct Raw {
     /// The spot swatch the colour is linked to.
     spot: Option<String>,
     overprint: bool,
+    /// The top-level layer the shape is on (sublayers count as their layer).
+    layer: usize,
 }
 
 #[derive(Default)]
 struct Collected {
     shapes: Vec<Raw>,
+    /// The top-level layer being walked, and the name of each layer.
+    layer: usize,
+    layer_names: Vec<String>,
     /// (object, why) for what could not be separated.
     skipped: Vec<(String, String)>,
     skipped_total: usize,
@@ -77,7 +82,9 @@ fn is_transparent(n: &Node) -> bool {
 
 fn collect(doc: &Document) -> Collected {
     let mut out = Collected::default();
-    for l in &doc.layers {
+    for (i, l) in doc.layers.iter().enumerate() {
+        out.layer = i;
+        out.layer_names.push(l.name.clone().unwrap_or_else(|| format!("Layer {}", i + 1)));
         walk(doc, l, &[], &mut out);
     }
     out
@@ -187,7 +194,7 @@ fn add(doc: &Document, n: &Node, path: &PathData, rule: FillRule, paint: &Paint,
         rule = FillRule::NonZero;
     }
     if !path.is_empty() {
-        out.shapes.push(Raw { path, rule, rgb: rgb8(doc, color), spot, overprint });
+        out.shapes.push(Raw { path, rule, rgb: rgb8(doc, color), spot, overprint, layer: out.layer });
     }
 }
 
@@ -294,7 +301,7 @@ fn rasterize(r: &mut Renderer, plate: &PathData, region: Rect, scale: f64, (w, h
 }
 
 /// The inks of the job and the ink of each shape.
-fn assign_inks(p: &Value, raws: &[Raw]) -> Result<(Vec<Ink>, Vec<usize>)> {
+fn assign_inks(p: &Value, raws: &[Raw], layer_names: &[String]) -> Result<(Vec<Ink>, Vec<usize>)> {
     const C: &str = "screen.separateVector";
     let mut rgbs: Vec<[u8; 3]> = Vec::new();
     let mut names: Vec<Option<String>> = Vec::new();
@@ -315,12 +322,43 @@ fn assign_inks(p: &Value, raws: &[Raw]) -> Result<(Vec<Ink>, Vec<usize>)> {
         }
         Some(_) => return Err(bad(C, "`inks` is a list of {name?, color, mesh?}")),
     }
-    // The ink of each shape: with given inks a spot swatch takes the ink of its name, otherwise the
-    // nearest colour; without, every distinct colour or spot swatch becomes an ink.
+    let by_layer = match str_param(p, "inkBy").unwrap_or("color") {
+        "color" => false,
+        "layer" => true,
+        _ => return Err(bad(C, "`inkBy` is color or layer")),
+    };
+    // By layer the given inks only set the colour and mesh of the layer they are named for.
+    let overrides = by_layer.then(|| (std::mem::take(&mut rgbs), std::mem::take(&mut names), std::mem::take(&mut meshes)));
+    // The ink of each shape: by layer its layer's ink; else with given inks a spot swatch takes the
+    // ink of its name and otherwise the nearest colour; without, every distinct colour or spot
+    // swatch becomes an ink.
     let mut of_shape = Vec::with_capacity(raws.len());
     let mut keys: Vec<(Option<String>, [u8; 3])> = Vec::new();
+    let mut layers_seen: Vec<usize> = Vec::new();
     for r in raws {
-        let ink = if given {
+        let ink = if by_layer {
+            match layers_seen.iter().position(|&l| l == r.layer) {
+                Some(i) => Some(i),
+                None => {
+                    if layers_seen.len() >= MAX_INKS {
+                        return Err(bad(C, format!("the art has shapes on more than {MAX_INKS} layers: merge layers or use `inkBy` color")));
+                    }
+                    layers_seen.push(r.layer);
+                    let name = layer_names.get(r.layer).cloned().unwrap_or_else(|| format!("Layer {}", r.layer + 1));
+                    let given_at = overrides
+                        .as_ref()
+                        .and_then(|(_, g_names, _)| g_names.iter().position(|n| n.as_deref().is_some_and(|n| n.eq_ignore_ascii_case(&name))));
+                    let (g_rgb, g_mesh) = match (&overrides, given_at) {
+                        (Some((rgbs, _, meshes)), Some(i)) => (rgbs.get(i).copied(), meshes.get(i).copied()),
+                        _ => (None, None),
+                    };
+                    rgbs.push(g_rgb.unwrap_or(r.rgb));
+                    names.push(Some(name));
+                    meshes.push(g_mesh.unwrap_or(156.0));
+                    Some(layers_seen.len() - 1)
+                }
+            }
+        } else if given {
             let by_name = r.spot.as_ref().and_then(|s| names.iter().position(|n| n.as_deref().is_some_and(|n| n.eq_ignore_ascii_case(s))));
             by_name.or_else(|| {
                 let lab = srgb_to_lab(r.rgb);
@@ -407,7 +445,7 @@ pub(super) fn separate_vector(s: &mut Session, p: &Value) -> Result<Value> {
     if collected.shapes.len() > MAX_SHAPES {
         return Err(bad(C, format!("the art has {} shapes; at most {MAX_SHAPES} can be separated at once", collected.shapes.len())));
     }
-    let (inks, of_shape) = assign_inks(p, &collected.shapes)?;
+    let (inks, of_shape) = assign_inks(p, &collected.shapes, &collected.layer_names)?;
     let shapes: Vec<Shape> =
         collected.shapes.into_iter().zip(&of_shape).map(|(r, &ink)| Shape { path: r.path, rule: r.rule, ink, overprint: r.overprint }).collect();
     let mut per_ink = vec![0usize; inks.len()];

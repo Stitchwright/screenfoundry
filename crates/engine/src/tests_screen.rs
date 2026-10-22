@@ -678,3 +678,36 @@ fn vector_plates_can_come_as_vector_pdfs() {
     }
     let _ = std::fs::remove_dir_all(dir);
 }
+
+#[test]
+fn vector_inks_can_be_one_per_layer() {
+    let mut s = Session::new();
+    s.execute("file.new", &json!({"width": 200, "height": 100})).unwrap();
+    // Layer 1 holds a yellow and a red shape; a second layer holds the navy.
+    shape(&mut s, (0.0, 0.0, 60.0, 100.0), YELLOW);
+    shape(&mut s, (70.0, 0.0, 60.0, 100.0), "#c81e1e");
+    s.execute("layer.new", &json!({"name": "Navy Plate"})).unwrap();
+    shape(&mut s, (140.0, 0.0, 60.0, 100.0), NAVY);
+
+    let by_color = s.execute("screen.separateVector", &json!({"dpi": 100})).unwrap();
+    assert_eq!(by_color["inks"].as_array().unwrap().len(), 3, "a colour each");
+    let r = s.execute("screen.separateVector", &json!({"dpi": 100, "inkBy": "layer"})).unwrap();
+    let inks: Vec<_> = r["inks"].as_array().unwrap().iter().map(|i| (i["name"].as_str().unwrap(), i["shapes"].as_u64().unwrap())).collect();
+    assert_eq!(inks, [("Layer 1", 2), ("Navy Plate", 1)]);
+    let (names, colors): (Vec<_>, Vec<_>) =
+        r["films"].as_array().unwrap().iter().map(|f| (f["name"].as_str().unwrap(), f["color"].as_str().unwrap())).unzip();
+    assert_eq!(names, ["Layer 1", "Navy Plate"], "light to dark");
+    assert_eq!(colors, [YELLOW, NAVY], "a layer takes the colour of its first shape");
+    // Both colours of the first layer print on its one film; the navy layer's shape is on the other.
+    let (l1, nav) = (film_image(film(&r, "Layer 1")), film_image(film(&r, "Navy Plate")));
+    assert!(inked(&l1, 40, 70) && inked(&l1, 130, 70) && !inked(&l1, 250, 70));
+    assert!(inked(&nav, 250, 70) && !inked(&nav, 40, 70) && !inked(&nav, 130, 70));
+    // An ink named for the layer sets its colour and mesh.
+    let o = s
+        .execute("screen.separateVector", &json!({"dpi": 100, "inkBy": "layer", "inks": [{"name": "navy plate", "color": "#101050", "mesh": 200}]}))
+        .unwrap();
+    let f = film(&o, "Navy Plate");
+    assert_eq!((f["color"].as_str().unwrap(), f["mesh"].as_f64().unwrap()), ("#101050", 200.0));
+    assert_eq!(film(&o, "Layer 1")["mesh"], 156.0, "the others keep the defaults");
+    assert!(s.execute("screen.separateVector", &json!({"inkBy": "shape"})).is_err());
+}

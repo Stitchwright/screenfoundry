@@ -101,6 +101,10 @@ straight edge in the art is a straight edge on the film.
 - **Inks.** Give them (`inks`, each object takes the nearest one; a spot swatch takes the ink of
   its own name first) or leave them out and every distinct colour or spot swatch of the art
   becomes an ink, up to 12. `snap` names them from the ink library as usual.
+- **One ink a layer.** With `inkBy: "layer"` each layer that has shapes is one ink, named after the
+  layer and coloured by its first shape, whatever colours its shapes are (sublayers count as
+  their layer). An entry of `inks` with the layer's name sets that ink's colour and mesh. Use it
+  when the art is already organised by screen.
 - **Knockout and overprint.** A shape knocks out the other inks under it, so no ink prints where
   it will be covered, unless the shape is set to overprint (Attributes, or `object.setOverprint`):
   then the ink below prints whole and the shape prints over it.
