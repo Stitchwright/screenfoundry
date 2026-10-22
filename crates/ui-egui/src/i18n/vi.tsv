@@ -6327,3 +6327,6 @@ machine	Stop	Dừng máy
 # ScreenFoundry: ink library commands (SC-3). Machine-written first pass, to be checked by a native speaker.
 	Ink Library	Thư viện mực
 	Match Colors to Inks	Ghép màu với mực
+
+# ScreenFoundry: dot gain (SC-5). Machine-written first pass, to be checked by a native speaker.
+	Dot Gain	Độ tăng điểm

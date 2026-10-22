@@ -82,6 +82,8 @@ pub struct ScreenPrintState {
     pub trap_mm: f64,
     /// The line screen (lines per inch), for simulated process.
     pub lpi: f64,
+    /// Dot gain at 50% in percent, for simulated process (0 turns the compensation off).
+    pub dot_gain_pct: f64,
     pub marks: bool,
     pub films: Vec<PreviewFilm>,
     /// Mesh and angle advice of the last preview, one line each.
@@ -99,6 +101,7 @@ impl Default for ScreenPrintState {
             underbase: false,
             trap_mm: 0.25,
             lpi: 45.0,
+            dot_gain_pct: 0.0,
             marks: true,
             films: Vec::new(),
             advice: Vec::new(),
@@ -127,7 +130,10 @@ impl ScreenPrintState {
         }
         match self.method {
             Method::Spot => p["trapMm"] = json!(self.trap_mm),
-            Method::Simulated => p["lpi"] = json!(self.lpi),
+            Method::Simulated => {
+                p["lpi"] = json!(self.lpi);
+                p["dotGain"] = json!(self.dot_gain_pct / 100.0);
+            }
         }
         (self.method.command(), p)
     }
@@ -299,6 +305,10 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                 ui.label(RichText::new(tl!("Line Screen")).color(t.text_dim));
                 ui.add(egui::DragValue::new(&mut st.lpi).range(5.0..=150.0).speed(0.5).suffix(" lpi"));
             });
+            ui.horizontal(|ui| {
+                ui.label(RichText::new(tl!("Dot Gain")).color(t.text_dim));
+                ui.add(egui::DragValue::new(&mut st.dot_gain_pct).range(0.0..=25.0).speed(0.25).suffix(" %"));
+            });
         }
     }
     ui.checkbox(&mut st.marks, tl!("Registration Marks"));
@@ -388,6 +398,9 @@ mod tests {
         assert_eq!(cmd, "screen.simulate");
         assert_eq!(p["inks"], json!([{"name": "Navy", "color": "#0a1458", "mesh": 110.0}]));
         assert_eq!((p["lpi"].clone(), p["dpi"].clone()), (json!(45.0), json!(600.0)));
+        assert_eq!(p["dotGain"], json!(0.0));
+        st.dot_gain_pct = 20.0;
+        assert_eq!(st.request(600.0, true).1["dotGain"], json!(0.2));
         assert!(p.get("colors").is_none() && p.get("trapMm").is_none());
     }
 

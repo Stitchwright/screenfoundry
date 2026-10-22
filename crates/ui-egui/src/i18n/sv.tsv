@@ -6680,3 +6680,6 @@ machine	Stop	Stopp
 # ScreenFoundry: ink library commands (SC-3). Machine-written first pass, to be checked by a native speaker.
 	Ink Library	Färgbibliotek
 	Match Colors to Inks	Matcha färger mot tryckfärger
+
+# ScreenFoundry: dot gain (SC-5). Machine-written first pass, to be checked by a native speaker.
+	Dot Gain	Punktökning

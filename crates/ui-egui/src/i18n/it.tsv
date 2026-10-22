@@ -6368,3 +6368,6 @@ machine	Stop	Arresto
 # ScreenFoundry: ink library commands (SC-3). Machine-written first pass, to be checked by a native speaker.
 	Ink Library	Libreria inchiostri
 	Match Colors to Inks	Abbina i colori agli inchiostri
+
+# ScreenFoundry: dot gain (SC-5). Machine-written first pass, to be checked by a native speaker.
+	Dot Gain	Aumento del punto

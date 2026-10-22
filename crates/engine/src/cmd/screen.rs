@@ -8,7 +8,7 @@
 use std::io::Cursor;
 
 use sc_core::color::{parse_hex, to_hex};
-use sc_core::halftone::{DotShape, HalftoneOptions, halftone};
+use sc_core::halftone::{DotShape, HalftoneOptions, MAX_DOT_GAIN, halftone};
 use sc_core::inklib::{self, DEFAULT_MAX_DELTA_E, LibraryInk};
 use sc_core::job::{DEFAULT_ANGLES, Film, Ink, Role, SimulatedJob, SpotJob, UnderbaseOptions};
 use sc_core::jobsheet::{JobSheet, SheetFilm};
@@ -78,7 +78,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Simulated Process",
             [],
             None,
-            "{source?, dpi?, inks?: [{name?, color, mesh? (230)}], colors?: how many inks to find in the art when `inks` is not given (4; 1–8), snap?: true|{maxDeltaE? (25), library?: [{name, color}]} replace each ink by the nearest library ink and use its name when none is given, base?: \"#rrggbb\" the colour under the dots (#ffffff), underbase?: true|{name?, color?, mesh?, chokeMm?}, lpi? (45), angles?: [degrees an ink] (22.5, 67.5, 45, 15, 75, 37.5, 52.5, 7.5), shape?: round|ellipse|line (round), minDot? (0.08), maxDot? (0.95), marks?, format?: png|tiff|tiff-g4|pdf (png), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?} full-colour art as halftone dots of a few inks side by side over the base, each ink at its own screen angle, the underbase first then the inks light to dark → {dpi, width, height, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64}], advice: [{ink, code, message}]}",
+            "{source?, dpi?, inks?: [{name?, color, mesh? (230)}], colors?: how many inks to find in the art when `inks` is not given (4; 1–8), snap?: true|{maxDeltaE? (25), library?: [{name, color}]} replace each ink by the nearest library ink and use its name when none is given, base?: \"#rrggbb\" the colour under the dots (#ffffff), underbase?: true|{name?, color?, mesh?, chokeMm?}, lpi? (45), angles?: [degrees an ink] (22.5, 67.5, 45, 15, 75, 37.5, 52.5, 7.5), shape?: round|ellipse|line (round), minDot? (0.08), maxDot? (0.95), dotGain?: how much bigger a 50% dot prints than on the film (0 = off; 0.2 = a 50% dot prints as 70%; at most 0.25; the film is lightened to cancel it), marks?, format?: png|tiff|tiff-g4|pdf (png), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?} full-colour art as halftone dots of a few inks side by side over the base, each ink at its own screen angle, the underbase first then the inks light to dark → {dpi, width, height, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64}], advice: [{ink, code, message}]}",
             always,
             simulate
         ),
@@ -87,7 +87,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Halftone Film",
             [],
             None,
-            "{source?, dpi?, ink?: \"#rrggbb\" (#000000), name?, mesh? (230), lpi? (45), angle? (22.5), shape?: round|ellipse|line (round), minDot?: tones below this print nothing (0.08), maxDot?: tones above this print solid (0.95), marks?, format?: png|tiff|tiff-g4|pdf (png), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?} one ink's tones screened into dots → {dpi, width, height, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64}], advice: [{code, message}]}",
+            "{source?, dpi?, ink?: \"#rrggbb\" (#000000), name?, mesh? (230), lpi? (45), angle? (22.5), shape?: round|ellipse|line (round), minDot?: tones below this print nothing (0.08), maxDot?: tones above this print solid (0.95), dotGain?: how much bigger a 50% dot prints than on the film (0 = off; 0.2 = a 50% dot prints as 70%; at most 0.25; the film is lightened to cancel it), marks?, format?: png|tiff|tiff-g4|pdf (png), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?} one ink's tones screened into dots → {dpi, width, height, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64}], advice: [{code, message}]}",
             always,
             halftone_film
         ),
@@ -535,6 +535,7 @@ fn simulate(s: &mut Session, p: &Value) -> Result<Value> {
             shape,
             min_dot: num(p, C, "minDot", 0.08, 0.0..=1.0)?,
             max_dot: num(p, C, "maxDot", 0.95, 0.0..=1.0)?,
+            dot_gain: num(p, C, "dotGain", 0.0, 0.0..=MAX_DOT_GAIN)?,
         },
     };
     let films = job.run(&img).map_err(sc(C))?;
@@ -580,6 +581,7 @@ fn halftone_film(s: &mut Session, p: &Value) -> Result<Value> {
         shape,
         min_dot: num(p, C, "minDot", 0.08, 0.0..=1.0)?,
         max_dot: num(p, C, "maxDot", 0.95, 0.0..=1.0)?,
+        dot_gain: num(p, C, "dotGain", 0.0, 0.0..=MAX_DOT_GAIN)?,
     };
     let bitmap = halftone(&plate, &opts).map_err(sc(C))?;
     let film = Film { name: name_of(p.get("name"), "Halftone".into()), ink_rgb: ink, mesh, role: Role::Color, bitmap };

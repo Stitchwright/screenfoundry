@@ -6701,3 +6701,6 @@ machine	Stop	Megállás
 # ScreenFoundry: ink library commands (SC-3). Machine-written first pass, to be checked by a native speaker.
 	Ink Library	Festékkönyvtár
 	Match Colors to Inks	Színek festékekhez rendelése
+
+# ScreenFoundry: dot gain (SC-5). Machine-written first pass, to be checked by a native speaker.
+	Dot Gain	Pontnövekedés

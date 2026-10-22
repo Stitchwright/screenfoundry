@@ -6548,3 +6548,6 @@ machine	Stop	停止
 # ScreenFoundry: ink library commands (SC-3). Machine-written first pass, to be checked by a native speaker.
 	Ink Library	油墨库
 	Match Colors to Inks	将颜色匹配到油墨
+
+# ScreenFoundry: dot gain (SC-5). Machine-written first pass, to be checked by a native speaker.
+	Dot Gain	网点扩大

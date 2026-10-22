@@ -6407,3 +6407,6 @@ machine	Stop	停止
 # ScreenFoundry: ink library commands (SC-3). Machine-written first pass, to be checked by a native speaker.
 	Ink Library	インクライブラリ
 	Match Colors to Inks	色をインクに対応付け
+
+# ScreenFoundry: dot gain (SC-5). Machine-written first pass, to be checked by a native speaker.
+	Dot Gain	ドットゲイン

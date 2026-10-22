@@ -6684,3 +6684,6 @@ machine	Stop	Спиране
 # ScreenFoundry: ink library commands (SC-3). Machine-written first pass, to be checked by a native speaker.
 	Ink Library	Библиотека с мастила
 	Match Colors to Inks	Съпоставяне на цветове с мастила
+
+# ScreenFoundry: dot gain (SC-5). Machine-written first pass, to be checked by a native speaker.
+	Dot Gain	Разширение на точката

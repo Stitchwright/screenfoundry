@@ -6741,3 +6741,6 @@ swatch	Bright Violet	Kirkas violetti
 # ScreenFoundry: ink library commands (SC-3). Machine-written first pass, to be checked by a native speaker.
 	Ink Library	Painovärikirjasto
 	Match Colors to Inks	Sovita värit painoväreihin
+
+# ScreenFoundry: dot gain (SC-5). Machine-written first pass, to be checked by a native speaker.
+	Dot Gain	Pisteen kasvu

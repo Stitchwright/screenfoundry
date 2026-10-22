@@ -32,13 +32,38 @@ pub struct HalftoneOptions {
     pub min_dot: f64,
     /// Coverage above this prints solid (highlights between dots fill in). 0..1.
     pub max_dot: f64,
+    /// How much bigger a 50% dot prints than it is on the film (ink spreads through the mesh), as a
+    /// share of the cell: 0.2 means a 50% dot prints as 70%. The film's tones are lightened to
+    /// cancel it, so the print comes out at the intended tone. 0 turns it off; at most
+    /// [`MAX_DOT_GAIN`].
+    #[serde(default)]
+    pub dot_gain: f64,
+}
+
+/// The largest dot gain that still gives a rising curve (the printed tone reaches 100% only at 100%).
+pub const MAX_DOT_GAIN: f64 = 0.25;
+
+/// The film tone that prints as `tone` under `gain`, with printed = film + 4·gain·film·(1 − film)
+/// (the gain is greatest at 50% and zero at the ends). Both in 0..1.
+pub fn compensate_gain(tone: f64, gain: f64) -> f64 {
+    if gain <= 0.0 {
+        return tone;
+    }
+    let tone = tone.clamp(0.0, 1.0);
+    if tone == 0.0 || tone == 1.0 {
+        return tone; // the curve leaves the ends alone; avoid rounding error there
+    }
+    let k = 4.0 * gain;
+    // Solves k·f² − (1 + k)·f + tone = 0 for the root in 0..1.
+    let d = ((1.0 + k).powi(2) - 4.0 * k * tone).max(0.0);
+    ((1.0 + k - d.sqrt()) / (2.0 * k)).clamp(0.0, 1.0)
 }
 
 impl Default for HalftoneOptions {
     fn default() -> Self {
         // 22.5 degrees is the commonly cited screen-printing angle; 8% / 95% are editable
         // limits, not facts (see the research notes).
-        Self { dpi: 1200.0, lpi: 45.0, angle_deg: 22.5, shape: DotShape::Round, min_dot: 0.08, max_dot: 0.95 }
+        Self { dpi: 1200.0, lpi: 45.0, angle_deg: 22.5, shape: DotShape::Round, min_dot: 0.08, max_dot: 0.95, dot_gain: 0.0 }
     }
 }
 
@@ -83,6 +108,9 @@ fn validate(o: &HalftoneOptions) -> Result<()> {
     if !(0.0..=1.0).contains(&o.min_dot) || !(0.0..=1.0).contains(&o.max_dot) || o.min_dot > o.max_dot {
         return Err(param("min_dot/max_dot", "need 0 <= min_dot <= max_dot <= 1"));
     }
+    if !(0.0..=MAX_DOT_GAIN).contains(&o.dot_gain) {
+        return Err(param("dot_gain", format!("must be between 0 and {MAX_DOT_GAIN}")));
+    }
     Ok(())
 }
 
@@ -95,9 +123,11 @@ pub fn halftone(plate: &Gray8, o: &HalftoneOptions) -> Result<Bitmap1> {
     let n = sorted.len() as f64;
     let (w, h) = (plate.width(), plate.height());
     let mut bits = Vec::with_capacity(w * h);
+    // The film tone for each of the 256 plate values.
+    let film_tone: Vec<f64> = (0..=255u32).map(|v| compensate_gain(f64::from(v) / 255.0, o.dot_gain)).collect();
     for y in 0..h {
         for x in 0..w {
-            let tone = f64::from(plate.data().get(y * w + x).copied().unwrap_or(0)) / 255.0;
+            let tone = film_tone.get(usize::from(plate.data().get(y * w + x).copied().unwrap_or(0))).copied().unwrap_or(0.0);
             let on = if tone < o.min_dot.max(1.0 / 255.0) {
                 false
             } else if tone > o.max_dot {
@@ -125,7 +155,7 @@ mod tests {
     use super::*;
 
     fn opts(shape: DotShape, angle: f64) -> HalftoneOptions {
-        HalftoneOptions { dpi: 600.0, lpi: 50.0, angle_deg: angle, shape, min_dot: 0.0, max_dot: 1.0 }
+        HalftoneOptions { dpi: 600.0, lpi: 50.0, angle_deg: angle, shape, min_dot: 0.0, max_dot: 1.0, dot_gain: 0.0 }
     }
 
     #[test]
@@ -188,6 +218,39 @@ mod tests {
         bad(|o| o.angle_deg = f64::INFINITY);
         bad(|o| o.min_dot = 0.99); // above the default max_dot
         bad(|o| o.max_dot = 1.5);
+    }
+
+    #[test]
+    fn compensation_inverts_the_gain_curve() {
+        for gain in [0.05, 0.1, 0.2, MAX_DOT_GAIN] {
+            // Zero and full tone are untouched; every other tone is lightened, most at the middle.
+            assert_eq!((compensate_gain(0.0, gain), compensate_gain(1.0, gain)), (0.0, 1.0));
+            let mut last = 0.0;
+            for i in 1..100 {
+                let t = f64::from(i) / 100.0;
+                let film = compensate_gain(t, gain);
+                assert!(film < t && film > last, "gain {gain} tone {t}: {film}");
+                last = film;
+                // Printing the compensated film with the gain model gives the tone back.
+                let printed = film + 4.0 * gain * film * (1.0 - film);
+                assert!((printed - t).abs() < 1e-9, "gain {gain} tone {t}: printed {printed}");
+            }
+        }
+        // 20% gain: a 70% tone needs a 50% dot.
+        assert!((compensate_gain(0.7, 0.2) - 0.5).abs() < 1e-9);
+        assert_eq!(compensate_gain(0.3, 0.0), 0.3);
+    }
+
+    #[test]
+    fn dot_gain_shrinks_the_film_dots_and_is_validated() {
+        let plate = Gray8::filled(240, 240, 179).unwrap(); // 70%
+        let plain = halftone(&plate, &opts(DotShape::Round, 22.5)).unwrap().coverage();
+        let o = HalftoneOptions { dot_gain: 0.2, ..opts(DotShape::Round, 22.5) };
+        let comp = halftone(&plate, &o).unwrap().coverage();
+        assert!((plain - 0.70).abs() < 0.03 && (comp - 0.50).abs() < 0.03, "{plain} {comp}");
+        for bad in [-0.01, 0.26, f64::NAN, f64::INFINITY] {
+            assert!(halftone(&plate, &HalftoneOptions { dot_gain: bad, ..o }).is_err(), "{bad}");
+        }
     }
 
     #[test]

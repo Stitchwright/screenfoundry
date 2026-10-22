@@ -237,7 +237,15 @@ mod tests {
             base: [255, 255, 255],
             underbase: underbase.then(|| UnderbaseOptions { ink: ink("White", [255, 255, 255]), choke_px: 1.0 }),
             angles: vec![22.5, 67.5],
-            halftone: HalftoneOptions { dpi: 600.0, lpi: 50.0, angle_deg: 0.0, shape: crate::halftone::DotShape::Round, min_dot: 0.0, max_dot: 1.0 },
+            halftone: HalftoneOptions {
+                dpi: 600.0,
+                lpi: 50.0,
+                angle_deg: 0.0,
+                shape: crate::halftone::DotShape::Round,
+                min_dot: 0.0,
+                max_dot: 1.0,
+                dot_gain: 0.0,
+            },
         }
     }
 

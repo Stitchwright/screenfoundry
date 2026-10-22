@@ -6660,3 +6660,6 @@ swatch	Bright Violet	Felviolet
 # ScreenFoundry: ink library commands (SC-3). Machine-written first pass, to be checked by a native speaker.
 	Ink Library	Inktbibliotheek
 	Match Colors to Inks	Kleuren aan inkten koppelen
+
+# ScreenFoundry: dot gain (SC-5). Machine-written first pass, to be checked by a native speaker.
+	Dot Gain	Puntverbreding

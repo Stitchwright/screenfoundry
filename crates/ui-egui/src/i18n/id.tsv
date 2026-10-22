@@ -6618,3 +6618,6 @@ swatch	Bright Violet	Violet cerah
 # ScreenFoundry: ink library commands (SC-3). Machine-written first pass, to be checked by a native speaker.
 	Ink Library	Pustaka tinta
 	Match Colors to Inks	Cocokkan warna dengan tinta
+
+# ScreenFoundry: dot gain (SC-5). Machine-written first pass, to be checked by a native speaker.
+	Dot Gain	Pertambahan titik

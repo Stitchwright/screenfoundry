@@ -65,7 +65,10 @@ points and adjust them (`trapMm`, `underbase.chokeMm`) after a test print.
 (round, ellipse, line), the lines per inch (`lpi`, default 45), and the screen angle (default
 22.5°). Tones lighter than `minDot` (default 8%) print nothing, because tiny dots do not hold on
 the screen; tones darker than `maxDot` (default 95%) print solid. The film's resolution is `dpi`;
-each dot cell needs at least four film pixels.
+each dot cell needs at least four film pixels. Ink spreads through the mesh, so a printed dot comes
+out bigger than the film's. Set `dotGain` (a fraction: 0.2 means a 50% dot prints as 70%; at most
+0.25, default 0 = off) and the film's tones are lightened to cancel it, most at the middle and not
+at all at 0% and 100%. Measure the gain on a test print; it depends on mesh, ink and squeegee.
 
 ## Simulated process
 
@@ -81,8 +84,9 @@ screened at its own angle (`angles`, default 22.5°, 67.5°, 45°, 15°, 75°, �
 patterns do not clash; the underbase prints first, then the inks light to dark. Up to eight
 inks; give them (`inks`) or let ScreenFoundry find them (`colors`).
 
-It does not model dot gain, dots overlapping, or how opaque the ink is. Print a test and adjust
-the dot limits (`minDot`, `maxDot`) and the line screen before a production run.
+`dotGain` works here too (and is the Dot Gain box in the panel). It does not model dots overlapping
+or how opaque the ink is. Print a test and adjust the dot limits (`minDot`, `maxDot`), the dot gain
+and the line screen before a production run.
 
 ## Mesh and line screen
 
@@ -135,9 +139,9 @@ parameter.
 
 ## Known limits
 
-- Simulated process has no dot-gain compensation and treats dots as side by side, not
-  overlapping. Index color is not built yet.
+- Simulated process treats dots as side by side, not overlapping, and the dot gain is one number
+  for every ink. Index color is not built yet.
 - One trap width and one choke width for the whole job.
-- Films are PNG or uncompressed TIFF; no PDF, compressed TIFF, or machine-specific output yet.
+- Films are PNG, TIFF, CCITT Group 4 TIFF or PDF; no machine-specific (CTS, DTF) output yet.
 - The defaults come from published practitioner advice that disagrees in places. Test-print
   before a production run.

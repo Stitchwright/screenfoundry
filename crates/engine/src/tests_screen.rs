@@ -442,3 +442,20 @@ fn separating_with_snap_uses_library_inks_and_keeps_given_names() {
     assert!(sim["films"].as_array().unwrap().iter().any(|f| f["name"] == "Shop Blue"));
     assert!(s.execute("screen.separate", &json!({"inks": inks, "snap": 3})).is_err());
 }
+
+#[test]
+fn dot_gain_lightens_the_film_so_the_print_comes_out_right() {
+    let mut s = session();
+    let mut png = Vec::new();
+    let img = image::RgbaImage::from_pixel(120, 120, image::Rgba([77, 77, 77, 255])); // 70% black
+    image::DynamicImage::ImageRgba8(img).write_to(&mut std::io::Cursor::new(&mut png), image::ImageFormat::Png).unwrap();
+    let src = json!({"dataBase64": vectorcraft_format::base64_encode(&png)});
+    let mut cov = |p: Value| s.execute("screen.halftone", &p).unwrap()["films"][0]["coverage"].as_f64().unwrap();
+    let plain = cov(json!({"source": src, "dpi": 600, "minDot": 0, "maxDot": 1}));
+    let gain = cov(json!({"source": src, "dpi": 600, "minDot": 0, "maxDot": 1, "dotGain": 0.2}));
+    assert!((plain - 0.70).abs() < 0.05, "{plain}");
+    assert!((gain - 0.50).abs() < 0.05, "a 70% tone with 20% gain is a 50% film dot: {gain}");
+    for bad in [json!(-0.1), json!(0.3), json!("x")] {
+        assert!(s.execute("screen.halftone", &json!({"source": src, "dotGain": bad})).is_err(), "{bad}");
+    }
+}

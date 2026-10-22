@@ -6556,3 +6556,6 @@ file-filter	ScreenFoundry Template	ScreenFoundry-ის შაბლონი
 # ScreenFoundry: ink library commands (SC-3). Machine-written first pass, to be checked by a native speaker.
 	Ink Library	საღებავების ბიბლიოთეკა
 	Match Colors to Inks	ფერების საღებავებთან შეხამება
+
+# ScreenFoundry: dot gain (SC-5). Machine-written first pass, to be checked by a native speaker.
+	Dot Gain	წერტილის ზრდა

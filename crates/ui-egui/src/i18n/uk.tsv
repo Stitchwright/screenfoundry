@@ -6348,3 +6348,6 @@ machine	Stop	Зупинка
 # ScreenFoundry: ink library commands (SC-3). Machine-written first pass, to be checked by a native speaker.
 	Ink Library	Бібліотека фарб
 	Match Colors to Inks	Підібрати фарби до кольорів
+
+# ScreenFoundry: dot gain (SC-5). Machine-written first pass, to be checked by a native speaker.
+	Dot Gain	Розтискання

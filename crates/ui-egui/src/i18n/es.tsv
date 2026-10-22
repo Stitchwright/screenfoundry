@@ -6679,3 +6679,6 @@ mark-style	Japanese	Japonesas
 # ScreenFoundry: ink library commands (SC-3). Machine-written first pass, to be checked by a native speaker.
 	Ink Library	Biblioteca de tintas
 	Match Colors to Inks	Asociar colores con tintas
+
+# ScreenFoundry: dot gain (SC-5). Machine-written first pass, to be checked by a native speaker.
+	Dot Gain	Ganancia de punto

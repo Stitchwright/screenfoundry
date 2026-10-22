@@ -6567,3 +6567,6 @@ machine	Stop	Zatrzymanie
 # ScreenFoundry: ink library commands (SC-3). Machine-written first pass, to be checked by a native speaker.
 	Ink Library	Biblioteka farb
 	Match Colors to Inks	Dopasuj kolory do farb
+
+# ScreenFoundry: dot gain (SC-5). Machine-written first pass, to be checked by a native speaker.
+	Dot Gain	Przyrost punktu
