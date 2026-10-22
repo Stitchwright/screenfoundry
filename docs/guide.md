@@ -28,6 +28,10 @@ channel, the command-line tool and the MCP server.
    them to the folder as PNG files, with registration marks.
 4. Print the films on film positive and expose the screens.
 
+The **Screen Print** panel (Window › Screen Print) does the same with live feedback: choose the
+method, press **Find Colors**, edit the inks, then **Preview** to see each film and how much of
+the art it covers, or **Save Films…**.
+
 For a photo or a tonal image in one ink, choose **Screen Print › Halftone Film…** instead.
 
 ## Colors and inks

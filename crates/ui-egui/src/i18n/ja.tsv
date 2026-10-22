@@ -6389,3 +6389,14 @@ machine	Stop	停止
 
 # ScreenFoundry: Simulated Process (SC-5). Machine-written first pass, to be checked by a native speaker.
 	Simulated Process	シミュレーテッドプロセス
+
+# ScreenFoundry: Screen Print panel (SC-3). Machine-written first pass, to be checked by a native speaker.
+	Find Colors	色を検出
+	Line Screen	線数
+	Registration Marks	トンボ
+	Save Films…	フィルムを保存…
+	Trap	トラッピング
+	Underbase	下刷り
+
+# ScreenFoundry: Screen Print panel (SC-3), machine-written first pass.
+	Mesh	メッシュ

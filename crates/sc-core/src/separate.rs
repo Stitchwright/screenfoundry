@@ -6,6 +6,8 @@
 //!
 //! Simulated-process separation (overlapping halftone channels) is the next stage; see the spec.
 
+use std::collections::HashMap;
+
 use crate::color::{delta_e_sq, srgb_to_lab};
 use crate::error::{Result, param};
 use crate::image::{Gray8, Rgba8};
@@ -66,16 +68,38 @@ pub fn extract_palette(img: &Rgba8, k: usize) -> Result<Vec<[u8; 3]>> {
         }
     }
 
-    // Report the mean sRGB of each cluster's members, ordered by size.
+    // Report one colour per cluster, ordered by size. Flat art has anti-aliased edges whose blended
+    // pixels would pull a mean off the fill, so when one exact colour makes up most of a cluster
+    // that colour is reported; otherwise (photographs) the cluster's mean.
     let mut acc = vec![([0u64; 3], 0u64); centers.len()];
+    let mut counts: Vec<HashMap<[u8; 3], u64>> = vec![HashMap::new(); centers.len()];
     for (a, s) in assign.iter().zip(&samples) {
         for (sum, &v) in acc[*a].0.iter_mut().zip(s) {
             *sum += u64::from(v);
         }
         acc[*a].1 += 1;
+        *counts[*a].entry(*s).or_insert(0) += 1;
     }
-    let mut out: Vec<(u64, [u8; 3])> =
-        acc.into_iter().filter(|(_, n)| *n > 0).map(|(s, n)| (n, [(s[0] / n) as u8, (s[1] / n) as u8, (s[2] / n) as u8])).collect();
+    // A small cluster with no dominant exact colour is the blend along an edge, not an ink.
+    let total = samples.len() as u64;
+    let mut out: Vec<(u64, [u8; 3])> = acc
+        .into_iter()
+        .zip(counts)
+        .filter(|((_, n), _)| *n > 0)
+        .filter(|((_, n), seen)| {
+            let flat = seen.values().max().is_some_and(|&k| k * 2 >= *n);
+            flat || *n * 20 >= total
+        })
+        .map(|((s, n), seen)| {
+            // The most common exact colour; ties go to the smaller colour so the answer is stable.
+            let mode = seen.iter().max_by(|a, b| a.1.cmp(b.1).then(b.0.cmp(a.0))).map(|(c, k)| (*c, *k));
+            let color = match mode {
+                Some((c, k)) if k * 2 >= n => c,
+                _ => [(s[0] / n) as u8, (s[1] / n) as u8, (s[2] / n) as u8],
+            };
+            (n, color)
+        })
+        .collect();
     out.sort_by_key(|b| std::cmp::Reverse(b.0));
     Ok(out.into_iter().map(|(_, c)| c).collect())
 }
@@ -162,6 +186,49 @@ mod tests {
         let p = extract_palette(&img, 4).unwrap();
         assert_eq!(p.len(), 2);
         assert!(p.contains(&[200, 30, 30]) && p.contains(&[20, 20, 160]));
+    }
+
+    #[test]
+    fn flat_colours_stay_exact_despite_blended_edge_pixels() {
+        // Yellow on the left, navy on the right, and a few blended pixels where they meet.
+        let (yellow, navy) = ([250u8, 220, 20], [10u8, 20, 88]);
+        let blend = [130u8, 120, 54];
+        let mut img = Vec::new();
+        for _ in 0..10 {
+            for x in 0..40 {
+                let c = if x < 19 {
+                    yellow
+                } else if x == 19 || x == 20 {
+                    blend
+                } else {
+                    navy
+                };
+                img.extend_from_slice(&[c[0], c[1], c[2], 255]);
+            }
+        }
+        let p = extract_palette(&Rgba8::new(40, 10, img).unwrap(), 2).unwrap();
+        assert!(p.contains(&yellow) && p.contains(&navy), "{p:?}");
+    }
+
+    #[test]
+    fn edge_blends_are_not_inks_even_when_more_colours_are_asked_for() {
+        // Three flat colours, and a few scattered blended pixels between them.
+        let flats = [[250u8, 220, 20], [10, 20, 88], [200, 30, 30]];
+        let mut img = Vec::new();
+        for y in 0..20 {
+            for x in 0..60 {
+                let mut c = flats[x / 20];
+                if x % 20 == 0 && x > 0 && y % 4 == 0 {
+                    c = [(x * 3 + y) as u8, (y * 9) as u8, (x * 2) as u8]; // varied one-off blends
+                }
+                img.extend_from_slice(&[c[0], c[1], c[2], 255]);
+            }
+        }
+        let p = extract_palette(&Rgba8::new(60, 20, img).unwrap(), 6).unwrap();
+        assert_eq!(p.len(), 3, "{p:?}");
+        for f in flats {
+            assert!(p.contains(&f), "{f:?} in {p:?}");
+        }
     }
 
     #[test]

@@ -6533,3 +6533,11 @@ machine	Stop	停止
 
 # ScreenFoundry: Simulated Process (SC-5). Machine-written first pass, to be checked by a native speaker.
 	Simulated Process	模拟分色
+
+# ScreenFoundry: Screen Print panel (SC-3). Machine-written first pass, to be checked by a native speaker.
+	Find Colors	查找颜色
+	Line Screen	加网线数
+	Registration Marks	套准标记
+	Save Films…	保存胶片…
+	Trap	补漏白
+	Underbase	打底

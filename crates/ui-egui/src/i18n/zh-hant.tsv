@@ -6313,3 +6313,14 @@ machine	Stop	停止
 
 # ScreenFoundry: Simulated Process (SC-5). Machine-written first pass, to be checked by a native speaker.
 	Simulated Process	模擬分色
+
+# ScreenFoundry: Screen Print panel (SC-3). Machine-written first pass, to be checked by a native speaker.
+	Find Colors	尋找顏色
+	Line Screen	網線數
+	Registration Marks	套準標記
+	Save Films…	儲存底片…
+	Trap	補漏白
+	Underbase	打底
+
+# ScreenFoundry: Screen Print panel (SC-3), machine-written first pass.
+	Mesh	網目

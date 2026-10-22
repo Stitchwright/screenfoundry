@@ -6686,3 +6686,11 @@ machine	Stop	Megállás
 
 # ScreenFoundry: Simulated Process (SC-5). Machine-written first pass, to be checked by a native speaker.
 	Simulated Process	Szimulált folyamat
+
+# ScreenFoundry: Screen Print panel (SC-3). Machine-written first pass, to be checked by a native speaker.
+	Find Colors	Színek keresése
+	Line Screen	Rasztersűrűség
+	Registration Marks	Illesztőjelek
+	Save Films…	Filmek mentése…
+	Trap	Átfedés
+	Underbase	Alapréteg

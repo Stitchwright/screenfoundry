@@ -3053,6 +3053,7 @@ pub fn menu_tree_named(english_names: bool) -> Vec<(&'static str, Vec<Item>)> {
                         panel("Info", "info"),
                         panel("Document Info", "docInfo"),
                         panel("Navigator", "navigator"),
+                        panel("Screen Print", "screenPrint"),
                         panel("Attributes", "attributes"),
                         panel("Variables", crate::panels::variables::ID),
                         panel("Actions", "actions"),

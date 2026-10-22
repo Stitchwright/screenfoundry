@@ -6661,3 +6661,11 @@ machine	Stop	Στάση
 
 # ScreenFoundry: Simulated Process (SC-5). Machine-written first pass, to be checked by a native speaker.
 	Simulated Process	Προσομοιωμένη διεργασία
+
+# ScreenFoundry: Screen Print panel (SC-3). Machine-written first pass, to be checked by a native speaker.
+	Find Colors	Εύρεση χρωμάτων
+	Line Screen	Πυκνότητα ράστερ
+	Registration Marks	Σημάδια εγγραφής
+	Save Films…	Αποθήκευση φιλμ…
+	Trap	Επικάλυψη
+	Underbase	Υπόστρωμα

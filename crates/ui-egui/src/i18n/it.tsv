@@ -6350,3 +6350,14 @@ machine	Stop	Arresto
 
 # ScreenFoundry: Simulated Process (SC-5). Machine-written first pass, to be checked by a native speaker.
 	Simulated Process	Processo simulato
+
+# ScreenFoundry: Screen Print panel (SC-3). Machine-written first pass, to be checked by a native speaker.
+	Find Colors	Trova i colori
+	Line Screen	Lineatura
+	Registration Marks	Crocini di registro
+	Save Films…	Salva le pellicole…
+	Trap	Sovrapposizione
+	Underbase	Sottofondo
+
+# ScreenFoundry: Screen Print panel (SC-3), machine-written first pass.
+	Mesh	Maglia

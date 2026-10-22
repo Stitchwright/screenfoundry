@@ -6669,3 +6669,11 @@ machine	Stop	Спиране
 
 # ScreenFoundry: Simulated Process (SC-5). Machine-written first pass, to be checked by a native speaker.
 	Simulated Process	Симулиран процес
+
+# ScreenFoundry: Screen Print panel (SC-3). Machine-written first pass, to be checked by a native speaker.
+	Find Colors	Намиране на цветове
+	Line Screen	Линиатура
+	Registration Marks	Пасери
+	Save Films…	Запазване на филмите…
+	Trap	Припокриване
+	Underbase	Подложка

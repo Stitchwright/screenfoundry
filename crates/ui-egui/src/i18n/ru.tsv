@@ -6346,3 +6346,14 @@ machine	Stop	Остановка
 
 # ScreenFoundry: Simulated Process (SC-5). Machine-written first pass, to be checked by a native speaker.
 	Simulated Process	Имитация процесса
+
+# ScreenFoundry: Screen Print panel (SC-3). Machine-written first pass, to be checked by a native speaker.
+	Find Colors	Найти цвета
+	Line Screen	Линиатура
+	Registration Marks	Метки совмещения
+	Save Films…	Сохранить плёнки…
+	Trap	Треппинг
+	Underbase	Подложка
+
+# ScreenFoundry: Screen Print panel (SC-3), machine-written first pass.
+	Mesh	Сетка

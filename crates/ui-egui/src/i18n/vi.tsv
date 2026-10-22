@@ -6309,3 +6309,14 @@ machine	Stop	Dừng máy
 
 # ScreenFoundry: Simulated Process (SC-5). Machine-written first pass, to be checked by a native speaker.
 	Simulated Process	Quy trình mô phỏng
+
+# ScreenFoundry: Screen Print panel (SC-3). Machine-written first pass, to be checked by a native speaker.
+	Find Colors	Tìm màu
+	Line Screen	Số đường lưới
+	Registration Marks	Dấu căn chỉnh
+	Save Films…	Lưu phim…
+	Trap	Chồng viền
+	Underbase	Lớp lót
+
+# ScreenFoundry: Screen Print panel (SC-3), machine-written first pass.
+	Mesh	Lưới

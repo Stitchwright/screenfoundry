@@ -6541,3 +6541,11 @@ file-filter	ScreenFoundry Template	ScreenFoundry-ის შაბლონი
 
 # ScreenFoundry: Simulated Process (SC-5). Machine-written first pass, to be checked by a native speaker.
 	Simulated Process	სიმულირებული პროცესი
+
+# ScreenFoundry: Screen Print panel (SC-3). Machine-written first pass, to be checked by a native speaker.
+	Find Colors	ფერების პოვნა
+	Line Screen	ხაზების სიხშირე
+	Registration Marks	რეგისტრაციის ნიშნები
+	Save Films…	ფირების შენახვა…
+	Trap	გადაფარვა
+	Underbase	ქვედა ფენა

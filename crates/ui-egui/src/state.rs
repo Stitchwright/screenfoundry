@@ -175,6 +175,7 @@ pub const ICON_PANELS: &[(&str, &str, &str)] = &[
     ("info", "Info", "info"),
     ("docInfo", "Document Info", "dc-list-view"),
     ("navigator", "Navigator", "map"),
+    (crate::panels::screen_print::ID, "Screen Print", "printer"),
     ("separations", "Separations Preview", "printer"),
     ("imageTrace", "Image Trace", "image"),
     ("magicWand", "Magic Wand", "wand-sparkles"),
@@ -203,6 +204,7 @@ pub const ICON_PANEL_GROUPS: &[&[&str]] = &[
     &["character", "paragraph", "glyphs"],
     &["history", "actions", "info", "navigator"],
     &["variables"],
+    &["screenPrint"],
 ];
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -409,6 +411,9 @@ pub struct UiState {
     /// View › Calibrate Life Size….
     #[serde(skip)]
     pub life_size: crate::dialogs::life_size::LifeSizeState,
+    /// The Screen Print panel's inks, options and last preview.
+    #[serde(skip)]
+    pub screen_print: crate::panels::screen_print::ScreenPrintState,
     /// Recorded actions (Actions panel), persisted with the UI preferences.
     #[serde(default = "crate::panels::actions::default_sets")]
     pub action_sets: Vec<crate::panels::actions::ActionSet>,
@@ -818,6 +823,7 @@ impl Default for UiState {
             about: false,
             help: Default::default(),
             life_size: Default::default(),
+            screen_print: Default::default(),
             action_sets: crate::panels::actions::default_sets(),
             recording: None,
             shortcut_overrides: Default::default(),

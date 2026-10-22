@@ -6726,3 +6726,11 @@ swatch	Bright Violet	Kirkas violetti
 
 # ScreenFoundry: Simulated Process (SC-5). Machine-written first pass, to be checked by a native speaker.
 	Simulated Process	Simuloitu prosessi
+
+# ScreenFoundry: Screen Print panel (SC-3). Machine-written first pass, to be checked by a native speaker.
+	Find Colors	Etsi värit
+	Line Screen	Rasteritiheys
+	Registration Marks	Passerimerkit
+	Save Films…	Tallenna kalvot…
+	Trap	Limitys
+	Underbase	Aluspohja

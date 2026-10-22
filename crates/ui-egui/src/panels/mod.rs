@@ -35,6 +35,7 @@ pub mod paragraph;
 pub mod pathfinder;
 pub mod pattern_options;
 pub mod properties;
+pub mod screen_print;
 pub mod separations;
 pub mod stroke;
 pub mod svg_interactivity;
@@ -160,6 +161,7 @@ pub fn show_icon_panel(app: &mut VectorcraftApp, ui: &mut Ui, id: &str) {
         "paragraph" => paragraph::show(app, ui),
         "glyphs" => glyphs::show(app, ui),
         "navigator" => navigator::show(app, ui),
+        screen_print::ID => screen_print::show(app, ui),
         "brushes" => brushes::show(app, ui),
         "symbols" => symbols::show(app, ui),
         "patternOptions" => pattern_options::show(app, ui),
@@ -208,6 +210,7 @@ pub fn panel_menu_items(app: &mut VectorcraftApp, ui: &mut Ui, id: &str) -> bool
         "paragraph" => paragraph::menu(app, ui),
         "glyphs" => glyphs::menu(app, ui),
         "navigator" => navigator::menu(app, ui),
+        screen_print::ID => screen_print::menu(app, ui),
         "brushes" => brushes::menu(app, ui),
         "symbols" => symbols::menu(app, ui),
         "patternOptions" => pattern_options::menu(app, ui),

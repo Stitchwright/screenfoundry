@@ -6603,3 +6603,11 @@ swatch	Bright Violet	Violet cerah
 
 # ScreenFoundry: Simulated Process (SC-5). Machine-written first pass, to be checked by a native speaker.
 	Simulated Process	Proses Simulasi
+
+# ScreenFoundry: Screen Print panel (SC-3). Machine-written first pass, to be checked by a native speaker.
+	Find Colors	Temukan Warna
+	Line Screen	Kerapatan Raster
+	Registration Marks	Tanda Registrasi
+	Save Films…	Simpan Film…
+	Trap	Tumpang Tindih
+	Underbase	Alas
