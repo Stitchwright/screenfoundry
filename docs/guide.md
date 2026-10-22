@@ -107,6 +107,11 @@ straight edge in the art is a straight edge on the film.
 - **Trap and underbase.** Both are path operations. Each ink grows by `trapMm` (default 0.25 mm)
   only where a darker ink lies, so light colours tuck under dark ones and free edges stay put.
   The underbase is the art's footprint pulled in by `chokeMm`.
+- **Vector plates.** With `vectorPdf` every film also comes as a one-page vector PDF the size of
+  the artboard (black on nothing, in the `vector` entry of the film, or `NN-role-name.vector.pdf`
+  next to the film in `dir`). It holds the plate's paths as they are, trap and knockout included,
+  so a RIP can draw them at any resolution. Registration marks are drawn on the raster films
+  only.
 - **Type** is separated through its outlines, in the colours of its first style; use Create
   Outlines when characters differ in colour. Clip groups and layer clips are honoured.
 - **Left out, and said so.** Gradients, patterns, meshes, placed pictures, brush strokes, symbol

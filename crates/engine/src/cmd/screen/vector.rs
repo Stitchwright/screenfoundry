@@ -260,9 +260,8 @@ pub(super) fn trap_under(plates: &[PathData], trap: f64) -> Vec<PathData> {
         .collect()
 }
 
-/// Draw `plate` as black on nothing, without smoothing, `w` × `h` pixels over `region`, and
-/// threshold it into film.
-fn rasterize(r: &mut Renderer, plate: &PathData, region: Rect, scale: f64, (w, h): (u32, u32)) -> Result<Bitmap1> {
+/// A document whose one artboard is `region` and whose one object is `plate` filled with `ink`.
+fn plate_document(plate: &PathData, region: Rect, ink: Color) -> Result<Document> {
     const C: &str = "screen.separateVector";
     let mut doc = Document::new(region.width().max(1.0), region.height().max(1.0));
     if let Some(a) = doc.artboards.first_mut() {
@@ -270,8 +269,23 @@ fn rasterize(r: &mut Renderer, plate: &PathData, region: Rect, scale: f64, (w, h
     }
     let layer = doc.layers.first().map(|l| l.id).ok_or_else(|| bad(C, "internal: no layer"))?;
     let id = doc.alloc_id();
-    let node = Node::path(id, plate.clone(), Appearance::basic(Paint::solid(Color::BLACK), Paint::None, 0.0));
+    let node = Node::path(id, plate.clone(), Appearance::basic(Paint::solid(ink), Paint::None, 0.0));
     doc.insert(Some(layer), 0, node).map_err(|e| bad(C, e.to_string()))?;
+    Ok(doc)
+}
+
+/// `plate` as a one-page vector PDF the size of the artboard: black ink (the film's own K) on nothing.
+fn plate_pdf(plate: &PathData, region: Rect) -> Result<Vec<u8>> {
+    const C: &str = "screen.separateVector";
+    let doc = plate_document(plate, region, Color::Gray { k: 1.0 })?;
+    crate::cmd::rasterfx::export_pdf(&doc, &vectorcraft_pdf::PdfOptions::default()).map_err(|e| bad(C, e.to_string()))
+}
+
+/// Draw `plate` as black on nothing, without smoothing, `w` × `h` pixels over `region`, and
+/// threshold it into film.
+fn rasterize(r: &mut Renderer, plate: &PathData, region: Rect, scale: f64, (w, h): (u32, u32)) -> Result<Bitmap1> {
+    const C: &str = "screen.separateVector";
+    let doc = plate_document(plate, region, Color::BLACK)?;
     let view = vectorcraft_geom::Affine::scale(scale) * vectorcraft_geom::Affine::translate((-region.x0, -region.y0));
     let opts = RenderOptions { background: None, artboards: false, skip_templates: true, anti_alias: AntiAlias::None, ..Default::default() };
     let img = r.render(&doc, w, h, view, &opts);
@@ -349,6 +363,27 @@ fn assign_inks(p: &Value, raws: &[Raw]) -> Result<(Vec<Ink>, Vec<usize>)> {
     Ok((inks, of_shape))
 }
 
+/// Give each film entry in `films` its plate as a vector PDF (`vector`): a file in `dir` when
+/// there is one, else base64.
+fn attach_vector_pdfs(films: &mut [Value], paths: &[PathData], region: Rect, dir: Option<&str>) -> Result<()> {
+    for (i, (entry, path)) in films.iter_mut().zip(paths).enumerate() {
+        let pdf = plate_pdf(path, region)?;
+        let mut v = json!({ "format": "pdf" });
+        match dir {
+            Some(dir) => {
+                let role = entry["role"].as_str().unwrap_or("color").to_string();
+                let name = entry["name"].as_str().unwrap_or("film").to_string();
+                let file = format!("{}/{:02}-{}-{}.vector.pdf", dir.trim_end_matches(['/', '\\']), i + 1, role, slug(&name));
+                crate::cmd::fileio::write_file(&file, &pdf)?;
+                v["path"] = json!(file);
+            }
+            None => v["dataBase64"] = json!(vectorcraft_format::base64_encode(&pdf)),
+        }
+        entry["vector"] = v;
+    }
+    Ok(())
+}
+
 /// `screen.separateVector`: the open document's paths as one film per ink.
 pub(super) fn separate_vector(s: &mut Session, p: &Value) -> Result<Value> {
     const C: &str = "screen.separateVector";
@@ -358,6 +393,7 @@ pub(super) fn separate_vector(s: &mut Session, p: &Value) -> Result<Value> {
     let dpi = num(p, C, "dpi", DEFAULT_DPI, 25.0..=2400.0)?;
     let trap_mm = num(p, C, "trapMm", 0.25, 0.0..=5.0)?;
     let marks = bool_or(p, "marks", false);
+    let vector_pdf = bool_or(p, "vectorPdf", false);
     let fmt = FilmFormat::parse(C, p)?;
     // Lengths are millimetres in the parameters and points in the document.
     let pt = |mm: f64| mm / 25.4 * 72.0;
@@ -391,6 +427,8 @@ pub(super) fn separate_vector(s: &mut Session, p: &Value) -> Result<Value> {
 
     let mut renderer = Renderer::new();
     let mut films = Vec::with_capacity(inks.len() + 1);
+    // The path behind each film, in the same order, for the vector output.
+    let mut film_paths: Vec<PathData> = Vec::with_capacity(inks.len() + 1);
     if let Some(ub) = &underbase {
         let covered: Vec<(&PathData, FillRule)> =
             order.iter().filter(|&&i| lightness(i) < WHITE_L).filter_map(|&i| plates.get(i)).map(|q| (q, FillRule::NonZero)).collect();
@@ -404,6 +442,7 @@ pub(super) fn separate_vector(s: &mut Session, p: &Value) -> Result<Value> {
                 role: Role::Underbase,
                 bitmap: rasterize(&mut renderer, &path, region, scale, size)?,
             });
+            film_paths.push(path);
         }
     }
     for (&i, plate) in order.iter().zip(&trapped) {
@@ -415,13 +454,20 @@ pub(super) fn separate_vector(s: &mut Session, p: &Value) -> Result<Value> {
             role: Role::Color,
             bitmap: rasterize(&mut renderer, plate, region, scale, size)?,
         });
+        film_paths.push(plate.clone());
     }
 
-    let films = emit(C, films, dpi, marks, fmt, dir_param(p))?;
+    let mut films = emit(C, films, dpi, marks, fmt, dir_param(p))?;
+    if vector_pdf {
+        attach_vector_pdfs(&mut films, &film_paths, region, dir_param(p))?;
+    }
     let (w, h) = films.first().map(|f| (f["width"].clone(), f["height"].clone())).unwrap_or_default();
     let sheet = job_sheet(C, p, dpi, &films, &[], dir_param(p))?;
 
     let mut notes: Vec<String> = Vec::new();
+    if vector_pdf && marks {
+        notes.push("registration marks are on the raster films only; the vector PDFs are the plain plates".to_string());
+    }
     if collected.transparent > 0 {
         notes.push(format!("{} objects use opacity, blend modes, masks or effects; they print as solid shapes", collected.transparent));
     }

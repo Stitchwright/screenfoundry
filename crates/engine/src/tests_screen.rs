@@ -645,3 +645,36 @@ fn vector_separation_honours_clipping_masks() {
     assert!(inked(&img, 100, 70));
     assert!(!inked(&img, 60, 70) && !inked(&img, 150, 70) && !inked(&img, 250, 70));
 }
+
+#[test]
+fn vector_plates_can_come_as_vector_pdfs() {
+    let mut s = Session::new();
+    s.execute("file.new", &json!({"width": 200, "height": 100})).unwrap();
+    shape(&mut s, (0.0, 0.0, 140.0, 100.0), YELLOW);
+    shape(&mut s, (100.0, 0.0, 100.0, 100.0), NAVY);
+    // Off by default.
+    let plain = s.execute("screen.separateVector", &json!({"dpi": 100, "inks": inks()})).unwrap();
+    assert!(plain["films"][0].get("vector").is_none());
+    // Inline: one PDF a film, in the films' order, with paths and no picture.
+    let r = s.execute("screen.separateVector", &json!({"dpi": 100, "inks": inks(), "vectorPdf": true, "marks": true})).unwrap();
+    assert_eq!(r["films"].as_array().unwrap().len(), 2);
+    for f in r["films"].as_array().unwrap() {
+        assert_eq!(f["vector"]["format"], "pdf");
+        let pdf = vectorcraft_format::base64_decode(f["vector"]["dataBase64"].as_str().unwrap()).unwrap();
+        assert!(pdf.starts_with(b"%PDF-"), "{}", f["name"]);
+        let text = String::from_utf8_lossy(&pdf);
+        // The page is the artboard and holds no picture (the ProcSet always lists /ImageB and /ImageC).
+        assert!(text.contains("/MediaBox[0 0 200 100]") && !text.contains("/XObject"), "a vector page, not a bitmap: {}", f["name"]);
+    }
+    assert!(r["notes"].as_array().unwrap().iter().any(|n| n.as_str().unwrap().contains("registration marks")), "{r}");
+    // To a folder: next to the raster film, named for it.
+    let dir = vectorcraft_testkit::temp_dir("screen-vector");
+    let w = s.execute("screen.separateVector", &json!({"dpi": 100, "inks": inks(), "vectorPdf": true, "dir": dir.to_string_lossy()})).unwrap();
+    for f in w["films"].as_array().unwrap() {
+        let path = f["vector"]["path"].as_str().unwrap();
+        assert!(path.ends_with(".vector.pdf") && path.contains(&format!("-color-{}", f["name"].as_str().unwrap())), "{path}");
+        assert!(std::fs::read(path).unwrap().starts_with(b"%PDF-"));
+        assert!(f["vector"].get("dataBase64").is_none());
+    }
+    let _ = std::fs::remove_dir_all(dir);
+}
