@@ -6744,3 +6744,8 @@ swatch	Bright Violet	Kirkas violetti
 
 # ScreenFoundry: dot gain (SC-5). Machine-written first pass, to be checked by a native speaker.
 	Dot Gain	Pisteen kasvu
+
+# ScreenFoundry: index colour (SC-6). Machine-written first pass, to be checked by a native speaker.
+	Index Color	Indeksoitu väri
+	Pixel Size	Pikselin koko
+	Dither	Dithering

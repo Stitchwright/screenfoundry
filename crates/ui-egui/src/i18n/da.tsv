@@ -6621,3 +6621,8 @@ swatch	Bright Violet	Kraftig violet
 
 # ScreenFoundry: dot gain (SC-5). Machine-written first pass, to be checked by a native speaker.
 	Dot Gain	Punktilvækst
+
+# ScreenFoundry: index colour (SC-6). Machine-written first pass, to be checked by a native speaker.
+	Index Color	Indekseret farve
+	Pixel Size	Pixelstørrelse
+	Dither	Dithering

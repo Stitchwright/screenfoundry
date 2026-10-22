@@ -6337,3 +6337,8 @@ effect	Soft	Weich
 
 # ScreenFoundry: dot gain (SC-5). Machine-written first pass, to be checked by a native speaker.
 	Dot Gain	Punktzuwachs
+
+# ScreenFoundry: index colour (SC-6). Machine-written first pass, to be checked by a native speaker.
+	Index Color	Indexfarbe
+	Pixel Size	Pixelgröße
+	Dither	Dithering

@@ -6683,3 +6683,8 @@ machine	Stop	Stopp
 
 # ScreenFoundry: dot gain (SC-5). Machine-written first pass, to be checked by a native speaker.
 	Dot Gain	Punktökning
+
+# ScreenFoundry: index colour (SC-6). Machine-written first pass, to be checked by a native speaker.
+	Index Color	Indexerad färg
+	Pixel Size	Pixelstorlek
+	Dither	Dithering

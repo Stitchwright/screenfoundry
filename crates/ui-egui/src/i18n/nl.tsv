@@ -6663,3 +6663,8 @@ swatch	Bright Violet	Felviolet
 
 # ScreenFoundry: dot gain (SC-5). Machine-written first pass, to be checked by a native speaker.
 	Dot Gain	Puntverbreding
+
+# ScreenFoundry: index colour (SC-6). Machine-written first pass, to be checked by a native speaker.
+	Index Color	Geïndexeerde kleur
+	Pixel Size	Pixelgrootte
+	Dither	Dithering

@@ -6585,3 +6585,8 @@ mark-style	Japanese	Japonesas
 
 # ScreenFoundry: dot gain (SC-5). Machine-written first pass, to be checked by a native speaker.
 	Dot Gain	Ganho de ponto
+
+# ScreenFoundry: index colour (SC-6). Machine-written first pass, to be checked by a native speaker.
+	Index Color	Cor indexada
+	Pixel Size	Tamanho do pixel
+	Dither	Pontilhamento

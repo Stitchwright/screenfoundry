@@ -40,7 +40,7 @@ clippy clean with the workspace no-panic lints. Wired into the engine as `screen
 Known simplifications to fix:
 
 - Separation is hard assignment to the nearest ink: no anti-aliased edge handling, no
-  simulated-process (overlapping halftone channels), no index-colour dithering.
+  simulated-process (overlapping halftone channels), index colour is separate (`screen.index`).
 - Trap and choke use one global radius; no per-pair or per-edge control.
 - Film files are 1-bit PNG, uncompressed TIFF or CCITT Group 4 TIFF or one-page PDF (Group 4 image), plus a PDF job sheet (`jobSheet` option).
 - The app icon artwork is still StitchFoundry's (renamed files, old picture): a new original icon is part of SC-9.
@@ -55,7 +55,7 @@ Known simplifications to fix:
 | SC-3 (done: Screen Print panel with method, ink list, find colors, snap to library, underbase, trap, marks, per-film preview and save; `sc-core::inklib` generic library) | Separations panel: palette editor, per-plate preview, ink library, mesh and lpi advice | Panels read engine state only. |
 | SC-4 | Vector-first spot separation: each ink = a layer or object set; overprint/knockout, trap on paths | Uses the vector document directly; no rasterising until output. |
 | SC-5 (partly done: `screen.simulate`, dot gain) | Simulated process: spot-channel halftones over an underbase, highlight white | Done: per-pixel ink shares by optical mixing in linear light, least-ink tie-break, per-ink angles. Dot-gain compensation done (`dotGain`, one curve for all inks). Left: highlight white, ink-opacity/overlap model, an ink-limit option, per-ink gain curves. Calibrate with real shops. |
-| SC-6 | Index colour with a fixed ink palette and non-overlapping patterns | Palette selection per the research. |
+| SC-6 (done: `screen.index`, `sc-core::index`, Index Color in the panel) | Index colour with a fixed ink palette and non-overlapping patterns | Palette from the existing Lab k-means (`colors`) or the user's inks; Floyd-Steinberg error diffusion in linear light on square cells; one ink a pixel. Left: other diffusion kernels, ordered/patterned fills, palette optimisation against the dithered result. |
 | SC-7 | Stochastic (FM) and hybrid screening | Check void-and-cluster patent status first. |
 | SC-8 | CTS / DTF / DCS 2.0 output; job-sheet export | After SC-2. |
 | SC-9 | Rename to `screenfoundry` | Done 2026-10-21 except the icon artwork (needs a new original icon) and the hub name above. Binaries `screenfoundry` and `screenfoundry-cli`; documents save as `.screenfoundry`; `.stitchfoundry`, `.vectorcraft` and `.drawcraft` still open; settings come from the old StitchFoundry and VectorCraft folders when there are none yet. |
@@ -79,6 +79,7 @@ Decided by the owner on 2026-10-21: remove the embroidery code (done, `docs/plan
 - 2026-10-21: SC-2 first part: 1-bit PNG and TIFF films with their resolution (`format` option).
 - 2026-10-21: SC-5 first part: `screen.simulate` (simulated-process separation); `sc-core::simulated`.
 - 2026-10-22: SC-2: CCITT Group 4 TIFF films (`format: tiff-g4`, `fax` crate, MIT).
+- 2026-10-22: SC-6: index colour (`screen.index`; Index Color in the panel).
 - 2026-10-22: SC-5: dot-gain compensation (`dotGain` on `screen.halftone` and `screen.simulate`; Dot Gain in the panel).
 - 2026-10-22: SC-3: ink library (`sc-core::inklib`, `screen.inkLibrary`, `screen.matchInks`, `snap` option, Snap to Library button).
 - 2026-10-22: SC-2: PDF job sheet (`jobSheet` option; `sc-core::jobsheet`).

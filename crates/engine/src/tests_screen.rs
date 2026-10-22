@@ -459,3 +459,65 @@ fn dot_gain_lightens_the_film_so_the_print_comes_out_right() {
         assert!(s.execute("screen.halftone", &json!({"source": src, "dotGain": bad})).is_err(), "{bad}");
     }
 }
+
+#[test]
+fn index_prints_each_pixel_in_one_ink_and_the_films_never_overlap() {
+    let mut s = Session::new();
+    // A white-to-navy ramp over black and red inks: tone comes from how many pixels are inked.
+    let navy = [10, 20, 90];
+    let src = png_source(240, 60, |x, _| {
+        let c = mix_with_white(navy, f64::from(x) / 239.0);
+        [c[0], c[1], c[2], 255]
+    });
+    let inks = json!([{"name": "Black", "color": "#000000"}, {"name": "Red", "color": "#c81e1e"}]);
+    let r = s.execute("screen.index", &json!({"source": src, "dpi": 600, "cellMm": 0.2, "inks": inks})).unwrap();
+    let films = r["films"].as_array().unwrap();
+    let names: Vec<_> = films.iter().map(|f| f["name"].as_str().unwrap()).collect();
+    assert_eq!(names, ["Red", "Black"], "light to dark");
+    let cell = r["cellPx"].as_u64().unwrap() as u32;
+    assert_eq!(cell, 5, "0.2 mm at 600 dpi");
+    let (red, black) = (film_image(&films[0]), film_image(&films[1]));
+    for y in 0..red.height() {
+        for x in 0..red.width() {
+            assert!(!(inked(&red, x, y) && inked(&black, x, y)), "x={x} y={y}");
+            // Pixels come in whole cells.
+            assert_eq!(inked(&black, x, y), inked(&black, x - x % cell, y - y % cell), "x={x} y={y}");
+        }
+    }
+    let (left, right) = (inked_share(&films[1], 0, 60), inked_share(&films[1], 180, 240));
+    assert!(left < 0.2 && right > 0.5, "denser to the right: {left} {right}");
+}
+
+#[test]
+fn index_without_dither_is_flat_and_can_find_its_own_inks() {
+    let mut s = Session::new();
+    // Left half red, right half navy: two flat colours, found from the art, no underbase unless asked.
+    let src = png_source(100, 40, |x, _| if x < 50 { [200, 30, 30, 255] } else { [10, 20, 90, 255] });
+    let r = s.execute("screen.index", &json!({"source": src, "dpi": 300, "colors": 2, "dither": 0, "underbase": true})).unwrap();
+    let films = r["films"].as_array().unwrap();
+    assert_eq!(films.len(), 3, "underbase and two inks");
+    assert_eq!(films[0]["role"], "underbase");
+    for f in &films[1..] {
+        let c = f["coverage"].as_f64().unwrap();
+        assert!((c - 0.5).abs() < 0.03, "{}: {c}", f["name"]);
+    }
+}
+
+#[test]
+fn index_rejects_bad_parameters() {
+    let mut s = Session::new();
+    let src = png_source(8, 8, |_, _| [200, 30, 30, 255]);
+    let inks = json!([{"color": "#c81e1e"}]);
+    for bad in [
+        json!({"source": src, "inks": inks, "dither": 1.5}),
+        json!({"source": src, "inks": inks, "dither": "full"}),
+        json!({"source": src, "inks": inks, "cellMm": 0}),
+        json!({"source": src, "inks": inks, "cellMm": 9}),
+        json!({"source": src, "inks": inks, "base": "white"}),
+        json!({"source": src, "colors": 13}),
+        json!({"source": src, "inks": vec![json!({"color": "#c81e1e"}); 13]}),
+        json!({"source": src, "inks": []}),
+    ] {
+        assert!(s.execute("screen.index", &bad).is_err(), "{bad}");
+    }
+}

@@ -12,6 +12,7 @@
 //! * [`export`] – 1-bit PNG and TIFF film files with their resolution.
 //! * [`jobsheet`] – the PDF job sheet that travels with the films.
 //! * [`profile`] – mesh / lines-per-inch / angle sanity checks.
+//! * [`index`] – index colour: a fixed palette of inks, one per square pixel, by error diffusion.
 //! * [`inklib`] – a generic ink library and nearest-ink matching.
 //! * [`job`] – a serialisable job (inks, underbase, trap) and the pipeline that runs it.
 //!
@@ -24,6 +25,7 @@ pub mod error;
 pub mod export;
 pub mod halftone;
 pub mod image;
+pub mod index;
 pub mod inklib;
 pub mod job;
 pub mod jobsheet;

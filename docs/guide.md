@@ -14,6 +14,7 @@ channel, the command-line tool and the MCP server.
 - [Trap and choke](#trap-and-choke)
 - [Halftones](#halftones)
 - [Simulated process](#simulated-process)
+- [Index color](#index-color)
 - [Mesh and line screen](#mesh-and-line-screen)
 - [Registration marks](#registration-marks)
 - [Films and output](#films-and-output)
@@ -88,6 +89,22 @@ inks; give them (`inks`) or let ScreenFoundry find them (`colors`).
 or how opaque the ink is. Print a test and adjust the dot limits (`minDot`, `maxDot`), the dot gain
 and the line screen before a production run.
 
+## Index color
+
+**Index Color** (`screen.index`) reduces full-colour art to a fixed set of inks and prints each
+square pixel of the picture in exactly one of them (or in none, leaving the base). There are no
+dots, so nothing overlaps and the screens cannot moiré against each other. Give the inks (`inks`)
+or let ScreenFoundry find them (`colors`, default 6, up to 12); the base (`base`, default white)
+is the colour that shows where no ink prints.
+
+Each pixel takes the palette colour nearest to its own colour plus the error its neighbours left
+behind (Floyd-Steinberg error diffusion, worked in linear light so the average brightness
+matches the art). `dither` sets how much error spreads: 1 (default) is full diffusion for
+photographs, 0 maps every pixel to its nearest ink for flat art. `cellMm` (default 0.5 mm) is the
+side of one printed pixel: keep it several mesh threads wide or the pixels will not hold on the
+screen. The default is a starting point, not a standard; print a test. Inks print light to dark
+as usual, and `underbase` works as in simulated process.
+
 ## Mesh and line screen
 
 The mesh limits how fine a halftone can be. As a rule of thumb the line screen is between a fifth
@@ -131,6 +148,7 @@ or comes back as base64. Direct-to-screen and DTF output are planned.
 | `screen.advice` | Whether a line screen suits a mesh. |
 | `screen.separate` | One solid film per screen (spot colours). |
 | `screen.simulate` | Full colour as halftone dots of a few inks. |
+| `screen.index` | Full colour as square pixels of a fixed palette of inks. |
 | `screen.halftone` | One ink's tones as dots. |
 
 The artwork is the document's first artboard (`source: "document"`), an image file
@@ -140,7 +158,7 @@ parameter.
 ## Known limits
 
 - Simulated process treats dots as side by side, not overlapping, and the dot gain is one number
-  for every ink. Index color is not built yet.
+  for every ink. 
 - One trap width and one choke width for the whole job.
 - Films are PNG, TIFF, CCITT Group 4 TIFF or PDF; no machine-specific (CTS, DTF) output yet.
 - The defaults come from published practitioner advice that disagrees in places. Test-print

@@ -6687,3 +6687,8 @@ machine	Stop	Спиране
 
 # ScreenFoundry: dot gain (SC-5). Machine-written first pass, to be checked by a native speaker.
 	Dot Gain	Разширение на точката
+
+# ScreenFoundry: index colour (SC-6). Machine-written first pass, to be checked by a native speaker.
+	Index Color	Индексиран цвят
+	Pixel Size	Размер на пиксела
+	Dither	Дитеринг

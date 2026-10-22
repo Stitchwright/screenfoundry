@@ -9,8 +9,9 @@ use std::io::Cursor;
 
 use sc_core::color::{parse_hex, to_hex};
 use sc_core::halftone::{DotShape, HalftoneOptions, MAX_DOT_GAIN, halftone};
+use sc_core::index::{MAX_CELL_PX, MAX_INDEX_INKS};
 use sc_core::inklib::{self, DEFAULT_MAX_DELTA_E, LibraryInk};
-use sc_core::job::{DEFAULT_ANGLES, Film, Ink, Role, SimulatedJob, SpotJob, UnderbaseOptions};
+use sc_core::job::{DEFAULT_ANGLES, Film, IndexJob, Ink, Role, SimulatedJob, SpotJob, UnderbaseOptions};
 use sc_core::jobsheet::{JobSheet, SheetFilm};
 use sc_core::marks::{MarkSpec, frame_with_marks};
 use sc_core::profile::{Advice, check, recommended_lpi_range};
@@ -81,6 +82,15 @@ pub fn specs() -> Vec<CommandSpec> {
             "{source?, dpi?, inks?: [{name?, color, mesh? (230)}], colors?: how many inks to find in the art when `inks` is not given (4; 1–8), snap?: true|{maxDeltaE? (25), library?: [{name, color}]} replace each ink by the nearest library ink and use its name when none is given, base?: \"#rrggbb\" the colour under the dots (#ffffff), underbase?: true|{name?, color?, mesh?, chokeMm?}, lpi? (45), angles?: [degrees an ink] (22.5, 67.5, 45, 15, 75, 37.5, 52.5, 7.5), shape?: round|ellipse|line (round), minDot? (0.08), maxDot? (0.95), dotGain?: how much bigger a 50% dot prints than on the film (0 = off; 0.2 = a 50% dot prints as 70%; at most 0.25; the film is lightened to cancel it), marks?, format?: png|tiff|tiff-g4|pdf (png), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?} full-colour art as halftone dots of a few inks side by side over the base, each ink at its own screen angle, the underbase first then the inks light to dark → {dpi, width, height, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64}], advice: [{ink, code, message}]}",
             always,
             simulate
+        ),
+        cmd!(
+            "screen.index",
+            "Index Color",
+            [],
+            None,
+            "{source?, dpi?, inks?: [{name?, color, mesh? (156)}], colors?: how many inks to find in the art when `inks` is not given (6; 1–12), snap?: true|{maxDeltaE? (25), library?: [{name, color}]} replace each ink by the nearest library ink and use its name when none is given, base?: \"#rrggbb\" the colour under the pixels (#ffffff), underbase?: true|{name?, color?, mesh?, chokeMm?}, cellMm?: side of one printed pixel in millimetres (0.5; 0.05–5), dither?: how much of each pixel's error spreads to its neighbours (1; 0 = flat colour; 1 = full error diffusion), marks?, format?: png|tiff|tiff-g4|pdf (png), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?} full-colour art reduced to a fixed palette of inks with one ink per square pixel and no overlap or dots, the underbase first then the inks light to dark → {dpi, width, height, cellPx, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64}]}",
+            always,
+            index_colour
         ),
         cmd!(
             "screen.halftone",
@@ -494,6 +504,35 @@ fn separate(s: &mut Session, p: &Value) -> Result<Value> {
     let (w, h) = films.first().map(|f| (f["width"].clone(), f["height"].clone())).unwrap_or_default();
     let sheet = job_sheet(C, p, dpi, &films, &[], dir_param(p))?;
     let mut out = json!({ "dpi": dpi, "width": w, "height": h, "films": films });
+    attach(&mut out, sheet);
+    Ok(out)
+}
+
+/// `screen.index`: full-colour art as square pixels of a fixed palette of inks, none overlapping.
+fn index_colour(s: &mut Session, p: &Value) -> Result<Value> {
+    const C: &str = "screen.index";
+    let dpi = num(p, C, "dpi", DEFAULT_DPI, 25.0..=2400.0)?;
+    let marks = bool_or(p, "marks", false);
+    let fmt = FilmFormat::parse(C, p)?;
+    let mm_px = |mm: f64| mm / 25.4 * dpi;
+    let cell_px = (mm_px(num(p, C, "cellMm", 0.5, 0.05..=5.0)?).round().max(1.0) as usize).min(MAX_CELL_PX);
+    let dither = num(p, C, "dither", 1.0, 0.0..=1.0)?;
+    let base = color(C, "base", p.get("base"), [255, 255, 255])?;
+    let img = artwork(s, p, C, dpi)?;
+    // Index colour has no dots to blend with, so it looks for more inks than the other methods.
+    let mut q = p.clone();
+    if q.get("inks").is_none()
+        && let Some(o) = q.as_object_mut()
+    {
+        o.entry("colors").or_insert(json!(6));
+    }
+    let inks = inks_of(&q, C, &img, MAX_INDEX_INKS, 156.0)?;
+    let job = IndexJob { inks, base, underbase: underbase_of(p, C, mm_px)?, cell_px, dither };
+    let films = job.run(&img).map_err(sc(C))?;
+    let films = emit(C, films, dpi, marks, fmt, dir_param(p))?;
+    let (w, h) = films.first().map(|f| (f["width"].clone(), f["height"].clone())).unwrap_or_default();
+    let sheet = job_sheet(C, p, dpi, &films, &[], dir_param(p))?;
+    let mut out = json!({ "dpi": dpi, "width": w, "height": h, "cellPx": cell_px, "films": films });
     attach(&mut out, sheet);
     Ok(out)
 }

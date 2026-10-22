@@ -39,6 +39,8 @@ pub enum Method {
     Spot,
     /// Full colour from a few inks as halftone dots (`screen.simulate`).
     Simulated,
+    /// Full colour from a fixed palette of inks, one per square pixel (`screen.index`).
+    Index,
 }
 
 impl Method {
@@ -46,11 +48,12 @@ impl Method {
         match self {
             Method::Spot => "screen.separate",
             Method::Simulated => "screen.simulate",
+            Method::Index => "screen.index",
         }
     }
     fn default_mesh(self) -> f64 {
         match self {
-            Method::Spot => 156.0,
+            Method::Spot | Method::Index => 156.0,
             Method::Simulated => 230.0,
         }
     }
@@ -84,6 +87,10 @@ pub struct ScreenPrintState {
     pub lpi: f64,
     /// Dot gain at 50% in percent, for simulated process (0 turns the compensation off).
     pub dot_gain_pct: f64,
+    /// Side of one printed pixel in mm, for index colour.
+    pub cell_mm: f64,
+    /// How much error spreads between pixels in percent, for index colour (0 = flat).
+    pub dither_pct: f64,
     pub marks: bool,
     pub films: Vec<PreviewFilm>,
     /// Mesh and angle advice of the last preview, one line each.
@@ -102,6 +109,8 @@ impl Default for ScreenPrintState {
             trap_mm: 0.25,
             lpi: 45.0,
             dot_gain_pct: 0.0,
+            cell_mm: 0.5,
+            dither_pct: 100.0,
             marks: true,
             films: Vec::new(),
             advice: Vec::new(),
@@ -117,6 +126,8 @@ impl ScreenPrintState {
         match self.method {
             Method::Spot => PREVIEW_DPI,
             Method::Simulated => (self.lpi * PREVIEW_PIXELS_PER_CELL).clamp(PREVIEW_DPI, 1000.0),
+            // A printed pixel of the default size is a few preview pixels wide.
+            Method::Index => 2.0 * PREVIEW_DPI,
         }
     }
 
@@ -133,6 +144,10 @@ impl ScreenPrintState {
             Method::Simulated => {
                 p["lpi"] = json!(self.lpi);
                 p["dotGain"] = json!(self.dot_gain_pct / 100.0);
+            }
+            Method::Index => {
+                p["cellMm"] = json!(self.cell_mm);
+                p["dither"] = json!(self.dither_pct / 100.0);
             }
         }
         (self.method.command(), p)
@@ -263,6 +278,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
         ui.label(RichText::new(tl!("Method")).color(t.text_dim));
         ui.selectable_value(&mut st.method, Method::Spot, tl!("Spot Colors"));
         ui.selectable_value(&mut st.method, Method::Simulated, tl!("Simulated Process"));
+        ui.selectable_value(&mut st.method, Method::Index, tl!("Index Color"));
     });
     ui.horizontal(|ui| {
         ui.label(RichText::new(tl!("Colors")).color(t.text_dim));
@@ -308,6 +324,16 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
             ui.horizontal(|ui| {
                 ui.label(RichText::new(tl!("Dot Gain")).color(t.text_dim));
                 ui.add(egui::DragValue::new(&mut st.dot_gain_pct).range(0.0..=25.0).speed(0.25).suffix(" %"));
+            });
+        }
+        Method::Index => {
+            ui.horizontal(|ui| {
+                ui.label(RichText::new(tl!("Pixel Size")).color(t.text_dim));
+                ui.add(egui::DragValue::new(&mut st.cell_mm).range(0.05..=5.0).speed(0.01).suffix(" mm"));
+            });
+            ui.horizontal(|ui| {
+                ui.label(RichText::new(tl!("Dither")).color(t.text_dim));
+                ui.add(egui::DragValue::new(&mut st.dither_pct).range(0.0..=100.0).speed(1.0).suffix(" %"));
             });
         }
     }
@@ -402,6 +428,12 @@ mod tests {
         st.dot_gain_pct = 20.0;
         assert_eq!(st.request(600.0, true).1["dotGain"], json!(0.2));
         assert!(p.get("colors").is_none() && p.get("trapMm").is_none());
+        st.method = Method::Index;
+        let (cmd, p) = st.request(200.0, false);
+        assert_eq!(cmd, "screen.index");
+        assert_eq!((p["cellMm"].clone(), p["dither"].clone()), (json!(0.5), json!(1.0)));
+        assert!(p.get("lpi").is_none() && p.get("dotGain").is_none() && p.get("trapMm").is_none());
+        assert_eq!(st.preview_dpi(), 200.0);
     }
 
     #[test]

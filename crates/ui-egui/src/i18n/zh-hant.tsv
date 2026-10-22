@@ -6334,3 +6334,8 @@ machine	Stop	停止
 
 # ScreenFoundry: dot gain (SC-5). Machine-written first pass, to be checked by a native speaker.
 	Dot Gain	網點擴大
+
+# ScreenFoundry: index colour (SC-6). Machine-written first pass, to be checked by a native speaker.
+	Index Color	索引色彩
+	Pixel Size	像素大小
+	Dither	抖動

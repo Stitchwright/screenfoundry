@@ -6351,3 +6351,8 @@ machine	Stop	Зупинка
 
 # ScreenFoundry: dot gain (SC-5). Machine-written first pass, to be checked by a native speaker.
 	Dot Gain	Розтискання
+
+# ScreenFoundry: index colour (SC-6). Machine-written first pass, to be checked by a native speaker.
+	Index Color	Індексований колір
+	Pixel Size	Розмір пікселя
+	Dither	Дитеринг

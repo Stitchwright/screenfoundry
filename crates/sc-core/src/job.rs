@@ -9,6 +9,7 @@ use crate::color::srgb_to_lab;
 use crate::error::{Result, param};
 use crate::halftone::{HalftoneOptions, halftone, solid};
 use crate::image::{Bitmap1, Gray8, Rgba8};
+use crate::index::index_films;
 use crate::morph::{choke, spread, union};
 use crate::separate::{ALPHA_CUTOFF, separate_spot};
 use crate::simulated::simulated_plates;
@@ -90,6 +91,20 @@ impl SpotJob {
     }
 }
 
+/// The underbase film of full-colour art: the artwork's opaque area, pulled in so the base never
+/// shows past the dots.
+fn footprint_underbase(img: &Rgba8, ub: &UnderbaseOptions) -> Result<Film> {
+    let opaque: Vec<u8> = img.pixels().map(|p| if p[3] >= ALPHA_CUTOFF { 255 } else { 0 }).collect();
+    let footprint = Gray8::new(img.width(), img.height(), opaque)?;
+    Ok(Film {
+        name: ub.ink.name.clone(),
+        ink_rgb: ub.ink.rgb,
+        mesh: ub.ink.mesh,
+        role: Role::Underbase,
+        bitmap: solid(&choke(&footprint, ub.choke_px)?)?,
+    })
+}
+
 /// Screen angles for the inks of a simulated-process job, in order. Practitioner advice favours
 /// 22.5 and 67.5 degrees for two colours and keeps clear of 0 and 90, which line up with the mesh
 /// threads; the rest spread the other inks apart. A starting point, not a standard.
@@ -123,16 +138,7 @@ impl SimulatedJob {
 
         let mut films = Vec::with_capacity(self.inks.len() + 1);
         if let Some(ub) = &self.underbase {
-            // The footprint is the artwork's opaque area, pulled in so the base never shows past the dots.
-            let opaque: Vec<u8> = img.pixels().map(|p| if p[3] >= ALPHA_CUTOFF { 255 } else { 0 }).collect();
-            let footprint = Gray8::new(img.width(), img.height(), opaque)?;
-            films.push(Film {
-                name: ub.ink.name.clone(),
-                ink_rgb: ub.ink.rgb,
-                mesh: ub.ink.mesh,
-                role: Role::Underbase,
-                bitmap: solid(&choke(&footprint, ub.choke_px)?)?,
-            });
+            films.push(footprint_underbase(img, ub)?);
         }
         for &i in &order {
             let (Some(ink), Some(plate)) = (self.inks.get(i), plates.get(i)) else {
@@ -141,6 +147,45 @@ impl SimulatedJob {
             let angle = angles.get(i % angles.len()).copied().unwrap_or(22.5);
             let bitmap = halftone(plate, &HalftoneOptions { angle_deg: angle, ..self.halftone })?;
             films.push(Film { name: ink.name.clone(), ink_rgb: ink.rgb, mesh: ink.mesh, role: Role::Color, bitmap });
+        }
+        Ok(films)
+    }
+}
+
+/// Full-colour art reduced to a fixed palette of inks, one ink per square pixel (index colour).
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub struct IndexJob {
+    pub inks: Vec<Ink>,
+    /// The colour under the pixels: a white underbase, or the garment when there is none.
+    pub base: [u8; 3],
+    pub underbase: Option<UnderbaseOptions>,
+    /// Side of one printed pixel, in film pixels.
+    pub cell_px: usize,
+    /// How much of each pixel's error spreads to its neighbours: 0 (flat) to 1 (full diffusion).
+    pub dither: f64,
+}
+
+impl IndexJob {
+    pub fn run(&self, img: &Rgba8) -> Result<Vec<Film>> {
+        if self.inks.is_empty() {
+            return Err(param("inks", "a job needs at least one ink"));
+        }
+        let rgbs: Vec<[u8; 3]> = self.inks.iter().map(|i| i.rgb).collect();
+        let bitmaps = index_films(img, &rgbs, self.base, self.cell_px, self.dither)?;
+
+        let lightness = |i: usize| self.inks.get(i).map_or(0.0, |k| srgb_to_lab(k.rgb)[0]);
+        let mut order: Vec<usize> = (0..self.inks.len()).collect();
+        order.sort_by(|&a, &b| lightness(b).total_cmp(&lightness(a)));
+
+        let mut films = Vec::with_capacity(self.inks.len() + 1);
+        if let Some(ub) = &self.underbase {
+            films.push(footprint_underbase(img, ub)?);
+        }
+        for &i in &order {
+            let (Some(ink), Some(bitmap)) = (self.inks.get(i), bitmaps.get(i)) else {
+                return Err(param("inks", "film/ink mismatch"));
+            };
+            films.push(Film { name: ink.name.clone(), ink_rgb: ink.rgb, mesh: ink.mesh, role: Role::Color, bitmap: bitmap.clone() });
         }
         Ok(films)
     }
@@ -303,5 +348,26 @@ mod tests {
         let j = job(1.5);
         let s = serde_json::to_string(&j).unwrap();
         assert_eq!(serde_json::from_str::<SpotJob>(&s).unwrap(), j);
+    }
+
+    #[test]
+    fn index_job_orders_the_screens_and_keeps_them_apart() {
+        let job = IndexJob {
+            inks: vec![ink("Navy", [10, 20, 90]), ink("Yellow", [250, 220, 20])],
+            base: [255, 255, 255],
+            underbase: Some(UnderbaseOptions { ink: ink("White", [255, 255, 255]), choke_px: 2.0 }),
+            cell_px: 2,
+            dither: 1.0,
+        };
+        let films = job.run(&art()).unwrap();
+        let names: Vec<_> = films.iter().map(|f| f.name.as_str()).collect();
+        assert_eq!(names, ["White", "Yellow", "Navy"]);
+        let (yellow, navy) = (&films[1].bitmap, &films[2].bitmap);
+        assert!(yellow.get(10, 10) && !navy.get(10, 10), "the yellow third prints yellow only");
+        assert!(navy.get(30, 10) && !yellow.get(30, 10));
+        assert!(!yellow.get(50, 10) && !navy.get(50, 10), "nothing in the transparent area");
+        assert!(films[0].bitmap.get(10, 10) && !films[0].bitmap.get(50, 10));
+        let bad = IndexJob { inks: Vec::new(), ..job };
+        assert!(bad.run(&art()).is_err());
     }
 }

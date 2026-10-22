@@ -6410,3 +6410,8 @@ machine	Stop	停止
 
 # ScreenFoundry: dot gain (SC-5). Machine-written first pass, to be checked by a native speaker.
 	Dot Gain	ドットゲイン
+
+# ScreenFoundry: index colour (SC-6). Machine-written first pass, to be checked by a native speaker.
+	Index Color	インデックスカラー
+	Pixel Size	ピクセルサイズ
+	Dither	ディザ
