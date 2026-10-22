@@ -6568,3 +6568,6 @@ file-filter	ScreenFoundry Template	ScreenFoundry-ის შაბლონი
 # ScreenFoundry: vector separation (SC-4). Machine-written first pass, to be checked by a native speaker.
 	Vector Art	ვექტორული გრაფიკა
 	Separate Vector Art	ვექტორული გრაფიკის განცალკევება
+
+# ScreenFoundry: DTF files (SC-8). Machine-written first pass, to be checked by a native speaker.
+	DTF Files	DTF ფაილები

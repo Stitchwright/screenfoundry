@@ -1,9 +1,9 @@
 //! Film files. A film is a 1-bit image whose physical size matters, so both writers record the
-//! resolution: [`png_1bit`], [`tiff_1bit`], [`tiff_g4`] and [`pdf_g4`]. Black is ink (where the screen must open), white is
+//! resolution: [`png_rgba`] for art with transparency, [`png_1bit`], [`tiff_1bit`], [`tiff_g4`] and [`pdf_g4`]. Black is ink (where the screen must open), white is
 //! clear film, which is how film positives are made.
 
 use crate::error::{Result, param};
-use crate::image::Bitmap1;
+use crate::image::{Bitmap1, Rgba8};
 use crate::pdfout::{self, Pdf};
 
 /// Highest resolution a film file may declare. A 2,400 dpi imagesetter is the practical top.
@@ -51,6 +51,22 @@ pub fn png_1bit(film: &Bitmap1, dpi: f64) -> Result<Vec<u8>> {
     let mut w = enc.write_header().map_err(|e| param("film", e.to_string()))?;
     w.write_image_data(&data).map_err(|e| param("film", e.to_string()))?;
     w.finish().map_err(|e| param("film", e.to_string()))?;
+    Ok(out)
+}
+
+/// An 8-bit RGBA PNG (straight alpha) with its resolution in a `pHYs` chunk, for artwork that
+/// keeps its colour and transparency (direct-to-film files).
+pub fn png_rgba(img: &Rgba8, dpi: f64) -> Result<Vec<u8>> {
+    check_dpi(dpi)?;
+    let mut out = Vec::new();
+    let mut enc = png::Encoder::new(&mut out, img.width() as u32, img.height() as u32);
+    enc.set_color(png::ColorType::Rgba);
+    enc.set_depth(png::BitDepth::Eight);
+    let per_meter = (dpi / 0.0254).round() as u32;
+    enc.set_pixel_dims(Some(png::PixelDimensions { xppu: per_meter, yppu: per_meter, unit: png::Unit::Meter }));
+    let mut w = enc.write_header().map_err(|e| param("image", e.to_string()))?;
+    w.write_image_data(img.data()).map_err(|e| param("image", e.to_string()))?;
+    w.finish().map_err(|e| param("image", e.to_string()))?;
     Ok(out)
 }
 
@@ -327,6 +343,20 @@ mod tests {
         let wide = Bitmap1::new(65_536, 1).unwrap();
         assert!(tiff_g4(&wide, 300.0).is_err());
         assert!(tiff_g4(&Bitmap1::new(65_535, 1).unwrap(), 300.0).is_ok());
+    }
+
+    #[test]
+    fn rgba_png_keeps_colour_alpha_and_resolution() {
+        let img = Rgba8::new(2, 1, vec![200, 30, 30, 255, 1, 2, 3, 0]).unwrap();
+        let bytes = png_rgba(&img, 300.0).unwrap();
+        let mut reader = png::Decoder::new(Cursor::new(bytes)).read_info().unwrap();
+        assert_eq!((reader.info().color_type, reader.info().bit_depth), (png::ColorType::Rgba, png::BitDepth::Eight));
+        let dims = reader.info().pixel_dims.unwrap();
+        assert!((f64::from(dims.xppu) * 0.0254 - 300.0).abs() < 0.5);
+        let mut buf = vec![0u8; reader.output_buffer_size().unwrap()];
+        reader.next_frame(&mut buf).unwrap();
+        assert_eq!(&buf[..8], img.data());
+        assert!(png_rgba(&img, 0.0).is_err() && png_rgba(&img, f64::NAN).is_err());
     }
 
     #[test]

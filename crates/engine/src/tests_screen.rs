@@ -718,3 +718,54 @@ fn vector_inks_can_be_one_per_layer() {
     assert_eq!(film(&o, "Layer 1")["mesh"], 156.0, "the others keep the defaults");
     assert!(s.execute("screen.separateVector", &json!({"inkBy": "shape"})).is_err());
 }
+
+#[test]
+fn dtf_gives_mirrored_colour_and_a_choked_white_layer() {
+    let mut s = Session::new();
+    // 300 dpi: red on the left, blue on the right, a transparent column at the far right.
+    let src = png_source(60, 20, |x, _| match x {
+        0..=29 => [200, 30, 30, 255],
+        30..=53 => [20, 40, 170, 255],
+        _ => [0, 0, 0, 0],
+    });
+    let decode =
+        |f: &Value| image::load_from_memory(&vectorcraft_format::base64_decode(f["dataBase64"].as_str().unwrap()).unwrap()).unwrap().to_rgba8();
+    let r = s.execute("screen.dtf", &json!({"source": src, "whiteChokeMm": 0.3})).unwrap();
+    let files = r["files"].as_array().unwrap();
+    let names: Vec<_> = files.iter().map(|f| f["name"].as_str().unwrap()).collect();
+    assert_eq!(names, ["color", "white"]);
+    assert_eq!((r["dpi"].as_f64(), r["width"].as_u64(), r["height"].as_u64()), (Some(300.0), Some(60), Some(20)));
+    let (color, white) = (decode(&files[0]), decode(&files[1]));
+    // Mirrored by default: the transparent column is on the left now and the red on the right.
+    assert_eq!(color.get_pixel(0, 10).0[3], 0);
+    assert_eq!(color.get_pixel(59, 10).0, [200, 30, 30, 255]);
+    assert_eq!(color.get_pixel(20, 10).0, [20, 40, 170, 255]);
+    // The white lies under the colour and 0.3 mm (3.5 px) in from its edges.
+    assert_eq!(white.get_pixel(30, 10).0, [255, 255, 255, 255]);
+    assert_eq!(white.get_pixel(59 - 1, 10).0[3], 0, "choked in from the art edge");
+    assert_eq!(white.get_pixel(3, 10).0[3], 0, "no white where there is no art");
+    for y in 0..20 {
+        for x in 0..60 {
+            if white.get_pixel(x, y).0[3] == 255 {
+                assert_eq!(color.get_pixel(x, y).0[3], 255, "({x}, {y})");
+            }
+        }
+    }
+    // Unmirrored, no white, written to a folder.
+    let dir = vectorcraft_testkit::temp_dir("screen-dtf");
+    let o = s.execute("screen.dtf", &json!({"source": src, "mirror": false, "white": false, "dir": dir.to_string_lossy()})).unwrap();
+    let files = o["files"].as_array().unwrap();
+    assert_eq!(files.len(), 1);
+    let path = files[0]["path"].as_str().unwrap();
+    assert!(path.ends_with("/dtf-color.png"), "{path}");
+    let flat = image::open(path).unwrap().to_rgba8();
+    assert_eq!(flat.get_pixel(0, 10).0, [200, 30, 30, 255]);
+    let _ = std::fs::remove_dir_all(dir);
+    // No document and no source; out-of-range numbers. (Flags follow the other commands: a value
+    // that is not a boolean means the default.)
+    for bad in
+        [json!({"source": src, "dpi": 5}), json!({"source": src, "whiteChokeMm": 9}), json!({"source": src, "whiteChokeMm": "wide"}), json!({})]
+    {
+        assert!(s.execute("screen.dtf", &bad).is_err(), "{bad}");
+    }
+}

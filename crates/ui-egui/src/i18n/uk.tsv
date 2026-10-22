@@ -6360,3 +6360,6 @@ machine	Stop	Зупинка
 # ScreenFoundry: vector separation (SC-4). Machine-written first pass, to be checked by a native speaker.
 	Vector Art	Векторна графіка
 	Separate Vector Art	Кольороподіл векторної графіки
+
+# ScreenFoundry: DTF files (SC-8). Machine-written first pass, to be checked by a native speaker.
+	DTF Files	Файли DTF

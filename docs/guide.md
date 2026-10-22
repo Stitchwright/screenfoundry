@@ -16,6 +16,7 @@ channel, the command-line tool and the MCP server.
 - [Simulated process](#simulated-process)
 - [Vector art](#vector-art)
 - [Index color](#index-color)
+- [DTF files](#dtf-files)
 - [Mesh and line screen](#mesh-and-line-screen)
 - [Registration marks](#registration-marks)
 - [Films and output](#films-and-output)
@@ -140,6 +141,21 @@ side of one printed pixel: keep it several mesh threads wide or the pixels will 
 screen. The default is a starting point, not a standard; print a test. Inks print light to dark
 as usual, and `underbase` works as in simulated process.
 
+## DTF files
+
+**DTF Files** (`screen.dtf`) makes the files a direct-to-film printer takes from the artwork: the
+colour art on a transparent background, mirrored (`mirror`, default on) because the print is
+transferred to the garment face down, and a white layer (`white`, default on) to print under the
+colours. The white is white ink where the art is, pulled in from its edges by `whiteChokeMm`
+(default 0.3 mm) so no white shows past the colour. Both files are PNGs of the same size and
+mirroring, at `dpi` (default 300), with the resolution recorded; they are written as
+`dtf-color.png` and `dtf-white.png` in `dir`, or come back as base64.
+
+This is a first, narrow version. It does not lay several designs out on a gang sheet, make
+highlight whites or graded white, or write TIFF; and what a shop's RIP wants (white made by the
+RIP or supplied as a file, mirroring, resolution) varies, so check it against yours. The choke
+is a starting point, not a standard.
+
 ## Mesh and line screen
 
 The mesh limits how fine a halftone can be. As a rule of thumb the line screen is between a fifth
@@ -184,6 +200,7 @@ or comes back as base64. Direct-to-screen and DTF output are planned.
 | `screen.separate` | One solid film per screen (spot colours). |
 | `screen.simulate` | Full colour as halftone dots of a few inks. |
 | `screen.index` | Full colour as square pixels of a fixed palette of inks. |
+| `screen.dtf` | Direct-to-film files: mirrored colour on transparent and a white layer. |
 | `screen.separateVector` | The open document's paths as one film per ink, with knockout, overprint and trap. |
 | `screen.halftone` | One ink's tones as dots. |
 

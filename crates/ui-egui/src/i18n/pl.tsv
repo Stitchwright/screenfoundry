@@ -6579,3 +6579,6 @@ machine	Stop	Zatrzymanie
 # ScreenFoundry: vector separation (SC-4). Machine-written first pass, to be checked by a native speaker.
 	Vector Art	Grafika wektorowa
 	Separate Vector Art	Rozdziel grafikę wektorową
+
+# ScreenFoundry: DTF files (SC-8). Machine-written first pass, to be checked by a native speaker.
+	DTF Files	Pliki DTF

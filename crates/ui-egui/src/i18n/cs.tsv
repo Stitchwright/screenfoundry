@@ -6738,3 +6738,6 @@ mark-style	Japanese	Japonské
 # ScreenFoundry: vector separation (SC-4). Machine-written first pass, to be checked by a native speaker.
 	Vector Art	Vektorová grafika
 	Separate Vector Art	Rozdělit vektorovou grafiku
+
+# ScreenFoundry: DTF files (SC-8). Machine-written first pass, to be checked by a native speaker.
+	DTF Files	Soubory DTF

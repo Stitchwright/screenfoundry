@@ -8,6 +8,7 @@
 use std::io::Cursor;
 
 use sc_core::color::{parse_hex, to_hex};
+use sc_core::dtf::{DtfOptions, prepare};
 use sc_core::halftone::{DotShape, HalftoneOptions, MAX_DOT_GAIN, halftone};
 use sc_core::index::{MAX_CELL_PX, MAX_INDEX_INKS};
 use sc_core::inklib::{self, DEFAULT_MAX_DELTA_E, LibraryInk};
@@ -84,6 +85,15 @@ pub fn specs() -> Vec<CommandSpec> {
             "{dpi?, inkBy?: color|layer (color) with layer each layer that has shapes is one ink named after it and coloured by its first shape (sublayers count as their layer; an entry of `inks` with the layer's name sets its colour and mesh), inks?: [{name?, color, mesh? (156)}] the inks the art's colours go onto (each shape takes the nearest ink and a spot swatch takes the ink of its own name first; without `inks` each colour or spot swatch of the art is an ink up to 12), snap?: true|{maxDeltaE? (25), library?: [{name, color}]} replace each ink by the nearest library ink and use its name when none is given, underbase?: true|{name?, color? (#ffffff), mesh? (110), chokeMm? (0.3)}, trapMm? (0.25), marks?, vectorPdf?: also give each plate as a vector PDF in the `vector` entry of its film (the page is the artboard and with `marks` grows to hold the same four registration marks), format?: png|tiff|tiff-g4|pdf (png), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?} the open document's first artboard separated as paths: solid fills and strokes (type too) go onto inks, a shape knocks out the other inks under it unless it overprints, the underbase and the traps are path operations, and each plate is drawn once at the film resolution; the underbase first then the inks light to dark → {dpi, width, height, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64, vector?: {format, path | dataBase64}}], inks: [{name, color, shapes}], skipped: [{object, why}], skippedTotal, notes: [text]}",
             always,
             vector::separate_vector
+        ),
+        cmd!(
+            "screen.dtf",
+            "DTF Files",
+            [],
+            None,
+            "{source?, dpi? (300; 25–2400), mirror?: flip the art left to right for the film (true), white?: also make the white layer (true), whiteChokeMm?: how far the white is pulled in from the colour edges (0.3; 0–5), dir?: a folder to write the files in (without it: base64)} direct-to-film files from the artwork: the colour art on transparent (mirrored for the film) as a PNG and a white layer (white where white ink prints and the art's footprint pulled in by the choke) as a second PNG of the same size and mirroring → {dpi, width, height, files: [{name: color|white, format, width, height, path | dataBase64}]}",
+            always,
+            dtf_files
         ),
         cmd!(
             "screen.simulate",
@@ -517,6 +527,36 @@ fn separate(s: &mut Session, p: &Value) -> Result<Value> {
     let mut out = json!({ "dpi": dpi, "width": w, "height": h, "films": films });
     attach(&mut out, sheet);
     Ok(out)
+}
+
+/// `screen.dtf`: the artwork as direct-to-film files (SC-8): colour art mirrored on transparent,
+/// and a white layer.
+fn dtf_files(s: &mut Session, p: &Value) -> Result<Value> {
+    const C: &str = "screen.dtf";
+    let dpi = num(p, C, "dpi", DEFAULT_DPI, 25.0..=2400.0)?;
+    let choke_mm = num(p, C, "whiteChokeMm", 0.3, 0.0..=5.0)?;
+    let opts = DtfOptions { mirror: bool_or(p, "mirror", true), white: bool_or(p, "white", true), white_choke_px: choke_mm / 25.4 * dpi };
+    let img = artwork(s, p, C, dpi)?;
+    let files = prepare(&img, &opts).map_err(sc(C))?;
+    let mut parts = vec![("color", files.color)];
+    parts.extend(files.white.map(|w| ("white", w)));
+    let dir = dir_param(p);
+    let mut out = Vec::with_capacity(parts.len());
+    for (name, image) in parts {
+        let bytes = sc_core::export::png_rgba(&image, dpi).map_err(sc(C))?;
+        let mut v = json!({ "name": name, "format": "png", "width": image.width(), "height": image.height() });
+        match dir {
+            Some(dir) => {
+                let path = format!("{}/dtf-{name}.png", dir.trim_end_matches(['/', '\\']));
+                super::fileio::write_file(&path, &bytes)?;
+                v["path"] = json!(path);
+            }
+            None => v["dataBase64"] = json!(vectorcraft_format::base64_encode(&bytes)),
+        }
+        out.push(v);
+    }
+    let (w, h) = out.first().map(|f| (f["width"].clone(), f["height"].clone())).unwrap_or_default();
+    Ok(json!({ "dpi": dpi, "width": w, "height": h, "files": out }))
 }
 
 /// `screen.index`: full-colour art as square pixels of a fixed palette of inks, none overlapping.

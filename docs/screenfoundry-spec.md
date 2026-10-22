@@ -57,7 +57,7 @@ Known simplifications to fix:
 | SC-5 (partly done: `screen.simulate`, dot gain) | Simulated process: spot-channel halftones over an underbase, highlight white | Done: per-pixel ink shares by optical mixing in linear light, least-ink tie-break, per-ink angles. Dot-gain compensation done (`dotGain`, one curve for all inks). Left: highlight white, ink-opacity/overlap model, an ink-limit option, per-ink gain curves. Calibrate with real shops. |
 | SC-6 (done: `screen.index`, `sc-core::index`, Index Color in the panel) | Index colour with a fixed ink palette and non-overlapping patterns | Palette from the existing Lab k-means (`colors`) or the user's inks; Floyd-Steinberg error diffusion in linear light on square cells; one ink a pixel. Left: other diffusion kernels, ordered/patterned fills, palette optimisation against the dithered result. |
 | SC-7 | Stochastic (FM) and hybrid screening | Check void-and-cluster patent status first. |
-| SC-8 | CTS / DTF / DCS 2.0 output; job-sheet export | After SC-2. |
+| SC-8 (first part done: `screen.dtf`) | CTS / DTF / DCS 2.0 output; job-sheet export | DTF: mirrored colour PNG on transparent plus a choked white-layer PNG (`sc-core::dtf`). Left: gang sheets, highlight and graded white, TIFF, CTS output (1-bit screen-ruled bitmaps at the machine's resolution, nothing sourced on layout) and DCS 2.0. The job sheet is done (SC-2). |
 | SC-9 | Rename to `screenfoundry` | Done 2026-10-21 except the icon artwork (needs a new original icon) and the hub name above. Binaries `screenfoundry` and `screenfoundry-cli`; documents save as `.screenfoundry`; `.stitchfoundry`, `.vectorcraft` and `.drawcraft` still open; settings come from the old StitchFoundry and VectorCraft folders when there are none yet. |
 | SC-10 | Calibration: print-test pages and shop feedback loop to tune the default profiles | The only way to settle the research's open conflicts. |
 
@@ -79,6 +79,7 @@ Decided by the owner on 2026-10-21: remove the embroidery code (done, `docs/plan
 - 2026-10-21: SC-2 first part: 1-bit PNG and TIFF films with their resolution (`format` option).
 - 2026-10-21: SC-5 first part: `screen.simulate` (simulated-process separation); `sc-core::simulated`.
 - 2026-10-22: SC-2: CCITT Group 4 TIFF films (`format: tiff-g4`, `fax` crate, MIT).
+- 2026-10-22: SC-8 first part: `screen.dtf` (DTF colour and white files).
 - 2026-10-22: SC-4: ink per layer (`inkBy: "layer"`).
 - 2026-10-22: SC-4: vector plates as PDFs (`vectorPdf` on `screen.separateVector`).
 - 2026-10-22: SC-4 first part: `screen.separateVector` (separation on paths; Vector Art in the panel).

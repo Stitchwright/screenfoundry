@@ -6672,3 +6672,6 @@ swatch	Bright Violet	Felviolet
 # ScreenFoundry: vector separation (SC-4). Machine-written first pass, to be checked by a native speaker.
 	Vector Art	Vectorkunst
 	Separate Vector Art	Vectorkunst scheiden
+
+# ScreenFoundry: DTF files (SC-8). Machine-written first pass, to be checked by a native speaker.
+	DTF Files	DTF-bestanden

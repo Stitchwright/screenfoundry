@@ -6696,3 +6696,6 @@ machine	Stop	Спиране
 # ScreenFoundry: vector separation (SC-4). Machine-written first pass, to be checked by a native speaker.
 	Vector Art	Векторна графика
 	Separate Vector Art	Разделяне на векторна графика
+
+# ScreenFoundry: DTF files (SC-8). Machine-written first pass, to be checked by a native speaker.
+	DTF Files	DTF файлове

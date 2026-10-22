@@ -6335,3 +6335,6 @@ machine	Stop	정지
 # ScreenFoundry: vector separation (SC-4). Machine-written first pass, to be checked by a native speaker.
 	Vector Art	벡터 아트
 	Separate Vector Art	벡터 아트 분판
+
+# ScreenFoundry: DTF files (SC-8). Machine-written first pass, to be checked by a native speaker.
+	DTF Files	DTF 파일

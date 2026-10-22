@@ -6339,3 +6339,6 @@ machine	Stop	Dừng máy
 # ScreenFoundry: vector separation (SC-4). Machine-written first pass, to be checked by a native speaker.
 	Vector Art	Đồ họa vector
 	Separate Vector Art	Tách màu đồ họa vector
+
+# ScreenFoundry: DTF files (SC-8). Machine-written first pass, to be checked by a native speaker.
+	DTF Files	Tệp DTF
