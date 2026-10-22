@@ -27,6 +27,8 @@ const MAX_FILE_BYTES: u64 = 256 << 20;
 const MAX_IMAGE_SIDE: u32 = 20_000;
 const MAX_INKS: usize = 12;
 
+mod vector;
+
 pub fn specs() -> Vec<CommandSpec> {
     vec![
         cmd!(
@@ -73,6 +75,15 @@ pub fn specs() -> Vec<CommandSpec> {
             "{source?, dpi?, inks?: [{name?, color: \"#rrggbb\", mesh? (156)}], colors?: how many inks to find in the art when `inks` is not given (4; 1–12), underbase?: true|{name?, color? (#ffffff), mesh? (110), chokeMm? (0.3)}, snap?: true|{maxDeltaE? (25), library?: [{name, color}]} replace each ink by the nearest library ink (see screen.matchInks) and use its name when none is given, trapMm?: spread of colours that print before a darker one (0.25; 0–5), marks?: add registration marks (false), format?: png|tiff|tiff-g4|pdf (png), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?: a folder to write one 1-bit film file a screen (without it: base64)} spot-colour separation: one solid film per screen, the underbase first then the colours light to dark → {dpi, width, height, films: [{name, color, role: underbase|color, format, mesh, coverage, width, height, path | dataBase64}]}",
             always,
             separate
+        ),
+        cmd!(
+            "screen.separateVector",
+            "Separate Vector Art",
+            [],
+            None,
+            "{dpi?, inks?: [{name?, color, mesh? (156)}] the inks the art's colours go onto (each shape takes the nearest ink and a spot swatch takes the ink of its own name first; without `inks` each colour or spot swatch of the art is an ink up to 12), snap?: true|{maxDeltaE? (25), library?: [{name, color}]} replace each ink by the nearest library ink and use its name when none is given, underbase?: true|{name?, color? (#ffffff), mesh? (110), chokeMm? (0.3)}, trapMm? (0.25), marks?, format?: png|tiff|tiff-g4|pdf (png), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?} the open document's first artboard separated as paths: solid fills and strokes (type too) go onto inks, a shape knocks out the other inks under it unless it overprints, the underbase and the traps are path operations, and each plate is drawn once at the film resolution; the underbase first then the inks light to dark → {dpi, width, height, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64}], inks: [{name, color, shapes}], skipped: [{object, why}], skippedTotal, notes: [text]}",
+            always,
+            vector::separate_vector
         ),
         cmd!(
             "screen.simulate",

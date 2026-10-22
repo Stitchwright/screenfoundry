@@ -6372,3 +6372,7 @@ machine	Stop	Остановка
 	Index Color	Индексированный цвет
 	Pixel Size	Размер пикселя
 	Dither	Растушевка
+
+# ScreenFoundry: vector separation (SC-4). Machine-written first pass, to be checked by a native speaker.
+	Vector Art	Векторная графика
+	Separate Vector Art	Цветоделение векторной графики

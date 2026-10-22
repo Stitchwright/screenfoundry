@@ -6709,3 +6709,7 @@ machine	Stop	Megállás
 	Index Color	Indexelt szín
 	Pixel Size	Pixelméret
 	Dither	Dithering
+
+# ScreenFoundry: vector separation (SC-4). Machine-written first pass, to be checked by a native speaker.
+	Vector Art	Vektorgrafika
+	Separate Vector Art	Vektorgrafika színszétválasztása

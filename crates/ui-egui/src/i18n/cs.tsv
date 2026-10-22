@@ -6734,3 +6734,7 @@ mark-style	Japanese	Japonské
 	Index Color	Indexované barvy
 	Pixel Size	Velikost pixelu
 	Dither	Rozptýlení
+
+# ScreenFoundry: vector separation (SC-4). Machine-written first pass, to be checked by a native speaker.
+	Vector Art	Vektorová grafika
+	Separate Vector Art	Rozdělit vektorovou grafiku

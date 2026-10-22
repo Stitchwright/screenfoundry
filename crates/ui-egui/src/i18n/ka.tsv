@@ -6564,3 +6564,7 @@ file-filter	ScreenFoundry Template	ScreenFoundry-ის შაბლონი
 	Index Color	ინდექსირებული ფერი
 	Pixel Size	პიქსელის ზომა
 	Dither	დითერინგი
+
+# ScreenFoundry: vector separation (SC-4). Machine-written first pass, to be checked by a native speaker.
+	Vector Art	ვექტორული გრაფიკა
+	Separate Vector Art	ვექტორული გრაფიკის განცალკევება

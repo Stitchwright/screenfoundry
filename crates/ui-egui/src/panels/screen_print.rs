@@ -41,6 +41,8 @@ pub enum Method {
     Simulated,
     /// Full colour from a fixed palette of inks, one per square pixel (`screen.index`).
     Index,
+    /// The document's paths separated as paths, one film per ink (`screen.separateVector`).
+    Vector,
 }
 
 impl Method {
@@ -49,11 +51,12 @@ impl Method {
             Method::Spot => "screen.separate",
             Method::Simulated => "screen.simulate",
             Method::Index => "screen.index",
+            Method::Vector => "screen.separateVector",
         }
     }
     fn default_mesh(self) -> f64 {
         match self {
-            Method::Spot | Method::Index => 156.0,
+            Method::Spot | Method::Index | Method::Vector => 156.0,
             Method::Simulated => 230.0,
         }
     }
@@ -124,7 +127,7 @@ impl ScreenPrintState {
     /// film pixels each.
     pub fn preview_dpi(&self) -> f64 {
         match self.method {
-            Method::Spot => PREVIEW_DPI,
+            Method::Spot | Method::Vector => PREVIEW_DPI,
             Method::Simulated => (self.lpi * PREVIEW_PIXELS_PER_CELL).clamp(PREVIEW_DPI, 1000.0),
             // A printed pixel of the default size is a few preview pixels wide.
             Method::Index => 2.0 * PREVIEW_DPI,
@@ -134,13 +137,16 @@ impl ScreenPrintState {
     /// The command to run and its parameters, at `dpi`, with registration marks when `marks`.
     pub fn request(&self, dpi: f64, marks: bool) -> (&'static str, Value) {
         let mut p = json!({ "dpi": dpi, "marks": marks, "underbase": self.underbase });
+        // Vector art finds its own inks in the paths; the others look for `colors` in the picture.
         if self.inks.is_empty() {
-            p["colors"] = json!(self.colors);
+            if self.method != Method::Vector {
+                p["colors"] = json!(self.colors);
+            }
         } else {
             p["inks"] = json!(self.inks.iter().map(|i| json!({ "name": i.name, "color": i.color, "mesh": i.mesh })).collect::<Vec<_>>());
         }
         match self.method {
-            Method::Spot => p["trapMm"] = json!(self.trap_mm),
+            Method::Spot | Method::Vector => p["trapMm"] = json!(self.trap_mm),
             Method::Simulated => {
                 p["lpi"] = json!(self.lpi);
                 p["dotGain"] = json!(self.dot_gain_pct / 100.0);
@@ -279,6 +285,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
         ui.selectable_value(&mut st.method, Method::Spot, tl!("Spot Colors"));
         ui.selectable_value(&mut st.method, Method::Simulated, tl!("Simulated Process"));
         ui.selectable_value(&mut st.method, Method::Index, tl!("Index Color"));
+        ui.selectable_value(&mut st.method, Method::Vector, tl!("Vector Art"));
     });
     ui.horizontal(|ui| {
         ui.label(RichText::new(tl!("Colors")).color(t.text_dim));
@@ -310,7 +317,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     widgets::divider(ui);
     ui.checkbox(&mut st.underbase, tl!("Underbase"));
     match st.method {
-        Method::Spot => {
+        Method::Spot | Method::Vector => {
             ui.horizontal(|ui| {
                 ui.label(RichText::new(tl!("Trap")).color(t.text_dim));
                 ui.add(egui::DragValue::new(&mut st.trap_mm).range(0.0..=5.0).speed(0.05).suffix(" mm"));
@@ -434,6 +441,13 @@ mod tests {
         assert_eq!((p["cellMm"].clone(), p["dither"].clone()), (json!(0.5), json!(1.0)));
         assert!(p.get("lpi").is_none() && p.get("dotGain").is_none() && p.get("trapMm").is_none());
         assert_eq!(st.preview_dpi(), 200.0);
+        st.method = Method::Vector;
+        st.inks.clear();
+        let (cmd, p) = st.request(100.0, false);
+        assert_eq!(cmd, "screen.separateVector");
+        assert_eq!(p["trapMm"], json!(0.25));
+        assert!(p.get("colors").is_none() && p.get("lpi").is_none() && p.get("cellMm").is_none(), "{p}");
+        assert_eq!(st.preview_dpi(), 100.0);
     }
 
     #[test]

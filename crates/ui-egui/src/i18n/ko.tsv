@@ -6331,3 +6331,7 @@ machine	Stop	정지
 	Index Color	인덱스 컬러
 	Pixel Size	픽셀 크기
 	Dither	디더링
+
+# ScreenFoundry: vector separation (SC-4). Machine-written first pass, to be checked by a native speaker.
+	Vector Art	벡터 아트
+	Separate Vector Art	벡터 아트 분판

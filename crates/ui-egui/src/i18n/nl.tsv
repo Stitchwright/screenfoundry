@@ -6668,3 +6668,7 @@ swatch	Bright Violet	Felviolet
 	Index Color	Geïndexeerde kleur
 	Pixel Size	Pixelgrootte
 	Dither	Dithering
+
+# ScreenFoundry: vector separation (SC-4). Machine-written first pass, to be checked by a native speaker.
+	Vector Art	Vectorkunst
+	Separate Vector Art	Vectorkunst scheiden

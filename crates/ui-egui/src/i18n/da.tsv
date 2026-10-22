@@ -6626,3 +6626,7 @@ swatch	Bright Violet	Kraftig violet
 	Index Color	Indekseret farve
 	Pixel Size	Pixelstørrelse
 	Dither	Dithering
+
+# ScreenFoundry: vector separation (SC-4). Machine-written first pass, to be checked by a native speaker.
+	Vector Art	Vektorgrafik
+	Separate Vector Art	Separer vektorgrafik

@@ -6376,3 +6376,7 @@ machine	Stop	Arresto
 	Index Color	Colore indicizzato
 	Pixel Size	Dimensione pixel
 	Dither	Dithering
+
+# ScreenFoundry: vector separation (SC-4). Machine-written first pass, to be checked by a native speaker.
+	Vector Art	Grafica vettoriale
+	Separate Vector Art	Separa grafica vettoriale

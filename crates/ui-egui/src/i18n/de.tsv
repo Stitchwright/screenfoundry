@@ -6342,3 +6342,7 @@ effect	Soft	Weich
 	Index Color	Indexfarbe
 	Pixel Size	Pixelgröße
 	Dither	Dithering
+
+# ScreenFoundry: vector separation (SC-4). Machine-written first pass, to be checked by a native speaker.
+	Vector Art	Vektorgrafik
+	Separate Vector Art	Vektorgrafik separieren

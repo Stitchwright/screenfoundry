@@ -14,6 +14,7 @@ channel, the command-line tool and the MCP server.
 - [Trap and choke](#trap-and-choke)
 - [Halftones](#halftones)
 - [Simulated process](#simulated-process)
+- [Vector art](#vector-art)
 - [Index color](#index-color)
 - [Mesh and line screen](#mesh-and-line-screen)
 - [Registration marks](#registration-marks)
@@ -89,6 +90,30 @@ inks; give them (`inks`) or let ScreenFoundry find them (`colors`).
 or how opaque the ink is. Print a test and adjust the dot limits (`minDot`, `maxDot`), the dot gain
 and the line screen before a production run.
 
+## Vector art
+
+**Separate Vector Art** (`screen.separateVector`) separates the open document's first artboard
+without drawing it first. Every solid fill and every stroke (turned into its outline, with its
+dashes, caps and alignment) goes onto an ink, and the work stays on the paths until the last
+step: each finished plate is drawn once at the film resolution (`dpi`) with hard edges, so a
+straight edge in the art is a straight edge on the film.
+
+- **Inks.** Give them (`inks`, each object takes the nearest one; a spot swatch takes the ink of
+  its own name first) or leave them out and every distinct colour or spot swatch of the art
+  becomes an ink, up to 12. `snap` names them from the ink library as usual.
+- **Knockout and overprint.** A shape knocks out the other inks under it, so no ink prints where
+  it will be covered, unless the shape is set to overprint (Attributes, or `object.setOverprint`):
+  then the ink below prints whole and the shape prints over it.
+- **Trap and underbase.** Both are path operations. Each ink grows by `trapMm` (default 0.25 mm)
+  only where a darker ink lies, so light colours tuck under dark ones and free edges stay put.
+  The underbase is the art's footprint pulled in by `chokeMm`.
+- **Type** is separated through its outlines, in the colours of its first style; use Create
+  Outlines when characters differ in colour. Clip groups and layer clips are honoured.
+- **Left out, and said so.** Gradients, patterns, meshes, placed pictures, brush strokes, symbol
+  instances and live art that needs expanding are listed in `skipped`. Opacity, blend modes,
+  masks and effects are ignored (shapes print solid) and counted in `notes`, as are spot tints
+  under 100%. Use the raster commands for those.
+
 ## Index color
 
 **Index Color** (`screen.index`) reduces full-colour art to a fixed set of inks and prints each
@@ -149,6 +174,7 @@ or comes back as base64. Direct-to-screen and DTF output are planned.
 | `screen.separate` | One solid film per screen (spot colours). |
 | `screen.simulate` | Full colour as halftone dots of a few inks. |
 | `screen.index` | Full colour as square pixels of a fixed palette of inks. |
+| `screen.separateVector` | The open document's paths as one film per ink, with knockout, overprint and trap. |
 | `screen.halftone` | One ink's tones as dots. |
 
 The artwork is the document's first artboard (`source: "document"`), an image file

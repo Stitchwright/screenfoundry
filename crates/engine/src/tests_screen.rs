@@ -521,3 +521,127 @@ fn index_rejects_bad_parameters() {
         assert!(s.execute("screen.index", &bad).is_err(), "{bad}");
     }
 }
+
+/// A rectangle on the page with a fill; its id.
+fn shape(s: &mut Session, (x, y, w, h): (f64, f64, f64, f64), fill: &str) -> u64 {
+    let r = s.execute("shape.rectangle", &json!({"x": x, "y": y, "width": w, "height": h})).unwrap();
+    let id = r["id"].as_u64().unwrap();
+    s.execute("paint.setFill", &json!({"ids": [id], "color": fill})).unwrap();
+    s.execute("paint.setStroke", &json!({"ids": [id], "none": true})).unwrap();
+    id
+}
+
+fn film<'a>(r: &'a Value, name: &str) -> &'a Value {
+    r["films"].as_array().unwrap().iter().find(|f| f["name"] == name).unwrap_or_else(|| panic!("no film {name}: {r}"))
+}
+
+#[test]
+fn vector_separation_knocks_out_traps_and_has_an_underbase() {
+    let mut s = Session::new();
+    s.execute("file.new", &json!({"width": 200, "height": 100})).unwrap();
+    // Yellow runs under the navy: yellow 0..140 pt, navy 100..200 pt on top.
+    shape(&mut s, (0.0, 0.0, 140.0, 100.0), YELLOW);
+    shape(&mut s, (100.0, 0.0, 100.0, 100.0), NAVY);
+    let r = s.execute("screen.separateVector", &json!({"dpi": 100, "inks": inks(), "underbase": true, "trapMm": 1.0})).unwrap();
+    let names: Vec<_> = r["films"].as_array().unwrap().iter().map(|f| f["name"].as_str().unwrap()).collect();
+    assert_eq!(names, ["Underbase", "Yellow", "Navy"]);
+    assert_eq!(r["skippedTotal"], 0);
+    let (ub, yellow, navy) = (film_image(film(&r, "Underbase")), film_image(film(&r, "Yellow")), film_image(film(&r, "Navy")));
+    // 100 dpi: 100 pt is pixel 138.9. Yellow stops at the navy's edge plus the 1 mm (about 4 px) trap,
+    // although the art runs yellow to 140 pt: the navy knocked it out.
+    assert!(inked(&yellow, 20, 70) && !inked(&navy, 20, 70));
+    assert!(inked(&yellow, 141, 70), "trapped under the navy");
+    assert!(!inked(&yellow, 150, 70) && !inked(&yellow, 180, 70), "knocked out under the navy");
+    assert!(!inked(&navy, 130, 70) && inked(&navy, 145, 70) && inked(&navy, 270, 70));
+    assert!(!inked(&yellow, 250, 70), "no yellow where the art has none");
+    // The underbase fills the art and stays in from the edges.
+    assert!(inked(&ub, 138, 70) && !inked(&ub, 0, 70) && !inked(&ub, 138, 0));
+    // The films come out with edges at the art's own: no smoothing grey, sharp 1-bit.
+    assert_eq!(film(&r, "Navy")["format"], "png");
+}
+
+#[test]
+fn vector_overprint_prints_over_the_ink_below() {
+    let mut s = Session::new();
+    s.execute("file.new", &json!({"width": 200, "height": 100})).unwrap();
+    shape(&mut s, (0.0, 0.0, 200.0, 100.0), YELLOW);
+    let top = shape(&mut s, (60.0, 20.0, 80.0, 60.0), NAVY);
+    let p = json!({"dpi": 100, "inks": inks(), "trapMm": 0});
+    let knocked = s.execute("screen.separateVector", &p).unwrap();
+    let (a, b) = (film_image(film(&knocked, "Yellow")), film_image(film(&knocked, "Navy")));
+    assert!(!inked(&a, 139, 70) && inked(&b, 139, 70), "knocked out");
+    s.execute("object.setOverprint", &json!({"ids": [top], "fill": true})).unwrap();
+    let over = s.execute("screen.separateVector", &p).unwrap();
+    let (a, b) = (film_image(film(&over, "Yellow")), film_image(film(&over, "Navy")));
+    assert!(inked(&a, 139, 70) && inked(&b, 139, 70), "yellow stays under the overprinting navy");
+}
+
+#[test]
+fn vector_strokes_become_outlines_and_spot_swatches_name_their_inks() {
+    let mut s = Session::new();
+    s.execute("file.new", &json!({"width": 200, "height": 100})).unwrap();
+    s.execute("swatch.new", &json!({"name": "PMS Navy", "color": NAVY, "spot": true})).unwrap();
+    // A frame: no fill, a 10 pt stroke in the spot colour.
+    let r = s.execute("shape.rectangle", &json!({"x": 20, "y": 20, "width": 160, "height": 60})).unwrap();
+    let id = r["id"].as_u64().unwrap();
+    s.execute("paint.setFill", &json!({"ids": [id], "none": true})).unwrap();
+    s.execute("paint.setStroke", &json!({"ids": [id], "swatch": "PMS Navy"})).unwrap();
+    s.execute("stroke.set", &json!({"ids": [id], "weight": 10})).unwrap();
+    let out = s.execute("screen.separateVector", &json!({"dpi": 100})).unwrap();
+    let inks = out["inks"].as_array().unwrap();
+    assert_eq!(inks.len(), 1);
+    assert_eq!(inks[0]["name"], "PMS Navy", "the spot swatch names the ink");
+    let f = film(&out, "PMS Navy");
+    let img = film_image(f);
+    // The ring is inked and the middle is not (100 dpi: 1 pt = 1.39 px).
+    assert!(inked(&img, 28, 70) || inked(&img, 30, 70), "the stroke");
+    assert!(!inked(&img, 139, 70), "the hollow middle");
+    assert!(f["coverage"].as_f64().unwrap() > 0.05 && f["coverage"].as_f64().unwrap() < 0.4);
+}
+
+#[test]
+fn vector_separation_lists_what_it_cannot_separate_and_checks_input() {
+    let mut s = Session::new();
+    // No document.
+    assert!(s.execute("screen.separateVector", &json!({})).is_err());
+    s.execute("file.new", &json!({"width": 200, "height": 100})).unwrap();
+    // An empty page has nothing to separate.
+    assert!(s.execute("screen.separateVector", &json!({})).is_err());
+    let g = shape(&mut s, (0.0, 0.0, 100.0, 100.0), YELLOW);
+    s.execute("paint.setFill", &json!({"ids": [g], "gradient": {"kind": "linear"}})).unwrap();
+    shape(&mut s, (100.0, 0.0, 100.0, 100.0), NAVY);
+    let r = s.execute("screen.separateVector", &json!({"dpi": 100})).unwrap();
+    assert_eq!(r["skippedTotal"], 1);
+    assert!(r["skipped"][0]["why"].as_str().unwrap().contains("gradient"), "{r}");
+    assert_eq!(r["inks"].as_array().unwrap().len(), 1, "only the navy was separated");
+    let src = png_source(8, 8, |_, _| [200, 30, 30, 255]);
+    for bad in [
+        json!({"source": src}),
+        json!({"dpi": 5}),
+        json!({"trapMm": 9}),
+        json!({"inks": []}),
+        json!({"inks": "navy"}),
+        json!({"inks": vec![json!({"color": "#c81e1e"}); 13]}),
+        json!({"format": "bmp"}),
+        json!({"underbase": {"mesh": 0}}),
+    ] {
+        assert!(s.execute("screen.separateVector", &bad).is_err(), "{bad}");
+    }
+}
+
+#[test]
+fn vector_separation_honours_clipping_masks() {
+    let mut s = Session::new();
+    s.execute("file.new", &json!({"width": 200, "height": 100})).unwrap();
+    let art = shape(&mut s, (0.0, 0.0, 200.0, 100.0), YELLOW);
+    let mask = shape(&mut s, (50.0, 0.0, 50.0, 100.0), NAVY);
+    s.execute("select.set", &json!({"ids": [art, mask]})).unwrap();
+    s.execute("object.clippingMask.make", &json!({})).unwrap();
+    let r = s.execute("screen.separateVector", &json!({"dpi": 100, "trapMm": 0})).unwrap();
+    let names: Vec<_> = r["films"].as_array().unwrap().iter().map(|f| f["name"].as_str().unwrap()).collect();
+    assert_eq!(names.len(), 1, "the mask itself prints nothing: {names:?}");
+    let img = film_image(&r["films"][0]);
+    // 100 dpi: the mask is 50..100 pt = pixels 69.4..138.9.
+    assert!(inked(&img, 100, 70));
+    assert!(!inked(&img, 60, 70) && !inked(&img, 150, 70) && !inked(&img, 250, 70));
+}

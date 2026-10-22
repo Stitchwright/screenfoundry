@@ -6626,3 +6626,7 @@ swatch	Bright Violet	Violet cerah
 	Index Color	Warna Terindeks
 	Pixel Size	Ukuran Piksel
 	Dither	Dithering
+
+# ScreenFoundry: vector separation (SC-4). Machine-written first pass, to be checked by a native speaker.
+	Vector Art	Seni Vektor
+	Separate Vector Art	Pisahkan Seni Vektor

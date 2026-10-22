@@ -6339,3 +6339,7 @@ machine	Stop	停止
 	Index Color	索引色彩
 	Pixel Size	像素大小
 	Dither	抖動
+
+# ScreenFoundry: vector separation (SC-4). Machine-written first pass, to be checked by a native speaker.
+	Vector Art	向量圖稿
+	Separate Vector Art	分色向量圖稿
