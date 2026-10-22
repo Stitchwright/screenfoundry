@@ -114,8 +114,9 @@ straight edge in the art is a straight edge on the film.
 - **Vector plates.** With `vectorPdf` every film also comes as a one-page vector PDF the size of
   the artboard (black on nothing, in the `vector` entry of the film, or `NN-role-name.vector.pdf`
   next to the film in `dir`). It holds the plate's paths as they are, trap and knockout included,
-  so a RIP can draw them at any resolution. Registration marks are drawn on the raster films
-  only.
+  so a RIP can draw them at any resolution. With `marks` the page grows by the same margin as a
+  raster film and carries the same four registration marks (as paths), so a vector plate and a
+  raster film of the same job line up.
 - **Type** is separated through its outlines, in the colours of its first style; use Create
   Outlines when characters differ in colour. Clip groups and layer clips are honoured.
 - **Left out, and said so.** Gradients, patterns, meshes, placed pictures, brush strokes, symbol

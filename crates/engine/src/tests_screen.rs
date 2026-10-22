@@ -656,7 +656,7 @@ fn vector_plates_can_come_as_vector_pdfs() {
     let plain = s.execute("screen.separateVector", &json!({"dpi": 100, "inks": inks()})).unwrap();
     assert!(plain["films"][0].get("vector").is_none());
     // Inline: one PDF a film, in the films' order, with paths and no picture.
-    let r = s.execute("screen.separateVector", &json!({"dpi": 100, "inks": inks(), "vectorPdf": true, "marks": true})).unwrap();
+    let r = s.execute("screen.separateVector", &json!({"dpi": 100, "inks": inks(), "vectorPdf": true})).unwrap();
     assert_eq!(r["films"].as_array().unwrap().len(), 2);
     for f in r["films"].as_array().unwrap() {
         assert_eq!(f["vector"]["format"], "pdf");
@@ -666,7 +666,14 @@ fn vector_plates_can_come_as_vector_pdfs() {
         // The page is the artboard and holds no picture (the ProcSet always lists /ImageB and /ImageC).
         assert!(text.contains("/MediaBox[0 0 200 100]") && !text.contains("/XObject"), "a vector page, not a bitmap: {}", f["name"]);
     }
-    assert!(r["notes"].as_array().unwrap().iter().any(|n| n.as_str().unwrap().contains("registration marks")), "{r}");
+    // With marks the page grows by the raster films' margin (64 px = 46.08 pt a side at 100 dpi).
+    let m = s.execute("screen.separateVector", &json!({"dpi": 100, "inks": inks(), "vectorPdf": true, "marks": true})).unwrap();
+    for f in m["films"].as_array().unwrap() {
+        let pdf = vectorcraft_format::base64_decode(f["vector"]["dataBase64"].as_str().unwrap()).unwrap();
+        let text = String::from_utf8_lossy(&pdf);
+        assert!(text.contains("/MediaBox[0 0 292.16 192.16]"), "{}", f["name"]);
+        assert_eq!((f["width"].as_u64(), f["height"].as_u64()), (Some(406), Some(267)), "the raster film grew to match");
+    }
     // To a folder: next to the raster film, named for it.
     let dir = vectorcraft_testkit::temp_dir("screen-vector");
     let w = s.execute("screen.separateVector", &json!({"dpi": 100, "inks": inks(), "vectorPdf": true, "dir": dir.to_string_lossy()})).unwrap();

@@ -15,11 +15,12 @@
 use sc_core::Bitmap1;
 use sc_core::color::{delta_e_sq, srgb_to_lab};
 use sc_core::job::{Film, Ink, Role};
+use sc_core::marks::MarkSpec;
 use serde_json::{Value, json};
 use vectorcraft_color::{BlendMode, Color, Paint};
 use vectorcraft_doc::appearance::AppearanceItem;
 use vectorcraft_doc::{Appearance, Document, Node, NodeKind};
-use vectorcraft_geom::{FillRule, PathData, Rect};
+use vectorcraft_geom::{FillRule, PathData, Rect, shapes};
 use vectorcraft_pathops::{BoolOp, Join, boolean, offset_path, unite_all};
 use vectorcraft_render::{AntiAlias, RenderOptions, Renderer};
 
@@ -401,11 +402,44 @@ fn assign_inks(p: &Value, raws: &[Raw], layer_names: &[String]) -> Result<(Vec<I
     Ok((inks, of_shape))
 }
 
+/// The four registration marks as paths, in document points: the layout of the raster films'
+/// marks (a crosshair in a circle at each corner, outside the art) at the size [`MarkSpec`] gives
+/// for `dpi`, drawn around `art`. Also the region that holds the art and the marks, grown by the
+/// same margin as a raster film, so a vector plate and a raster film line up.
+fn vector_marks(art: Rect, dpi: f64) -> Result<(PathData, Rect)> {
+    const C: &str = "screen.separateVector";
+    let m = MarkSpec::for_dpi(dpi).map_err(sc(C))?;
+    let k = 72.0 / dpi;
+    let (size, line, gap) = (m.size_px as f64 * k, m.line_px as f64 * k, m.gap_px as f64 * k);
+    let (r, off, margin) = (size / 2.0, gap + size / 2.0, gap + size + k);
+    let inner = (r - line).max(0.0);
+    let square = |cx: f64, cy: f64, hw: f64, hh: f64| shapes::rectangle(Rect::new(cx - hw, cy - hh, cx + hw, cy + hh));
+    let mut parts: Vec<(PathData, FillRule)> = Vec::new();
+    for (cx, cy) in [(art.x0 - off, art.y0 - off), (art.x1 + off, art.y0 - off), (art.x1 + off, art.y1 + off), (art.x0 - off, art.y1 + off)] {
+        // The ring is the outer circle with the inner one cut out (even-odd).
+        let mut ring = shapes::ellipse(Rect::new(cx - r, cy - r, cx + r, cy + r));
+        if inner > 0.0 {
+            ring.subpaths.extend(shapes::ellipse(Rect::new(cx - inner, cy - inner, cx + inner, cy + inner)).subpaths);
+        }
+        parts.push((ring, FillRule::EvenOdd));
+        parts.push((square(cx, cy, r, line / 2.0), FillRule::NonZero));
+        parts.push((square(cx, cy, line / 2.0, r), FillRule::NonZero));
+    }
+    let refs: Vec<(&PathData, FillRule)> = parts.iter().map(|(p, rule)| (p, *rule)).collect();
+    Ok((unite_all(&refs), Rect::new(art.x0 - margin, art.y0 - margin, art.x1 + margin, art.y1 + margin)))
+}
+
 /// Give each film entry in `films` its plate as a vector PDF (`vector`): a file in `dir` when
 /// there is one, else base64.
-fn attach_vector_pdfs(films: &mut [Value], paths: &[PathData], region: Rect, dir: Option<&str>) -> Result<()> {
+///
+/// With `marks` (the marks and the larger region that holds them, from [`vector_marks`]) the page
+/// grows to hold them and every plate carries them.
+fn attach_vector_pdfs(films: &mut [Value], paths: &[PathData], region: Rect, marks: Option<&(PathData, Rect)>, dir: Option<&str>) -> Result<()> {
     for (i, (entry, path)) in films.iter_mut().zip(paths).enumerate() {
-        let pdf = plate_pdf(path, region)?;
+        let pdf = match marks {
+            Some((mk, framed)) => plate_pdf(&unite_all(&[(path, FillRule::NonZero), (mk, FillRule::NonZero)]), *framed)?,
+            None => plate_pdf(path, region)?,
+        };
         let mut v = json!({ "format": "pdf" });
         match dir {
             Some(dir) => {
@@ -497,15 +531,13 @@ pub(super) fn separate_vector(s: &mut Session, p: &Value) -> Result<Value> {
 
     let mut films = emit(C, films, dpi, marks, fmt, dir_param(p))?;
     if vector_pdf {
-        attach_vector_pdfs(&mut films, &film_paths, region, dir_param(p))?;
+        let framed = if marks { Some(vector_marks(region, dpi)?) } else { None };
+        attach_vector_pdfs(&mut films, &film_paths, region, framed.as_ref(), dir_param(p))?;
     }
     let (w, h) = films.first().map(|f| (f["width"].clone(), f["height"].clone())).unwrap_or_default();
     let sheet = job_sheet(C, p, dpi, &films, &[], dir_param(p))?;
 
     let mut notes: Vec<String> = Vec::new();
-    if vector_pdf && marks {
-        notes.push("registration marks are on the raster films only; the vector PDFs are the plain plates".to_string());
-    }
     if collected.transparent > 0 {
         notes.push(format!("{} objects use opacity, blend modes, masks or effects; they print as solid shapes", collected.transparent));
     }
@@ -598,6 +630,26 @@ mod tests {
         // No trap: unchanged. A lone plate has nothing to tuck under.
         assert_eq!(trap_under(&plates, 0.0), plates.to_vec());
         assert_eq!(trap_under(&plates[..1], 2.0), plates[..1].to_vec());
+    }
+
+    #[test]
+    fn vector_marks_sit_outside_the_art_inside_the_framed_region_and_match_the_raster_margin() {
+        let art = Rect::new(0.0, 0.0, 200.0, 100.0);
+        let (marks, framed) = vector_marks(art, 100.0).unwrap();
+        // The raster film grows by (gap + size + 1) px = 64 px a side at 100 dpi, i.e. 46.08 pt.
+        assert!((framed.x0 + 46.08).abs() < 1e-9 && (framed.x1 - 246.08).abs() < 1e-9 && (framed.y1 - 146.08).abs() < 1e-9, "{framed:?}");
+        let b = marks.bounds().unwrap();
+        assert!(b.x0 >= framed.x0 && b.y0 >= framed.y0 && b.x1 <= framed.x1 && b.y1 <= framed.y1, "{b:?}");
+        let inside = boolean(&marks, FillRule::NonZero, &rect(0.0, 0.0, 200.0, 100.0), FillRule::NonZero, BoolOp::Intersect);
+        assert!(inside.is_empty(), "nothing on the art");
+        // Four marks of the same shape: a ring (outer r 13.68, line 0.72) plus a cross 27.36 long.
+        let one = area_of(&marks) / 4.0;
+        let (r, t) = (13.68_f64, 0.72_f64);
+        let ring = std::f64::consts::PI * (r * r - (r - t) * (r - t));
+        let cross = 2.0 * 2.0 * r * t - t * t;
+        // The cross overlaps the ring where they meet, so the mark is a little less than the sum.
+        assert!(one > 0.9 * (ring + cross) && one < ring + cross + 1.0, "{one} vs {}", ring + cross);
+        assert!(vector_marks(art, f64::NAN).is_err());
     }
 
     #[test]
