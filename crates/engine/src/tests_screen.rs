@@ -205,6 +205,16 @@ fn films_come_as_one_bit_png_or_tiff_with_their_resolution() {
         assert_eq!(d.colortype().unwrap(), tiff::ColorType::Gray(1));
         assert_eq!(u64::from(d.dimensions().unwrap().0), f["width"].as_u64().unwrap());
     }
+    // Group 4 files decode to the same pixels as the uncompressed ones.
+    let g4 = s.execute("screen.separate", &json!({"dpi": 100, "inks": inks(), "format": "tiff-g4", "dir": dir.to_string_lossy()})).unwrap();
+    assert_eq!(g4["films"].as_array().unwrap().len(), tiff["films"].as_array().unwrap().len());
+    for f in g4["films"].as_array().unwrap() {
+        assert_eq!(f["format"], "tiff-g4");
+        let mut d = tiff::decoder::Decoder::new(std::io::Cursor::new(std::fs::read(f["path"].as_str().unwrap()).unwrap())).unwrap();
+        assert_eq!(d.get_tag_u64(tiff::tags::Tag::Compression).unwrap(), 4);
+        assert_eq!(u64::from(d.dimensions().unwrap().0), f["width"].as_u64().unwrap());
+        d.read_image().unwrap();
+    }
     // The halftone takes the option too.
     let mut png = Vec::new();
     let img = image::RgbaImage::from_pixel(60, 60, image::Rgba([128, 128, 128, 255]));

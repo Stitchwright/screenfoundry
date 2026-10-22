@@ -49,7 +49,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Separate Colors",
             [],
             None,
-            "{source?, dpi?, inks?: [{name?, color: \"#rrggbb\", mesh? (156)}], colors?: how many inks to find in the art when `inks` is not given (4; 1–12), underbase?: true|{name?, color? (#ffffff), mesh? (110), chokeMm? (0.3)}, trapMm?: spread of colours that print before a darker one (0.25; 0–5), marks?: add registration marks (false), format?: png|tiff (png), dir?: a folder to write one 1-bit film file a screen (without it: base64)} spot-colour separation: one solid film per screen, the underbase first then the colours light to dark → {dpi, width, height, films: [{name, color, role: underbase|color, format, mesh, coverage, width, height, path | dataBase64}]}",
+            "{source?, dpi?, inks?: [{name?, color: \"#rrggbb\", mesh? (156)}], colors?: how many inks to find in the art when `inks` is not given (4; 1–12), underbase?: true|{name?, color? (#ffffff), mesh? (110), chokeMm? (0.3)}, trapMm?: spread of colours that print before a darker one (0.25; 0–5), marks?: add registration marks (false), format?: png|tiff|tiff-g4 (png), dir?: a folder to write one 1-bit film file a screen (without it: base64)} spot-colour separation: one solid film per screen, the underbase first then the colours light to dark → {dpi, width, height, films: [{name, color, role: underbase|color, format, mesh, coverage, width, height, path | dataBase64}]}",
             always,
             separate
         ),
@@ -58,7 +58,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Simulated Process",
             [],
             None,
-            "{source?, dpi?, inks?: [{name?, color, mesh? (230)}], colors?: how many inks to find in the art when `inks` is not given (4; 1–8), base?: \"#rrggbb\" the colour under the dots (#ffffff), underbase?: true|{name?, color?, mesh?, chokeMm?}, lpi? (45), angles?: [degrees an ink] (22.5, 67.5, 45, 15, 75, 37.5, 52.5, 7.5), shape?: round|ellipse|line (round), minDot? (0.08), maxDot? (0.95), marks?, format?: png|tiff (png), dir?} full-colour art as halftone dots of a few inks side by side over the base, each ink at its own screen angle, the underbase first then the inks light to dark → {dpi, width, height, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64}], advice: [{ink, code, message}]}",
+            "{source?, dpi?, inks?: [{name?, color, mesh? (230)}], colors?: how many inks to find in the art when `inks` is not given (4; 1–8), base?: \"#rrggbb\" the colour under the dots (#ffffff), underbase?: true|{name?, color?, mesh?, chokeMm?}, lpi? (45), angles?: [degrees an ink] (22.5, 67.5, 45, 15, 75, 37.5, 52.5, 7.5), shape?: round|ellipse|line (round), minDot? (0.08), maxDot? (0.95), marks?, format?: png|tiff|tiff-g4 (png), dir?} full-colour art as halftone dots of a few inks side by side over the base, each ink at its own screen angle, the underbase first then the inks light to dark → {dpi, width, height, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64}], advice: [{ink, code, message}]}",
             always,
             simulate
         ),
@@ -67,7 +67,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Halftone Film",
             [],
             None,
-            "{source?, dpi?, ink?: \"#rrggbb\" (#000000), name?, mesh? (230), lpi? (45), angle? (22.5), shape?: round|ellipse|line (round), minDot?: tones below this print nothing (0.08), maxDot?: tones above this print solid (0.95), marks?, format?: png|tiff (png), dir?} one ink's tones screened into dots → {dpi, width, height, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64}], advice: [{code, message}]}",
+            "{source?, dpi?, ink?: \"#rrggbb\" (#000000), name?, mesh? (230), lpi? (45), angle? (22.5), shape?: round|ellipse|line (round), minDot?: tones below this print nothing (0.08), maxDot?: tones above this print solid (0.95), marks?, format?: png|tiff|tiff-g4 (png), dir?} one ink's tones screened into dots → {dpi, width, height, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64}], advice: [{code, message}]}",
             always,
             halftone_film
         ),
@@ -204,6 +204,7 @@ fn slug(name: &str) -> String {
 enum FilmFormat {
     Png,
     Tiff,
+    TiffG4,
 }
 
 impl FilmFormat {
@@ -211,24 +212,26 @@ impl FilmFormat {
         let given = match p.get("format") {
             None | Some(Value::Null) => "png",
             Some(Value::String(f)) => f.as_str(),
-            Some(_) => return Err(bad(cmd, "`format` is png or tiff")),
+            Some(_) => return Err(bad(cmd, "`format` is png, tiff or tiff-g4")),
         };
         match given {
             "png" => Ok(Self::Png),
             "tiff" | "tif" => Ok(Self::Tiff),
-            _ => Err(bad(cmd, "`format` is png or tiff")),
+            "tiff-g4" | "tif-g4" | "g4" => Ok(Self::TiffG4),
+            _ => Err(bad(cmd, "`format` is png, tiff or tiff-g4")),
         }
     }
     fn extension(self) -> &'static str {
         match self {
             Self::Png => "png",
-            Self::Tiff => "tif",
+            Self::Tiff | Self::TiffG4 => "tif",
         }
     }
     fn name(self) -> &'static str {
         match self {
             Self::Png => "png",
             Self::Tiff => "tiff",
+            Self::TiffG4 => "tiff-g4",
         }
     }
     /// A 1-bit file with the film's resolution: black where ink must reach the garment.
@@ -236,6 +239,7 @@ impl FilmFormat {
         match self {
             Self::Png => sc_core::export::png_1bit(film, dpi),
             Self::Tiff => sc_core::export::tiff_1bit(film, dpi),
+            Self::TiffG4 => sc_core::export::tiff_g4(film, dpi),
         }
         .map_err(sc(cmd))
     }

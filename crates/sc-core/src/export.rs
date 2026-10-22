@@ -1,5 +1,5 @@
 //! Film files. A film is a 1-bit image whose physical size matters, so both writers record the
-//! resolution: [`png_1bit`] and [`tiff_1bit`]. Black is ink (where the screen must open), white is
+//! resolution: [`png_1bit`], [`tiff_1bit`] and [`tiff_g4`]. Black is ink (where the screen must open), white is
 //! clear film, which is how film positives are made.
 
 use crate::error::{Result, param};
@@ -57,7 +57,29 @@ pub fn png_1bit(film: &Bitmap1, dpi: f64) -> Result<Vec<u8>> {
 /// interpretation is "white is zero", so a set bit is black ink.
 pub fn tiff_1bit(film: &Bitmap1, dpi: f64) -> Result<Vec<u8>> {
     check_dpi(dpi)?;
-    let data = packed_rows(film);
+    Ok(tiff_file(film, dpi, 1, &packed_rows(film)))
+}
+
+/// A 1-bit TIFF compressed with CCITT Group 4 (T.6), the usual format for film positives: flat
+/// ink areas shrink to a few hundred bytes where the raw file is megabytes. Same tags as
+/// [`tiff_1bit`]. Group 4 codes widths as 16 bits, so a film wider than 65,535 pixels is refused.
+pub fn tiff_g4(film: &Bitmap1, dpi: f64) -> Result<Vec<u8>> {
+    use fax::{Color, VecWriter, encoder::Encoder};
+    check_dpi(dpi)?;
+    let width = u16::try_from(film.width()).map_err(|_| param("film", "too wide for CCITT Group 4 (65,535 pixels at most)"))?;
+    let mut enc = Encoder::new(VecWriter::new());
+    for y in 0..film.height() {
+        let row = (0..film.width()).map(|x| if film.get(x, y) { Color::Black } else { Color::White });
+        // `VecWriter` cannot fail, so the error is `Infallible`; the `map_err` keeps it honest.
+        enc.encode_line(row, width).map_err(|_| param("film", "CCITT encoding failed"))?;
+    }
+    let data = enc.finish().map_err(|_| param("film", "CCITT encoding failed"))?.finish();
+    Ok(tiff_file(film, dpi, 4, &data))
+}
+
+/// The TIFF container shared by the writers: one strip, white is zero, `compression` is the
+/// TIFF code (1 none, 4 CCITT Group 4).
+fn tiff_file(film: &Bitmap1, dpi: f64, compression: u16, data: &[u8]) -> Vec<u8> {
     let (w, h) = (film.width() as u32, film.height() as u32);
     const ENTRIES: u16 = 12;
     let ifd_len = 2 + usize::from(ENTRIES) * 12 + 4;
@@ -83,7 +105,7 @@ pub fn tiff_1bit(film: &Bitmap1, dpi: f64) -> Result<Vec<u8>> {
     entry(256, LONG, 1, w); // ImageWidth
     entry(257, LONG, 1, h); // ImageLength
     entry(258, SHORT, 1, 1); // BitsPerSample
-    entry(259, SHORT, 1, 1); // Compression: none
+    entry(259, SHORT, 1, u32::from(compression)); // Compression
     entry(262, SHORT, 1, 0); // PhotometricInterpretation: WhiteIsZero
     entry(273, LONG, 1, strip as u32); // StripOffsets
     entry(277, SHORT, 1, 1); // SamplesPerPixel
@@ -97,8 +119,8 @@ pub fn tiff_1bit(film: &Bitmap1, dpi: f64) -> Result<Vec<u8>> {
         out.extend_from_slice(&num.to_le_bytes());
         out.extend_from_slice(&den.to_le_bytes());
     }
-    out.extend_from_slice(&data);
-    Ok(out)
+    out.extend_from_slice(data);
+    out
 }
 
 #[cfg(test)]
@@ -158,11 +180,73 @@ mod tests {
         assert_eq!(px[1] & 0b1111_1000, 0b1111_1000);
     }
 
+    /// What a TIFF decodes to: size, resolution tag and the packed pixels.
+    fn decode_tiff(bytes: Vec<u8>) -> ((u32, u32), tiff::decoder::ifd::Value, Vec<u8>) {
+        use tiff::decoder::{Decoder, DecodingResult};
+        let mut d = Decoder::new(Cursor::new(bytes)).unwrap();
+        let size = d.dimensions().unwrap();
+        let res = d.get_tag(tiff::tags::Tag::XResolution).unwrap();
+        let DecodingResult::U8(px) = d.read_image().unwrap() else { panic!("not 8-bit samples") };
+        (size, res, px)
+    }
+
+    #[test]
+    fn group4_decodes_to_the_same_pixels_as_the_raw_tiff() {
+        // Widths either side of byte and 64-pixel boundaries, with runs long enough to need make-up
+        // codes, lone pixels, solid rows, empty rows and noise.
+        for (w, h) in [(1, 1), (7, 5), (13, 3), (64, 9), (65, 9), (200, 40), (2600, 6)] {
+            let mut b = Bitmap1::new(w, h).unwrap();
+            let mut seed = 12345u32;
+            for y in 0..h {
+                for x in 0..w {
+                    seed = seed.wrapping_mul(1_664_525).wrapping_add(1_013_904_223);
+                    let ink = match y % 4 {
+                        0 => false,
+                        1 => true,
+                        2 => (seed >> 24) < 40,
+                        _ => (x / 3 + y) % 2 == 0,
+                    };
+                    b.set(x as i64, y as i64, ink);
+                }
+            }
+            let raw = decode_tiff(tiff_1bit(&b, 600.0).unwrap());
+            let g4 = decode_tiff(tiff_g4(&b, 600.0).unwrap());
+            assert_eq!(raw.0, g4.0, "{w}x{h}");
+            assert_eq!(raw.2, g4.2, "{w}x{h} pixels");
+            assert_eq!(format!("{:?}", raw.1), format!("{:?}", g4.1), "{w}x{h} resolution");
+        }
+    }
+
+    #[test]
+    fn group4_shrinks_flat_film_and_states_its_compression() {
+        use tiff::decoder::Decoder;
+        let mut b = Bitmap1::new(3000, 2000).unwrap();
+        for y in 500..1500 {
+            for x in 800..2200 {
+                b.set(x, y, true);
+            }
+        }
+        let g4 = tiff_g4(&b, 1200.0).unwrap();
+        assert!(g4.len() < 2_000, "{} bytes", g4.len());
+        assert!(g4.len() * 100 < tiff_1bit(&b, 1200.0).unwrap().len());
+        let mut d = Decoder::new(Cursor::new(g4)).unwrap();
+        assert_eq!(d.get_tag_u64(tiff::tags::Tag::Compression).unwrap(), 4);
+        assert_eq!(d.get_tag_u64(tiff::tags::Tag::ResolutionUnit).unwrap(), 2);
+    }
+
+    #[test]
+    fn group4_refuses_what_it_cannot_code() {
+        let wide = Bitmap1::new(65_536, 1).unwrap();
+        assert!(tiff_g4(&wide, 300.0).is_err());
+        assert!(tiff_g4(&Bitmap1::new(65_535, 1).unwrap(), 300.0).is_ok());
+    }
+
     #[test]
     fn bad_resolutions_are_errors() {
         for dpi in [0.0, -1.0, f64::NAN, f64::INFINITY, 1e9] {
             assert!(png_1bit(&sample(), dpi).is_err(), "{dpi}");
             assert!(tiff_1bit(&sample(), dpi).is_err(), "{dpi}");
+            assert!(tiff_g4(&sample(), dpi).is_err(), "{dpi}");
         }
     }
 

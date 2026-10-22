@@ -3799,6 +3799,7 @@ dependencies = [
 name = "sc-core"
 version = "0.14.0"
 dependencies = [
+ "fax",
  "png 0.18.1",
  "serde",
  "serde_json",

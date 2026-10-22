@@ -99,8 +99,9 @@ of a job grow by the same margin, so the marks line up from one film to the next
 ## Films and output
 
 Films are 1-bit images, black where ink must reach the garment, with the job's resolution
-recorded in the file so they print at the right size. Choose `format`: `png` (default) or `tiff`
-(uncompressed baseline, which imagesetters and direct-to-screen machines read). Choose a folder
+recorded in the file so they print at the right size. Choose `format`: `png` (default), `tiff`
+(uncompressed baseline) or `tiff-g4` (CCITT Group 4, which imagesetters and direct-to-screen
+machines read and which makes a flat film a few hundred bytes instead of megabytes). Choose a folder
 with `dir`; without one the films come back as base64. PDF output, direct-to-screen and DTF
 output are planned.
 
