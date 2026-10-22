@@ -215,6 +215,20 @@ fn films_come_as_one_bit_png_or_tiff_with_their_resolution() {
         assert_eq!(u64::from(d.dimensions().unwrap().0), f["width"].as_u64().unwrap());
         d.read_image().unwrap();
     }
+    // PDF films are one page each, at the film's physical size, and the app's own importer opens them.
+    let pdf = s.execute("screen.separate", &json!({"dpi": 100, "inks": inks(), "format": "pdf", "dir": dir.to_string_lossy()})).unwrap();
+    for f in pdf["films"].as_array().unwrap() {
+        assert_eq!(f["format"], "pdf");
+        let path = f["path"].as_str().unwrap();
+        assert!(path.ends_with(".pdf"), "{path}");
+        let bytes = std::fs::read(path).unwrap();
+        assert!(bytes.starts_with(b"%PDF-"));
+        let text = String::from_utf8_lossy(&bytes);
+        let (w, h) = (f["width"].as_f64().unwrap() * 0.72, f["height"].as_f64().unwrap() * 0.72);
+        assert!(text.contains(&format!("/MediaBox [0 0 {w:.4} {h:.4}]")), "{path}");
+        let mut opened = session();
+        opened.execute("document.open", &json!({"name": "film.pdf", "dataBase64": vectorcraft_format::base64_encode(&bytes)})).unwrap();
+    }
     // The halftone takes the option too.
     let mut png = Vec::new();
     let img = image::RgbaImage::from_pixel(60, 60, image::Rgba([128, 128, 128, 255]));

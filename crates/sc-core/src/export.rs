@@ -1,5 +1,5 @@
 //! Film files. A film is a 1-bit image whose physical size matters, so both writers record the
-//! resolution: [`png_1bit`], [`tiff_1bit`] and [`tiff_g4`]. Black is ink (where the screen must open), white is
+//! resolution: [`png_1bit`], [`tiff_1bit`], [`tiff_g4`] and [`pdf_g4`]. Black is ink (where the screen must open), white is
 //! clear film, which is how film positives are made.
 
 use crate::error::{Result, param};
@@ -64,8 +64,13 @@ pub fn tiff_1bit(film: &Bitmap1, dpi: f64) -> Result<Vec<u8>> {
 /// ink areas shrink to a few hundred bytes where the raw file is megabytes. Same tags as
 /// [`tiff_1bit`]. Group 4 codes widths as 16 bits, so a film wider than 65,535 pixels is refused.
 pub fn tiff_g4(film: &Bitmap1, dpi: f64) -> Result<Vec<u8>> {
-    use fax::{Color, VecWriter, encoder::Encoder};
     check_dpi(dpi)?;
+    Ok(tiff_file(film, dpi, 4, &g4_data(film)?))
+}
+
+/// The CCITT Group 4 code of `film`, ink as black, ending with the end-of-block marker.
+fn g4_data(film: &Bitmap1) -> Result<Vec<u8>> {
+    use fax::{Color, VecWriter, encoder::Encoder};
     let width = u16::try_from(film.width()).map_err(|_| param("film", "too wide for CCITT Group 4 (65,535 pixels at most)"))?;
     let mut enc = Encoder::new(VecWriter::new());
     for y in 0..film.height() {
@@ -73,8 +78,69 @@ pub fn tiff_g4(film: &Bitmap1, dpi: f64) -> Result<Vec<u8>> {
         // `VecWriter` cannot fail, so the error is `Infallible`; the `map_err` keeps it honest.
         enc.encode_line(row, width).map_err(|_| param("film", "CCITT encoding failed"))?;
     }
-    let data = enc.finish().map_err(|_| param("film", "CCITT encoding failed"))?.finish();
-    Ok(tiff_file(film, dpi, 4, &data))
+    Ok(enc.finish().map_err(|_| param("film", "CCITT encoding failed"))?.finish())
+}
+
+/// The longest side a PDF page may have, in points (the limit of PDF 1.4 viewers).
+const PDF_MAX_POINTS: f64 = 14_400.0;
+
+/// A one-page PDF holding the film as a Group 4 image at its physical size (the page is
+/// `pixels × 72 / dpi` points), ink black on white. The image is drawn edge to edge, so a viewer's
+/// "actual size" is the film's size. A film longer than 200 inches is refused.
+pub fn pdf_g4(film: &Bitmap1, dpi: f64) -> Result<Vec<u8>> {
+    use std::fmt::Write as _;
+    check_dpi(dpi)?;
+    let data = g4_data(film)?;
+    let (w, h) = (film.width(), film.height());
+    let pts = |px: usize| px as f64 * 72.0 / dpi;
+    let (pw, ph) = (pts(w), pts(h));
+    if pw > PDF_MAX_POINTS || ph > PDF_MAX_POINTS {
+        return Err(param("film", "larger than a PDF page can be (200 inches)"));
+    }
+    let content = format!("q {pw:.4} 0 0 {ph:.4} 0 0 cm /Im0 Do Q\n");
+    let mut out: Vec<u8> = b"%PDF-1.4\n%\xE2\xE3\xCF\xD3\n".to_vec();
+    let mut offsets = Vec::new();
+    let mut object = |out: &mut Vec<u8>, body: &[u8]| {
+        offsets.push(out.len());
+        let _ = writeln!(Sink(out), "{} 0 obj", offsets.len());
+        out.extend_from_slice(body);
+        out.extend_from_slice(b"\nendobj\n");
+    };
+    object(&mut out, b"<< /Type /Catalog /Pages 2 0 R >>");
+    object(&mut out, b"<< /Type /Pages /Kids [3 0 R] /Count 1 >>");
+    object(
+        &mut out,
+        format!("<< /Type /Page /Parent 2 0 R /MediaBox [0 0 {pw:.4} {ph:.4}] /Resources << /XObject << /Im0 5 0 R >> >> /Contents 4 0 R >>")
+            .as_bytes(),
+    );
+    object(&mut out, format!("<< /Length {} >>\nstream\n{content}endstream", content.len()).as_bytes());
+    let mut image = format!(
+        "<< /Type /XObject /Subtype /Image /Width {w} /Height {h} /ColorSpace /DeviceGray /BitsPerComponent 1 \
+         /Filter /CCITTFaxDecode /DecodeParms << /K -1 /Columns {w} /Rows {h} >> /Length {} >>\nstream\n",
+        data.len()
+    )
+    .into_bytes();
+    image.extend_from_slice(&data);
+    image.extend_from_slice(b"\nendstream");
+    object(&mut out, &image);
+    let xref = out.len();
+    let mut table = format!("xref\n0 {}\n0000000000 65535 f \n", offsets.len() + 1);
+    for o in &offsets {
+        let _ = writeln!(table, "{o:010} 00000 n ");
+    }
+    let _ = write!(table, "trailer\n<< /Size {} /Root 1 0 R >>\nstartxref\n{xref}\n%%EOF\n", offsets.len() + 1);
+    out.extend_from_slice(table.as_bytes());
+    Ok(out)
+}
+
+/// Lets `write!` append text to a byte vector.
+struct Sink<'a>(&'a mut Vec<u8>);
+
+impl std::fmt::Write for Sink<'_> {
+    fn write_str(&mut self, s: &str) -> std::fmt::Result {
+        self.0.extend_from_slice(s.as_bytes());
+        Ok(())
+    }
 }
 
 /// The TIFF container shared by the writers: one strip, white is zero, `compression` is the
@@ -232,6 +298,54 @@ mod tests {
         let mut d = Decoder::new(Cursor::new(g4)).unwrap();
         assert_eq!(d.get_tag_u64(tiff::tags::Tag::Compression).unwrap(), 4);
         assert_eq!(d.get_tag_u64(tiff::tags::Tag::ResolutionUnit).unwrap(), 2);
+    }
+
+    #[test]
+    fn pdf_has_a_valid_xref_the_film_size_and_decodable_pixels() {
+        let mut b = Bitmap1::new(300, 150).unwrap();
+        for y in 20..90 {
+            for x in 40..250 {
+                b.set(x, y, (x + y) % 7 != 0);
+            }
+        }
+        let pdf = pdf_g4(&b, 300.0).unwrap();
+        assert!(pdf.starts_with(b"%PDF-1.4"));
+        let text = String::from_utf8_lossy(&pdf);
+        // 300 × 150 px at 300 dpi is 72 × 36 points.
+        assert!(text.contains("/MediaBox [0 0 72.0000 36.0000]"), "{text}");
+        // Each xref entry points at its "N 0 obj".
+        let xref = text.rfind("startxref\n").unwrap();
+        let start: usize = text[xref + 10..].lines().next().unwrap().parse().unwrap();
+        assert!(pdf[start..].starts_with(b"xref\n0 6\n"));
+        let table = String::from_utf8_lossy(&pdf[start..]).into_owned();
+        for n in 1..=5usize {
+            let line = table.lines().nth(n + 2).unwrap();
+            let off: usize = line[..10].parse().unwrap();
+            assert!(pdf[off..].starts_with(format!("{n} 0 obj").as_bytes()), "object {n}");
+        }
+        // The image stream is the Group 4 code of the film: decode it and compare every pixel.
+        let key = b"stream\n";
+        let img_obj = pdf.windows(15).position(|w| w == b"/Subtype /Image").unwrap();
+        let rest = String::from_utf8_lossy(&pdf[img_obj..]).into_owned();
+        let from = img_obj + rest.find("stream\n").unwrap() + key.len();
+        let len: usize = rest.split("/Length ").nth(1).unwrap().split_whitespace().next().unwrap().parse().unwrap();
+        let mut y = 0;
+        fax::decoder::decode_g4(pdf[from..from + len].iter().copied(), 300, Some(150), |line| {
+            for (x, c) in fax::decoder::pels(line, 300).enumerate() {
+                assert_eq!(c == fax::Color::Black, b.get(x, y), "({x}, {y})");
+            }
+            y += 1;
+        })
+        .unwrap();
+        assert_eq!(y, 150);
+    }
+
+    #[test]
+    fn pdf_refuses_pages_past_the_pdf_limit() {
+        let long = Bitmap1::new(10, 4000).unwrap();
+        assert!(pdf_g4(&long, 1.0).is_err()); // 4000 inches
+        assert!(pdf_g4(&long, 600.0).is_ok());
+        assert!(pdf_g4(&long, f64::NAN).is_err());
     }
 
     #[test]
