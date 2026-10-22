@@ -6666,3 +6666,6 @@ machine	Stop	Спиране
 	Find Ink Colors	Намиране на цветовете на мастилото
 	Check Mesh and Line Screen	Проверка на мрежата и растера
 	Films saved to:	Филмите са запазени в:
+
+# ScreenFoundry: Simulated Process (SC-5). Machine-written first pass, to be checked by a native speaker.
+	Simulated Process	Симулиран процес

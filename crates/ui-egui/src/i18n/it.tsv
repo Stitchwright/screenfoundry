@@ -6347,3 +6347,6 @@ machine	Stop	Arresto
 	Find Ink Colors	Trova i colori dell’inchiostro
 	Check Mesh and Line Screen	Controlla tessuto e retinatura
 	Films saved to:	Pellicole salvate in:
+
+# ScreenFoundry: Simulated Process (SC-5). Machine-written first pass, to be checked by a native speaker.
+	Simulated Process	Processo simulato

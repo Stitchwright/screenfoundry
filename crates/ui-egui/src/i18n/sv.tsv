@@ -6662,3 +6662,6 @@ machine	Stop	Stopp
 	Find Ink Colors	Hitta tryckfärger
 	Check Mesh and Line Screen	Kontrollera duk och raster
 	Films saved to:	Filmer sparade i:
+
+# ScreenFoundry: Simulated Process (SC-5). Machine-written first pass, to be checked by a native speaker.
+	Simulated Process	Simulerad process

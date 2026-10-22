@@ -216,3 +216,111 @@ fn films_come_as_one_bit_png_or_tiff_with_their_resolution() {
     assert!(s.execute("screen.halftone", &json!({"source": src, "format": 3})).is_err());
     let _ = std::fs::remove_dir_all(dir);
 }
+
+/// sRGB bytes of a linear-light mix `t` of the way from white to `ink`.
+fn mix_with_white(ink: [u8; 3], t: f64) -> [u8; 3] {
+    let lin = |c: u8| {
+        let c = f64::from(c) / 255.0;
+        if c <= 0.04045 { c / 12.92 } else { ((c + 0.055) / 1.055).powf(2.4) }
+    };
+    let enc = |v: f64| {
+        let s = if v <= 0.003_130_8 { v * 12.92 } else { 1.055 * v.powf(1.0 / 2.4) - 0.055 };
+        (s * 255.0).round().clamp(0.0, 255.0) as u8
+    };
+    [0, 1, 2].map(|k| enc(1.0 + (lin(ink[k]) - 1.0) * t))
+}
+
+fn png_source(w: u32, h: u32, f: impl Fn(u32, u32) -> [u8; 4]) -> Value {
+    let img = image::RgbaImage::from_fn(w, h, |x, y| image::Rgba(f(x, y)));
+    let mut png = Vec::new();
+    image::DynamicImage::ImageRgba8(img).write_to(&mut std::io::Cursor::new(&mut png), image::ImageFormat::Png).unwrap();
+    json!({"dataBase64": vectorcraft_format::base64_encode(&png)})
+}
+
+/// The share of inked pixels of a PNG film in the columns `x0..x1`.
+fn inked_share(f: &Value, x0: u32, x1: u32) -> f64 {
+    let img = film_image(f);
+    let mut n = 0u32;
+    let mut inked_px = 0u32;
+    for y in 0..img.height() {
+        for x in x0..x1 {
+            n += 1;
+            inked_px += u32::from(inked(&img, x, y));
+        }
+    }
+    f64::from(inked_px) / f64::from(n)
+}
+
+#[test]
+fn simulate_prints_a_tone_as_dots_of_the_ink_over_the_base() {
+    let mut s = Session::new();
+    let navy = [10, 20, 90];
+    // A white-to-navy ramp, 240 pixels wide: denser dots to the right.
+    let src = png_source(240, 60, |x, _| {
+        let c = mix_with_white(navy, f64::from(x) / 239.0);
+        [c[0], c[1], c[2], 255]
+    });
+    let inks = json!([{"name": "Navy", "color": "#0a1458"}]);
+    let r = s.execute("screen.simulate", &json!({"source": src, "dpi": 600, "lpi": 50, "inks": inks, "minDot": 0, "maxDot": 1})).unwrap();
+    let films = r["films"].as_array().unwrap();
+    assert_eq!(films.len(), 1);
+    let f = &films[0];
+    let (left, mid, right) = (inked_share(f, 0, 60), inked_share(f, 90, 150), inked_share(f, 180, 240));
+    assert!(left < mid && mid < right, "{left} < {mid} < {right}");
+    assert!((left - 0.125).abs() < 0.06 && (mid - 0.5).abs() < 0.06 && (right - 0.875).abs() < 0.06, "{left} {mid} {right}");
+}
+
+#[test]
+fn simulate_mixes_inks_has_an_underbase_and_checks_mesh_and_angle() {
+    let mut s = Session::new();
+    // Half navy and half red by area (in linear light) over white: each ink covers a bit under half.
+    let (a, b) = ([10u8, 20, 90], [200u8, 30, 30]);
+    let lin = |c: u8| {
+        let c = f64::from(c) / 255.0;
+        if c <= 0.04045 { c / 12.92 } else { ((c + 0.055) / 1.055).powf(2.4) }
+    };
+    let enc = |v: f64| {
+        let s = if v <= 0.003_130_8 { v * 12.92 } else { 1.055 * v.powf(1.0 / 2.4) - 0.055 };
+        (s * 255.0).round().clamp(0.0, 255.0) as u8
+    };
+    let px: Vec<u8> = (0..3).map(|k| enc(0.5 * lin(a[k]) + 0.5 * lin(b[k]))).collect();
+    let src = png_source(120, 120, |_, _| [px[0], px[1], px[2], 255]);
+    let inks = json!([{"name": "Navy", "color": "#0a1458", "mesh": 110}, {"name": "Red", "color": "#c81e1e", "mesh": 230}]);
+    let r = s
+        .execute(
+            "screen.simulate",
+            &json!({"source": src, "dpi": 600, "lpi": 50, "inks": inks, "underbase": true, "angles": [0, 67.5], "minDot": 0, "maxDot": 1, "marks": true}),
+        )
+        .unwrap();
+    let names: Vec<_> = r["films"].as_array().unwrap().iter().map(|f| f["name"].as_str().unwrap()).collect();
+    assert_eq!(names, ["Underbase", "Red", "Navy"]);
+    let widths: std::collections::HashSet<_> = r["films"].as_array().unwrap().iter().map(|f| f["width"].as_u64()).collect();
+    assert_eq!(widths.len(), 1, "marks give every film the same size");
+    for f in &r["films"].as_array().unwrap()[1..] {
+        let c = f["coverage"].as_f64().unwrap();
+        assert!((c - 0.5).abs() < 0.05, "{}: {c}", f["name"]);
+    }
+    // Navy on 110 mesh at 50 lpi is too fine, and its 0° angle lines up with the threads.
+    let advice: Vec<_> = r["advice"].as_array().unwrap().iter().map(|a| (a["ink"].as_str().unwrap(), a["code"].as_str().unwrap())).collect();
+    assert_eq!(advice, [("Navy", "lpiTooHigh"), ("Navy", "angleAlignsWithThreads")]);
+}
+
+#[test]
+fn simulate_rejects_bad_parameters() {
+    let mut s = Session::new();
+    let src = png_source(8, 8, |_, _| [200, 30, 30, 255]);
+    let inks = json!([{"color": "#c81e1e"}]);
+    for bad in [
+        json!({"source": src, "inks": inks, "angles": []}),
+        json!({"source": src, "inks": inks, "angles": "22.5"}),
+        json!({"source": src, "inks": inks, "angles": [1e9]}),
+        json!({"source": src, "inks": inks, "base": "white"}),
+        json!({"source": src, "inks": inks, "shape": "star"}),
+        json!({"source": src, "inks": inks, "lpi": 0}),
+        json!({"source": src, "inks": inks, "lpi": 600, "dpi": 300}),
+        json!({"source": src, "colors": 9}),
+        json!({"source": src, "inks": vec![json!({"color": "#c81e1e"}); 9]}),
+    ] {
+        assert!(s.execute("screen.simulate", &bad).is_err(), "{bad}");
+    }
+}

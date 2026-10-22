@@ -6310,3 +6310,6 @@ machine	Stop	停止
 	Find Ink Colors	尋找油墨顏色
 	Check Mesh and Line Screen	檢查網目與網線數
 	Films saved to:	底片已儲存至：
+
+# ScreenFoundry: Simulated Process (SC-5). Machine-written first pass, to be checked by a native speaker.
+	Simulated Process	模擬分色

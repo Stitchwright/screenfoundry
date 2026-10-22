@@ -54,7 +54,7 @@ Known simplifications to fix:
 | SC-2 (partly done: 1-bit PNG and uncompressed TIFF, with the resolution recorded) | Film export: 1-bit TIFF (CCITT G4) and PDF per screen, at job dpi, with job-sheet page | Left: compressed TIFF, PDF, the job sheet. Use permissive crates only. |
 | SC-3 | Separations panel: palette editor, per-plate preview, ink library, mesh and lpi advice | Panels read engine state only. |
 | SC-4 | Vector-first spot separation: each ink = a layer or object set; overprint/knockout, trap on paths | Uses the vector document directly; no rasterising until output. |
-| SC-5 | Simulated process: spot-channel halftones over an underbase, highlight white | Needs the rules the research marks unverified; calibrate with real shops. |
+| SC-5 (first part done: `screen.simulate`) | Simulated process: spot-channel halftones over an underbase, highlight white | Done: per-pixel ink shares by optical mixing in linear light, least-ink tie-break, per-ink angles. Left: dot-gain compensation, highlight white, ink-opacity/overlap model, an ink-limit option. Calibrate with real shops. |
 | SC-6 | Index colour with a fixed ink palette and non-overlapping patterns | Palette selection per the research. |
 | SC-7 | Stochastic (FM) and hybrid screening | Check void-and-cluster patent status first. |
 | SC-8 | CTS / DTF / DCS 2.0 output; job-sheet export | After SC-2. |
@@ -77,3 +77,4 @@ Decided by the owner on 2026-10-21: remove the embroidery code (done, `docs/plan
 - 2026-10-21: Screen Print menu (right of Effect) with two folder-picking items; translations for 23 languages are a machine-written first pass and need native review.
 - 2026-10-21: embroidery removed (`docs/plans/remove-embroidery.md`); app renamed to ScreenFoundry (binaries, ids, packaging, catalogs) with the old document extension and settings folder still read.
 - 2026-10-21: SC-2 first part: 1-bit PNG and TIFF films with their resolution (`format` option).
+- 2026-10-21: SC-5 first part: `screen.simulate` (simulated-process separation); `sc-core::simulated`.

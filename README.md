@@ -24,6 +24,7 @@ separations and films live in one document, with PhotoCraft-style raster tools t
 | Underbase | Union of the colour plates, choked in; white inks get none. |
 | Trapping | Each colour that prints before a darker one is spread under it. |
 | Halftone | Round, elliptical and line dots at any angle and lpi, with dot-percentage limits; area coverage matches tone. |
+| Simulated process | Full colour from up to eight inks as halftone dots side by side over a base, each ink at its own angle; least ink for the colour. |
 | Registration marks | Crosshair-in-circle at the four corners, outside the artwork. |
 | Mesh check | Advice on lpi against mesh count and on angles that line up with the threads. |
 | Jobs | A serialisable job (inks, mesh, underbase, trap) run into films in print order. |

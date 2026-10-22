@@ -6302,3 +6302,6 @@ machine	Stop	정지
 	Find Ink Colors	잉크 색상 찾기
 	Check Mesh and Line Screen	메시 및 선수 확인
 	Films saved to:	필름 저장 위치:
+
+# ScreenFoundry: Simulated Process (SC-5). Machine-written first pass, to be checked by a native speaker.
+	Simulated Process	시뮬레이티드 프로세스

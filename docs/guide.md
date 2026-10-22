@@ -13,6 +13,7 @@ channel, the command-line tool and the MCP server.
 - [Underbase](#underbase)
 - [Trap and choke](#trap-and-choke)
 - [Halftones](#halftones)
+- [Simulated process](#simulated-process)
 - [Mesh and line screen](#mesh-and-line-screen)
 - [Registration marks](#registration-marks)
 - [Films and output](#films-and-output)
@@ -62,6 +63,23 @@ points and adjust them (`trapMm`, `underbase.chokeMm`) after a test print.
 the screen; tones darker than `maxDot` (default 95%) print solid. The film's resolution is `dpi`;
 each dot cell needs at least four film pixels.
 
+## Simulated process
+
+Spot colours give one solid film per ink. **Simulated Process** (`screen.simulate`) reproduces
+full-colour art, photographs and gradients with a handful of inks printed as halftone dots side
+by side over a base (a white underbase, or the garment: `base`).
+
+For every pixel ScreenFoundry works out the share of the area each ink should cover. It treats
+the dots as mixing in linear light: the pixel looks like the area-weighted average of the inks
+and the base. It picks the closest colour that mix can make, and where several mixes give the
+same colour it takes the one with the least ink, because fewer dots print cleaner. Each ink is
+screened at its own angle (`angles`, default 22.5°, 67.5°, 45°, 15°, 75°, …) so the dot
+patterns do not clash; the underbase prints first, then the inks light to dark. Up to eight
+inks; give them (`inks`) or let ScreenFoundry find them (`colors`).
+
+It does not model dot gain, dots overlapping, or how opaque the ink is. Print a test and adjust
+the dot limits (`minDot`, `maxDot`) and the line screen before a production run.
+
 ## Mesh and line screen
 
 The mesh limits how fine a halftone can be. As a rule of thumb the line screen is between a fifth
@@ -88,7 +106,8 @@ output are planned.
 |---|---|
 | `screen.palette` | The artwork's dominant colors. |
 | `screen.advice` | Whether a line screen suits a mesh. |
-| `screen.separate` | One film per screen. |
+| `screen.separate` | One solid film per screen (spot colours). |
+| `screen.simulate` | Full colour as halftone dots of a few inks. |
 | `screen.halftone` | One ink's tones as dots. |
 
 The artwork is the document's first artboard (`source: "document"`), an image file
@@ -97,8 +116,8 @@ parameter.
 
 ## Known limits
 
-- Separation is one solid film per ink. Simulated process (overlapping halftone channels) and
-  index color are not built yet.
+- Simulated process has no dot-gain compensation and treats dots as side by side, not
+  overlapping. Index color is not built yet.
 - One trap width and one choke width for the whole job.
 - Films are PNG or uncompressed TIFF; no PDF, compressed TIFF, or machine-specific output yet.
 - The defaults come from published practitioner advice that disagrees in places. Test-print

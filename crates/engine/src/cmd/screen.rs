@@ -9,7 +9,7 @@ use std::io::Cursor;
 
 use sc_core::color::{parse_hex, to_hex};
 use sc_core::halftone::{DotShape, HalftoneOptions, halftone};
-use sc_core::job::{Film, Ink, Role, SpotJob, UnderbaseOptions};
+use sc_core::job::{DEFAULT_ANGLES, Film, Ink, Role, SimulatedJob, SpotJob, UnderbaseOptions};
 use sc_core::marks::{MarkSpec, frame_with_marks};
 use sc_core::profile::{Advice, check, recommended_lpi_range};
 use sc_core::separate::{extract_palette, tone_plate};
@@ -52,6 +52,15 @@ pub fn specs() -> Vec<CommandSpec> {
             "{source?, dpi?, inks?: [{name?, color: \"#rrggbb\", mesh? (156)}], colors?: how many inks to find in the art when `inks` is not given (4; 1–12), underbase?: true|{name?, color? (#ffffff), mesh? (110), chokeMm? (0.3)}, trapMm?: spread of colours that print before a darker one (0.25; 0–5), marks?: add registration marks (false), format?: png|tiff (png), dir?: a folder to write one 1-bit film file a screen (without it: base64)} spot-colour separation: one solid film per screen, the underbase first then the colours light to dark → {dpi, width, height, films: [{name, color, role: underbase|color, format, mesh, coverage, width, height, path | dataBase64}]}",
             always,
             separate
+        ),
+        cmd!(
+            "screen.simulate",
+            "Simulated Process",
+            [],
+            None,
+            "{source?, dpi?, inks?: [{name?, color, mesh? (230)}], colors?: how many inks to find in the art when `inks` is not given (4; 1–8), base?: \"#rrggbb\" the colour under the dots (#ffffff), underbase?: true|{name?, color?, mesh?, chokeMm?}, lpi? (45), angles?: [degrees an ink] (22.5, 67.5, 45, 15, 75, 37.5, 52.5, 7.5), shape?: round|ellipse|line (round), minDot? (0.08), maxDot? (0.95), marks?, format?: png|tiff (png), dir?} full-colour art as halftone dots of a few inks side by side over the base, each ink at its own screen angle, the underbase first then the inks light to dark → {dpi, width, height, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64}], advice: [{ink, code, message}]}",
+            always,
+            simulate
         ),
         cmd!(
             "screen.halftone",
@@ -270,6 +279,57 @@ fn dir_param(p: &Value) -> Option<&str> {
     str_param(p, "dir").map(str::trim).filter(|d| !d.is_empty())
 }
 
+/// The inks of a job: the `inks` given (name, color, mesh), else `colors` of them found in the art.
+fn inks_of(p: &Value, cmd: &str, img: &Rgba8, max: usize, default_mesh: f64) -> Result<Vec<Ink>> {
+    let rgbs: Vec<[u8; 3]> = match p.get("inks") {
+        Some(Value::Array(a)) => {
+            if a.is_empty() || a.len() > max {
+                return Err(bad(cmd, format!("`inks` holds 1 to {max} inks")));
+            }
+            a.iter().map(|i| color(cmd, "inks[].color", i.get("color"), [0, 0, 0])).collect::<Result<_>>()?
+        }
+        None | Some(Value::Null) => {
+            let n = num(p, cmd, "colors", 4.0, 1.0..=max as f64)? as usize;
+            extract_palette(img, n).map_err(sc(cmd))?
+        }
+        Some(_) => return Err(bad(cmd, "`inks` is a list of {name?, color, mesh?}")),
+    };
+    if rgbs.is_empty() {
+        return Err(bad(cmd, "the artwork has no opaque pixels to separate"));
+    }
+    Ok(rgbs
+        .iter()
+        .enumerate()
+        .map(|(i, &rgb)| {
+            let given = p.get("inks").and_then(|a| a.get(i));
+            Ink {
+                name: name_of(given.and_then(|g| g.get("name")), format!("Ink {}", i + 1)),
+                rgb,
+                mesh: given.and_then(|g| g.get("mesh")).and_then(Value::as_f64).filter(|m| (1.0..=1000.0).contains(m)).unwrap_or(default_mesh),
+            }
+        })
+        .collect())
+}
+
+/// The underbase asked for: `underbase` true or {name?, color?, mesh?, chokeMm?}; none when absent or false.
+fn underbase_of(p: &Value, cmd: &str, mm_px: impl Fn(f64) -> f64) -> Result<Option<UnderbaseOptions>> {
+    match p.get("underbase") {
+        None | Some(Value::Null) | Some(Value::Bool(false)) => Ok(None),
+        Some(u) => {
+            let empty = json!({});
+            let u = if u.is_object() { u } else { &empty };
+            Ok(Some(UnderbaseOptions {
+                ink: Ink {
+                    name: name_of(u.get("name"), "Underbase".into()),
+                    rgb: color(cmd, "underbase.color", u.get("color"), [255, 255, 255])?,
+                    mesh: num(u, cmd, "mesh", 110.0, 1.0..=1000.0)?,
+                },
+                choke_px: mm_px(num(u, cmd, "chokeMm", 0.3, 0.0..=5.0)?),
+            }))
+        }
+    }
+}
+
 fn separate(s: &mut Session, p: &Value) -> Result<Value> {
     const C: &str = "screen.separate";
     let dpi = num(p, C, "dpi", DEFAULT_DPI, 25.0..=2400.0)?;
@@ -279,56 +339,69 @@ fn separate(s: &mut Session, p: &Value) -> Result<Value> {
     let mm_px = |mm: f64| mm / 25.4 * dpi;
     let img = artwork(s, p, C, dpi)?;
 
-    let rgbs: Vec<[u8; 3]> = match p.get("inks") {
-        Some(Value::Array(a)) => {
-            if a.is_empty() || a.len() > MAX_INKS {
-                return Err(bad(C, format!("`inks` holds 1 to {MAX_INKS} inks")));
-            }
-            a.iter().map(|i| color(C, "inks[].color", i.get("color"), [0, 0, 0])).collect::<Result<_>>()?
-        }
-        None | Some(Value::Null) => {
-            let n = num(p, C, "colors", 4.0, 1.0..=MAX_INKS as f64)? as usize;
-            extract_palette(&img, n).map_err(sc(C))?
-        }
-        Some(_) => return Err(bad(C, "`inks` is a list of {name?, color, mesh?}")),
-    };
-    if rgbs.is_empty() {
-        return Err(bad(C, "the artwork has no opaque pixels to separate"));
-    }
-    let inks: Vec<Ink> = rgbs
-        .iter()
-        .enumerate()
-        .map(|(i, &rgb)| {
-            let given = p.get("inks").and_then(|a| a.get(i));
-            Ink {
-                name: name_of(given.and_then(|g| g.get("name")), format!("Ink {}", i + 1)),
-                rgb,
-                mesh: given.and_then(|g| g.get("mesh")).and_then(Value::as_f64).filter(|m| (1.0..=1000.0).contains(m)).unwrap_or(156.0),
-            }
-        })
-        .collect();
-
-    let underbase = match p.get("underbase") {
-        None | Some(Value::Null) | Some(Value::Bool(false)) => None,
-        Some(u) => {
-            let empty = json!({});
-            let u = if u.is_object() { u } else { &empty };
-            Some(UnderbaseOptions {
-                ink: Ink {
-                    name: name_of(u.get("name"), "Underbase".into()),
-                    rgb: color(C, "underbase.color", u.get("color"), [255, 255, 255])?,
-                    mesh: num(u, C, "mesh", 110.0, 1.0..=1000.0)?,
-                },
-                choke_px: mm_px(num(u, C, "chokeMm", 0.3, 0.0..=5.0)?),
-            })
-        }
-    };
+    let inks = inks_of(p, C, &img, MAX_INKS, 156.0)?;
+    let underbase = underbase_of(p, C, mm_px)?;
 
     let job = SpotJob { inks, underbase, trap_px: mm_px(trap_mm) };
     let films = job.run(&img).map_err(sc(C))?;
     let films = emit(C, films, dpi, marks, fmt, dir_param(p))?;
     let (w, h) = films.first().map(|f| (f["width"].clone(), f["height"].clone())).unwrap_or_default();
     Ok(json!({ "dpi": dpi, "width": w, "height": h, "films": films }))
+}
+
+/// `screen.simulate`: full-colour art as halftone dots of a few inks over a base.
+fn simulate(s: &mut Session, p: &Value) -> Result<Value> {
+    const C: &str = "screen.simulate";
+    let dpi = num(p, C, "dpi", DEFAULT_DPI, 25.0..=2400.0)?;
+    let lpi = num(p, C, "lpi", 45.0, 1.0..=500.0)?;
+    let marks = bool_or(p, "marks", false);
+    let fmt = FilmFormat::parse(C, p)?;
+    let mm_px = |mm: f64| mm / 25.4 * dpi;
+    let shape = match str_param(p, "shape").unwrap_or("round") {
+        "round" => DotShape::Round,
+        "ellipse" => DotShape::Ellipse,
+        "line" => DotShape::Line,
+        _ => return Err(bad(C, "`shape` is round, ellipse or line")),
+    };
+    let angles: Vec<f64> = match p.get("angles") {
+        None | Some(Value::Null) => DEFAULT_ANGLES.to_vec(),
+        Some(Value::Array(a)) if !a.is_empty() && a.len() <= 16 => a
+            .iter()
+            .map(|v| v.as_f64().filter(|d| d.is_finite() && d.abs() <= 3600.0).ok_or_else(|| bad(C, "`angles` are degrees")))
+            .collect::<Result<_>>()?,
+        Some(_) => return Err(bad(C, "`angles` is a list of 1 to 16 degrees")),
+    };
+    let base = color(C, "base", p.get("base"), [255, 255, 255])?;
+    let img = artwork(s, p, C, dpi)?;
+    let inks = inks_of(p, C, &img, sc_core::simulated::MAX_INKS, 230.0)?;
+    let job = SimulatedJob {
+        inks: inks.clone(),
+        base,
+        underbase: underbase_of(p, C, mm_px)?,
+        angles: angles.clone(),
+        halftone: HalftoneOptions {
+            dpi,
+            lpi,
+            angle_deg: 0.0,
+            shape,
+            min_dot: num(p, C, "minDot", 0.08, 0.0..=1.0)?,
+            max_dot: num(p, C, "maxDot", 0.95, 0.0..=1.0)?,
+        },
+    };
+    let films = job.run(&img).map_err(sc(C))?;
+    let films = emit(C, films, dpi, marks, fmt, dir_param(p))?;
+    let (w, h) = films.first().map(|f| (f["width"].clone(), f["height"].clone())).unwrap_or_default();
+    // Mesh and line-screen advice for each ink at the angle it is printed at.
+    let mut advice = Vec::new();
+    for (i, ink) in inks.iter().enumerate() {
+        let angle = angles.get(i % angles.len()).copied().unwrap_or(22.5);
+        for a in check(ink.mesh, lpi, angle) {
+            let mut v = advice_json(&a);
+            v["ink"] = json!(ink.name);
+            advice.push(v);
+        }
+    }
+    Ok(json!({ "dpi": dpi, "width": w, "height": h, "films": films, "advice": advice }))
 }
 
 fn halftone_film(s: &mut Session, p: &Value) -> Result<Value> {

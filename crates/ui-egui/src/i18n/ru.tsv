@@ -6343,3 +6343,6 @@ machine	Stop	Остановка
 	Find Ink Colors	Найти цвета красок
 	Check Mesh and Line Screen	Проверить сетку и линиатуру
 	Films saved to:	Плёнки сохранены в:
+
+# ScreenFoundry: Simulated Process (SC-5). Machine-written first pass, to be checked by a native speaker.
+	Simulated Process	Имитация процесса

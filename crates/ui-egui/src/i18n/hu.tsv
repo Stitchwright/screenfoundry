@@ -6683,3 +6683,6 @@ machine	Stop	Megállás
 	Find Ink Colors	Festékszínek keresése
 	Check Mesh and Line Screen	Szita és raszter ellenőrzése
 	Films saved to:	A filmek mentve ide:
+
+# ScreenFoundry: Simulated Process (SC-5). Machine-written first pass, to be checked by a native speaker.
+	Simulated Process	Szimulált folyamat

@@ -5,6 +5,7 @@
 //! * [`image`] – RGBA artwork, 8-bit plates and 1-bit film, with size caps.
 //! * [`color`] – sRGB to CIE Lab, for perceptual ink matching.
 //! * [`separate`] – palette extraction, spot-colour separation, tone plates.
+//! * [`simulated`] – simulated-process separation: full colour from a few inks as halftone dots.
 //! * [`morph`] – exact Euclidean choke and spread of a plate (for underbase and traps).
 //! * [`halftone`] – amplitude-modulated screening (round, elliptical, line) at a screen angle.
 //! * [`marks`] – registration crosshairs.
@@ -26,6 +27,7 @@ pub mod marks;
 pub mod morph;
 pub mod profile;
 pub mod separate;
+pub mod simulated;
 
 pub use error::{Result, ScError};
 pub use image::{Bitmap1, Gray8, Rgba8};

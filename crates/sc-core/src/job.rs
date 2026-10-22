@@ -7,10 +7,11 @@
 
 use crate::color::srgb_to_lab;
 use crate::error::{Result, param};
-use crate::halftone::solid;
-use crate::image::{Bitmap1, Rgba8};
+use crate::halftone::{HalftoneOptions, halftone, solid};
+use crate::image::{Bitmap1, Gray8, Rgba8};
 use crate::morph::{choke, spread, union};
-use crate::separate::separate_spot;
+use crate::separate::{ALPHA_CUTOFF, separate_spot};
+use crate::simulated::simulated_plates;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
@@ -84,6 +85,62 @@ impl SpotJob {
             let last = pos + 1 == order.len();
             let plate = if last { plate.clone() } else { spread(plate, self.trap_px)? };
             films.push(Film { name: ink.name.clone(), ink_rgb: ink.rgb, mesh: ink.mesh, role: Role::Color, bitmap: solid(&plate)? });
+        }
+        Ok(films)
+    }
+}
+
+/// Screen angles for the inks of a simulated-process job, in order. Practitioner advice favours
+/// 22.5 and 67.5 degrees for two colours and keeps clear of 0 and 90, which line up with the mesh
+/// threads; the rest spread the other inks apart. A starting point, not a standard.
+pub const DEFAULT_ANGLES: [f64; 8] = [22.5, 67.5, 45.0, 15.0, 75.0, 37.5, 52.5, 7.5];
+
+/// Full-colour art as halftone dots of a few spot inks over a base (simulated process).
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub struct SimulatedJob {
+    pub inks: Vec<Ink>,
+    /// The colour under the dots: a white underbase, or the garment when there is none.
+    pub base: [u8; 3],
+    pub underbase: Option<UnderbaseOptions>,
+    /// The screen angle of each ink in order (reused, in turn, when there are more inks).
+    pub angles: Vec<f64>,
+    /// Resolution, ruling, dot shape and dot limits; its `angle_deg` is replaced per ink.
+    pub halftone: HalftoneOptions,
+}
+
+impl SimulatedJob {
+    pub fn run(&self, img: &Rgba8) -> Result<Vec<Film>> {
+        if self.inks.is_empty() {
+            return Err(param("inks", "a job needs at least one ink"));
+        }
+        let rgbs: Vec<[u8; 3]> = self.inks.iter().map(|i| i.rgb).collect();
+        let plates = simulated_plates(img, &rgbs, self.base)?;
+        let angles: &[f64] = if self.angles.is_empty() { &DEFAULT_ANGLES } else { &self.angles };
+
+        let lightness = |i: usize| self.inks.get(i).map_or(0.0, |k| srgb_to_lab(k.rgb)[0]);
+        let mut order: Vec<usize> = (0..self.inks.len()).collect();
+        order.sort_by(|&a, &b| lightness(b).total_cmp(&lightness(a)));
+
+        let mut films = Vec::with_capacity(self.inks.len() + 1);
+        if let Some(ub) = &self.underbase {
+            // The footprint is the artwork's opaque area, pulled in so the base never shows past the dots.
+            let opaque: Vec<u8> = img.pixels().map(|p| if p[3] >= ALPHA_CUTOFF { 255 } else { 0 }).collect();
+            let footprint = Gray8::new(img.width(), img.height(), opaque)?;
+            films.push(Film {
+                name: ub.ink.name.clone(),
+                ink_rgb: ub.ink.rgb,
+                mesh: ub.ink.mesh,
+                role: Role::Underbase,
+                bitmap: solid(&choke(&footprint, ub.choke_px)?)?,
+            });
+        }
+        for &i in &order {
+            let (Some(ink), Some(plate)) = (self.inks.get(i), plates.get(i)) else {
+                return Err(param("inks", "plate/ink mismatch"));
+            };
+            let angle = angles.get(i % angles.len()).copied().unwrap_or(22.5);
+            let bitmap = halftone(plate, &HalftoneOptions { angle_deg: angle, ..self.halftone })?;
+            films.push(Film { name: ink.name.clone(), ink_rgb: ink.rgb, mesh: ink.mesh, role: Role::Color, bitmap });
         }
         Ok(films)
     }
@@ -172,6 +229,65 @@ mod tests {
         assert!(j.run(&art()).is_err());
         j.inks.clear();
         assert!(j.run(&art()).is_err());
+    }
+
+    fn sim_job(underbase: bool) -> SimulatedJob {
+        SimulatedJob {
+            inks: vec![ink("Navy", [10, 20, 90]), ink("Red", [200, 30, 30])],
+            base: [255, 255, 255],
+            underbase: underbase.then(|| UnderbaseOptions { ink: ink("White", [255, 255, 255]), choke_px: 1.0 }),
+            angles: vec![22.5, 67.5],
+            halftone: HalftoneOptions { dpi: 600.0, lpi: 50.0, angle_deg: 0.0, shape: crate::halftone::DotShape::Round, min_dot: 0.0, max_dot: 1.0 },
+        }
+    }
+
+    /// 120 × 120 pixels of one colour that is half navy, half red, in linear light.
+    fn half_and_half() -> Rgba8 {
+        let (a, b) = (crate::simulated::to_linear([10, 20, 90]), crate::simulated::to_linear([200, 30, 30]));
+        let enc = |v: f64| -> u8 {
+            let s = if v <= 0.003_130_8 { v * 12.92 } else { 1.055 * v.powf(1.0 / 2.4) - 0.055 };
+            (s * 255.0).round().clamp(0.0, 255.0) as u8
+        };
+        let px = [enc((a[0] + b[0]) / 2.0), enc((a[1] + b[1]) / 2.0), enc((a[2] + b[2]) / 2.0), 255];
+        Rgba8::new(120, 120, px.repeat(120 * 120)).unwrap()
+    }
+
+    #[test]
+    fn simulated_process_prints_each_ink_as_dots_at_its_own_angle() {
+        let films = sim_job(false).run(&half_and_half()).unwrap();
+        let names: Vec<_> = films.iter().map(|f| f.name.as_str()).collect();
+        assert_eq!(names, ["Red", "Navy"], "light to dark, no underbase asked for");
+        // Each ink covers about half the area, and the two films are different patterns.
+        for f in &films {
+            assert!((f.bitmap.coverage() - 0.5).abs() < 0.04, "{}: {}", f.name, f.bitmap.coverage());
+        }
+        assert_ne!(films[0].bitmap, films[1].bitmap, "different angles");
+    }
+
+    #[test]
+    fn simulated_process_underbase_covers_the_opaque_area_only() {
+        let mut d = half_and_half().data().to_vec();
+        for px in d.chunks_exact_mut(4).take(120 * 20) {
+            px[3] = 0; // the top 20 rows are background
+        }
+        let img = Rgba8::new(120, 120, d).unwrap();
+        let films = sim_job(true).run(&img).unwrap();
+        assert_eq!(films[0].role, Role::Underbase);
+        let ub = &films[0].bitmap;
+        assert!(ub.get(60, 70) && !ub.get(60, 5), "under the art, not under the background");
+        assert!(!ub.get(60, 20), "choked in from the edge");
+    }
+
+    #[test]
+    fn simulated_process_rejects_bad_jobs() {
+        let mut j = sim_job(false);
+        j.inks.clear();
+        assert!(j.run(&half_and_half()).is_err());
+        let mut j = sim_job(false);
+        j.halftone.dpi = f64::NAN;
+        assert!(j.run(&half_and_half()).is_err());
+        let json = serde_json::to_string(&sim_job(true)).unwrap();
+        assert_eq!(serde_json::from_str::<SimulatedJob>(&json).unwrap(), sim_job(true));
     }
 
     #[test]
