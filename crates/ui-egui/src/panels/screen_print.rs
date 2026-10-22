@@ -167,6 +167,30 @@ fn find_colors(app: &mut VectorcraftApp, st: &mut ScreenPrintState) {
     }
 }
 
+/// Snap to Library: each ink takes the nearest library ink within reach, and its name unless the
+/// ink was renamed. Two inks never end up the same colour (the later keeps its own).
+fn snap_to_library(app: &mut VectorcraftApp, st: &mut ScreenPrintState) {
+    let colors: Vec<&str> = st.inks.iter().map(|i| i.color.as_str()).collect();
+    match run(app, "screen.matchInks", json!({ "colors": colors })) {
+        Ok(r) => {
+            let mut used: Vec<String> = Vec::new();
+            for (ink, m) in st.inks.iter_mut().zip(r["matches"].as_array().into_iter().flatten()) {
+                let (Some(color), Some(name)) = (m["library"].as_str(), m["name"].as_str()) else { continue };
+                if used.iter().any(|u| u == color) {
+                    continue;
+                }
+                used.push(color.to_string());
+                ink.color = color.to_string();
+                if ink.name.strip_prefix("Ink ").is_some_and(|n| n.parse::<u32>().is_ok()) {
+                    ink.name = name.to_string();
+                }
+            }
+            st.message = None;
+        }
+        Err(e) => st.message = Some(e),
+    }
+}
+
 /// Preview: run the separation at a low resolution and keep each film as a thumbnail.
 fn preview(app: &mut VectorcraftApp, ctx: &egui::Context, st: &mut ScreenPrintState) {
     let (cmd, params) = st.request(st.preview_dpi(), false);
@@ -227,7 +251,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
     let can_save = has_doc && crate::picks::can(app, &crate::picks::PickRequest::Folder);
     // Take the state out so the buttons below can run commands on `app` while it is edited.
     let mut st = std::mem::take(&mut app.ui.screen_print);
-    let (mut find, mut prev, mut save_clicked) = (false, false, false);
+    let (mut find, mut snap, mut prev, mut save_clicked) = (false, false, false, false);
 
     ui.horizontal(|ui| {
         ui.label(RichText::new(tl!("Method")).color(t.text_dim));
@@ -238,6 +262,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
         ui.label(RichText::new(tl!("Colors")).color(t.text_dim));
         ui.add(egui::DragValue::new(&mut st.colors).range(1..=MAX_COLORS));
         ui.add_enabled_ui(has_doc, |ui| find = widgets::secondary_button(ui, tl!("Find Colors")).clicked());
+        ui.add_enabled_ui(!st.inks.is_empty(), |ui| snap = widgets::secondary_button(ui, tl!("Snap to Library")).clicked());
     });
 
     // The ink list: a swatch, the colour, the name and the mesh of each screen.
@@ -285,6 +310,9 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
 
     if find {
         find_colors(app, &mut st);
+    }
+    if snap {
+        snap_to_library(app, &mut st);
     }
     if prev {
         preview(app, &ctx, &mut st);
@@ -392,6 +420,29 @@ mod tests {
         }
         preview(&mut app, &ctx, &mut st);
         assert!(st.advice.iter().any(|a| a.contains("moiré") || a.contains("mesh")), "{:?}", st.advice);
+    }
+
+    #[test]
+    fn snap_to_library_swaps_in_library_inks_and_keeps_renamed_ones() {
+        let mut app = VectorcraftApp::new(vectorcraft_engine::Session::new(), Default::default());
+        let row = |name: &str, color: &str| InkRow { name: name.into(), color: color.into(), mesh: 156.0 };
+        let mut st = ScreenPrintState {
+            inks: vec![row("Ink 1", "#cd2328"), row("Hero Blue", "#1d4fa6"), row("Ink 3", "#d0222a"), row("Ink 4", "#00ff00")],
+            ..Default::default()
+        };
+        snap_to_library(&mut app, &mut st);
+        assert!(st.message.is_none(), "{:?}", st.message);
+        let got: Vec<_> = st.inks.iter().map(|i| (i.name.as_str(), i.color.as_str())).collect();
+        assert_eq!(
+            got,
+            [("Red", "#d21f26"), ("Hero Blue", "#1f4fa8"), ("Ink 3", "#d0222a"), ("Ink 4", "#00ff00")],
+            "the second near-red and the far green keep their colours"
+        );
+        // A bad colour in the list is reported, not applied.
+        st.inks = vec![row("Ink 1", "nope")];
+        snap_to_library(&mut app, &mut st);
+        assert!(st.message.is_some());
+        assert_eq!(st.inks[0].color, "nope");
     }
 
     #[test]

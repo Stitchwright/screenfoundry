@@ -6361,3 +6361,6 @@ machine	Stop	Arresto
 
 # ScreenFoundry: Screen Print panel (SC-3), machine-written first pass.
 	Mesh	Maglia
+
+# ScreenFoundry: ink library (SC-3). Machine-written first pass, to be checked by a native speaker.
+	Snap to Library	Allinea alla libreria

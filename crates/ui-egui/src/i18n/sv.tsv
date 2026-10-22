@@ -6673,3 +6673,6 @@ machine	Stop	Stopp
 	Save Films…	Spara filmer…
 	Trap	Överfyllning
 	Underbase	Underlag
+
+# ScreenFoundry: ink library (SC-3). Machine-written first pass, to be checked by a native speaker.
+	Snap to Library	Anpassa till bibliotek

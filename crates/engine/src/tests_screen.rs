@@ -388,3 +388,57 @@ fn a_job_sheet_lists_the_screens_and_the_advice() {
     assert!(s.execute("screen.halftone", &json!({"source": src, "jobSheet": 3})).is_err());
     let _ = std::fs::remove_dir_all(dir);
 }
+
+#[test]
+fn the_ink_library_lists_inks_and_matches_colours_to_them() {
+    let mut s = session();
+    let lib = s.execute("screen.inkLibrary", &json!({})).unwrap();
+    let inks = lib["inks"].as_array().unwrap();
+    assert!(inks.len() >= 30 && inks.iter().all(|i| i["color"].as_str().is_some_and(|c| c.len() == 7) && i["family"].is_string()));
+
+    let r = s.execute("screen.matchInks", &json!({"colors": ["#d21f26", "#cd2328", "#00ff00"], "maxDeltaE": 15})).unwrap();
+    let m = r["matches"].as_array().unwrap();
+    assert_eq!((m[0]["name"].as_str(), m[0]["deltaE"].as_f64()), (Some("Red"), Some(0.0)));
+    assert_eq!(m[1]["name"], "Red");
+    assert!(m[1]["deltaE"].as_f64().unwrap() > 0.0);
+    assert!(m[2].is_null(), "nothing is within 15 of pure green");
+
+    // The shop's own ink is tried first.
+    let own = s.execute("screen.matchInks", &json!({"colors": ["#d21f26"], "library": [{"name": "Shop Red", "color": "#d21f26"}]})).unwrap();
+    assert_eq!(own["matches"][0]["name"], "Shop Red");
+
+    for bad in [
+        json!({}),
+        json!({"colors": "#fff"}),
+        json!({"colors": ["nope"]}),
+        json!({"colors": ["#fff"], "maxDeltaE": -1}),
+        json!({"colors": ["#fff"], "library": [{"color": 1}]}),
+    ] {
+        assert!(s.execute("screen.matchInks", &bad).is_err(), "{bad}");
+    }
+}
+
+#[test]
+fn separating_with_snap_uses_library_inks_and_keeps_given_names() {
+    let mut s = session();
+    let inks = json!([{"color": "#cd2328", "name": "Front Red"}, {"color": "#1d4fa6"}, {"color": "#d0222a"}]);
+    let r = s.execute("screen.separate", &json!({"dpi": 100, "inks": inks, "snap": true})).unwrap();
+    let films = r["films"].as_array().unwrap();
+    let find = |color: &str| films.iter().find(|f| f["color"] == color).map(|f| f["name"].as_str().unwrap().to_string());
+    // The given name stays; the blue takes the library's name; the second near-red is not folded
+    // into the same ink, so it keeps its own colour and no screen comes out the same as another.
+    assert_eq!(films.len(), 3);
+    assert_eq!(find("#d21f26").as_deref(), Some("Front Red"));
+    assert_eq!(find("#1f4fa8").as_deref(), Some("Royal Blue"));
+    assert_eq!(find("#d0222a").as_deref(), Some("Ink 3"));
+    // Without it the colours are as given; with a tight limit nothing snaps.
+    let plain = s.execute("screen.separate", &json!({"dpi": 100, "inks": inks})).unwrap();
+    let colors = |r: &Value| r["films"].as_array().unwrap().iter().map(|f| f["color"].as_str().unwrap().to_string()).collect::<Vec<_>>();
+    assert!(colors(&plain).contains(&"#cd2328".to_string()));
+    let tight = s.execute("screen.separate", &json!({"dpi": 100, "inks": inks, "snap": {"maxDeltaE": 0}})).unwrap();
+    assert!(colors(&tight).contains(&"#1d4fa6".to_string()) && !colors(&tight).contains(&"#1f4fa8".to_string()));
+    let sim =
+        s.execute("screen.simulate", &json!({"dpi": 300, "inks": inks, "snap": {"library": [{"name": "Shop Blue", "color": "#1d4fa6"}]}})).unwrap();
+    assert!(sim["films"].as_array().unwrap().iter().any(|f| f["name"] == "Shop Blue"));
+    assert!(s.execute("screen.separate", &json!({"inks": inks, "snap": 3})).is_err());
+}

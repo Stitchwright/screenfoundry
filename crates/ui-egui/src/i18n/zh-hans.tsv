@@ -6541,3 +6541,6 @@ machine	Stop	停止
 	Save Films…	保存胶片…
 	Trap	补漏白
 	Underbase	打底
+
+# ScreenFoundry: ink library (SC-3). Machine-written first pass, to be checked by a native speaker.
+	Snap to Library	匹配到库

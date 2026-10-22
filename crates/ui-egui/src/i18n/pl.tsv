@@ -6560,3 +6560,6 @@ machine	Stop	Zatrzymanie
 	Save Films…	Zapisz filmy…
 	Trap	Zachodzenie
 	Underbase	Podkład
+
+# ScreenFoundry: ink library (SC-3). Machine-written first pass, to be checked by a native speaker.
+	Snap to Library	Dopasuj do biblioteki

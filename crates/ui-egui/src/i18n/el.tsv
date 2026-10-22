@@ -6669,3 +6669,6 @@ machine	Stop	Στάση
 	Save Films…	Αποθήκευση φιλμ…
 	Trap	Επικάλυψη
 	Underbase	Υπόστρωμα
+
+# ScreenFoundry: ink library (SC-3). Machine-written first pass, to be checked by a native speaker.
+	Snap to Library	Προσαρμογή στη βιβλιοθήκη

@@ -6549,3 +6549,6 @@ file-filter	ScreenFoundry Template	ScreenFoundry-ის შაბლონი
 	Save Films…	ფირების შენახვა…
 	Trap	გადაფარვა
 	Underbase	ქვედა ფენა
+
+# ScreenFoundry: ink library (SC-3). Machine-written first pass, to be checked by a native speaker.
+	Snap to Library	ბიბლიოთეკასთან მორგება

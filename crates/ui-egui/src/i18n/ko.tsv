@@ -6316,3 +6316,6 @@ machine	Stop	정지
 
 # ScreenFoundry: Screen Print panel (SC-3), machine-written first pass.
 	Mesh	메시
+
+# ScreenFoundry: ink library (SC-3). Machine-written first pass, to be checked by a native speaker.
+	Snap to Library	라이브러리에 맞추기

@@ -6694,3 +6694,6 @@ machine	Stop	Megállás
 	Save Films…	Filmek mentése…
 	Trap	Átfedés
 	Underbase	Alapréteg
+
+# ScreenFoundry: ink library (SC-3). Machine-written first pass, to be checked by a native speaker.
+	Snap to Library	Igazítás a könyvtárhoz

@@ -9,6 +9,7 @@ use std::io::Cursor;
 
 use sc_core::color::{parse_hex, to_hex};
 use sc_core::halftone::{DotShape, HalftoneOptions, halftone};
+use sc_core::inklib::{self, DEFAULT_MAX_DELTA_E, LibraryInk};
 use sc_core::job::{DEFAULT_ANGLES, Film, Ink, Role, SimulatedJob, SpotJob, UnderbaseOptions};
 use sc_core::jobsheet::{JobSheet, SheetFilm};
 use sc_core::marks::{MarkSpec, frame_with_marks};
@@ -37,6 +38,24 @@ pub fn specs() -> Vec<CommandSpec> {
             palette
         ),
         cmd!(
+            query "screen.inkLibrary",
+            "Ink Library",
+            [],
+            None,
+            "{} the built-in generic inks (original starting points, not measured or brand colours) → {inks: [{name, color: \"#rrggbb\", family}]}",
+            always,
+            ink_library
+        ),
+        cmd!(
+            query "screen.matchInks",
+            "Match Colors to Inks",
+            [],
+            None,
+            "{colors: [\"#rrggbb\"] (up to 64), maxDeltaE?: how far a match may be, CIE76 (25; 0–150), library?: [{name, color}] your own inks, tried before the built-in ones} the library ink nearest each colour → {matches: [{color, name, library: \"#rrggbb\", deltaE} | null]} (null when none is within maxDeltaE)",
+            always,
+            match_inks
+        ),
+        cmd!(
             query "screen.advice",
             "Check Mesh and Line Screen",
             [],
@@ -50,7 +69,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Separate Colors",
             [],
             None,
-            "{source?, dpi?, inks?: [{name?, color: \"#rrggbb\", mesh? (156)}], colors?: how many inks to find in the art when `inks` is not given (4; 1–12), underbase?: true|{name?, color? (#ffffff), mesh? (110), chokeMm? (0.3)}, trapMm?: spread of colours that print before a darker one (0.25; 0–5), marks?: add registration marks (false), format?: png|tiff|tiff-g4|pdf (png), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?: a folder to write one 1-bit film file a screen (without it: base64)} spot-colour separation: one solid film per screen, the underbase first then the colours light to dark → {dpi, width, height, films: [{name, color, role: underbase|color, format, mesh, coverage, width, height, path | dataBase64}]}",
+            "{source?, dpi?, inks?: [{name?, color: \"#rrggbb\", mesh? (156)}], colors?: how many inks to find in the art when `inks` is not given (4; 1–12), underbase?: true|{name?, color? (#ffffff), mesh? (110), chokeMm? (0.3)}, snap?: true|{maxDeltaE? (25), library?: [{name, color}]} replace each ink by the nearest library ink (see screen.matchInks) and use its name when none is given, trapMm?: spread of colours that print before a darker one (0.25; 0–5), marks?: add registration marks (false), format?: png|tiff|tiff-g4|pdf (png), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?: a folder to write one 1-bit film file a screen (without it: base64)} spot-colour separation: one solid film per screen, the underbase first then the colours light to dark → {dpi, width, height, films: [{name, color, role: underbase|color, format, mesh, coverage, width, height, path | dataBase64}]}",
             always,
             separate
         ),
@@ -59,7 +78,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Simulated Process",
             [],
             None,
-            "{source?, dpi?, inks?: [{name?, color, mesh? (230)}], colors?: how many inks to find in the art when `inks` is not given (4; 1–8), base?: \"#rrggbb\" the colour under the dots (#ffffff), underbase?: true|{name?, color?, mesh?, chokeMm?}, lpi? (45), angles?: [degrees an ink] (22.5, 67.5, 45, 15, 75, 37.5, 52.5, 7.5), shape?: round|ellipse|line (round), minDot? (0.08), maxDot? (0.95), marks?, format?: png|tiff|tiff-g4|pdf (png), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?} full-colour art as halftone dots of a few inks side by side over the base, each ink at its own screen angle, the underbase first then the inks light to dark → {dpi, width, height, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64}], advice: [{ink, code, message}]}",
+            "{source?, dpi?, inks?: [{name?, color, mesh? (230)}], colors?: how many inks to find in the art when `inks` is not given (4; 1–8), snap?: true|{maxDeltaE? (25), library?: [{name, color}]} replace each ink by the nearest library ink and use its name when none is given, base?: \"#rrggbb\" the colour under the dots (#ffffff), underbase?: true|{name?, color?, mesh?, chokeMm?}, lpi? (45), angles?: [degrees an ink] (22.5, 67.5, 45, 15, 75, 37.5, 52.5, 7.5), shape?: round|ellipse|line (round), minDot? (0.08), maxDot? (0.95), marks?, format?: png|tiff|tiff-g4|pdf (png), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?} full-colour art as halftone dots of a few inks side by side over the base, each ink at its own screen angle, the underbase first then the inks light to dark → {dpi, width, height, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64}], advice: [{ink, code, message}]}",
             always,
             simulate
         ),
@@ -285,6 +304,75 @@ fn emit(cmd: &str, films: Vec<Film>, dpi: f64, marks: bool, fmt: FilmFormat, dir
     Ok(out)
 }
 
+/// The library to match against: the caller's own inks (`library`: [{name, color}]) first, then the built-in ones.
+fn library_of(cmd: &str, v: Option<&Value>) -> Result<Vec<LibraryInk>> {
+    let mut lib = Vec::new();
+    match v {
+        None | Some(Value::Null) => {}
+        Some(Value::Array(a)) if a.len() <= 500 => {
+            for (i, e) in a.iter().enumerate() {
+                let rgb = color(cmd, "library[].color", e.get("color"), [0, 0, 0])?;
+                lib.push(LibraryInk { name: name_of(e.get("name"), format!("Shop ink {}", i + 1)), rgb, family: "shop".into() });
+            }
+        }
+        Some(_) => return Err(bad(cmd, "`library` is a list of up to 500 {name?, color}")),
+    }
+    lib.extend(inklib::builtin());
+    Ok(lib)
+}
+
+fn ink_library(_: &mut Session, _: &Value) -> Result<Value> {
+    let inks: Vec<Value> = inklib::builtin().iter().map(|i| json!({ "name": i.name, "color": to_hex(i.rgb), "family": i.family })).collect();
+    Ok(json!({ "inks": inks }))
+}
+
+fn match_inks(_: &mut Session, p: &Value) -> Result<Value> {
+    const C: &str = "screen.matchInks";
+    let max = num(p, C, "maxDeltaE", DEFAULT_MAX_DELTA_E, 0.0..=150.0)?;
+    let lib = library_of(C, p.get("library"))?;
+    let colors = match p.get("colors") {
+        Some(Value::Array(a)) if a.len() <= 64 => a,
+        _ => return Err(bad(C, "`colors` is a list of up to 64 colours like \"#rrggbb\"")),
+    };
+    let mut matches = Vec::with_capacity(colors.len());
+    for c in colors {
+        let rgb = color(C, "colors[]", Some(c), [0, 0, 0])?;
+        matches.push(match inklib::snap(&lib, rgb, max) {
+            Some(m) => json!({
+                "color": to_hex(rgb), "name": m.ink.name, "library": to_hex(m.ink.rgb),
+                "deltaE": (m.delta_e * 100.0).round() / 100.0,
+            }),
+            None => Value::Null,
+        });
+    }
+    Ok(json!({ "matches": matches }))
+}
+
+/// `snap` (true or {maxDeltaE?, library?}): each colour becomes the nearest library ink within reach,
+/// and the library's name where `names[i]` is not given. Two colours never land on one ink: the
+/// later keeps its own colour, so every screen stays distinct.
+fn snap_inks(cmd: &str, p: &Value, rgbs: &mut [[u8; 3]], names: &mut [Option<String>]) -> Result<()> {
+    let opts = match p.get("snap") {
+        None | Some(Value::Null | Value::Bool(false)) => return Ok(()),
+        Some(Value::Bool(true)) => json!({}),
+        Some(o @ Value::Object(_)) => o.clone(),
+        Some(_) => return Err(bad(cmd, "`snap` is true or {maxDeltaE?, library?}")),
+    };
+    let max = num(&opts, cmd, "maxDeltaE", DEFAULT_MAX_DELTA_E, 0.0..=150.0)?;
+    let lib = library_of(cmd, opts.get("library"))?;
+    let mut used: Vec<[u8; 3]> = Vec::new();
+    for (rgb, name) in rgbs.iter_mut().zip(names.iter_mut()) {
+        let Some(m) = inklib::snap(&lib, *rgb, max) else { continue };
+        if used.contains(&m.ink.rgb) {
+            continue;
+        }
+        used.push(m.ink.rgb);
+        *rgb = m.ink.rgb;
+        name.get_or_insert_with(|| m.ink.name.clone());
+    }
+    Ok(())
+}
+
 /// The job sheet when `jobSheet` is given (`true` or `{title?, notes?}`): a PDF listing the screens
 /// and the advice, written as `job-sheet.pdf` under `dir` or returned as base64.
 fn job_sheet(cmd: &str, p: &Value, dpi: f64, films: &[Value], advice: &[String], dir: Option<&str>) -> Result<Option<Value>> {
@@ -334,7 +422,7 @@ fn dir_param(p: &Value) -> Option<&str> {
 
 /// The inks of a job: the `inks` given (name, color, mesh), else `colors` of them found in the art.
 fn inks_of(p: &Value, cmd: &str, img: &Rgba8, max: usize, default_mesh: f64) -> Result<Vec<Ink>> {
-    let rgbs: Vec<[u8; 3]> = match p.get("inks") {
+    let mut rgbs: Vec<[u8; 3]> = match p.get("inks") {
         Some(Value::Array(a)) => {
             if a.is_empty() || a.len() > max {
                 return Err(bad(cmd, format!("`inks` holds 1 to {max} inks")));
@@ -350,13 +438,18 @@ fn inks_of(p: &Value, cmd: &str, img: &Rgba8, max: usize, default_mesh: f64) -> 
     if rgbs.is_empty() {
         return Err(bad(cmd, "the artwork has no opaque pixels to separate"));
     }
+    // A name the caller gave stays; the library's name fills in only where there is none.
+    let mut names: Vec<Option<String>> = (0..rgbs.len())
+        .map(|i| Some(name_of(p.get("inks").and_then(|a| a.get(i)).and_then(|g| g.get("name")), String::new())).filter(|n| !n.is_empty()))
+        .collect();
+    snap_inks(cmd, p, &mut rgbs, &mut names)?;
     Ok(rgbs
         .iter()
         .enumerate()
         .map(|(i, &rgb)| {
             let given = p.get("inks").and_then(|a| a.get(i));
             Ink {
-                name: name_of(given.and_then(|g| g.get("name")), format!("Ink {}", i + 1)),
+                name: names.get(i).cloned().flatten().unwrap_or_else(|| format!("Ink {}", i + 1)),
                 rgb,
                 mesh: given.and_then(|g| g.get("mesh")).and_then(Value::as_f64).filter(|m| (1.0..=1000.0).contains(m)).unwrap_or(default_mesh),
             }

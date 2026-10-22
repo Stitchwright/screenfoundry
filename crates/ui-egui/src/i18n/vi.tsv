@@ -6320,3 +6320,6 @@ machine	Stop	Dừng máy
 
 # ScreenFoundry: Screen Print panel (SC-3), machine-written first pass.
 	Mesh	Lưới
+
+# ScreenFoundry: ink library (SC-3). Machine-written first pass, to be checked by a native speaker.
+	Snap to Library	Khớp với thư viện

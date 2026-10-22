@@ -96,6 +96,17 @@ angle lines the dots up with the mesh threads (0° or 90°), which invites moir�
 With `marks`, every film gets a crosshair-in-circle at each corner, outside the art. All films
 of a job grow by the same margin, so the marks line up from one film to the next.
 
+## Ink library
+
+`screen.inkLibrary` lists about 35 generic inks (White, Red, Royal Blue, Metallic Gold…). Their
+colours are on-screen starting points, not measurements of any ink and not brand colours. In the
+panel, **Snap to Library** replaces each ink by the nearest library ink (by CIE76 ΔE, up to 25) and
+gives it the library's name unless you renamed it; two inks never snap to the same library ink, so
+no two screens come out identical. The same works in commands: `screen.matchInks` returns the
+nearest ink for each colour, and `snap` (`true` or `{maxDeltaE, library}`) on `screen.separate` and
+`screen.simulate` does it before separating. Pass your own inks as `library: [{name, color}]`; they
+are tried before the built-in ones.
+
 ## Films and output
 
 Films are 1-bit images, black where ink must reach the garment, with the job's resolution
