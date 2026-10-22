@@ -348,3 +348,43 @@ fn simulate_rejects_bad_parameters() {
         assert!(s.execute("screen.simulate", &bad).is_err(), "{bad}");
     }
 }
+
+#[test]
+fn a_job_sheet_lists_the_screens_and_the_advice() {
+    let mut s = session();
+    let dir = vectorcraft_testkit::temp_dir("screen-sheet");
+    let none = s.execute("screen.separate", &json!({"dpi": 100, "inks": inks()})).unwrap();
+    assert!(none.get("jobSheet").is_none(), "the sheet is asked for");
+
+    let r = s
+        .execute(
+            "screen.separate",
+            &json!({"dpi": 100, "inks": inks(), "format": "tiff-g4", "dir": dir.to_string_lossy(), "jobSheet": {"title": "Tour (front)", "notes": "Cure 160 C"}}),
+        )
+        .unwrap();
+    let path = r["jobSheet"]["path"].as_str().unwrap();
+    assert!(path.ends_with("/job-sheet.pdf"), "{path}");
+    let text = String::from_utf8_lossy(&std::fs::read(path).unwrap()).into_owned();
+    assert!(text.contains("(Tour \\(front\\))") && text.contains("(Cure 160 C)"), "{text}");
+    for (i, f) in r["films"].as_array().unwrap().iter().enumerate() {
+        let file = f["path"].as_str().unwrap().rsplit('/').next().unwrap();
+        assert!(text.contains(&format!("({file})")), "{file}");
+        assert!(text.contains(&format!("({}. {})", i + 1, f["name"].as_str().unwrap())));
+    }
+    let mut opened = session();
+    opened.execute("document.open", &json!({"name": "sheet.pdf", "dataBase64": vectorcraft_format::base64_encode(text.as_bytes())})).ok();
+
+    // Without a folder the sheet comes back as base64; the halftone's advice reaches it.
+    let mut png = Vec::new();
+    let img = image::RgbaImage::from_pixel(60, 60, image::Rgba([128, 128, 128, 255]));
+    image::DynamicImage::ImageRgba8(img).write_to(&mut std::io::Cursor::new(&mut png), image::ImageFormat::Png).unwrap();
+    let src = json!({"dataBase64": vectorcraft_format::base64_encode(&png)});
+    let h = s.execute("screen.halftone", &json!({"source": src, "dpi": 600, "mesh": 60, "lpi": 55, "jobSheet": true})).unwrap();
+    assert!(!h["advice"].as_array().unwrap().is_empty());
+    let bytes = vectorcraft_format::base64_decode(h["jobSheet"]["dataBase64"].as_str().unwrap()).unwrap();
+    let sheet = String::from_utf8_lossy(&bytes).into_owned();
+    assert!(sheet.starts_with("%PDF-1.4") && sheet.contains("(Advice)") && sheet.contains("(ScreenFoundry job)"), "{sheet}");
+
+    assert!(s.execute("screen.halftone", &json!({"source": src, "jobSheet": 3})).is_err());
+    let _ = std::fs::remove_dir_all(dir);
+}

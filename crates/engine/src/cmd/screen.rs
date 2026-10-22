@@ -10,6 +10,7 @@ use std::io::Cursor;
 use sc_core::color::{parse_hex, to_hex};
 use sc_core::halftone::{DotShape, HalftoneOptions, halftone};
 use sc_core::job::{DEFAULT_ANGLES, Film, Ink, Role, SimulatedJob, SpotJob, UnderbaseOptions};
+use sc_core::jobsheet::{JobSheet, SheetFilm};
 use sc_core::marks::{MarkSpec, frame_with_marks};
 use sc_core::profile::{Advice, check, recommended_lpi_range};
 use sc_core::separate::{extract_palette, tone_plate};
@@ -49,7 +50,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Separate Colors",
             [],
             None,
-            "{source?, dpi?, inks?: [{name?, color: \"#rrggbb\", mesh? (156)}], colors?: how many inks to find in the art when `inks` is not given (4; 1–12), underbase?: true|{name?, color? (#ffffff), mesh? (110), chokeMm? (0.3)}, trapMm?: spread of colours that print before a darker one (0.25; 0–5), marks?: add registration marks (false), format?: png|tiff|tiff-g4|pdf (png), dir?: a folder to write one 1-bit film file a screen (without it: base64)} spot-colour separation: one solid film per screen, the underbase first then the colours light to dark → {dpi, width, height, films: [{name, color, role: underbase|color, format, mesh, coverage, width, height, path | dataBase64}]}",
+            "{source?, dpi?, inks?: [{name?, color: \"#rrggbb\", mesh? (156)}], colors?: how many inks to find in the art when `inks` is not given (4; 1–12), underbase?: true|{name?, color? (#ffffff), mesh? (110), chokeMm? (0.3)}, trapMm?: spread of colours that print before a darker one (0.25; 0–5), marks?: add registration marks (false), format?: png|tiff|tiff-g4|pdf (png), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?: a folder to write one 1-bit film file a screen (without it: base64)} spot-colour separation: one solid film per screen, the underbase first then the colours light to dark → {dpi, width, height, films: [{name, color, role: underbase|color, format, mesh, coverage, width, height, path | dataBase64}]}",
             always,
             separate
         ),
@@ -58,7 +59,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Simulated Process",
             [],
             None,
-            "{source?, dpi?, inks?: [{name?, color, mesh? (230)}], colors?: how many inks to find in the art when `inks` is not given (4; 1–8), base?: \"#rrggbb\" the colour under the dots (#ffffff), underbase?: true|{name?, color?, mesh?, chokeMm?}, lpi? (45), angles?: [degrees an ink] (22.5, 67.5, 45, 15, 75, 37.5, 52.5, 7.5), shape?: round|ellipse|line (round), minDot? (0.08), maxDot? (0.95), marks?, format?: png|tiff|tiff-g4|pdf (png), dir?} full-colour art as halftone dots of a few inks side by side over the base, each ink at its own screen angle, the underbase first then the inks light to dark → {dpi, width, height, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64}], advice: [{ink, code, message}]}",
+            "{source?, dpi?, inks?: [{name?, color, mesh? (230)}], colors?: how many inks to find in the art when `inks` is not given (4; 1–8), base?: \"#rrggbb\" the colour under the dots (#ffffff), underbase?: true|{name?, color?, mesh?, chokeMm?}, lpi? (45), angles?: [degrees an ink] (22.5, 67.5, 45, 15, 75, 37.5, 52.5, 7.5), shape?: round|ellipse|line (round), minDot? (0.08), maxDot? (0.95), marks?, format?: png|tiff|tiff-g4|pdf (png), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?} full-colour art as halftone dots of a few inks side by side over the base, each ink at its own screen angle, the underbase first then the inks light to dark → {dpi, width, height, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64}], advice: [{ink, code, message}]}",
             always,
             simulate
         ),
@@ -67,7 +68,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Halftone Film",
             [],
             None,
-            "{source?, dpi?, ink?: \"#rrggbb\" (#000000), name?, mesh? (230), lpi? (45), angle? (22.5), shape?: round|ellipse|line (round), minDot?: tones below this print nothing (0.08), maxDot?: tones above this print solid (0.95), marks?, format?: png|tiff|tiff-g4|pdf (png), dir?} one ink's tones screened into dots → {dpi, width, height, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64}], advice: [{code, message}]}",
+            "{source?, dpi?, ink?: \"#rrggbb\" (#000000), name?, mesh? (230), lpi? (45), angle? (22.5), shape?: round|ellipse|line (round), minDot?: tones below this print nothing (0.08), maxDot?: tones above this print solid (0.95), marks?, format?: png|tiff|tiff-g4|pdf (png), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?} one ink's tones screened into dots → {dpi, width, height, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64}], advice: [{code, message}]}",
             always,
             halftone_film
         ),
@@ -284,6 +285,49 @@ fn emit(cmd: &str, films: Vec<Film>, dpi: f64, marks: bool, fmt: FilmFormat, dir
     Ok(out)
 }
 
+/// The job sheet when `jobSheet` is given (`true` or `{title?, notes?}`): a PDF listing the screens
+/// and the advice, written as `job-sheet.pdf` under `dir` or returned as base64.
+fn job_sheet(cmd: &str, p: &Value, dpi: f64, films: &[Value], advice: &[String], dir: Option<&str>) -> Result<Option<Value>> {
+    let opts = match p.get("jobSheet") {
+        None | Some(Value::Null | Value::Bool(false)) => return Ok(None),
+        Some(Value::Bool(true)) => json!({}),
+        Some(o @ Value::Object(_)) => o.clone(),
+        Some(_) => return Err(bad(cmd, "`jobSheet` is true or {title?, notes?}")),
+    };
+    let text = |k: &str| opts.get(k).and_then(Value::as_str).map(str::trim).unwrap_or_default().chars().take(600).collect::<String>();
+    let size = |k: &str| films.first().and_then(|f| f[k].as_u64()).unwrap_or(0) as usize;
+    let rows = films
+        .iter()
+        .map(|f| SheetFilm {
+            name: f["name"].as_str().unwrap_or_default().to_string(),
+            rgb: f["color"].as_str().and_then(parse_hex).unwrap_or([0, 0, 0]),
+            role: f["role"].as_str().unwrap_or("color").to_string(),
+            mesh: f["mesh"].as_f64().unwrap_or(0.0),
+            coverage: f["coverage"].as_f64().unwrap_or(0.0),
+            file: f["path"].as_str().and_then(|p| p.rsplit(['/', '\\']).next()).map(str::to_string),
+        })
+        .collect();
+    let title = Some(text("title")).filter(|t| !t.is_empty()).unwrap_or_else(|| "ScreenFoundry job".into());
+    let sheet =
+        JobSheet { title, notes: text("notes"), dpi, width_px: size("width"), height_px: size("height"), films: rows, advice: advice.to_vec() };
+    let bytes = sc_core::jobsheet::pdf(&sheet).map_err(sc(cmd))?;
+    Ok(Some(match dir {
+        Some(dir) => {
+            let path = format!("{}/job-sheet.pdf", dir.trim_end_matches(['/', '\\']));
+            super::fileio::write_file(&path, &bytes)?;
+            json!({ "path": path })
+        }
+        None => json!({ "dataBase64": vectorcraft_format::base64_encode(&bytes) }),
+    }))
+}
+
+/// Adds the job sheet to a result when one was made.
+fn attach(out: &mut Value, sheet: Option<Value>) {
+    if let Some(sheet) = sheet {
+        out["jobSheet"] = sheet;
+    }
+}
+
 fn dir_param(p: &Value) -> Option<&str> {
     str_param(p, "dir").map(str::trim).filter(|d| !d.is_empty())
 }
@@ -355,7 +399,10 @@ fn separate(s: &mut Session, p: &Value) -> Result<Value> {
     let films = job.run(&img).map_err(sc(C))?;
     let films = emit(C, films, dpi, marks, fmt, dir_param(p))?;
     let (w, h) = films.first().map(|f| (f["width"].clone(), f["height"].clone())).unwrap_or_default();
-    Ok(json!({ "dpi": dpi, "width": w, "height": h, "films": films }))
+    let sheet = job_sheet(C, p, dpi, &films, &[], dir_param(p))?;
+    let mut out = json!({ "dpi": dpi, "width": w, "height": h, "films": films });
+    attach(&mut out, sheet);
+    Ok(out)
 }
 
 /// `screen.simulate`: full-colour art as halftone dots of a few inks over a base.
@@ -410,7 +457,12 @@ fn simulate(s: &mut Session, p: &Value) -> Result<Value> {
             advice.push(v);
         }
     }
-    Ok(json!({ "dpi": dpi, "width": w, "height": h, "films": films, "advice": advice }))
+    let lines: Vec<String> =
+        advice.iter().map(|a| format!("{}: {}", a["ink"].as_str().unwrap_or_default(), a["message"].as_str().unwrap_or_default())).collect();
+    let sheet = job_sheet(C, p, dpi, &films, &lines, dir_param(p))?;
+    let mut out = json!({ "dpi": dpi, "width": w, "height": h, "films": films, "advice": advice });
+    attach(&mut out, sheet);
+    Ok(out)
 }
 
 fn halftone_film(s: &mut Session, p: &Value) -> Result<Value> {
@@ -440,8 +492,10 @@ fn halftone_film(s: &mut Session, p: &Value) -> Result<Value> {
     let film = Film { name: name_of(p.get("name"), "Halftone".into()), ink_rgb: ink, mesh, role: Role::Color, bitmap };
     let films = emit(C, vec![film], dpi, bool_or(p, "marks", false), FilmFormat::parse(C, p)?, dir_param(p))?;
     let (w, h) = films.first().map(|f| (f["width"].clone(), f["height"].clone())).unwrap_or_default();
-    Ok(json!({
-        "dpi": dpi, "width": w, "height": h, "films": films,
-        "advice": check(mesh, lpi, angle).iter().map(advice_json).collect::<Vec<_>>(),
-    }))
+    let advice: Vec<Value> = check(mesh, lpi, angle).iter().map(advice_json).collect();
+    let lines: Vec<String> = advice.iter().map(|a| a["message"].as_str().unwrap_or_default().to_string()).collect();
+    let sheet = job_sheet(C, p, dpi, &films, &lines, dir_param(p))?;
+    let mut out = json!({ "dpi": dpi, "width": w, "height": h, "films": films, "advice": advice });
+    attach(&mut out, sheet);
+    Ok(out)
 }

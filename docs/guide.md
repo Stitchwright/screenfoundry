@@ -102,8 +102,11 @@ Films are 1-bit images, black where ink must reach the garment, with the job's r
 recorded in the file so they print at the right size. Choose `format`: `png` (default), `tiff`
 (uncompressed baseline), `tiff-g4` (CCITT Group 4, which imagesetters and direct-to-screen
 machines read and which makes a flat film a few hundred bytes instead of megabytes) or `pdf` (one page per
-film at its physical size, for print shops that take PDF). Choose a folder with `dir`; without one the films come back as base64. Direct-to-screen and DTF output are
-planned.
+film at its physical size, for print shops that take PDF). Choose a folder with `dir`; without one the films come back as base64. Add `jobSheet`
+(`true`, or `{title, notes}`) for a one-page PDF that travels with the films: the film size and
+resolution, then one row per screen in print order with its colour swatch, role, mesh, coverage
+and file name, then the mesh and line-screen advice. It is written as `job-sheet.pdf` in `dir`,
+or comes back as base64. Direct-to-screen and DTF output are planned.
 
 ## Commands and automation
 

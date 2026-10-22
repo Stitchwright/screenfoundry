@@ -10,6 +10,7 @@
 //! * [`halftone`] – amplitude-modulated screening (round, elliptical, line) at a screen angle.
 //! * [`marks`] – registration crosshairs.
 //! * [`export`] – 1-bit PNG and TIFF film files with their resolution.
+//! * [`jobsheet`] – the PDF job sheet that travels with the films.
 //! * [`profile`] – mesh / lines-per-inch / angle sanity checks.
 //! * [`job`] – a serialisable job (inks, underbase, trap) and the pipeline that runs it.
 //!
@@ -23,8 +24,10 @@ pub mod export;
 pub mod halftone;
 pub mod image;
 pub mod job;
+pub mod jobsheet;
 pub mod marks;
 pub mod morph;
+mod pdfout;
 pub mod profile;
 pub mod separate;
 pub mod simulated;

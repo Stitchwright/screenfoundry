@@ -4,6 +4,7 @@
 
 use crate::error::{Result, param};
 use crate::image::Bitmap1;
+use crate::pdfout::{self, Pdf};
 
 /// Highest resolution a film file may declare. A 2,400 dpi imagesetter is the practical top.
 pub const MAX_DPI: f64 = 20_000.0;
@@ -88,7 +89,6 @@ const PDF_MAX_POINTS: f64 = 14_400.0;
 /// `pixels × 72 / dpi` points), ink black on white. The image is drawn edge to edge, so a viewer's
 /// "actual size" is the film's size. A film longer than 200 inches is refused.
 pub fn pdf_g4(film: &Bitmap1, dpi: f64) -> Result<Vec<u8>> {
-    use std::fmt::Write as _;
     check_dpi(dpi)?;
     let data = g4_data(film)?;
     let (w, h) = (film.width(), film.height());
@@ -97,50 +97,24 @@ pub fn pdf_g4(film: &Bitmap1, dpi: f64) -> Result<Vec<u8>> {
     if pw > PDF_MAX_POINTS || ph > PDF_MAX_POINTS {
         return Err(param("film", "larger than a PDF page can be (200 inches)"));
     }
-    let content = format!("q {pw:.4} 0 0 {ph:.4} 0 0 cm /Im0 Do Q\n");
-    let mut out: Vec<u8> = b"%PDF-1.4\n%\xE2\xE3\xCF\xD3\n".to_vec();
-    let mut offsets = Vec::new();
-    let mut object = |out: &mut Vec<u8>, body: &[u8]| {
-        offsets.push(out.len());
-        let _ = writeln!(Sink(out), "{} 0 obj", offsets.len());
-        out.extend_from_slice(body);
-        out.extend_from_slice(b"\nendobj\n");
-    };
-    object(&mut out, b"<< /Type /Catalog /Pages 2 0 R >>");
-    object(&mut out, b"<< /Type /Pages /Kids [3 0 R] /Count 1 >>");
-    object(
-        &mut out,
-        format!("<< /Type /Page /Parent 2 0 R /MediaBox [0 0 {pw:.4} {ph:.4}] /Resources << /XObject << /Im0 5 0 R >> >> /Contents 4 0 R >>")
-            .as_bytes(),
+    let mut pdf = Pdf::new();
+    let (catalog, pages, page, contents, image) = (pdf.reserve(), pdf.reserve(), pdf.reserve(), pdf.reserve(), pdf.reserve());
+    pdf.set(catalog, format!("<< /Type /Catalog /Pages {pages} 0 R >>").as_bytes());
+    pdf.set(pages, format!("<< /Type /Pages /Kids [{page} 0 R] /Count 1 >>").as_bytes());
+    pdf.set(
+        page,
+        format!(
+            "<< /Type /Page /Parent {pages} 0 R /MediaBox [0 0 {pw:.4} {ph:.4}] /Resources << /XObject << /Im0 {image} 0 R >> >> /Contents {contents} 0 R >>"
+        )
+        .as_bytes(),
     );
-    object(&mut out, format!("<< /Length {} >>\nstream\n{content}endstream", content.len()).as_bytes());
-    let mut image = format!(
-        "<< /Type /XObject /Subtype /Image /Width {w} /Height {h} /ColorSpace /DeviceGray /BitsPerComponent 1 \
-         /Filter /CCITTFaxDecode /DecodeParms << /K -1 /Columns {w} /Rows {h} >> /Length {} >>\nstream\n",
-        data.len()
-    )
-    .into_bytes();
-    image.extend_from_slice(&data);
-    image.extend_from_slice(b"\nendstream");
-    object(&mut out, &image);
-    let xref = out.len();
-    let mut table = format!("xref\n0 {}\n0000000000 65535 f \n", offsets.len() + 1);
-    for o in &offsets {
-        let _ = writeln!(table, "{o:010} 00000 n ");
-    }
-    let _ = write!(table, "trailer\n<< /Size {} /Root 1 0 R >>\nstartxref\n{xref}\n%%EOF\n", offsets.len() + 1);
-    out.extend_from_slice(table.as_bytes());
-    Ok(out)
-}
-
-/// Lets `write!` append text to a byte vector.
-struct Sink<'a>(&'a mut Vec<u8>);
-
-impl std::fmt::Write for Sink<'_> {
-    fn write_str(&mut self, s: &str) -> std::fmt::Result {
-        self.0.extend_from_slice(s.as_bytes());
-        Ok(())
-    }
+    pdf.set(contents, &pdfout::stream("", format!("q {pw:.4} 0 0 {ph:.4} 0 0 cm /Im0 Do Q").as_bytes()));
+    let dict = format!(
+        "/Type /XObject /Subtype /Image /Width {w} /Height {h} /ColorSpace /DeviceGray /BitsPerComponent 1 \
+         /Filter /CCITTFaxDecode /DecodeParms << /K -1 /Columns {w} /Rows {h} >>"
+    );
+    pdf.set(image, &pdfout::stream(&dict, &data));
+    pdf.finish(catalog)
 }
 
 /// The TIFF container shared by the writers: one strip, white is zero, `compression` is the
