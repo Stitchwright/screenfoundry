@@ -642,7 +642,7 @@ fn vector_separation_lists_what_it_cannot_separate_and_checks_input() {
     let g = shape(&mut s, (0.0, 0.0, 100.0, 100.0), YELLOW);
     s.execute("paint.setFill", &json!({"ids": [g], "gradient": {"kind": "linear"}})).unwrap();
     shape(&mut s, (100.0, 0.0, 100.0, 100.0), NAVY);
-    let r = s.execute("screen.separateVector", &json!({"dpi": 100})).unwrap();
+    let r = s.execute("screen.separateVector", &json!({"dpi": 100, "tones": false})).unwrap();
     assert_eq!(r["skippedTotal"], 1);
     assert!(r["skipped"][0]["why"].as_str().unwrap().contains("gradient"), "{r}");
     assert_eq!(r["inks"].as_array().unwrap().len(), 1, "only the navy was separated");
@@ -716,6 +716,47 @@ fn vector_plates_can_come_as_vector_pdfs() {
         assert!(f["vector"].get("dataBase64").is_none());
     }
     let _ = std::fs::remove_dir_all(dir);
+}
+
+#[test]
+fn vector_spot_tints_and_gradients_print_as_dots() {
+    let mut s = Session::new();
+    s.execute("file.new", &json!({"width": 200, "height": 100})).unwrap();
+    s.execute("swatch.new", &json!({"name": "PMS Navy", "color": NAVY, "spot": true})).unwrap();
+    // Left: a 50% tint of the spot (`tint` is a percentage); right: the spot at 100%.
+    for (x, tint) in [(0.0, Some(50)), (100.0, None)] {
+        let id = shape(&mut s, (x, 0.0, 100.0, 100.0), NAVY);
+        let mut p = json!({"ids": [id], "swatch": "PMS Navy"});
+        if let Some(t) = tint {
+            p["tint"] = json!(t);
+        }
+        s.execute("paint.setFill", &p).unwrap();
+    }
+    let r = s.execute("screen.separateVector", &json!({"dpi": 300, "minDot": 0, "maxDot": 1})).unwrap();
+    assert_eq!(r["inks"].as_array().unwrap().len(), 1, "both are the one spot ink: {r}");
+    let f = &r["films"][0];
+    let (tint, solid) = (inked_share(f, 40, 380), inked_share(f, 450, 800));
+    assert!((tint - 0.5).abs() < 0.1 && solid > 0.99, "{tint} {solid}");
+    assert!(r["notes"].as_array().unwrap().iter().any(|n| n.as_str().unwrap().contains("print as dots")), "{r}");
+    // With tones off the tint prints solid and is counted.
+    let off = s.execute("screen.separateVector", &json!({"dpi": 300, "tones": false})).unwrap();
+    assert!(inked_share(&off["films"][0], 40, 380) > 0.99);
+    assert!(off["notes"].as_array().unwrap().iter().any(|n| n.as_str().unwrap().contains("tints")));
+
+    // A white-to-black gradient: dots grow from the light end to the dark end.
+    let mut s = Session::new();
+    s.execute("file.new", &json!({"width": 200, "height": 100})).unwrap();
+    let g = shape(&mut s, (0.0, 0.0, 200.0, 100.0), "#808080");
+    s.execute("paint.setFill", &json!({"ids": [g], "gradient": {"kind": "linear"}})).unwrap();
+    let r = s.execute("screen.separateVector", &json!({"dpi": 300, "minDot": 0, "maxDot": 1})).unwrap();
+    assert_eq!(r["skippedTotal"], 0);
+    let f = &r["films"][0];
+    let (left, mid, right) = (inked_share(f, 20, 120), inked_share(f, 360, 480), inked_share(f, 720, 820));
+    assert!(left < 0.25 && right > 0.75 && left < mid && mid < right, "{left} {mid} {right}");
+    // FM screening works for tones too.
+    let fm = s.execute("screen.separateVector", &json!({"dpi": 300, "minDot": 0, "maxDot": 1, "screening": "fm"})).unwrap();
+    let f = &fm["films"][0];
+    assert!(inked_share(f, 20, 120) < inked_share(f, 720, 820));
 }
 
 #[test]

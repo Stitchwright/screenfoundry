@@ -85,7 +85,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Separate Vector Art",
             [],
             None,
-            "{dpi?, inkBy?: color|layer|group (color) with layer each layer that has shapes is one ink named after it and coloured by its first shape (sublayers count as their layer; an entry of `inks` with the layer's name sets its colour and mesh) and with group each outermost group is one ink named after the group (loose shapes of a layer share an ink named after the layer), inks?: [{name?, color, mesh? (156)}] the inks the art's colours go onto (each shape takes the nearest ink and a spot swatch takes the ink of its own name first; without `inks` each colour or spot swatch of the art is an ink up to 12), snap?: true|{maxDeltaE? (25), library?: [{name, color}]} replace each ink by the nearest library ink and use its name when none is given, underbase?: true|{name?, color? (#ffffff), mesh? (110), chokeMm? (0.3)}, trapMm? (0.25), pairs?: [{spread: the name of the lighter ink, under: the name of the ink printed after it that it tucks under, mm (0.25–0 for none; replaces trapMm for that pair)}], marks?, vectorSvg?: give each plate as an SVG instead of a PDF in the `vector` entry (black paths, for editing; `vectorPdf` wins when both are given), vectorPdf?: also give each plate as a vector PDF in the `vector` entry of its film (the page is the artboard and with `marks` grows to hold the same four registration marks), format?: png|tiff|tiff-g4|pdf (png), mirror?: flip every film left to right for emulsion-down printing (false), dcs?: single|multiple (also write the films as a DCS 2.0 file; multiple puts each plate in a file beside a main file and needs `dir`), dcsName?: the job name in the DCS files (separation), dcsCompositeDpi?: the resolution of the composite in the DCS main file (150; 10–2400; the film resolution or more gives a full resolution composite and a large file), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?} the open document's first artboard separated as paths: solid fills and strokes (type too) go onto inks, a shape knocks out the other inks under it unless it overprints, the underbase and the traps are path operations, and each plate is drawn once at the film resolution; the underbase first then the inks light to dark → {dpi, width, height, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64, vector?: {format, path | dataBase64}}], inks: [{name, color, shapes}], skipped: [{object, why}], skippedTotal, notes: [text]}",
+            "{dpi?, inkBy?: color|layer|group (color) with layer each layer that has shapes is one ink named after it and coloured by its first shape (sublayers count as their layer; an entry of `inks` with the layer's name sets its colour and mesh) and with group each outermost group is one ink named after the group (loose shapes of a layer share an ink named after the layer), inks?: [{name?, color, mesh? (156)}] the inks the art's colours go onto (each shape takes the nearest ink and a spot swatch takes the ink of its own name first; without `inks` each colour or spot swatch of the art is an ink up to 12), snap?: true|{maxDeltaE? (25), library?: [{name, color}]} replace each ink by the nearest library ink and use its name when none is given, underbase?: true|{name?, color? (#ffffff), mesh? (110), chokeMm? (0.3)}, trapMm? (0.25), pairs?: [{spread: the name of the lighter ink, under: the name of the ink printed after it that it tucks under, mm (0.25–0 for none; replaces trapMm for that pair)}], marks?, tones? (true: a spot tint below 100% and a gradient print as dots, a tint as its share of the ink and a gradient by the tone of what it draws with its darkest stop as the ink; false prints tints solid and skips gradients), lpi?: the line screen of those dots (45), shape?: round|ellipse|line (round), screening?: am|fm|hybrid (am; fm scatters equal dots with no angle or ruling so nothing can moire; hybrid scatters only the light and dark ends and angles dots between), dotMm?: the size of one FM dot (0.2; 0.02–5), fmKernel?: floyd|jarvis|stucki (floyd; how the error is spread), hybridBelow?: a hybrid scatters cells lighter than this tone (0.15; 0–1), hybridAbove?: a hybrid scatters cells darker than this tone (0.85; 0–1), minDot?: tones below this print nothing (0.08), maxDot?: tones above this print solid (0.95), dotGain?: how much bigger a 50% dot prints than on the film (0 = off; at most 0.25), vectorSvg?: give each plate as an SVG instead of a PDF in the `vector` entry (black paths, for editing; `vectorPdf` wins when both are given), vectorPdf?: also give each plate as a vector PDF in the `vector` entry of its film (the page is the artboard and with `marks` grows to hold the same four registration marks), format?: png|tiff|tiff-g4|pdf (png), mirror?: flip every film left to right for emulsion-down printing (false), dcs?: single|multiple (also write the films as a DCS 2.0 file; multiple puts each plate in a file beside a main file and needs `dir`), dcsName?: the job name in the DCS files (separation), dcsCompositeDpi?: the resolution of the composite in the DCS main file (150; 10–2400; the film resolution or more gives a full resolution composite and a large file), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?} the open document's first artboard separated as paths: solid fills and strokes (type too) go onto inks, a shape knocks out the other inks under it unless it overprints, the underbase and the traps are path operations, and each plate is drawn once at the film resolution; the underbase first then the inks light to dark → {dpi, width, height, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64, vector?: {format, path | dataBase64}}], inks: [{name, color, shapes}], skipped: [{object, why}], skippedTotal, notes: [text]}",
             always,
             vector::separate_vector
         ),
@@ -819,6 +819,25 @@ fn index_colour(s: &mut Session, p: &Value) -> Result<Value> {
     Ok(out)
 }
 
+/// A tone plate screened into film: angled dots, or scattered ones when `scatter` is given.
+fn screen_plate(plate: &sc_core::Gray8, opts: &HalftoneOptions, scatter: &Option<Scatter>) -> sc_core::Result<Bitmap1> {
+    match scatter {
+        Some(Scatter { fm, hybrid: Some(h) }) => hybrid_screen(plate, opts, fm, h),
+        Some(Scatter { fm, hybrid: None }) => fm_screen(plate, fm),
+        None => halftone(plate, opts),
+    }
+}
+
+/// The dot shape named by `shape`: round (default), ellipse or line.
+fn shape_of(p: &Value, cmd: &str) -> Result<DotShape> {
+    match str_param(p, "shape").unwrap_or("round") {
+        "round" => Ok(DotShape::Round),
+        "ellipse" => Ok(DotShape::Ellipse),
+        "line" => Ok(DotShape::Line),
+        _ => Err(bad(cmd, "`shape` is round, ellipse or line")),
+    }
+}
+
 /// The scattered-dot screening asked for.
 struct Scatter {
     fm: FmOptions,
@@ -970,11 +989,7 @@ fn halftone_film(s: &mut Session, p: &Value) -> Result<Value> {
         dot_gain: num(p, C, "dotGain", 0.0, 0.0..=MAX_DOT_GAIN)?,
     };
     let scatter = scatter_of(C, p, dpi)?;
-    let bitmap = match &scatter {
-        Some(Scatter { fm, hybrid: Some(h) }) => hybrid_screen(&plate, &opts, fm, h).map_err(sc(C))?,
-        Some(Scatter { fm, hybrid: None }) => fm_screen(&plate, fm).map_err(sc(C))?,
-        None => halftone(&plate, &opts).map_err(sc(C))?,
-    };
+    let bitmap = screen_plate(&plate, &opts, &scatter).map_err(sc(C))?;
     let film = Film { name: name_of(p.get("name"), "Halftone".into()), ink_rgb: ink, mesh, role: Role::Color, bitmap };
     let (films, dcs) = finish_films(C, p, vec![film], dpi, bool_or(p, "marks", false), FilmFormat::parse(C, p)?)?;
     let (w, h) = films.first().map(|f| (f["width"].clone(), f["height"].clone())).unwrap_or_default();

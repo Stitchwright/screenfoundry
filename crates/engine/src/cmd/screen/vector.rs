@@ -30,6 +30,9 @@ use crate::cmd::pathops::node_path;
 /// Most shapes one job separates: knocking out is pairwise, so the work grows with the square.
 const MAX_SHAPES: usize = 10_000;
 
+/// Most tinted or gradient shapes one job screens: each is drawn and screened at the film size.
+const MAX_SCREENED: usize = 64;
+
 /// Most skipped objects listed in the result (the rest are counted).
 const MAX_LISTED: usize = 50;
 
@@ -37,6 +40,16 @@ const MAX_LISTED: usize = 50;
 const WHITE_L: f64 = 95.0;
 
 const MITER_LIMIT: f64 = 4.0;
+
+/// How a shape prints: solid, or screened into dots at a tone.
+#[derive(Clone)]
+enum Tone {
+    Solid,
+    /// A spot tint below 100%: this share of the ink, as dots.
+    Tint(f64),
+    /// A gradient: the tone follows the colours the paint draws.
+    Painted(Paint),
+}
 
 /// One painted shape of the art, in stacking order.
 struct Raw {
@@ -46,6 +59,7 @@ struct Raw {
     /// The spot swatch the colour is linked to.
     spot: Option<String>,
     overprint: bool,
+    tone: Tone,
     /// The top-level layer the shape is on (sublayers count as their layer).
     layer: usize,
     /// The object set the shape belongs to: its outermost group, else its layer (an index into
@@ -55,6 +69,8 @@ struct Raw {
 
 #[derive(Default)]
 struct Collected {
+    /// Whether tints and gradients are screened (else tints print solid and gradients are skipped).
+    tones_on: bool,
     shapes: Vec<Raw>,
     /// The top-level layer being walked, and the name of each layer.
     layer: usize,
@@ -89,8 +105,8 @@ fn is_transparent(n: &Node) -> bool {
     n.opacity < 1.0 || n.blend != BlendMode::Normal || n.extras().mask.is_some() || !n.appearance.effects.is_empty()
 }
 
-fn collect(doc: &Document) -> Collected {
-    let mut out = Collected::default();
+fn collect(doc: &Document, tones_on: bool) -> Collected {
+    let mut out = Collected { tones_on, ..Default::default() };
     for (i, l) in doc.layers.iter().enumerate() {
         out.layer = i;
         out.layer_names.push(l.name.clone().unwrap_or_else(|| format!("Layer {}", i + 1)));
@@ -200,12 +216,37 @@ fn leaf(doc: &Document, n: &Node, clips: Clips, out: &mut Collected) {
 
 #[allow(clippy::too_many_arguments)]
 fn add(doc: &Document, n: &Node, path: &PathData, rule: FillRule, paint: &Paint, overprint: bool, clips: Clips, out: &mut Collected) {
-    let Paint::Solid { color, swatch, tint } = paint else {
-        out.skip(n, "a gradient or pattern: give it a solid colour");
-        return;
+    let (rgb, spot, tone) = match paint {
+        Paint::Solid { color, swatch, tint } => {
+            let spot = swatch.as_ref().filter(|s| doc.swatch(s).is_some_and(|sw| sw.spot)).cloned();
+            let tinted = spot.is_some() && *tint < 1.0;
+            if tinted && out.tones_on {
+                // The ink is the swatch's own colour; the dots carry the tint.
+                let full = spot
+                    .as_ref()
+                    .and_then(|s| doc.swatch(s))
+                    .and_then(|sw| if let Paint::Solid { color, .. } = &sw.paint { Some(*color) } else { None })
+                    .unwrap_or(*color);
+                (rgb8(doc, &full), spot, Tone::Tint(f64::from(*tint)))
+            } else {
+                out.tinted += usize::from(tinted);
+                (rgb8(doc, color), spot, Tone::Solid)
+            }
+        }
+        Paint::Gradient(g) if out.tones_on => {
+            // The ink is the darkest colour of the gradient: the tone is how far each point is from white towards it.
+            let darkest = g.gradient.stops.iter().map(|st| rgb8(doc, &st.color)).min_by(|a, b| srgb_to_lab(*a)[0].total_cmp(&srgb_to_lab(*b)[0]));
+            let Some(rgb) = darkest else {
+                out.skip(n, "a gradient with no stops");
+                return;
+            };
+            (rgb, None, Tone::Painted(paint.clone()))
+        }
+        _ => {
+            out.skip(n, "a gradient or pattern: give it a solid colour");
+            return;
+        }
     };
-    let spot = swatch.as_ref().filter(|s| doc.swatch(s).is_some_and(|sw| sw.spot)).cloned();
-    out.tinted += usize::from(spot.is_some() && *tint < 1.0);
     let (mut path, mut rule) = (path.clone(), rule);
     for (clip, clip_rule) in clips {
         path = boolean(&path, rule, clip, *clip_rule, BoolOp::Intersect);
@@ -224,7 +265,7 @@ fn add(doc: &Document, n: &Node, path: &PathData, rule: FillRule, paint: &Paint,
                 }
             },
         };
-        out.shapes.push(Raw { path, rule, rgb: rgb8(doc, color), spot, overprint, layer: out.layer, set });
+        out.shapes.push(Raw { path, rule, rgb, spot, overprint, tone, layer: out.layer, set });
     }
 }
 
@@ -234,6 +275,8 @@ pub(super) struct Shape {
     pub rule: FillRule,
     pub ink: usize,
     pub overprint: bool,
+    /// Printed as dots at a tone rather than solid: kept out of the solid plate.
+    pub screened: bool,
 }
 
 fn overlaps(a: Rect, b: Rect) -> bool {
@@ -243,7 +286,15 @@ fn overlaps(a: Rect, b: Rect) -> bool {
 /// One plate per ink (`inks` of them) from shapes in stacking order, bottom first. A shape knocks
 /// out the shapes of other inks below it where they overlap, unless it overprints; so each plate
 /// holds only what shows (what the ink prints) plus what is printed over.
+#[cfg(test)]
 pub(super) fn compose(shapes: &[Shape], inks: usize) -> Vec<PathData> {
+    compose_parts(shapes, inks).0
+}
+
+/// [`compose`] with the screened shapes kept apart: the solid plates, and for each screened
+/// shape (by index) the part of it that shows.
+pub(super) fn compose_parts(shapes: &[Shape], inks: usize) -> (Vec<PathData>, Vec<(usize, PathData)>) {
+    let mut screened_parts: Vec<(usize, PathData)> = Vec::new();
     let boxes: Vec<Option<Rect>> = shapes.iter().map(|s| s.path.bounds()).collect();
     let mut parts: Vec<Vec<(PathData, FillRule)>> = vec![Vec::new(); inks];
     for (i, s) in shapes.iter().enumerate() {
@@ -260,19 +311,23 @@ pub(super) fn compose(shapes: &[Shape], inks: usize) -> Vec<PathData> {
         } else {
             (boolean(&s.path, s.rule, &unite_all(&above), FillRule::NonZero, BoolOp::Difference), FillRule::NonZero)
         };
-        if !visible.0.is_empty()
-            && let Some(p) = parts.get_mut(s.ink)
-        {
+        if visible.0.is_empty() {
+            continue;
+        }
+        if s.screened {
+            screened_parts.push((i, unite_all(&[(&visible.0, visible.1)])));
+        } else if let Some(p) = parts.get_mut(s.ink) {
             p.push(visible);
         }
     }
-    parts
+    let plates = parts
         .iter()
         .map(|p| {
             let refs: Vec<(&PathData, FillRule)> = p.iter().map(|(path, rule)| (path, *rule)).collect();
             unite_all(&refs)
         })
-        .collect()
+        .collect();
+    (plates, screened_parts)
 }
 
 /// Trap `plates` (in print order): each grows by `trap` (document units) but only where a plate
@@ -342,7 +397,7 @@ fn pair_traps(p: &Value, inks: &[Ink]) -> Result<Vec<(usize, usize, f64)>> {
 }
 
 /// A document whose one artboard is `region` and whose one object is `plate` filled with `ink`.
-fn plate_document(plate: &PathData, region: Rect, ink: Color) -> Result<Document> {
+fn plate_document(plate: &PathData, region: Rect, paint: Paint) -> Result<Document> {
     const C: &str = "screen.separateVector";
     let mut doc = Document::new(region.width().max(1.0), region.height().max(1.0));
     if let Some(a) = doc.artboards.first_mut() {
@@ -350,7 +405,7 @@ fn plate_document(plate: &PathData, region: Rect, ink: Color) -> Result<Document
     }
     let layer = doc.layers.first().map(|l| l.id).ok_or_else(|| bad(C, "internal: no layer"))?;
     let id = doc.alloc_id();
-    let node = Node::path(id, plate.clone(), Appearance::basic(Paint::solid(ink), Paint::None, 0.0));
+    let node = Node::path(id, plate.clone(), Appearance::basic(paint, Paint::None, 0.0));
     doc.insert(Some(layer), 0, node).map_err(|e| bad(C, e.to_string()))?;
     Ok(doc)
 }
@@ -358,13 +413,13 @@ fn plate_document(plate: &PathData, region: Rect, ink: Color) -> Result<Document
 /// `plate` as a one-page vector PDF the size of the artboard: black ink (the film's own K) on nothing.
 fn plate_pdf(plate: &PathData, region: Rect) -> Result<Vec<u8>> {
     const C: &str = "screen.separateVector";
-    let doc = plate_document(plate, region, Color::Gray { k: 1.0 })?;
+    let doc = plate_document(plate, region, Paint::solid(Color::Gray { k: 1.0 }))?;
     crate::cmd::rasterfx::export_pdf(&doc, &vectorcraft_pdf::PdfOptions::default()).map_err(|e| bad(C, e.to_string()))
 }
 
 /// `plate` as an SVG the size of the artboard: black ink on nothing.
 fn plate_svg(plate: &PathData, region: Rect) -> Result<Vec<u8>> {
-    let doc = plate_document(plate, region, Color::Gray { k: 1.0 })?;
+    let doc = plate_document(plate, region, Paint::solid(Color::Gray { k: 1.0 }))?;
     Ok(vectorcraft_svg::export(&doc, &vectorcraft_svg::ExportOptions::default()).into_bytes())
 }
 
@@ -372,12 +427,62 @@ fn plate_svg(plate: &PathData, region: Rect) -> Result<Vec<u8>> {
 /// threshold it into film.
 fn rasterize(r: &mut Renderer, plate: &PathData, region: Rect, scale: f64, (w, h): (u32, u32)) -> Result<Bitmap1> {
     const C: &str = "screen.separateVector";
-    let doc = plate_document(plate, region, Color::BLACK)?;
+    let doc = plate_document(plate, region, Paint::solid(Color::BLACK))?;
     let view = vectorcraft_geom::Affine::scale(scale) * vectorcraft_geom::Affine::translate((-region.x0, -region.y0));
     let opts = RenderOptions { background: None, artboards: false, skip_templates: true, anti_alias: AntiAlias::None, ..Default::default() };
     let img = r.render(&doc, w, h, view, &opts);
     let bits: Vec<bool> = img.pixels.chunks_exact(4).map(|px| px.get(3).copied().unwrap_or(0) >= 128).collect();
     Bitmap1::from_bits(w as usize, h as usize, bits).map_err(sc(C))
+}
+
+/// The screening for tints and gradients: the dots of a halftone at the job's ruling.
+struct ToneScreen {
+    opts: HalftoneOptions,
+    scatter: Option<Scatter>,
+}
+
+/// `path` filled with `paint`, drawn without smoothing into `size` pixels over `region`.
+fn render_painted(r: &mut Renderer, path: &PathData, paint: &Paint, region: Rect, scale: f64, (w, h): (u32, u32)) -> Result<sc_core::Rgba8> {
+    const C: &str = "screen.separateVector";
+    let doc = plate_document(path, region, paint.clone())?;
+    let view = vectorcraft_geom::Affine::scale(scale) * vectorcraft_geom::Affine::translate((-region.x0, -region.y0));
+    let opts = RenderOptions { background: None, artboards: false, skip_templates: true, anti_alias: AntiAlias::None, ..Default::default() };
+    let img = r.render(&doc, w, h, view, &opts);
+    sc_core::Rgba8::new(w as usize, h as usize, img.to_straight()).map_err(sc(C))
+}
+
+/// The dots of one screened shape: its visible `part`, screened at the tone it carries (a tint's
+/// share, or what its gradient draws) with the ink at `angle`.
+#[allow(clippy::too_many_arguments)]
+fn screened_part(
+    r: &mut Renderer,
+    shape: &Shape,
+    tone: &Tone,
+    part: &PathData,
+    ink_rgb: [u8; 3],
+    angle: f64,
+    screen: &ToneScreen,
+    (region, scale, size): (Rect, f64, (u32, u32)),
+) -> Result<Bitmap1> {
+    const C: &str = "screen.separateVector";
+    let mask = rasterize(r, part, region, scale, size)?;
+    let (w, h) = (size.0 as usize, size.1 as usize);
+    let plate = match tone {
+        Tone::Tint(t) => {
+            let v = (t.clamp(0.0, 1.0) * 255.0).round() as u8;
+            let data: Vec<u8> = (0..w * h).map(|i| if mask.get(i % w, i / w) { v } else { 0 }).collect();
+            sc_core::Gray8::new(w, h, data).map_err(sc(C))?
+        }
+        Tone::Painted(paint) => {
+            let img = render_painted(r, &shape.path, paint, region, scale, size)?;
+            sc_core::separate::tone_plate(&img, ink_rgb).map_err(sc(C))?
+        }
+        Tone::Solid => return Ok(mask),
+    };
+    let opts = HalftoneOptions { angle_deg: angle, ..screen.opts };
+    let dots = screen_plate(&plate, &opts, &screen.scatter).map_err(sc(C))?;
+    let bits: Vec<bool> = (0..w * h).map(|i| mask.get(i % w, i / w) && dots.get(i % w, i / w)).collect();
+    Bitmap1::from_bits(w, h, bits).map_err(sc(C))
 }
 
 /// The inks of the job and the ink of each shape.
@@ -572,13 +677,19 @@ pub(super) fn separate_vector(s: &mut Session, p: &Value) -> Result<Value> {
     let region = st.doc.artboards.first().ok_or_else(|| bad(C, "the document has no artboard"))?.rect;
     let scale = dpi / 72.0;
     let size = vectorcraft_render::raster_size(region, scale).map_err(|e| bad(C, e))?;
-    let collected = collect(&st.doc);
+    let tones_on = bool_or(p, "tones", true);
+    let collected = collect(&st.doc, tones_on);
     if collected.shapes.len() > MAX_SHAPES {
         return Err(bad(C, format!("the art has {} shapes; at most {MAX_SHAPES} can be separated at once", collected.shapes.len())));
     }
     let (inks, of_shape) = assign_inks(p, &collected.shapes, &collected.layer_names, &collected.set_names)?;
-    let shapes: Vec<Shape> =
-        collected.shapes.into_iter().zip(&of_shape).map(|(r, &ink)| Shape { path: r.path, rule: r.rule, ink, overprint: r.overprint }).collect();
+    let tones: Vec<Tone> = collected.shapes.iter().map(|r| r.tone.clone()).collect();
+    let shapes: Vec<Shape> = collected
+        .shapes
+        .into_iter()
+        .zip(&of_shape)
+        .map(|(r, &ink)| Shape { screened: !matches!(r.tone, Tone::Solid), path: r.path, rule: r.rule, ink, overprint: r.overprint })
+        .collect();
     let mut per_ink = vec![0usize; inks.len()];
     for s in &shapes {
         if let Some(n) = per_ink.get_mut(s.ink) {
@@ -586,7 +697,32 @@ pub(super) fn separate_vector(s: &mut Session, p: &Value) -> Result<Value> {
         }
     }
 
-    let plates = compose(&shapes, inks.len());
+    let (plates, screened_parts) = compose_parts(&shapes, inks.len());
+    if screened_parts.len() > MAX_SCREENED {
+        return Err(bad(
+            C,
+            format!(
+                "{} tinted or gradient shapes show; at most {MAX_SCREENED} can be screened at once: use `tones: false` or simplify",
+                screened_parts.len()
+            ),
+        ));
+    }
+    let tone_screen = if screened_parts.is_empty() {
+        None
+    } else {
+        Some(ToneScreen {
+            opts: HalftoneOptions {
+                dpi,
+                lpi: num(p, C, "lpi", 45.0, 1.0..=500.0)?,
+                angle_deg: 0.0,
+                shape: shape_of(p, C)?,
+                min_dot: num(p, C, "minDot", 0.08, 0.0..=1.0)?,
+                max_dot: num(p, C, "maxDot", 0.95, 0.0..=1.0)?,
+                dot_gain: num(p, C, "dotGain", 0.0, 0.0..=MAX_DOT_GAIN)?,
+            },
+            scatter: scatter_of(C, p, dpi)?,
+        })
+    };
     // Print order: light to dark, as for the other methods.
     let lightness = |i: usize| inks.get(i).map_or(0.0, |k| srgb_to_lab(k.rgb)[0]);
     let mut order: Vec<usize> = (0..inks.len()).collect();
@@ -609,8 +745,15 @@ pub(super) fn separate_vector(s: &mut Session, p: &Value) -> Result<Value> {
     // The path behind each film, in the same order, for the vector output.
     let mut film_paths: Vec<PathData> = Vec::with_capacity(inks.len() + 1);
     if let Some(ub) = &underbase {
-        let covered: Vec<(&PathData, FillRule)> =
+        let mut covered: Vec<(&PathData, FillRule)> =
             order.iter().filter(|&&i| lightness(i) < WHITE_L).filter_map(|&i| plates.get(i)).map(|q| (q, FillRule::NonZero)).collect();
+        // Dots print on the underbase too.
+        covered.extend(
+            screened_parts
+                .iter()
+                .filter(|(idx, _)| shapes.get(*idx).is_some_and(|sh| lightness(sh.ink) < WHITE_L))
+                .map(|(_, q)| (q, FillRule::NonZero)),
+        );
         let footprint = unite_all(&covered);
         if !footprint.is_empty() {
             let path = offset_path(&footprint, -ub.choke_px, Join::Round, MITER_LIMIT);
@@ -626,13 +769,22 @@ pub(super) fn separate_vector(s: &mut Session, p: &Value) -> Result<Value> {
     }
     for (&i, plate) in order.iter().zip(&trapped) {
         let Some(ink) = inks.get(i) else { continue };
-        films.push(Film {
-            name: ink.name.clone(),
-            ink_rgb: ink.rgb,
-            mesh: ink.mesh,
-            role: Role::Color,
-            bitmap: rasterize(&mut renderer, plate, region, scale, size)?,
-        });
+        let mut bitmap = rasterize(&mut renderer, plate, region, scale, size)?;
+        if let Some(screen) = &tone_screen {
+            let angle = DEFAULT_ANGLES.get(i % DEFAULT_ANGLES.len()).copied().unwrap_or(22.5);
+            for (idx, part) in screened_parts.iter().filter(|(idx, _)| shapes.get(*idx).is_some_and(|sh| sh.ink == i)) {
+                let (Some(shape), Some(tone)) = (shapes.get(*idx), tones.get(*idx)) else { continue };
+                let dots = screened_part(&mut renderer, shape, tone, part, ink.rgb, angle, screen, (region, scale, size))?;
+                for y in 0..bitmap.height() {
+                    for x in 0..bitmap.width() {
+                        if dots.get(x, y) {
+                            bitmap.set(x as i64, y as i64, true);
+                        }
+                    }
+                }
+            }
+        }
+        films.push(Film { name: ink.name.clone(), ink_rgb: ink.rgb, mesh: ink.mesh, role: Role::Color, bitmap });
         film_paths.push(plate.clone());
     }
 
@@ -656,6 +808,12 @@ pub(super) fn separate_vector(s: &mut Session, p: &Value) -> Result<Value> {
     }
     if collected.tinted > 0 {
         notes.push(format!("{} spot tints below 100% print solid", collected.tinted));
+    }
+    if !screened_parts.is_empty() {
+        notes.push(format!(
+            "{} tinted or gradient shapes print as dots in the films; the vector plates (vectorPdf, vectorSvg) hold only the solid parts",
+            screened_parts.len()
+        ));
     }
     if collected.mixed_text > 0 {
         notes.push(format!("{} text objects print in the colours of their first style: Create Outlines to separate the rest", collected.mixed_text));
@@ -683,7 +841,7 @@ mod tests {
     }
 
     fn shape(path: PathData, ink: usize, overprint: bool) -> Shape {
-        Shape { path, rule: FillRule::NonZero, ink, overprint }
+        Shape { path, rule: FillRule::NonZero, ink, overprint, screened: false }
     }
 
     fn area_of(p: &PathData) -> f64 {
@@ -725,7 +883,8 @@ mod tests {
         // A ring of ink 0 (square with a square hole, even-odd) with ink 1 inside the hole.
         let mut ring = rect(0.0, 0.0, 100.0, 100.0);
         ring.subpaths.extend(rect(30.0, 30.0, 70.0, 70.0).subpaths);
-        let shapes = [Shape { path: ring, rule: FillRule::EvenOdd, ink: 0, overprint: false }, shape(rect(40.0, 40.0, 60.0, 60.0), 1, false)];
+        let shapes =
+            [Shape { path: ring, rule: FillRule::EvenOdd, ink: 0, overprint: false, screened: false }, shape(rect(40.0, 40.0, 60.0, 60.0), 1, false)];
         let plates = compose(&shapes, 2);
         assert!((area_of(&plates[0]) - (10_000.0 - 1_600.0)).abs() < 1e-3);
         assert!((area_of(&plates[1]) - 400.0).abs() < 1e-3);
