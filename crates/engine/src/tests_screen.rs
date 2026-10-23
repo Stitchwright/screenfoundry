@@ -1143,3 +1143,22 @@ fn simulate_takes_a_dot_gain_for_each_ink() {
         assert!(run(bad.clone()).is_err(), "{bad}");
     }
 }
+
+#[test]
+fn simulate_ink_limit_caps_the_darks() {
+    let mut s = Session::new();
+    let src = png_source(60, 60, |_, _| [0, 0, 0, 255]);
+    let inks = json!([{"name": "Black", "color": "#000000"}]);
+    let base = json!({"source": src, "dpi": 600, "lpi": 50, "inks": inks, "minDot": 0, "maxDot": 1});
+    let share = |r: &Value| inked_share(&r["films"][0], 0, 60);
+    let free = share(&s.execute("screen.simulate", &base).unwrap());
+    let mut capped = base.clone();
+    capped["inkLimit"] = json!(0.7);
+    let capped = share(&s.execute("screen.simulate", &capped).unwrap());
+    assert!(free > 0.97 && (capped - 0.7).abs() < 0.05, "{free} {capped}");
+    for bad in [json!(0.0), json!(1.5), json!("x")] {
+        let mut p = base.clone();
+        p["inkLimit"] = bad.clone();
+        assert!(s.execute("screen.simulate", &p).is_err(), "{bad}");
+    }
+}

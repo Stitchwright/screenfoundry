@@ -134,6 +134,13 @@ pub struct SimulatedJob {
     /// beyond the list keep it): thick or fine inks gain differently on the same mesh.
     #[serde(default)]
     pub gains: Vec<f64>,
+    /// The most of the area all inks together may cover, 0.1 to 1 (default 1: no cap).
+    #[serde(default = "full")]
+    pub ink_limit: f64,
+}
+
+fn full() -> f64 {
+    1.0
 }
 
 impl SimulatedJob {
@@ -142,7 +149,7 @@ impl SimulatedJob {
             return Err(param("inks", "a job needs at least one ink"));
         }
         let rgbs: Vec<[u8; 3]> = self.inks.iter().map(|i| i.rgb).collect();
-        let plates = simulated_plates(img, &rgbs, self.base)?;
+        let plates = simulated_plates(img, &rgbs, self.base, self.ink_limit)?;
         let angles: &[f64] = if self.angles.is_empty() { &DEFAULT_ANGLES } else { &self.angles };
 
         let lightness = |i: usize| self.inks.get(i).map_or(0.0, |k| srgb_to_lab(k.rgb)[0]);
@@ -313,6 +320,7 @@ mod tests {
             fm: None,
             hybrid: None,
             gains: Vec::new(),
+            ink_limit: 1.0,
         }
     }
 
@@ -362,6 +370,18 @@ mod tests {
         let cov = |fs: &[Film], n: &str| fs.iter().find(|f| f.name == n).map(|f| f.bitmap.coverage()).unwrap_or(-1.0);
         assert_eq!(cov(&films, "Navy"), cov(&plain, "Navy"));
         assert!(cov(&films, "Red") < cov(&plain, "Red") - 0.03, "{} vs {}", cov(&films, "Red"), cov(&plain, "Red"));
+    }
+
+    #[test]
+    fn an_ink_limit_lowers_the_dots_in_the_darks() {
+        let dark = Rgba8::new(120, 120, [10u8, 20, 90, 255].repeat(120 * 120)).unwrap(); // the navy itself
+        let mut j = sim_job(false);
+        let full_cov: f64 = j.run(&dark).unwrap().iter().map(|f| f.bitmap.coverage()).sum();
+        j.ink_limit = 0.8;
+        let capped: f64 = j.run(&dark).unwrap().iter().map(|f| f.bitmap.coverage()).sum();
+        assert!(full_cov > 0.95 && (capped - 0.8).abs() < 0.03, "{full_cov} {capped}");
+        j.ink_limit = 0.0;
+        assert!(j.run(&dark).is_err());
     }
 
     #[test]

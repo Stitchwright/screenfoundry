@@ -90,7 +90,9 @@ inks; give them (`inks`) or let ScreenFoundry find them (`colors`).
 
 `dotGain` works here too (and is the Dot Gain box in the panel). Inks gain differently on the same
 mesh, so `inkGains` gives each ink its own number in the order of `inks` (it replaces `dotGain` for
-that ink; the panel has one box only). It does not model dots overlapping
+that ink; the panel has one box only). `inkLimit` (0.1 to 1, default 1) caps the share of the area
+all inks may cover together: the darkest tones keep some base showing, which holds open on the
+mesh, and come out lighter. It does not model dots overlapping
 or how opaque the ink is. Print a test and adjust the dot limits (`minDot`, `maxDot`), the dot gain
 and the line screen before a production run.
 

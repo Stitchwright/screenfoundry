@@ -7,7 +7,7 @@
 //! the base and the inks closest to `T`. When several mixes match `T` exactly (more than four
 //! points make the hull ambiguous) the one with the least ink wins: fewer dots print cleaner.
 //!
-//! Dot gain, overlap of dots at different angles and ink opacity are not modelled; the defaults of
+//! Dot gain (done in the halftone step), overlap of dots at different angles and ink opacity are not modelled; the defaults of
 //! the halftone step are where those are tuned.
 
 use std::collections::HashMap;
@@ -18,6 +18,9 @@ use crate::separate::ALPHA_CUTOFF;
 
 /// Most inks a simulated-process job separates (the base is extra).
 pub const MAX_INKS: usize = 8;
+
+/// Lowest ink limit accepted.
+pub const MIN_INK_LIMIT: f64 = 0.1;
 
 /// Distinct colours solved exactly; past this, colours are rounded to 6 bits a channel first.
 const EXACT_COLORS: usize = 262_144;
@@ -132,9 +135,15 @@ pub fn solve_shares(points: &[[f64; 3]], target: [f64; 3]) -> Vec<f64> {
 
 /// One tone plate per ink: the share of the area each ink covers, 0 to 255, for every opaque
 /// pixel (background pixels get 0 on every plate). `base` is the colour under the dots.
-pub fn simulated_plates(img: &Rgba8, inks: &[[u8; 3]], base: [u8; 3]) -> Result<Vec<Gray8>> {
+///
+/// `ink_limit` caps the share of the area all inks together may cover (1 = no cap): the darkest
+/// tones keep some base showing, which holds open on the mesh, and come out a little lighter.
+pub fn simulated_plates(img: &Rgba8, inks: &[[u8; 3]], base: [u8; 3], ink_limit: f64) -> Result<Vec<Gray8>> {
     if inks.is_empty() || inks.len() > MAX_INKS {
         return Err(param("inks", format!("need 1..={MAX_INKS} inks")));
+    }
+    if !ink_limit.is_finite() || !(MIN_INK_LIMIT..=1.0).contains(&ink_limit) {
+        return Err(param("ink_limit", format!("must be {MIN_INK_LIMIT}..=1")));
     }
     let mut points = vec![to_linear(base)];
     points.extend(inks.iter().map(|&c| to_linear(c)));
@@ -156,7 +165,11 @@ pub fn simulated_plates(img: &Rgba8, inks: &[[u8; 3]], base: [u8; 3]) -> Result<
         let rgb = if coarse { [p[0] & 0xfc | 2, p[1] & 0xfc | 2, p[2] & 0xfc | 2] } else { [p[0], p[1], p[2]] };
         let key = u32::from_le_bytes([rgb[0], rgb[1], rgb[2], 0]);
         let shares = cache.entry(key).or_insert_with(|| {
-            let s = solve_shares(&points, to_linear(rgb));
+            let mut s = solve_shares(&points, to_linear(rgb));
+            let ink: f64 = s.iter().skip(1).sum();
+            if ink > ink_limit {
+                s.iter_mut().skip(1).for_each(|c| *c *= ink_limit / ink);
+            }
             s.iter().skip(1).map(|c| (c * 255.0).round().clamp(0.0, 255.0) as u8).collect()
         });
         for (plane, &v) in planes.iter_mut().zip(shares.iter()) {
@@ -267,7 +280,7 @@ mod tests {
         }
         d.extend_from_slice(&[0, 0, 0, 0]);
         let img = Rgba8::new(12, 1, d).unwrap();
-        let plates = simulated_plates(&img, &[BLUE, RED], WHITE).unwrap();
+        let plates = simulated_plates(&img, &[BLUE, RED], WHITE, 1.0).unwrap();
         let blue = plates[0].data();
         assert!(blue[0] <= 1 && blue[10] >= 254, "{blue:?}");
         for w in blue[..11].windows(2) {
@@ -281,7 +294,25 @@ mod tests {
     #[test]
     fn bad_inputs_are_errors() {
         let img = Rgba8::new(1, 1, vec![0, 0, 0, 255]).unwrap();
-        assert!(simulated_plates(&img, &[], WHITE).is_err());
-        assert!(simulated_plates(&img, &[RED; MAX_INKS + 1], WHITE).is_err());
+        assert!(simulated_plates(&img, &[], WHITE, 1.0).is_err());
+        assert!(simulated_plates(&img, &[RED; MAX_INKS + 1], WHITE, 1.0).is_err());
+        for bad in [0.0, 0.05, 1.1, f64::NAN, f64::INFINITY] {
+            assert!(simulated_plates(&img, &[RED], WHITE, bad).is_err(), "{bad}");
+        }
+    }
+
+    #[test]
+    fn an_ink_limit_caps_the_total_coverage_and_leaves_light_tones_alone() {
+        let d = [0, 0, 0, 255, 255, 255, 255, 255].to_vec(); // black, white
+        let img = Rgba8::new(2, 1, d).unwrap();
+        let free = simulated_plates(&img, &[[0, 0, 0]], WHITE, 1.0).unwrap();
+        assert_eq!(free[0].data(), &[255, 0]);
+        let capped = simulated_plates(&img, &[[0, 0, 0]], WHITE, 0.8).unwrap();
+        assert_eq!(capped[0].data(), &[204, 0]);
+        // Two inks share the cap in proportion.
+        let img = Rgba8::new(1, 1, vec![0, 0, 0, 255]).unwrap();
+        let p = simulated_plates(&img, &[BLUE, RED], WHITE, 0.5).unwrap();
+        let total = u32::from(p[0].data()[0]) + u32::from(p[1].data()[0]);
+        assert!(total <= 128, "{total}");
     }
 }
