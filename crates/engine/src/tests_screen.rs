@@ -907,3 +907,56 @@ fn dtf_can_be_tiff_graded_and_laid_out_on_a_gang_sheet() {
         assert!(s.execute("screen.dtf", &bad).is_err(), "{bad}");
     }
 }
+
+#[test]
+fn gang_sheets_can_turn_designs_and_dcs_has_a_chosen_composite_and_managed_cmyk() {
+    let mut s = Session::new();
+    let decode = |f: &Value| vectorcraft_format::base64_decode(f["dataBase64"].as_str().unwrap()).unwrap();
+    // Four artboards 100 × 28.8 pt (a 139 × 40 px design at 100 dpi) on a sheet 200 mm (787 px) wide.
+    s.execute("file.new", &json!({"width": 100, "height": 29})).unwrap();
+    for i in 1..4 {
+        s.execute("artboard.new", &json!({"x": 200.0 * f64::from(i), "y": 0, "width": 100, "height": 29})).unwrap();
+    }
+    for i in 0..4 {
+        let r = s.execute("shape.rectangle", &json!({"x": 200.0 * f64::from(i), "y": 0, "width": 100, "height": 29})).unwrap();
+        s.execute("paint.setFill", &json!({"ids": [r["id"].as_u64().unwrap()], "color": NAVY})).unwrap();
+    }
+    // 60 mm wide: one design (139 px) fits a 236 px row twice only with the gap, so rows run long;
+    // standing them up (40 × 139) four fit across.
+    let flat = s.execute("screen.dtf", &json!({"artboards": "all", "sheetWidthMm": 60, "gapMm": 2, "dpi": 100, "mirror": false})).unwrap();
+    let turned =
+        s.execute("screen.dtf", &json!({"artboards": "all", "sheetWidthMm": 60, "gapMm": 2, "dpi": 100, "mirror": false, "rotate": true})).unwrap();
+    assert!(turned["height"].as_u64() < flat["height"].as_u64(), "{} vs {}", turned["height"], flat["height"]);
+    assert!(flat["placements"].as_array().unwrap().iter().all(|p| p["rotated"] == false));
+    let put = turned["placements"].as_array().unwrap();
+    assert!(put.iter().all(|p| p["rotated"] == true && p["width"].as_u64() < p["height"].as_u64()), "{turned}");
+    let sheet = image::load_from_memory(&decode(&turned["files"][0])).unwrap().to_rgba8();
+    for p in put {
+        let (x, y) = (p["x"].as_u64().unwrap() as u32, p["y"].as_u64().unwrap() as u32);
+        assert_eq!(sheet.get_pixel(x + 5, y + 50).0[3], 255, "{p}");
+    }
+
+    // DCS: the composite resolution is chosen and the CMYK comes from the colour settings.
+    let mut t = session();
+    let inks = inks();
+    let dcs_of = |t: &mut Session, extra: Value| {
+        let mut p = json!({"dpi": 300, "inks": inks, "dcs": "single"});
+        p.as_object_mut().unwrap().extend(extra.as_object().unwrap().clone());
+        let r = t.execute("screen.separate", &p).unwrap();
+        vectorcraft_format::base64_decode(r["dcs"]["dataBase64"].as_str().unwrap()).unwrap()
+    };
+    let (small, full) = (dcs_of(&mut t, json!({})), dcs_of(&mut t, json!({"dcsCompositeDpi": 300})));
+    assert!(full.len() > small.len() * 3, "a full resolution composite is far larger: {} vs {}", full.len(), small.len());
+    let head = |f: &[u8]| String::from_utf8_lossy(&f[..f.windows(14).position(|w| w == b"%%EndComments\n").unwrap()]).into_owned();
+    let lines: Vec<String> = head(&small).lines().filter(|l| l.starts_with("%%CMYKCustomColor: ")).map(str::to_string).collect();
+    assert_eq!(lines.len(), 2);
+    for l in &lines {
+        let v: Vec<f64> = l["%%CMYKCustomColor: ".len()..].split_whitespace().take(4).map(|x| x.parse().unwrap()).collect();
+        assert!(v.len() == 4 && v.iter().all(|c| (0.0..=1.0).contains(c)), "{l}");
+    }
+    for bad in [json!({"dcsCompositeDpi": 5}), json!({"dcsCompositeDpi": 9000}), json!({"dcsCompositeDpi": "full"})] {
+        let mut p = json!({"dpi": 300, "inks": inks, "dcs": "single"});
+        p.as_object_mut().unwrap().extend(bad.as_object().unwrap().clone());
+        assert!(t.execute("screen.separate", &p).is_err(), "{p}");
+    }
+}

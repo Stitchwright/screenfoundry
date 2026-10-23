@@ -92,15 +92,66 @@ pub struct Placement {
     pub index: usize,
     pub x: usize,
     pub y: usize,
+    /// The size on the sheet (swapped from the design's own when it was turned).
     pub width: usize,
     pub height: usize,
+    /// Turned a quarter turn clockwise.
+    pub rotated: bool,
+}
+
+/// `img` turned a quarter turn clockwise.
+fn rotated_cw(img: &Rgba8) -> Result<Rgba8> {
+    let (w, h) = (img.width(), img.height());
+    let mut out = vec![0u8; img.data().len()];
+    for (i, px) in img.data().chunks_exact(4).enumerate() {
+        let (x, y) = (i % w, i / w);
+        let at = (x * h + (h - 1 - y)) * 4;
+        if let Some(dst) = out.get_mut(at..at + 4) {
+            dst.copy_from_slice(px);
+        }
+    }
+    Rgba8::new(h, w, out)
+}
+
+/// Rows of items `sizes` apart by `gap` on a sheet `sheet_w` wide, tallest first, left to right, a
+/// new row when the next does not fit: where each goes (x, y) in the order given, and the height
+/// the rows need. `None` when an item is wider than the sheet.
+fn shelf(sizes: &[(usize, usize)], sheet_w: usize, gap: usize) -> Option<(Vec<(usize, usize)>, usize)> {
+    if sizes.iter().any(|&(w, _)| w > sheet_w) {
+        return None;
+    }
+    let mut order: Vec<usize> = (0..sizes.len()).collect();
+    order.sort_by_key(|&i| std::cmp::Reverse(sizes.get(i).map_or(0, |s| s.1)));
+    let (mut x, mut y, mut row_h) = (0usize, 0usize, 0usize);
+    let mut at = vec![(0, 0); sizes.len()];
+    for &i in &order {
+        let &(w, h) = sizes.get(i)?;
+        if x > 0 && x.saturating_add(w) > sheet_w {
+            y = y.saturating_add(row_h).saturating_add(gap);
+            (x, row_h) = (0, 0);
+        }
+        *at.get_mut(i)? = (x, y);
+        x = x.saturating_add(w).saturating_add(gap);
+        row_h = row_h.max(h);
+    }
+    Some((at, y.saturating_add(row_h)))
+}
+
+/// One way of laying the designs out: which are turned, where each goes and how tall the rows are.
+struct Layout {
+    turned: Vec<bool>,
+    at: Vec<(usize, usize)>,
+    height: usize,
 }
 
 /// Lay `designs` out on one transparent sheet `sheet_w` pixels wide, `gap` pixels apart, in rows
-/// (shelf packing): tallest first, left to right, a new row when the next design does not fit.
-/// The sheet is as tall as the rows need. Designs are not rotated. Placements come back in the
-/// order the designs were given.
-pub fn gang_sheet(designs: &[Rgba8], sheet_w: usize, gap: usize) -> Result<(Rgba8, Vec<Placement>)> {
+/// (shelf packing): tallest first, left to right, a new row when the next design does not fit. The
+/// sheet is as tall as the rows need. With `rotate` each of three layouts is tried (every design
+/// as it is, every design turned to lie wider than tall, every design turned to stand taller
+/// than wide, where it fits) and the one that makes the shortest sheet is used, so turning never
+/// does worse than not turning; a design too wide for the sheet may be turned to fit. Placements
+/// come back in the order the designs were given.
+pub fn gang_sheet(designs: &[Rgba8], sheet_w: usize, gap: usize, rotate: bool) -> Result<(Rgba8, Vec<Placement>)> {
     use crate::error::param;
     if designs.is_empty() || designs.len() > MAX_DESIGNS {
         return Err(param("designs", format!("a gang sheet holds 1 to {MAX_DESIGNS} designs")));
@@ -108,38 +159,54 @@ pub fn gang_sheet(designs: &[Rgba8], sheet_w: usize, gap: usize) -> Result<(Rgba
     if sheet_w == 0 {
         return Err(param("sheet_w", "the sheet has no width"));
     }
-    if let Some((i, d)) = designs.iter().enumerate().find(|(_, d)| d.width() > sheet_w) {
-        return Err(param("sheet_w", format!("design {} is {} px wide and the sheet {sheet_w}", i + 1, d.width())));
+    let own: Vec<(usize, usize)> = designs.iter().map(|d| (d.width(), d.height())).collect();
+    // Each candidate: for every design whether it is turned.
+    let mut candidates: Vec<Vec<bool>> = vec![vec![false; designs.len()]];
+    if rotate {
+        // Turn a design when that gives the wanted shape and it still fits across the sheet.
+        let wanted = |landscape: bool| -> Vec<bool> {
+            own.iter().map(|&(w, h)| if landscape { h > w && h <= sheet_w } else { w > h && h <= sheet_w }).collect()
+        };
+        candidates.push(wanted(true));
+        candidates.push(wanted(false));
+        // A design wider than the sheet can only go turned.
+        candidates.push(own.iter().map(|&(w, _)| w > sheet_w).collect());
     }
-    let mut order: Vec<usize> = (0..designs.len()).collect();
-    order.sort_by_key(|&i| std::cmp::Reverse(designs.get(i).map_or(0, Rgba8::height)));
-    let (mut x, mut y, mut row_h) = (0usize, 0usize, 0usize);
-    let mut placed = Vec::with_capacity(designs.len());
-    for &i in &order {
-        let Some(d) = designs.get(i) else { continue };
-        if x > 0 && x.saturating_add(d.width()) > sheet_w {
-            y = y.saturating_add(row_h).saturating_add(gap);
-            (x, row_h) = (0, 0);
+    let size_of = |turned: &[bool]| -> Vec<(usize, usize)> { own.iter().zip(turned).map(|(&(w, h), &t)| if t { (h, w) } else { (w, h) }).collect() };
+    let mut best: Option<Layout> = None;
+    for turned in candidates {
+        let sizes = size_of(&turned);
+        if let Some((at, height)) = shelf(&sizes, sheet_w, gap)
+            && best.as_ref().is_none_or(|b| height < b.height)
+        {
+            best = Some(Layout { turned, at, height });
         }
-        placed.push(Placement { index: i, x, y, width: d.width(), height: d.height() });
-        x = x.saturating_add(d.width()).saturating_add(gap);
-        row_h = row_h.max(d.height());
     }
-    let sheet_h = y.saturating_add(row_h);
+    let Some(Layout { turned, at, height: sheet_h }) = best else {
+        let (i, d) = designs.iter().enumerate().find(|(_, d)| d.width() > sheet_w).map_or((0, 0), |(i, d)| (i, d.width()));
+        return Err(param("sheet_w", format!("design {} is {d} px wide and the sheet {sheet_w}", i + 1)));
+    };
     if sheet_w.checked_mul(sheet_h).is_none_or(|n| n > crate::image::MAX_PIXELS) {
         return Err(param("sheet_w", "the sheet would be too large: use a narrower sheet, a smaller gap or a lower resolution"));
     }
     let mut data = vec![0u8; sheet_w * sheet_h * 4];
-    for pl in &placed {
-        let Some(d) = designs.get(pl.index) else { continue };
-        for (row, src) in d.data().chunks_exact(d.width() * 4).enumerate() {
-            let at = ((pl.y + row) * sheet_w + pl.x) * 4;
-            if let Some(dst) = data.get_mut(at..at + src.len()) {
+    let sizes = size_of(&turned);
+    let mut placed = Vec::with_capacity(designs.len());
+    for (i, design) in designs.iter().enumerate() {
+        let (&(x, y), &(width, height), &rotated) = (
+            at.get(i).ok_or_else(|| param("designs", "internal: no place"))?,
+            sizes.get(i).ok_or_else(|| param("designs", "internal: no size"))?,
+            turned.get(i).ok_or_else(|| param("designs", "internal: no turn"))?,
+        );
+        let art = if rotated { rotated_cw(design)? } else { design.clone() };
+        for (row, src) in art.data().chunks_exact(width * 4).enumerate() {
+            let from = ((y + row) * sheet_w + x) * 4;
+            if let Some(dst) = data.get_mut(from..from + src.len()) {
                 dst.copy_from_slice(src);
             }
         }
+        placed.push(Placement { index: i, x, y, width, height, rotated });
     }
-    placed.sort_by_key(|p| p.index);
     Ok((Rgba8::new(sheet_w, sheet_h, data)?, placed))
 }
 
@@ -226,16 +293,16 @@ mod tests {
     fn a_gang_sheet_packs_rows_tallest_first_with_gaps_and_reports_where() {
         // Widths 40, 30, 50, 20 and heights 10, 30, 20, 30 on a 100 wide sheet with 5 gaps.
         let d = [block(40, 10, 1), block(30, 30, 2), block(50, 20, 3), block(20, 30, 4)];
-        let (sheet, at) = gang_sheet(&d, 100, 5).unwrap();
+        let (sheet, at) = gang_sheet(&d, 100, 5, false).unwrap();
         // Tallest first: designs 2 and 4 (30 high) then 3, then 1. Row 1: 30 + 5 + 20 = 55 wide, then
         // design 3 (50) does not fit in the last 40: row 2 holds 3 and 1 (50 + 5 + 40 = 95).
         assert_eq!(
             at,
             [
-                Placement { index: 0, x: 55, y: 35, width: 40, height: 10 },
-                Placement { index: 1, x: 0, y: 0, width: 30, height: 30 },
-                Placement { index: 2, x: 0, y: 35, width: 50, height: 20 },
-                Placement { index: 3, x: 35, y: 0, width: 20, height: 30 },
+                Placement { index: 0, x: 55, y: 35, width: 40, height: 10, rotated: false },
+                Placement { index: 1, x: 0, y: 0, width: 30, height: 30, rotated: false },
+                Placement { index: 2, x: 0, y: 35, width: 50, height: 20, rotated: false },
+                Placement { index: 3, x: 35, y: 0, width: 20, height: 30, rotated: false },
             ]
         );
         assert_eq!((sheet.width(), sheet.height()), (100, 55));
@@ -253,12 +320,51 @@ mod tests {
 
     #[test]
     fn gang_sheets_refuse_what_does_not_fit() {
-        assert!(gang_sheet(&[], 100, 5).is_err());
-        assert!(gang_sheet(&[block(10, 10, 0)], 0, 5).is_err());
-        assert!(gang_sheet(&[block(101, 10, 0)], 100, 5).is_err(), "wider than the sheet");
-        assert!(gang_sheet(&[block(10, 10, 0)], usize::MAX, 0).is_err(), "too large a sheet");
-        assert!(gang_sheet(&vec![block(1, 1, 0); MAX_DESIGNS + 1], 100, 0).is_err());
-        let (one, _) = gang_sheet(&[block(7, 3, 9)], 7, 100).unwrap();
+        assert!(gang_sheet(&[], 100, 5, false).is_err());
+        assert!(gang_sheet(&[block(10, 10, 0)], 0, 5, false).is_err());
+        assert!(gang_sheet(&[block(101, 10, 0)], 100, 5, false).is_err(), "wider than the sheet");
+        assert!(gang_sheet(&[block(10, 10, 0)], usize::MAX, 0, false).is_err(), "too large a sheet");
+        assert!(gang_sheet(&vec![block(1, 1, 0); MAX_DESIGNS + 1], 100, 0, false).is_err());
+        let (one, _) = gang_sheet(&[block(7, 3, 9)], 7, 100, false).unwrap();
         assert_eq!((one.width(), one.height()), (7, 3));
+    }
+
+    #[test]
+    fn a_quarter_turn_is_clockwise_and_turning_four_times_gives_the_art_back() {
+        // 3 wide, 2 high: row 0 is a b c, row 1 is d e f.
+        let img = Rgba8::new(3, 2, (0..6u8).flat_map(|i| [i, 0, 0, 255]).collect()).unwrap();
+        let r = rotated_cw(&img).unwrap();
+        assert_eq!((r.width(), r.height()), (2, 3));
+        // Clockwise: the left column read bottom to top becomes the top row: d a / e b / f c.
+        let reds: Vec<u8> = (0..3).flat_map(|y| (0..2).map(move |x| (x, y))).map(|(x, y)| r.pixel(x, y).unwrap()[0]).collect();
+        assert_eq!(reds, [3, 0, 4, 1, 5, 2]);
+        let back = rotated_cw(&rotated_cw(&rotated_cw(&r).unwrap()).unwrap()).unwrap();
+        assert_eq!(back, img);
+    }
+
+    #[test]
+    fn turning_designs_makes_a_shorter_sheet_when_it_can_and_never_a_longer_one() {
+        // Four 70 × 20 designs on a 100 wide sheet: lying down only one fits a row (height 95 with
+        // gaps of 5), but standing up (20 × 70) four fit across (height 70).
+        let d = vec![block(70, 20, 1); 4];
+        let (flat, at) = gang_sheet(&d, 100, 5, false).unwrap();
+        assert_eq!(flat.height(), 95);
+        assert!(at.iter().all(|p| !p.rotated));
+        let (turned, at) = gang_sheet(&d, 100, 5, true).unwrap();
+        assert_eq!((turned.width(), turned.height()), (100, 70));
+        assert!(at.iter().all(|p| p.rotated && p.width == 20 && p.height == 70), "{at:?}");
+        // The artwork is in there turned: the design is solid, so its box is filled.
+        let p = at[0];
+        assert_eq!(turned.pixel(p.x + 3, p.y + 60), Some([1, 1, 1, 255]));
+        // The same set that packed well stays as it was.
+        let d = [block(40, 10, 1), block(30, 30, 2), block(50, 20, 3), block(20, 30, 4)];
+        let (a, _) = gang_sheet(&d, 100, 5, false).unwrap();
+        let (b, _) = gang_sheet(&d, 100, 5, true).unwrap();
+        assert!(b.height() <= a.height());
+        // A design wider than the sheet goes if it can be turned to fit.
+        assert!(gang_sheet(&[block(150, 40, 0)], 100, 5, false).is_err());
+        let (_, at) = gang_sheet(&[block(150, 40, 0)], 100, 5, true).unwrap();
+        assert_eq!((at[0].rotated, at[0].width, at[0].height), (true, 40, 150));
+        assert!(gang_sheet(&[block(150, 120, 0)], 100, 5, true).is_err(), "too big turned or not");
     }
 }

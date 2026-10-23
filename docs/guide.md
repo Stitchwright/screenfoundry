@@ -157,13 +157,16 @@ colours. The white is white ink where the art is, pulled in from its edges by `w
 - **Gang sheet.** `artboards` (`"all"`, or a list of artboard numbers from 1) lays several
   artboards of the open document out on one sheet `sheetWidthMm` wide (required; roll widths
   vary, so there is no default), `gapMm` apart (default 5): in rows, tallest first, left to
-  right, a new row when the next does not fit, no rotation. The sheet is as tall as the rows
-  need. `placements` says where each artboard went (pixels and millimetres, as they are in the
+  right, a new row when the next does not fit. The sheet is as tall as the rows need. With
+  `rotate` ScreenFoundry also tries every design turned to lie wider than tall and every design
+  turned to stand taller than wide (where it fits across the sheet) and uses the layout with the
+  shortest sheet, so turning never does worse than not turning; a design too wide for the sheet
+  can then go turned. This is shelf packing, not a search for the best possible nesting. `placements` says where each artboard went (pixels and millimetres, as they are in the
   files, so after mirroring). The mirroring and the white layer then apply to the whole sheet.
 
 What a shop's RIP wants (white made by the RIP or supplied as a file, mirroring, resolution)
 varies, so check it against yours. The choke and the gap are starting points, not standards.
-There is no highlight-white tool beyond the graded mode, and no automatic nesting or rotation.
+There is no highlight-white tool beyond the graded mode, and no nesting beyond the shelf layouts above.
 
 ## Mesh and line screen
 
@@ -217,9 +220,11 @@ plates as files beside a main file and needs `dir`. `dcsName` names the job and 
 (default `separation`). It is written from the public specification (June 1993, revised May
 1995) and checked by reading the files back, but no DCS consumer or PostScript interpreter was
 available to try it in: test it with your own RIP before relying on it. The composite is drawn at
-150 dpi to keep the main file small (the specification prefers full resolution), each plate is a
-spot colour, and the CMYK values written for it are a plain conversion of the ink's screen colour,
-not a colour-managed one.
+150 dpi by default to keep the main file small; `dcsCompositeDpi` sets it, and the film's own
+resolution (or more) gives the full-resolution composite the specification prefers, in a much
+larger file (a composite over 50 megapixels is refused). Each plate is a spot colour, and the
+CMYK values written for it come from the document's colour settings (working CMYK space and
+rendering intent) applied to the ink's screen colour, since a spot ink's real CMYK is not known.
 
 ## Commands and automation
 

@@ -11,7 +11,8 @@
 //!
 //! Every plate here is a spot colour (a film is one ink), drawn as a 1-bit grayscale image whose
 //! black is where that ink prints. The composite is the plates painted in order in their own
-//! colours on white, at a reduced resolution ([`COMPOSITE_DPI`]) to keep the main file small. A
+//! colours on white, at a resolution the caller chooses ([`DEFAULT_COMPOSITE_DPI`] unless asked;
+//! the film's own for a full-resolution composite, which makes a large main file). A
 //! plate file begins `%!PS-Adobe` and ends `%%Trailer` and carries no `%%PlateFile` comment, as the
 //! specification asks.
 //!
@@ -21,9 +22,13 @@
 use crate::error::{Result, param};
 use crate::image::Bitmap1;
 
-/// Resolution of the composite preview in the main file. The specification prefers a full
+/// Default resolution of the composite in the main file. The specification prefers a full
 /// resolution composite for proofing; this keeps the file a fraction of the size of the plates.
-pub const COMPOSITE_DPI: f64 = 150.0;
+pub const DEFAULT_COMPOSITE_DPI: f64 = 150.0;
+
+/// Largest composite, in bytes of RGB (50 megapixels), so that a full-resolution composite of a
+/// huge film cannot exhaust memory.
+const MAX_COMPOSITE_BYTES: usize = 150_000_000;
 
 /// Most plates one file points at.
 pub const MAX_PLATES: usize = 32;
@@ -43,7 +48,11 @@ const EPS_SIGNATURE: &str = "%!PS-Adobe-2.0 EPSF-1.2"; // brand-ok: the file sig
 #[derive(Clone, Copy, Debug)]
 pub struct Plate<'a> {
     pub name: &'a str,
+    /// The ink's colour on screen, for the composite.
     pub rgb: [u8; 3],
+    /// The ink's CMYK (0 to 1) for `%%CMYKCustomColor`, if the caller can convert it with colour
+    /// management; otherwise a plain conversion of `rgb`.
+    pub cmyk: Option<[f64; 4]>,
     pub film: &'a Bitmap1,
 }
 
@@ -58,7 +67,8 @@ fn dsc_name(name: &str) -> String {
     if s.is_empty() { "Ink".into() } else { s.chars().take(60).collect() }
 }
 
-/// Naive CMYK of an sRGB colour (full black generation), for `%%CMYKCustomColor`.
+/// Plain CMYK of an sRGB colour (full black generation), for `%%CMYKCustomColor` when the caller
+/// gave none.
 fn cmyk(rgb: [u8; 3]) -> [f64; 4] {
     let [r, g, b] = rgb.map(|c| f64::from(c) / 255.0);
     let k = 1.0 - r.max(g).max(b);
@@ -155,7 +165,21 @@ struct Main {
     body: Vec<u8>,
 }
 
-fn main_parts(plates: &[Plate], dpi: f64, title: &str, size: (usize, usize)) -> (Main, (u32, u32), (f64, f64)) {
+/// The composite's subsampling step: every `step`-th film pixel, so that it comes out at about
+/// `composite_dpi`. A composite dpi at or above the film's is every pixel.
+fn composite_step(dpi: f64, composite_dpi: f64, size: (usize, usize)) -> Result<usize> {
+    if !composite_dpi.is_finite() || composite_dpi <= 0.0 {
+        return Err(param("composite_dpi", "must be above 0"));
+    }
+    let step = ((dpi / composite_dpi).ceil() as usize).max(1);
+    let bytes = size.0.div_ceil(step).saturating_mul(size.1.div_ceil(step)).saturating_mul(3);
+    if bytes > MAX_COMPOSITE_BYTES {
+        return Err(param("composite_dpi", "the composite would be too large: lower the composite resolution"));
+    }
+    Ok(step)
+}
+
+fn main_parts(plates: &[Plate], dpi: f64, title: &str, size: (usize, usize), step: usize) -> (Main, (u32, u32), (f64, f64)) {
     let pt = (size.0 as f64 * 72.0 / dpi, size.1 as f64 * 72.0 / dpi);
     let bbox = (pt.0.ceil() as u32, pt.1.ceil() as u32);
     let names: Vec<String> = plates.iter().map(|p| format!("({})", dsc_name(p.name))).collect();
@@ -163,12 +187,11 @@ fn main_parts(plates: &[Plate], dpi: f64, title: &str, size: (usize, usize)) -> 
     head.push_str(&format!("%%Title: {}\n", dsc_name(title)));
     head.push_str(&list_comment("%%DocumentCustomColors:", &names));
     for (p, n) in plates.iter().zip(&names) {
-        let [c, m, y, k] = cmyk(p.rgb);
+        let [c, m, y, k] = p.cmyk.map_or_else(|| cmyk(p.rgb), |v| v.map(|c| if c.is_finite() { c.clamp(0.0, 1.0) } else { 0.0 }));
         head.push_str(&format!("%%CMYKCustomColor: {c:.3} {m:.3} {y:.3} {k:.3} {n}\n"));
     }
     head.push_str(&format!("%%DocumentData: Binary\n%%LanguageLevel: 2\n%%BoundingBox: 0 0 {} {}\n", bbox.0, bbox.1));
 
-    let step = ((dpi / COMPOSITE_DPI).ceil() as usize).max(1);
     let (cw, ch, rgb) = composite(plates, size, step);
     let mut body = format!(
         "%%EndComments\ngsave\n0 0 translate {:.4} {:.4} scale\n/pic {} string def\n{cw} {ch} 8 [{cw} 0 0 -{ch} 0 {ch}] {{currentfile pic readstring pop}} false 3 colorimage\n",
@@ -188,9 +211,10 @@ fn padded(line: String) -> String {
 }
 
 /// A single-file DCS 2.0: the main part, then every plate's EPS, in one file.
-pub fn single_file(plates: &[Plate], dpi: f64, title: &str) -> Result<Vec<u8>> {
+pub fn single_file(plates: &[Plate], dpi: f64, title: &str, composite_dpi: f64) -> Result<Vec<u8>> {
     let size = check(plates, dpi)?;
-    let (main, bbox, pt) = main_parts(plates, dpi, title, size);
+    let step = composite_step(dpi, composite_dpi, size)?;
+    let (main, bbox, pt) = main_parts(plates, dpi, title, size, step);
     let eps: Vec<Vec<u8>> = plates.iter().map(|p| plate_eps(p, bbox, pt, title)).collect();
     // Every plate line has the same length whatever its numbers are, so the main part's length
     // is known before the numbers are.
@@ -214,12 +238,13 @@ pub fn single_file(plates: &[Plate], dpi: f64, title: &str) -> Result<Vec<u8>> {
 
 /// A multiple-file DCS 2.0: the main file, and the EPS of every plate to write under `file_names`
 /// (in plate order; each a plain file name, no folder).
-pub fn multiple_files(plates: &[Plate], dpi: f64, title: &str, file_names: &[String]) -> Result<(Vec<u8>, Vec<Vec<u8>>)> {
+pub fn multiple_files(plates: &[Plate], dpi: f64, title: &str, file_names: &[String], composite_dpi: f64) -> Result<(Vec<u8>, Vec<Vec<u8>>)> {
     let size = check(plates, dpi)?;
+    let step = composite_step(dpi, composite_dpi, size)?;
     if file_names.len() != plates.len() || file_names.iter().any(|n| n.is_empty() || n.contains(['/', '\\', ' ', '\n'])) {
         return Err(param("file_names", "one plain file name without spaces for each plate"));
     }
-    let (main, bbox, pt) = main_parts(plates, dpi, title, size);
+    let (main, bbox, pt) = main_parts(plates, dpi, title, size, step);
     let mut out = main.head;
     for (p, f) in plates.iter().zip(file_names) {
         out.push_str(&padded(format!("%%PlateFile: ({}) EPS Local {f}", dsc_name(p.name))));
@@ -267,8 +292,11 @@ mod tests {
     #[test]
     fn single_file_points_at_complete_plate_files_inside_itself() {
         let (a, b) = two_plates();
-        let plates = [Plate { name: "Yellow (PMS 109)", rgb: [250, 220, 20], film: &a }, Plate { name: "Navy", rgb: [10, 20, 90], film: &b }];
-        let dcs = single_file(&plates, 300.0, "Job").unwrap();
+        let plates = [
+            Plate { name: "Yellow (PMS 109)", rgb: [250, 220, 20], cmyk: None, film: &a },
+            Plate { name: "Navy", rgb: [10, 20, 90], cmyk: None, film: &b },
+        ];
+        let dcs = single_file(&plates, 300.0, "Job", DEFAULT_COMPOSITE_DPI).unwrap();
         assert!(dcs.starts_with(b"%!PS-Adobe-2.0 EPSF-1.2\n"));
         let text = String::from_utf8_lossy(&dcs[..600]).into_owned();
         assert!(text.contains("%%DocumentCustomColors: (Yellow -PMS 109-) (Navy)"), "{text}");
@@ -306,7 +334,7 @@ mod tests {
     #[test]
     fn the_composite_paints_each_plate_in_its_colour_on_white() {
         let (a, b) = two_plates();
-        let plates = [Plate { name: "A", rgb: [250, 220, 20], film: &a }, Plate { name: "B", rgb: [10, 20, 90], film: &b }];
+        let plates = [Plate { name: "A", rgb: [250, 220, 20], cmyk: None, film: &a }, Plate { name: "B", rgb: [10, 20, 90], cmyk: None, film: &b }];
         let (cw, ch, rgb) = composite(&plates, (19, 6), 1);
         assert_eq!((cw, ch), (19, 6));
         let at = |x: usize, y: usize| [rgb[(y * cw + x) * 3], rgb[(y * cw + x) * 3 + 1], rgb[(y * cw + x) * 3 + 2]];
@@ -320,8 +348,8 @@ mod tests {
     #[test]
     fn multiple_files_name_their_plates_and_have_no_offsets() {
         let (a, b) = two_plates();
-        let plates = [Plate { name: "A", rgb: [1, 2, 3], film: &a }, Plate { name: "B", rgb: [4, 5, 6], film: &b }];
-        let (main, files) = multiple_files(&plates, 300.0, "Job", &["job-a.eps".into(), "job-b.eps".into()]).unwrap();
+        let plates = [Plate { name: "A", rgb: [1, 2, 3], cmyk: None, film: &a }, Plate { name: "B", rgb: [4, 5, 6], cmyk: None, film: &b }];
+        let (main, files) = multiple_files(&plates, 300.0, "Job", &["job-a.eps".into(), "job-b.eps".into()], DEFAULT_COMPOSITE_DPI).unwrap();
         let lines = plate_lines(&main);
         assert_eq!(lines.iter().map(|l| (l.0.as_str(), l.1.as_str(), l.2)).collect::<Vec<_>>(), [("A", "Local", None), ("B", "Local", None)]);
         // The comments only: the composite after them is binary and may hold any byte.
@@ -331,16 +359,16 @@ mod tests {
         assert!(files.iter().all(|f| f.starts_with(b"%!PS-Adobe") && f.ends_with(b"%%Trailer\n")));
         assert!(main.ends_with(b"%%Trailer\n"));
         assert!(!text.contains('#'), "multiple-file plates have no #offset");
-        assert!(multiple_files(&plates, 300.0, "Job", &["only-one.eps".into()]).is_err());
-        assert!(multiple_files(&plates, 300.0, "Job", &["a/b.eps".into(), "c.eps".into()]).is_err());
+        assert!(multiple_files(&plates, 300.0, "Job", &["only-one.eps".into()], DEFAULT_COMPOSITE_DPI).is_err());
+        assert!(multiple_files(&plates, 300.0, "Job", &["a/b.eps".into(), "c.eps".into()], DEFAULT_COMPOSITE_DPI).is_err());
     }
 
     #[test]
     fn long_colour_lists_continue_on_plus_lines_and_no_header_line_passes_255() {
         let film = film(8, 8, |_, _| false);
         let names: Vec<String> = (0..12).map(|i| format!("A rather long ink name number {i} for a test")).collect();
-        let plates: Vec<Plate> = names.iter().map(|n| Plate { name: n, rgb: [n.len() as u8; 3], film: &film }).collect();
-        let dcs = single_file(&plates, 600.0, "Job").unwrap();
+        let plates: Vec<Plate> = names.iter().map(|n| Plate { name: n, rgb: [n.len() as u8; 3], cmyk: None, film: &film }).collect();
+        let dcs = single_file(&plates, 600.0, "Job", DEFAULT_COMPOSITE_DPI).unwrap();
         let head = String::from_utf8_lossy(&dcs[..dcs.windows(14).position(|w| w == b"%%EndComments\n").unwrap()]).into_owned();
         assert!(head.contains("\n%%+ ("), "{head}");
         assert!(head.lines().all(|l| l.len() <= 255), "lines are at most 255 bytes");
@@ -348,20 +376,60 @@ mod tests {
     }
 
     fn p(f: &Bitmap1) -> Plate<'_> {
-        Plate { name: "A", rgb: [0; 3], film: f }
+        Plate { name: "A", rgb: [0; 3], cmyk: None, film: f }
     }
 
     #[test]
     fn plates_must_agree_and_be_countable() {
         let (a, _) = two_plates();
         let other = film(8, 8, |_, _| true);
-        assert!(single_file(&[], 300.0, "J").is_err());
-        assert!(single_file(&[p(&a), p(&other)], 300.0, "J").is_err());
-        assert!(single_file(&[p(&a)], f64::NAN, "J").is_err());
-        assert!(single_file(&[p(&a)], 0.0, "J").is_err());
+        assert!(single_file(&[], 300.0, "J", 150.0).is_err());
+        assert!(single_file(&[p(&a), p(&other)], 300.0, "J", 150.0).is_err());
+        assert!(single_file(&[p(&a)], f64::NAN, "J", 150.0).is_err());
+        assert!(single_file(&[p(&a)], 0.0, "J", 150.0).is_err());
         let many: Vec<Plate> = (0..=MAX_PLATES).map(|_| p(&a)).collect();
-        assert!(single_file(&many, 300.0, "J").is_err());
+        assert!(single_file(&many, 300.0, "J", 150.0).is_err());
         assert_eq!(dsc_name("a(b)\\c\n"), "a-b--c-");
         assert_eq!(dsc_name("   "), "Ink");
+    }
+
+    #[test]
+    fn the_composite_resolution_is_chosen_and_full_resolution_is_bigger() {
+        let (a, b) = two_plates();
+        let plates = [Plate { name: "A", rgb: [1, 2, 3], cmyk: None, film: &a }, Plate { name: "B", rgb: [4, 5, 6], cmyk: None, film: &b }];
+        // 19 × 6 px at 300 dpi: 150 dpi takes every second pixel (10 × 3), the film's own all of them.
+        let half = single_file(&plates, 300.0, "Job", 150.0).unwrap();
+        let full = single_file(&plates, 300.0, "Job", 300.0).unwrap();
+        let above = single_file(&plates, 300.0, "Job", 2400.0).unwrap();
+        assert_eq!(full, above, "a composite resolution above the film's is the film's");
+        let comp = |f: &[u8]| {
+            let end = (f.windows(14).position(|w| w == b"%%EndComments\n").unwrap() + 1500).min(f.len());
+            let t = String::from_utf8_lossy(&f[..end]).into_owned();
+            t.lines().find(|l| l.ends_with("false 3 colorimage")).map(str::to_string).unwrap()
+        };
+        assert!(comp(&half).starts_with("10 3 8 [10 0 0 -3 0 3]"), "{}", comp(&half));
+        assert!(comp(&full).starts_with("19 6 8 [19 0 0 -6 0 6]"), "{}", comp(&full));
+        assert_eq!(full.len() - half.len(), (19 * 6 - 10 * 3) * 3, "only the composite differs in size");
+        for bad in [0.0, -1.0, f64::NAN, f64::INFINITY * 0.0] {
+            assert!(single_file(&plates, 300.0, "Job", bad).is_err(), "{bad}");
+        }
+        // A film too big for a full-resolution composite is refused, not allocated.
+        let huge = Bitmap1::new(8_000, 8_000).unwrap(); // 192 MB of composite at full resolution
+        assert!(single_file(&[Plate { name: "H", rgb: [0; 3], cmyk: None, film: &huge }], 600.0, "J", 600.0).is_err());
+        assert!(single_file(&[Plate { name: "H", rgb: [0; 3], cmyk: None, film: &huge }], 600.0, "J", 150.0).is_ok());
+    }
+
+    #[test]
+    fn a_given_cmyk_is_written_instead_of_the_plain_conversion() {
+        let (a, _) = two_plates();
+        let plate = |cmyk| Plate { name: "A", rgb: [250, 220, 20], cmyk, film: &a };
+        let text = |p: Plate| {
+            let f = single_file(&[p], 300.0, "J", 150.0).unwrap();
+            String::from_utf8_lossy(&f[..f.windows(14).position(|w| w == b"%%EndComments\n").unwrap()]).into_owned()
+        };
+        assert!(text(plate(None)).contains("%%CMYKCustomColor: 0.000 0.120 0.920 0.020 (A)"));
+        assert!(text(plate(Some([0.02, 0.1, 0.95, 0.0]))).contains("%%CMYKCustomColor: 0.020 0.100 0.950 0.000 (A)"));
+        // Out of range and non-finite values are held to 0..1.
+        assert!(text(plate(Some([1.7, -0.3, f64::NAN, 0.5]))).contains("%%CMYKCustomColor: 1.000 0.000 0.000 0.500 (A)"));
     }
 }
