@@ -769,3 +769,141 @@ fn dtf_gives_mirrored_colour_and_a_choked_white_layer() {
         assert!(s.execute("screen.dtf", &bad).is_err(), "{bad}");
     }
 }
+
+#[test]
+fn films_can_be_mirrored_for_emulsion_down_printing() {
+    let mut s = session();
+    let plain = s.execute("screen.separate", &json!({"dpi": 100, "inks": inks(), "trapMm": 0})).unwrap();
+    let flipped = s.execute("screen.separate", &json!({"dpi": 100, "inks": inks(), "trapMm": 0, "mirror": true})).unwrap();
+    let (a, b) = (film_image(film(&plain, "Yellow")), film_image(film(&flipped, "Yellow")));
+    assert_eq!(a.dimensions(), b.dimensions());
+    let w = a.width();
+    // Yellow is the left half: after mirroring it is the right half.
+    assert!(inked(&a, 20, 70) && !inked(&a, w - 20, 70));
+    assert!(!inked(&b, 20, 70) && inked(&b, w - 20, 70));
+    for y in [3, 50, 120] {
+        for x in 0..w {
+            assert_eq!(inked(&a, x, y), inked(&b, w - 1 - x, y), "x={x} y={y}");
+        }
+    }
+    // Marks are symmetric, so they stay at the same corners.
+    let m = s.execute("screen.separate", &json!({"dpi": 100, "inks": inks(), "marks": true, "mirror": true})).unwrap();
+    let mi = film_image(film(&m, "Navy"));
+    let spec = sc_core::marks::MarkSpec::for_dpi(100.0).unwrap();
+    // The top-left mark's centre sits (size - size / 2 + 1) px in from the corner of the framed film.
+    let c = (spec.size_px - spec.size_px / 2 + 1) as u32;
+    let right = mi.width() - 1 - c;
+    assert!(inked(&mi, c, c), "the left mark");
+    assert!(inked(&mi, right, c) || inked(&mi, right + 1, c), "the right mark (flipping a mark is a pixel off its twin)");
+    // A mirrored vector job mirrors its PDFs too (the same page flipped).
+    let v = s.execute("screen.separateVector", &json!({"dpi": 100, "inks": inks(), "vectorPdf": true, "mirror": true})).unwrap();
+    assert!(v["films"][0]["vector"]["dataBase64"].is_string());
+}
+
+#[test]
+fn films_come_as_a_dcs_file_single_or_multiple() {
+    let mut s = session();
+    let b64 = |v: &Value| vectorcraft_format::base64_decode(v.as_str().unwrap()).unwrap();
+    let find = |hay: &[u8], needle: &[u8]| hay.windows(needle.len()).position(|w| w == needle);
+    // Single file, inline: the plates inside, in the order of the films.
+    let r = s.execute("screen.separate", &json!({"dpi": 100, "inks": inks(), "trapMm": 0, "dcs": "single", "dcsName": "Spring Tee"})).unwrap();
+    assert_eq!((r["dcs"]["mode"].as_str(), r["dcs"]["plates"].as_u64()), (Some("single"), Some(2)));
+    let dcs = b64(&r["dcs"]["dataBase64"]);
+    assert!(dcs.starts_with(b"%!PS-Adobe-2.0 EPSF-1.2\n"));
+    let end = find(&dcs, b"%%EndComments\n").unwrap();
+    let head = String::from_utf8_lossy(&dcs[..end]).into_owned();
+    assert!(head.contains("%%Title: Spring Tee") && head.contains("%%DocumentCustomColors: (Yellow) (Navy)"), "{head}");
+    let lines: Vec<_> = head.lines().filter_map(|l| l.strip_prefix("%%PlateFile: ")).collect();
+    assert_eq!(lines.len(), 2);
+    for (line, name) in lines.iter().zip(["Yellow", "Navy"]) {
+        let f: Vec<_> = line.split_whitespace().collect();
+        assert_eq!(&f[..2], &[format!("({name})"), "EPS".to_string()]);
+        let (off, size): (usize, usize) = (f[2].strip_prefix('#').unwrap().parse().unwrap(), f[3].parse().unwrap());
+        assert!(dcs[off..off + size].starts_with(b"%!PS-Adobe") && dcs[off..off + size].ends_with(b"%%Trailer\n"));
+    }
+    // To a folder: <name>.eps, named for the job.
+    let dir = vectorcraft_testkit::temp_dir("screen-dcs");
+    let one = s.execute("screen.separate", &json!({"dpi": 100, "inks": inks(), "dcs": "single", "dir": dir.to_string_lossy()})).unwrap();
+    let path = one["dcs"]["path"].as_str().unwrap();
+    assert!(path.ends_with("/separation.eps") && std::fs::read(path).unwrap().starts_with(b"%!PS-Adobe"), "{path}");
+    // Multiple: a main file and a file a plate, which the main file names.
+    let many = s
+        .execute("screen.separate", &json!({"dpi": 100, "inks": inks(), "dcs": "multiple", "dcsName": "Job", "dir": dir.to_string_lossy()}))
+        .unwrap();
+    let files: Vec<&str> = many["dcs"]["plateFiles"].as_array().unwrap().iter().map(|f| f.as_str().unwrap()).collect();
+    assert_eq!(files.len(), 2);
+    let main = std::fs::read(many["dcs"]["path"].as_str().unwrap()).unwrap();
+    let main_head = String::from_utf8_lossy(&main[..find(&main, b"%%EndComments\n").unwrap()]).into_owned();
+    for f in &files {
+        let name = f.rsplit('/').next().unwrap();
+        assert!(main_head.contains(&format!("EPS Local {name}")), "{name} in {main_head}");
+        assert!(std::fs::read(f).unwrap().starts_with(b"%!PS-Adobe"));
+    }
+    // The other film commands take it too.
+    let src = png_source(60, 60, |_, _| [128, 128, 128, 255]);
+    let h = s.execute("screen.halftone", &json!({"source": src, "dpi": 600, "dcs": "single"})).unwrap();
+    assert_eq!(h["dcs"]["plates"], 1);
+    let _ = std::fs::remove_dir_all(dir);
+    // Without it there is no DCS entry; bad values and a missing folder are errors.
+    assert!(s.execute("screen.separate", &json!({"dpi": 100, "inks": inks()})).unwrap().get("dcs").is_none());
+    for bad in [json!({"dcs": "both"}), json!({"dcs": 1}), json!({"dcs": "multiple"})] {
+        let mut p = json!({"dpi": 100, "inks": inks()});
+        p.as_object_mut().unwrap().extend(bad.as_object().unwrap().clone());
+        assert!(s.execute("screen.separate", &p).is_err(), "{p}");
+    }
+}
+
+#[test]
+fn dtf_can_be_tiff_graded_and_laid_out_on_a_gang_sheet() {
+    let mut s = Session::new();
+    let decode = |f: &Value| vectorcraft_format::base64_decode(f["dataBase64"].as_str().unwrap()).unwrap();
+    // A 50% faded design.
+    let src = png_source(60, 20, |x, _| [200, 30, 30, if x < 30 { 255 } else { 200 }]);
+    let solid = s.execute("screen.dtf", &json!({"source": src, "mirror": false, "whiteChokeMm": 0})).unwrap();
+    let graded = s.execute("screen.dtf", &json!({"source": src, "mirror": false, "whiteChokeMm": 0, "whiteMode": "graded"})).unwrap();
+    let alpha = |r: &Value, x| image::load_from_memory(&decode(&r["files"][1])).unwrap().to_rgba8().get_pixel(x, 10).0[3];
+    assert_eq!((alpha(&solid, 40), alpha(&graded, 40), alpha(&graded, 10)), (255, 200, 255));
+    // TIFF.
+    let t = s.execute("screen.dtf", &json!({"source": src, "format": "tiff"})).unwrap();
+    assert_eq!(t["files"][0]["format"], "tiff");
+    let img = image::load_from_memory_with_format(&decode(&t["files"][0]), image::ImageFormat::Tiff).unwrap().to_rgba8();
+    assert_eq!((img.width(), img.height()), (60, 20));
+
+    // A gang sheet of three artboards: 100 × 50 pt each, on a sheet 100 mm wide with 5 mm gaps.
+    s.execute("file.new", &json!({"width": 100, "height": 50})).unwrap();
+    s.execute("artboard.new", &json!({"x": 200, "y": 0, "width": 100, "height": 50})).unwrap();
+    s.execute("artboard.new", &json!({"x": 400, "y": 0, "width": 100, "height": 80})).unwrap();
+    for (x, y, w, h, fill) in [(0.0, 0.0, 100.0, 50.0, NAVY), (200.0, 0.0, 100.0, 50.0, YELLOW), (400.0, 0.0, 100.0, 80.0, "#c81e1e")] {
+        let r = s.execute("shape.rectangle", &json!({"x": x, "y": y, "width": w, "height": h})).unwrap();
+        s.execute("paint.setFill", &json!({"ids": [r["id"].as_u64().unwrap()], "color": fill})).unwrap();
+    }
+    let g = s.execute("screen.dtf", &json!({"artboards": "all", "sheetWidthMm": 100, "gapMm": 5, "dpi": 100, "mirror": false})).unwrap();
+    let place = g["placements"].as_array().unwrap();
+    assert_eq!(place.len(), 3);
+    // 100 mm is 394 px at 100 dpi and a design is 139 px wide, so two fit on a row with the 20 px gap.
+    let sheet = image::load_from_memory(&decode(&g["files"][0])).unwrap().to_rgba8();
+    assert_eq!(sheet.width(), 394);
+    for pl in place {
+        let (x, y) = (pl["x"].as_u64().unwrap() as u32, pl["y"].as_u64().unwrap() as u32);
+        assert_eq!(sheet.get_pixel(x + 10, y + 10).0[3], 255, "{pl}");
+    }
+    // The tallest design (artboard 3, 80 pt) comes first; nothing overlaps; mirroring flips the places.
+    assert_eq!(place[2]["x"], 0);
+    let m = s.execute("screen.dtf", &json!({"artboards": [3, 1], "sheetWidthMm": 100, "dpi": 100})).unwrap();
+    assert_eq!(m["placements"].as_array().unwrap().len(), 2);
+    assert_eq!(m["placements"][0]["artboard"], 3);
+    assert_eq!(m["placements"][0]["x"].as_u64().unwrap() + m["placements"][0]["width"].as_u64().unwrap(), 394, "mirrored: now at the right");
+    for bad in [
+        json!({"artboards": "all"}),
+        json!({"artboards": "all", "sheetWidthMm": 5}),
+        json!({"artboards": [4], "sheetWidthMm": 100}),
+        json!({"artboards": [], "sheetWidthMm": 100}),
+        json!({"artboards": "some", "sheetWidthMm": 100}),
+        json!({"artboards": "all", "sheetWidthMm": 30, "dpi": 300}),
+        json!({"source": src, "artboards": "all", "sheetWidthMm": 100}),
+        json!({"whiteMode": "pale"}),
+        json!({"format": "bmp"}),
+    ] {
+        assert!(s.execute("screen.dtf", &bad).is_err(), "{bad}");
+    }
+}

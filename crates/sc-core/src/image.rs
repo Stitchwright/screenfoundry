@@ -122,6 +122,14 @@ impl Bitmap1 {
     pub fn bits(&self) -> &[bool] {
         &self.bits
     }
+    /// The film flipped left to right, as for printing emulsion side down.
+    pub fn mirrored(&self) -> Self {
+        let mut bits = Vec::with_capacity(self.bits.len());
+        for row in self.bits.chunks_exact(self.width.max(1)) {
+            bits.extend(row.iter().rev());
+        }
+        Self { width: self.width, height: self.height, bits }
+    }
     pub fn get(&self, x: usize, y: usize) -> bool {
         x < self.width && y < self.height && self.bits.get(y * self.width + x).copied().unwrap_or(false)
     }

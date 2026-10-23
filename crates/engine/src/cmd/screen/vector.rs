@@ -529,9 +529,15 @@ pub(super) fn separate_vector(s: &mut Session, p: &Value) -> Result<Value> {
         film_paths.push(plate.clone());
     }
 
-    let mut films = emit(C, films, dpi, marks, fmt, dir_param(p))?;
+    let (mut films, dcs) = finish_films(C, p, films, dpi, marks, fmt)?;
     if vector_pdf {
         let framed = if marks { Some(vector_marks(region, dpi)?) } else { None };
+        // Mirrored films come with mirrored vector plates: flip about the middle of the page they are drawn on.
+        if bool_or(p, "mirror", false) {
+            let page = framed.as_ref().map_or(region, |(_, r)| *r);
+            let flip = vectorcraft_geom::Affine::new([-1.0, 0.0, 0.0, 1.0, page.x0 + page.x1, 0.0]);
+            film_paths = film_paths.iter().map(|path| path.transformed(flip)).collect();
+        }
         attach_vector_pdfs(&mut films, &film_paths, region, framed.as_ref(), dir_param(p))?;
     }
     let (w, h) = films.first().map(|f| (f["width"].clone(), f["height"].clone())).unwrap_or_default();
@@ -555,6 +561,7 @@ pub(super) fn separate_vector(s: &mut Session, p: &Value) -> Result<Value> {
         "skipped": skipped, "skippedTotal": collected.skipped_total, "notes": notes,
     });
     attach(&mut out, sheet);
+    attach_dcs(&mut out, dcs);
     Ok(out)
 }
 

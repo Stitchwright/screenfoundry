@@ -147,14 +147,23 @@ as usual, and `underbase` works as in simulated process.
 colour art on a transparent background, mirrored (`mirror`, default on) because the print is
 transferred to the garment face down, and a white layer (`white`, default on) to print under the
 colours. The white is white ink where the art is, pulled in from its edges by `whiteChokeMm`
-(default 0.3 mm) so no white shows past the colour. Both files are PNGs of the same size and
-mirroring, at `dpi` (default 300), with the resolution recorded; they are written as
-`dtf-color.png` and `dtf-white.png` in `dir`, or come back as base64.
+(default 0.3 mm) so no white shows past the colour. Both files are the same size and mirroring, at `dpi` (default 300), with the resolution recorded;
+`format` is `png` (default) or `tiff` (uncompressed 8-bit RGBA). They are written as
+`dtf-color` and `dtf-white` with that extension in `dir`, or come back as base64.
 
-This is a first, narrow version. It does not lay several designs out on a gang sheet, make
-highlight whites or graded white, or write TIFF; and what a shop's RIP wants (white made by the
-RIP or supplied as a file, mirroring, resolution) varies, so check it against yours. The choke
-is a starting point, not a standard.
+- **Graded white.** `whiteMode: "graded"` makes the white as opaque as the art is, inside the
+  footprint, so soft edges and fades get a matching white; the default `solid` is full white
+  wherever the art is at least half opaque.
+- **Gang sheet.** `artboards` (`"all"`, or a list of artboard numbers from 1) lays several
+  artboards of the open document out on one sheet `sheetWidthMm` wide (required; roll widths
+  vary, so there is no default), `gapMm` apart (default 5): in rows, tallest first, left to
+  right, a new row when the next does not fit, no rotation. The sheet is as tall as the rows
+  need. `placements` says where each artboard went (pixels and millimetres, as they are in the
+  files, so after mirroring). The mirroring and the white layer then apply to the whole sheet.
+
+What a shop's RIP wants (white made by the RIP or supplied as a file, mirroring, resolution)
+varies, so check it against yours. The choke and the gap are starting points, not standards.
+There is no highlight-white tool beyond the graded mode, and no automatic nesting or rotation.
 
 ## Mesh and line screen
 
@@ -189,7 +198,28 @@ film at its physical size, for print shops that take PDF). Choose a folder with 
 (`true`, or `{title, notes}`) for a one-page PDF that travels with the films: the film size and
 resolution, then one row per screen in print order with its colour swatch, role, mesh, coverage
 and file name, then the mesh and line-screen advice. It is written as `job-sheet.pdf` in `dir`,
-or comes back as base64. Direct-to-screen and DTF output are planned.
+or comes back as base64.
+
+**Mirror.** `mirror` flips every film left to right, for printing the film emulsion side down or
+for a machine that wants it that way (registration marks are symmetric, so they stay at the
+corners). With `vectorPdf` the vector plates are flipped too.
+
+**Computer-to-screen (CTS).** A CTS machine takes a 1-bit bitmap at its own resolution (600 to
+over 2500 dpi according to the sources read). The films already are that: set `dpi` to the
+machine's (up to 2400) and take `tiff-g4` or `tiff`, with `mirror` if it asks for it. ScreenFoundry
+writes no machine-specific format or driver file; if your machine needs one, say so.
+
+**DCS 2.0.** `dcs` (`single` or `multiple`) also writes the films as a DCS 2.0 file, the format
+older separation and RIP software reads: a main EPS holding a composite and a pointer to every
+plate, and one EPS per plate (a 1-bit grayscale image, black where the ink prints). `single`
+puts everything in one file (`%%PlateFile` entries with byte offsets); `multiple` writes the
+plates as files beside a main file and needs `dir`. `dcsName` names the job and the files
+(default `separation`). It is written from the public specification (June 1993, revised May
+1995) and checked by reading the files back, but no DCS consumer or PostScript interpreter was
+available to try it in: test it with your own RIP before relying on it. The composite is drawn at
+150 dpi to keep the main file small (the specification prefers full resolution), each plate is a
+spot colour, and the CMYK values written for it are a plain conversion of the ink's screen colour,
+not a colour-managed one.
 
 ## Commands and automation
 

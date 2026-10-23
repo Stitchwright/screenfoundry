@@ -8,7 +8,8 @@
 use std::io::Cursor;
 
 use sc_core::color::{parse_hex, to_hex};
-use sc_core::dtf::{DtfOptions, prepare};
+use sc_core::dcs::{self, Plate};
+use sc_core::dtf::{DtfOptions, gang_sheet, prepare};
 use sc_core::halftone::{DotShape, HalftoneOptions, MAX_DOT_GAIN, halftone};
 use sc_core::index::{MAX_CELL_PX, MAX_INDEX_INKS};
 use sc_core::inklib::{self, DEFAULT_MAX_DELTA_E, LibraryInk};
@@ -73,7 +74,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Separate Colors",
             [],
             None,
-            "{source?, dpi?, inks?: [{name?, color: \"#rrggbb\", mesh? (156)}], colors?: how many inks to find in the art when `inks` is not given (4; 1–12), underbase?: true|{name?, color? (#ffffff), mesh? (110), chokeMm? (0.3)}, snap?: true|{maxDeltaE? (25), library?: [{name, color}]} replace each ink by the nearest library ink (see screen.matchInks) and use its name when none is given, trapMm?: spread of colours that print before a darker one (0.25; 0–5), marks?: add registration marks (false), format?: png|tiff|tiff-g4|pdf (png), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?: a folder to write one 1-bit film file a screen (without it: base64)} spot-colour separation: one solid film per screen, the underbase first then the colours light to dark → {dpi, width, height, films: [{name, color, role: underbase|color, format, mesh, coverage, width, height, path | dataBase64}]}",
+            "{source?, dpi?, inks?: [{name?, color: \"#rrggbb\", mesh? (156)}], colors?: how many inks to find in the art when `inks` is not given (4; 1–12), underbase?: true|{name?, color? (#ffffff), mesh? (110), chokeMm? (0.3)}, snap?: true|{maxDeltaE? (25), library?: [{name, color}]} replace each ink by the nearest library ink (see screen.matchInks) and use its name when none is given, trapMm?: spread of colours that print before a darker one (0.25; 0–5), marks?: add registration marks (false), format?: png|tiff|tiff-g4|pdf (png), mirror?: flip every film left to right for emulsion-down printing (false), dcs?: single|multiple (also write the films as a DCS 2.0 file; multiple puts each plate in a file beside a main file and needs `dir`), dcsName?: the job name in the DCS files (separation), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?: a folder to write one 1-bit film file a screen (without it: base64)} spot-colour separation: one solid film per screen, the underbase first then the colours light to dark → {dpi, width, height, films: [{name, color, role: underbase|color, format, mesh, coverage, width, height, path | dataBase64}]}",
             always,
             separate
         ),
@@ -82,7 +83,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Separate Vector Art",
             [],
             None,
-            "{dpi?, inkBy?: color|layer (color) with layer each layer that has shapes is one ink named after it and coloured by its first shape (sublayers count as their layer; an entry of `inks` with the layer's name sets its colour and mesh), inks?: [{name?, color, mesh? (156)}] the inks the art's colours go onto (each shape takes the nearest ink and a spot swatch takes the ink of its own name first; without `inks` each colour or spot swatch of the art is an ink up to 12), snap?: true|{maxDeltaE? (25), library?: [{name, color}]} replace each ink by the nearest library ink and use its name when none is given, underbase?: true|{name?, color? (#ffffff), mesh? (110), chokeMm? (0.3)}, trapMm? (0.25), marks?, vectorPdf?: also give each plate as a vector PDF in the `vector` entry of its film (the page is the artboard and with `marks` grows to hold the same four registration marks), format?: png|tiff|tiff-g4|pdf (png), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?} the open document's first artboard separated as paths: solid fills and strokes (type too) go onto inks, a shape knocks out the other inks under it unless it overprints, the underbase and the traps are path operations, and each plate is drawn once at the film resolution; the underbase first then the inks light to dark → {dpi, width, height, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64, vector?: {format, path | dataBase64}}], inks: [{name, color, shapes}], skipped: [{object, why}], skippedTotal, notes: [text]}",
+            "{dpi?, inkBy?: color|layer (color) with layer each layer that has shapes is one ink named after it and coloured by its first shape (sublayers count as their layer; an entry of `inks` with the layer's name sets its colour and mesh), inks?: [{name?, color, mesh? (156)}] the inks the art's colours go onto (each shape takes the nearest ink and a spot swatch takes the ink of its own name first; without `inks` each colour or spot swatch of the art is an ink up to 12), snap?: true|{maxDeltaE? (25), library?: [{name, color}]} replace each ink by the nearest library ink and use its name when none is given, underbase?: true|{name?, color? (#ffffff), mesh? (110), chokeMm? (0.3)}, trapMm? (0.25), marks?, vectorPdf?: also give each plate as a vector PDF in the `vector` entry of its film (the page is the artboard and with `marks` grows to hold the same four registration marks), format?: png|tiff|tiff-g4|pdf (png), mirror?: flip every film left to right for emulsion-down printing (false), dcs?: single|multiple (also write the films as a DCS 2.0 file; multiple puts each plate in a file beside a main file and needs `dir`), dcsName?: the job name in the DCS files (separation), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?} the open document's first artboard separated as paths: solid fills and strokes (type too) go onto inks, a shape knocks out the other inks under it unless it overprints, the underbase and the traps are path operations, and each plate is drawn once at the film resolution; the underbase first then the inks light to dark → {dpi, width, height, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64, vector?: {format, path | dataBase64}}], inks: [{name, color, shapes}], skipped: [{object, why}], skippedTotal, notes: [text]}",
             always,
             vector::separate_vector
         ),
@@ -91,7 +92,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "DTF Files",
             [],
             None,
-            "{source?, dpi? (300; 25–2400), mirror?: flip the art left to right for the film (true), white?: also make the white layer (true), whiteChokeMm?: how far the white is pulled in from the colour edges (0.3; 0–5), dir?: a folder to write the files in (without it: base64)} direct-to-film files from the artwork: the colour art on transparent (mirrored for the film) as a PNG and a white layer (white where white ink prints and the art's footprint pulled in by the choke) as a second PNG of the same size and mirroring → {dpi, width, height, files: [{name: color|white, format, width, height, path | dataBase64}]}",
+            "{source?, dpi? (300; 25–2400), artboards?: all|[artboard numbers from 1] (a gang sheet of these artboards of the open document instead of the first one alone; needs sheetWidthMm), sheetWidthMm?: the sheet width (a gang sheet needs it; 10–2000), gapMm?: the space between designs (5; 0–100), mirror?: flip the art left to right for the film (true), white?: also make the white layer (true), whiteMode?: solid|graded (solid; graded makes the white as opaque as the art), whiteChokeMm?: how far the white is pulled in from the colour edges (0.3; 0–5), format?: png|tiff (png), dir?: a folder to write the files in (without it: base64)} direct-to-film files from the artwork: the colour art on transparent (mirrored for the film) and a white layer (white where white ink prints and the art footprint pulled in by the choke) as a second file of the same size and mirroring; a gang sheet lays the designs out in rows tallest first without rotating them → {dpi, width, height, files: [{name: color|white, format, width, height, path | dataBase64}], placements?: [{artboard, x, y, width, height, xMm, yMm}] where the position is in the file (after mirroring)}",
             always,
             dtf_files
         ),
@@ -100,7 +101,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Simulated Process",
             [],
             None,
-            "{source?, dpi?, inks?: [{name?, color, mesh? (230)}], colors?: how many inks to find in the art when `inks` is not given (4; 1–8), snap?: true|{maxDeltaE? (25), library?: [{name, color}]} replace each ink by the nearest library ink and use its name when none is given, base?: \"#rrggbb\" the colour under the dots (#ffffff), underbase?: true|{name?, color?, mesh?, chokeMm?}, lpi? (45), angles?: [degrees an ink] (22.5, 67.5, 45, 15, 75, 37.5, 52.5, 7.5), shape?: round|ellipse|line (round), minDot? (0.08), maxDot? (0.95), dotGain?: how much bigger a 50% dot prints than on the film (0 = off; 0.2 = a 50% dot prints as 70%; at most 0.25; the film is lightened to cancel it), marks?, format?: png|tiff|tiff-g4|pdf (png), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?} full-colour art as halftone dots of a few inks side by side over the base, each ink at its own screen angle, the underbase first then the inks light to dark → {dpi, width, height, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64}], advice: [{ink, code, message}]}",
+            "{source?, dpi?, inks?: [{name?, color, mesh? (230)}], colors?: how many inks to find in the art when `inks` is not given (4; 1–8), snap?: true|{maxDeltaE? (25), library?: [{name, color}]} replace each ink by the nearest library ink and use its name when none is given, base?: \"#rrggbb\" the colour under the dots (#ffffff), underbase?: true|{name?, color?, mesh?, chokeMm?}, lpi? (45), angles?: [degrees an ink] (22.5, 67.5, 45, 15, 75, 37.5, 52.5, 7.5), shape?: round|ellipse|line (round), minDot? (0.08), maxDot? (0.95), dotGain?: how much bigger a 50% dot prints than on the film (0 = off; 0.2 = a 50% dot prints as 70%; at most 0.25; the film is lightened to cancel it), marks?, format?: png|tiff|tiff-g4|pdf (png), mirror?: flip every film left to right for emulsion-down printing (false), dcs?: single|multiple (also write the films as a DCS 2.0 file; multiple puts each plate in a file beside a main file and needs `dir`), dcsName?: the job name in the DCS files (separation), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?} full-colour art as halftone dots of a few inks side by side over the base, each ink at its own screen angle, the underbase first then the inks light to dark → {dpi, width, height, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64}], advice: [{ink, code, message}]}",
             always,
             simulate
         ),
@@ -109,7 +110,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Index Color",
             [],
             None,
-            "{source?, dpi?, inks?: [{name?, color, mesh? (156)}], colors?: how many inks to find in the art when `inks` is not given (6; 1–12), snap?: true|{maxDeltaE? (25), library?: [{name, color}]} replace each ink by the nearest library ink and use its name when none is given, base?: \"#rrggbb\" the colour under the pixels (#ffffff), underbase?: true|{name?, color?, mesh?, chokeMm?}, cellMm?: side of one printed pixel in millimetres (0.5; 0.05–5), dither?: how much of each pixel's error spreads to its neighbours (1; 0 = flat colour; 1 = full error diffusion), marks?, format?: png|tiff|tiff-g4|pdf (png), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?} full-colour art reduced to a fixed palette of inks with one ink per square pixel and no overlap or dots, the underbase first then the inks light to dark → {dpi, width, height, cellPx, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64}]}",
+            "{source?, dpi?, inks?: [{name?, color, mesh? (156)}], colors?: how many inks to find in the art when `inks` is not given (6; 1–12), snap?: true|{maxDeltaE? (25), library?: [{name, color}]} replace each ink by the nearest library ink and use its name when none is given, base?: \"#rrggbb\" the colour under the pixels (#ffffff), underbase?: true|{name?, color?, mesh?, chokeMm?}, cellMm?: side of one printed pixel in millimetres (0.5; 0.05–5), dither?: how much of each pixel's error spreads to its neighbours (1; 0 = flat colour; 1 = full error diffusion), marks?, format?: png|tiff|tiff-g4|pdf (png), mirror?: flip every film left to right for emulsion-down printing (false), dcs?: single|multiple (also write the films as a DCS 2.0 file; multiple puts each plate in a file beside a main file and needs `dir`), dcsName?: the job name in the DCS files (separation), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?} full-colour art reduced to a fixed palette of inks with one ink per square pixel and no overlap or dots, the underbase first then the inks light to dark → {dpi, width, height, cellPx, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64}]}",
             always,
             index_colour
         ),
@@ -118,7 +119,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Halftone Film",
             [],
             None,
-            "{source?, dpi?, ink?: \"#rrggbb\" (#000000), name?, mesh? (230), lpi? (45), angle? (22.5), shape?: round|ellipse|line (round), minDot?: tones below this print nothing (0.08), maxDot?: tones above this print solid (0.95), dotGain?: how much bigger a 50% dot prints than on the film (0 = off; 0.2 = a 50% dot prints as 70%; at most 0.25; the film is lightened to cancel it), marks?, format?: png|tiff|tiff-g4|pdf (png), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?} one ink's tones screened into dots → {dpi, width, height, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64}], advice: [{code, message}]}",
+            "{source?, dpi?, ink?: \"#rrggbb\" (#000000), name?, mesh? (230), lpi? (45), angle? (22.5), shape?: round|ellipse|line (round), minDot?: tones below this print nothing (0.08), maxDot?: tones above this print solid (0.95), dotGain?: how much bigger a 50% dot prints than on the film (0 = off; 0.2 = a 50% dot prints as 70%; at most 0.25; the film is lightened to cancel it), marks?, format?: png|tiff|tiff-g4|pdf (png), mirror?: flip every film left to right for emulsion-down printing (false), dcs?: single|multiple (also write the films as a DCS 2.0 file; multiple puts each plate in a file beside a main file and needs `dir`), dcsName?: the job name in the DCS files (separation), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?} one ink's tones screened into dots → {dpi, width, height, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64}], advice: [{code, message}]}",
             always,
             halftone_film
         ),
@@ -195,14 +196,19 @@ fn artwork(s: &Session, p: &Value, cmd: &str, dpi: f64) -> Result<Rgba8> {
         None => {
             // These commands also work on a file, so they stay enabled with no document open;
             // say what to give instead of failing with `NoDocument`.
-            let st = s.doc().map_err(|_| bad(cmd, "no document is open: give `source` as {path} or {dataBase64}"))?;
-            let region = st.doc.artboards.first().ok_or_else(|| bad(cmd, "the document has no artboard"))?.rect;
-            let scale = dpi / 72.0;
-            vectorcraft_render::raster_size(region, scale).map_err(|e| bad(cmd, e))?;
-            let r = vectorcraft_render::Renderer::new().render_region(&st.doc, region, scale, false);
-            Rgba8::new(r.width as usize, r.height as usize, r.to_straight()).map_err(sc(cmd))
+            artboard_art(s, cmd, 0, dpi)
         }
     }
+}
+
+/// Artboard `index` (0-based) of the open document drawn at `dpi` on transparent.
+fn artboard_art(s: &Session, cmd: &str, index: usize, dpi: f64) -> Result<Rgba8> {
+    let st = s.doc().map_err(|_| bad(cmd, "no document is open: give `source` as {path} or {dataBase64}"))?;
+    let region = st.doc.artboards.get(index).ok_or_else(|| bad(cmd, format!("the document has no artboard {}", index + 1)))?.rect;
+    let scale = dpi / 72.0;
+    vectorcraft_render::raster_size(region, scale).map_err(|e| bad(cmd, e))?;
+    let r = vectorcraft_render::Renderer::new().render_region(&st.doc, region, scale, false);
+    Rgba8::new(r.width as usize, r.height as usize, r.to_straight()).map_err(sc(cmd))
 }
 
 fn palette(s: &mut Session, p: &Value) -> Result<Value> {
@@ -301,17 +307,33 @@ impl FilmFormat {
     }
 }
 
-/// The result entries for `films`, written under `dir` when given.
-fn emit(cmd: &str, films: Vec<Film>, dpi: f64, marks: bool, fmt: FilmFormat, dir: Option<&str>) -> Result<Vec<Value>> {
+/// The films as they print: registration marks around each and, with `mirror` in `p`, flipped left
+/// to right (for emulsion-down printing and for machines that expect it). With each film's
+/// coverage, measured on the art before the marks and their margin are added.
+fn prepare_films(cmd: &str, p: &Value, films: Vec<Film>, dpi: f64, marks: bool) -> Result<(Vec<Film>, Vec<f64>)> {
     let spec = if marks { Some(MarkSpec::for_dpi(dpi).map_err(sc(cmd))?) } else { None };
+    let mirror = bool_or(p, "mirror", false);
+    let coverage: Vec<f64> = films.iter().map(|f| (f.bitmap.coverage() * 1e4).round() / 1e4).collect();
+    let films = films
+        .into_iter()
+        .map(|f| {
+            let framed = match &spec {
+                Some(m) => frame_with_marks(&f.bitmap, m).map_err(sc(cmd))?,
+                None => f.bitmap,
+            };
+            Ok(Film { bitmap: if mirror { framed.mirrored() } else { framed }, ..f })
+        })
+        .collect::<Result<_>>()?;
+    Ok((films, coverage))
+}
+
+/// The result entries for `films` as they are, written under `dir` when given.
+fn emit(cmd: &str, films: Vec<Film>, coverage: &[f64], dpi: f64, fmt: FilmFormat, dir: Option<&str>) -> Result<Vec<Value>> {
     let mut out = Vec::with_capacity(films.len());
     for (i, f) in films.into_iter().enumerate() {
-        let coverage = (f.bitmap.coverage() * 1e4).round() / 1e4;
+        let coverage = coverage.get(i).copied().unwrap_or_default();
         let name = f.name;
-        let bitmap = match &spec {
-            Some(m) => frame_with_marks(&f.bitmap, m).map_err(sc(cmd))?,
-            None => f.bitmap,
-        };
+        let bitmap = f.bitmap;
         let file = fmt.encode(cmd, &bitmap, dpi)?;
         let role = match f.role {
             Role::Underbase => "underbase",
@@ -333,6 +355,62 @@ fn emit(cmd: &str, films: Vec<Film>, dpi: f64, marks: bool, fmt: FilmFormat, dir
         out.push(v);
     }
     Ok(out)
+}
+
+/// The DCS 2.0 file or files for `films` when `dcs` (`single` or `multiple`) is given: the plates
+/// in one file, or each in a file of its own beside a main file (which needs `dir`). Named after
+/// `dcsName`. `None` without `dcs`.
+fn dcs_output(cmd: &str, p: &Value, films: &[Film], dpi: f64, dir: Option<&str>) -> Result<Option<Value>> {
+    let multiple = match p.get("dcs") {
+        None | Some(Value::Null) => return Ok(None),
+        Some(Value::String(m)) if m == "single" => false,
+        Some(Value::String(m)) if m == "multiple" => true,
+        Some(_) => return Err(bad(cmd, "`dcs` is single or multiple")),
+    };
+    let title = name_of(p.get("dcsName"), "separation".into());
+    let base = slug(&title);
+    let plates: Vec<Plate> = films.iter().map(|f| Plate { name: &f.name, rgb: f.ink_rgb, film: &f.bitmap }).collect();
+    let folder = dir.map(|d| d.trim_end_matches(['/', '\\']).to_string());
+    if multiple {
+        let folder = folder.ok_or_else(|| bad(cmd, "`dcs` multiple writes several files: give `dir`"))?;
+        let names: Vec<String> = films.iter().enumerate().map(|(i, f)| format!("{base}-{:02}-{}.eps", i + 1, slug(&f.name))).collect();
+        let (main, files) = dcs::multiple_files(&plates, dpi, &title, &names).map_err(sc(cmd))?;
+        let main_path = format!("{folder}/{base}.eps");
+        super::fileio::write_file(&main_path, &main)?;
+        let mut paths = Vec::with_capacity(files.len());
+        for (name, bytes) in names.iter().zip(&files) {
+            let path = format!("{folder}/{name}");
+            super::fileio::write_file(&path, bytes)?;
+            paths.push(path);
+        }
+        return Ok(Some(json!({ "mode": "multiple", "path": main_path, "plateFiles": paths, "plates": plates.len() })));
+    }
+    let bytes = dcs::single_file(&plates, dpi, &title).map_err(sc(cmd))?;
+    let mut v = json!({ "mode": "single", "plates": plates.len() });
+    match folder {
+        Some(folder) => {
+            let path = format!("{folder}/{base}.eps");
+            super::fileio::write_file(&path, &bytes)?;
+            v["path"] = json!(path);
+        }
+        None => v["dataBase64"] = json!(vectorcraft_format::base64_encode(&bytes)),
+    }
+    Ok(Some(v))
+}
+
+/// Marks and mirroring, then the DCS file when asked, then the film files: what every film
+/// command ends with. Returns the film entries and the DCS entry.
+fn finish_films(cmd: &str, p: &Value, films: Vec<Film>, dpi: f64, marks: bool, fmt: FilmFormat) -> Result<(Vec<Value>, Option<Value>)> {
+    let (films, coverage) = prepare_films(cmd, p, films, dpi, marks)?;
+    let dcs = dcs_output(cmd, p, &films, dpi, dir_param(p))?;
+    Ok((emit(cmd, films, &coverage, dpi, fmt, dir_param(p))?, dcs))
+}
+
+/// Adds the DCS entry to a result when one was made.
+fn attach_dcs(out: &mut Value, dcs: Option<Value>) {
+    if let Some(d) = dcs {
+        out["dcs"] = d;
+    }
 }
 
 /// The library to match against: the caller's own inks (`library`: [{name, color}]) first, then the built-in ones.
@@ -521,33 +599,89 @@ fn separate(s: &mut Session, p: &Value) -> Result<Value> {
 
     let job = SpotJob { inks, underbase, trap_px: mm_px(trap_mm) };
     let films = job.run(&img).map_err(sc(C))?;
-    let films = emit(C, films, dpi, marks, fmt, dir_param(p))?;
+    let (films, dcs) = finish_films(C, p, films, dpi, marks, fmt)?;
     let (w, h) = films.first().map(|f| (f["width"].clone(), f["height"].clone())).unwrap_or_default();
     let sheet = job_sheet(C, p, dpi, &films, &[], dir_param(p))?;
     let mut out = json!({ "dpi": dpi, "width": w, "height": h, "films": films });
     attach(&mut out, sheet);
+    attach_dcs(&mut out, dcs);
     Ok(out)
 }
 
 /// `screen.dtf`: the artwork as direct-to-film files (SC-8): colour art mirrored on transparent,
-/// and a white layer.
+/// and a white layer; with `artboards` several designs on one gang sheet.
 fn dtf_files(s: &mut Session, p: &Value) -> Result<Value> {
     const C: &str = "screen.dtf";
     let dpi = num(p, C, "dpi", DEFAULT_DPI, 25.0..=2400.0)?;
     let choke_mm = num(p, C, "whiteChokeMm", 0.3, 0.0..=5.0)?;
-    let opts = DtfOptions { mirror: bool_or(p, "mirror", true), white: bool_or(p, "white", true), white_choke_px: choke_mm / 25.4 * dpi };
-    let img = artwork(s, p, C, dpi)?;
+    let mirror = bool_or(p, "mirror", true);
+    let graded = match str_param(p, "whiteMode").unwrap_or("solid") {
+        "solid" => false,
+        "graded" => true,
+        _ => return Err(bad(C, "`whiteMode` is solid or graded")),
+    };
+    let tiff = match str_param(p, "format").unwrap_or("png") {
+        "png" => false,
+        "tiff" | "tif" => true,
+        _ => return Err(bad(C, "`format` is png or tiff")),
+    };
+    if !matches!(p.get("format"), None | Some(Value::Null | Value::String(_))) {
+        return Err(bad(C, "`format` is png or tiff"));
+    }
+    let px = |mm: f64| (mm / 25.4 * dpi).round().max(0.0) as usize;
+    let opts = DtfOptions { mirror, white: bool_or(p, "white", true), white_choke_px: choke_mm / 25.4 * dpi, graded };
+
+    let mut placements = None;
+    let img = match p.get("artboards") {
+        None | Some(Value::Null) => artwork(s, p, C, dpi)?,
+        Some(boards) => {
+            if !matches!(p.get("source"), None | Some(Value::Null)) {
+                return Err(bad(C, "`artboards` are the open document's: leave `source` out"));
+            }
+            let count = s.doc().map_err(|_| bad(C, "no document is open"))?.doc.artboards.len();
+            let wanted: Vec<usize> = match boards {
+                Value::String(a) if a == "all" => (1..=count).collect(),
+                Value::Array(a) if !a.is_empty() && a.len() <= sc_core::dtf::MAX_DESIGNS => a
+                    .iter()
+                    .map(|v| {
+                        v.as_u64()
+                            .filter(|n| (1..=count as u64).contains(n))
+                            .map(|n| n as usize)
+                            .ok_or_else(|| bad(C, format!("`artboards` are numbers from 1 to {count}")))
+                    })
+                    .collect::<Result<_>>()?,
+                _ => return Err(bad(C, "`artboards` is \"all\" or a list of artboard numbers")),
+            };
+            let width_mm = num_req(p, C, "sheetWidthMm", 10.0..=2000.0)?;
+            let gap = px(num(p, C, "gapMm", 5.0, 0.0..=100.0)?);
+            let designs = wanted.iter().map(|&n| artboard_art(s, C, n - 1, dpi)).collect::<Result<Vec<_>>>()?;
+            let (sheet, put) = gang_sheet(&designs, px(width_mm).max(1), gap).map_err(sc(C))?;
+            let mm = |v: usize| (v as f64 / dpi * 25.4 * 10.0).round() / 10.0;
+            placements = Some(
+                put.iter()
+                    .zip(&wanted)
+                    .map(|(pl, &n)| {
+                        // The files are mirrored as a whole, so a design's place is flipped too.
+                        let x = if mirror { sheet.width() - pl.x - pl.width } else { pl.x };
+                        json!({ "artboard": n, "x": x, "y": pl.y, "width": pl.width, "height": pl.height, "xMm": mm(x), "yMm": mm(pl.y) })
+                    })
+                    .collect::<Vec<_>>(),
+            );
+            sheet
+        }
+    };
     let files = prepare(&img, &opts).map_err(sc(C))?;
     let mut parts = vec![("color", files.color)];
     parts.extend(files.white.map(|w| ("white", w)));
     let dir = dir_param(p);
     let mut out = Vec::with_capacity(parts.len());
     for (name, image) in parts {
-        let bytes = sc_core::export::png_rgba(&image, dpi).map_err(sc(C))?;
-        let mut v = json!({ "name": name, "format": "png", "width": image.width(), "height": image.height() });
+        let bytes = if tiff { sc_core::export::tiff_rgba(&image, dpi) } else { sc_core::export::png_rgba(&image, dpi) }.map_err(sc(C))?;
+        let format = if tiff { "tiff" } else { "png" };
+        let mut v = json!({ "name": name, "format": format, "width": image.width(), "height": image.height() });
         match dir {
             Some(dir) => {
-                let path = format!("{}/dtf-{name}.png", dir.trim_end_matches(['/', '\\']));
+                let path = format!("{}/dtf-{name}.{}", dir.trim_end_matches(['/', '\\']), if tiff { "tif" } else { "png" });
                 super::fileio::write_file(&path, &bytes)?;
                 v["path"] = json!(path);
             }
@@ -556,7 +690,11 @@ fn dtf_files(s: &mut Session, p: &Value) -> Result<Value> {
         out.push(v);
     }
     let (w, h) = out.first().map(|f| (f["width"].clone(), f["height"].clone())).unwrap_or_default();
-    Ok(json!({ "dpi": dpi, "width": w, "height": h, "files": out }))
+    let mut result = json!({ "dpi": dpi, "width": w, "height": h, "files": out });
+    if let Some(pl) = placements {
+        result["placements"] = json!(pl);
+    }
+    Ok(result)
 }
 
 /// `screen.index`: full-colour art as square pixels of a fixed palette of inks, none overlapping.
@@ -580,11 +718,12 @@ fn index_colour(s: &mut Session, p: &Value) -> Result<Value> {
     let inks = inks_of(&q, C, &img, MAX_INDEX_INKS, 156.0)?;
     let job = IndexJob { inks, base, underbase: underbase_of(p, C, mm_px)?, cell_px, dither };
     let films = job.run(&img).map_err(sc(C))?;
-    let films = emit(C, films, dpi, marks, fmt, dir_param(p))?;
+    let (films, dcs) = finish_films(C, p, films, dpi, marks, fmt)?;
     let (w, h) = films.first().map(|f| (f["width"].clone(), f["height"].clone())).unwrap_or_default();
     let sheet = job_sheet(C, p, dpi, &films, &[], dir_param(p))?;
     let mut out = json!({ "dpi": dpi, "width": w, "height": h, "cellPx": cell_px, "films": films });
     attach(&mut out, sheet);
+    attach_dcs(&mut out, dcs);
     Ok(out)
 }
 
@@ -629,7 +768,7 @@ fn simulate(s: &mut Session, p: &Value) -> Result<Value> {
         },
     };
     let films = job.run(&img).map_err(sc(C))?;
-    let films = emit(C, films, dpi, marks, fmt, dir_param(p))?;
+    let (films, dcs) = finish_films(C, p, films, dpi, marks, fmt)?;
     let (w, h) = films.first().map(|f| (f["width"].clone(), f["height"].clone())).unwrap_or_default();
     // Mesh and line-screen advice for each ink at the angle it is printed at.
     let mut advice = Vec::new();
@@ -646,6 +785,7 @@ fn simulate(s: &mut Session, p: &Value) -> Result<Value> {
     let sheet = job_sheet(C, p, dpi, &films, &lines, dir_param(p))?;
     let mut out = json!({ "dpi": dpi, "width": w, "height": h, "films": films, "advice": advice });
     attach(&mut out, sheet);
+    attach_dcs(&mut out, dcs);
     Ok(out)
 }
 
@@ -675,12 +815,13 @@ fn halftone_film(s: &mut Session, p: &Value) -> Result<Value> {
     };
     let bitmap = halftone(&plate, &opts).map_err(sc(C))?;
     let film = Film { name: name_of(p.get("name"), "Halftone".into()), ink_rgb: ink, mesh, role: Role::Color, bitmap };
-    let films = emit(C, vec![film], dpi, bool_or(p, "marks", false), FilmFormat::parse(C, p)?, dir_param(p))?;
+    let (films, dcs) = finish_films(C, p, vec![film], dpi, bool_or(p, "marks", false), FilmFormat::parse(C, p)?)?;
     let (w, h) = films.first().map(|f| (f["width"].clone(), f["height"].clone())).unwrap_or_default();
     let advice: Vec<Value> = check(mesh, lpi, angle).iter().map(advice_json).collect();
     let lines: Vec<String> = advice.iter().map(|a| a["message"].as_str().unwrap_or_default().to_string()).collect();
     let sheet = job_sheet(C, p, dpi, &films, &lines, dir_param(p))?;
     let mut out = json!({ "dpi": dpi, "width": w, "height": h, "films": films, "advice": advice });
     attach(&mut out, sheet);
+    attach_dcs(&mut out, dcs);
     Ok(out)
 }

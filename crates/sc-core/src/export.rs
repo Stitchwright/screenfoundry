@@ -1,5 +1,5 @@
 //! Film files. A film is a 1-bit image whose physical size matters, so both writers record the
-//! resolution: [`png_rgba`] for art with transparency, [`png_1bit`], [`tiff_1bit`], [`tiff_g4`] and [`pdf_g4`]. Black is ink (where the screen must open), white is
+//! resolution: [`png_rgba`] and [`tiff_rgba`] for art with transparency, [`png_1bit`], [`tiff_1bit`], [`tiff_g4`] and [`pdf_g4`]. Black is ink (where the screen must open), white is
 //! clear film, which is how film positives are made.
 
 use crate::error::{Result, param};
@@ -67,6 +67,56 @@ pub fn png_rgba(img: &Rgba8, dpi: f64) -> Result<Vec<u8>> {
     let mut w = enc.write_header().map_err(|e| param("image", e.to_string()))?;
     w.write_image_data(img.data()).map_err(|e| param("image", e.to_string()))?;
     w.finish().map_err(|e| param("image", e.to_string()))?;
+    Ok(out)
+}
+
+/// An uncompressed 8-bit RGBA TIFF (little-endian, straight alpha declared as unassociated) with
+/// its resolution in inches, for artwork that keeps its colour and transparency.
+pub fn tiff_rgba(img: &Rgba8, dpi: f64) -> Result<Vec<u8>> {
+    check_dpi(dpi)?;
+    let data = img.data();
+    const ENTRIES: u16 = 13;
+    let ifd_len = 2 + usize::from(ENTRIES) * 12 + 4;
+    let bits = 8 + ifd_len; // four SHORTs of 8 bits follow the IFD
+    let rationals = bits + 8; // then two RATIONALs
+    let strip = rationals + 16;
+    let (den, num) = (1000u32, (dpi * 1000.0).round() as u32);
+    let size = u32::try_from(data.len()).map_err(|_| param("image", "too large for a TIFF strip"))?;
+    let mut out = Vec::with_capacity(strip + data.len());
+    out.extend_from_slice(b"II*\0");
+    out.extend_from_slice(&8u32.to_le_bytes());
+    out.extend_from_slice(&ENTRIES.to_le_bytes());
+    let mut entry = |tag: u16, ty: u16, count: u32, value: u32| {
+        out.extend_from_slice(&tag.to_le_bytes());
+        out.extend_from_slice(&ty.to_le_bytes());
+        out.extend_from_slice(&count.to_le_bytes());
+        out.extend_from_slice(&value.to_le_bytes());
+    };
+    const SHORT: u16 = 3;
+    const LONG: u16 = 4;
+    const RATIONAL: u16 = 5;
+    entry(256, LONG, 1, img.width() as u32); // ImageWidth
+    entry(257, LONG, 1, img.height() as u32); // ImageLength
+    entry(258, SHORT, 4, bits as u32); // BitsPerSample: 8, 8, 8, 8
+    entry(259, SHORT, 1, 1); // Compression: none
+    entry(262, SHORT, 1, 2); // PhotometricInterpretation: RGB
+    entry(273, LONG, 1, strip as u32); // StripOffsets
+    entry(277, SHORT, 1, 4); // SamplesPerPixel
+    entry(278, LONG, 1, img.height() as u32); // RowsPerStrip
+    entry(279, LONG, 1, size); // StripByteCounts
+    entry(282, RATIONAL, 1, rationals as u32); // XResolution
+    entry(283, RATIONAL, 1, rationals as u32 + 8); // YResolution
+    entry(296, SHORT, 1, 2); // ResolutionUnit: inch
+    entry(338, SHORT, 1, 2); // ExtraSamples: unassociated alpha
+    out.extend_from_slice(&0u32.to_le_bytes()); // no next IFD
+    for _ in 0..4 {
+        out.extend_from_slice(&8u16.to_le_bytes());
+    }
+    for _ in 0..2 {
+        out.extend_from_slice(&num.to_le_bytes());
+        out.extend_from_slice(&den.to_le_bytes());
+    }
+    out.extend_from_slice(data);
     Ok(out)
 }
 
@@ -357,6 +407,23 @@ mod tests {
         reader.next_frame(&mut buf).unwrap();
         assert_eq!(&buf[..8], img.data());
         assert!(png_rgba(&img, 0.0).is_err() && png_rgba(&img, f64::NAN).is_err());
+    }
+
+    #[test]
+    fn rgba_tiff_decodes_with_alpha_and_resolution() {
+        use tiff::decoder::{Decoder, DecodingResult};
+        use tiff::tags::Tag;
+        let img = Rgba8::new(3, 2, (0..6u8).flat_map(|i| [i * 40, 255 - i * 40, i, 255 - i * 30]).collect()).unwrap();
+        let bytes = tiff_rgba(&img, 300.0).unwrap();
+        let mut d = Decoder::new(Cursor::new(bytes)).unwrap();
+        assert_eq!(d.dimensions().unwrap(), (3, 2));
+        assert_eq!(d.colortype().unwrap(), tiff::ColorType::RGBA(8));
+        let tiff::decoder::ifd::Value::Rational(n, den) = d.get_tag(Tag::XResolution).unwrap() else { panic!("not a rational") };
+        assert!((f64::from(n) / f64::from(den) - 300.0).abs() < 1e-6);
+        assert_eq!(d.get_tag_u64(Tag::ResolutionUnit).unwrap(), 2);
+        let DecodingResult::U8(px) = d.read_image().unwrap() else { panic!("not 8-bit samples") };
+        assert_eq!(px, img.data());
+        assert!(tiff_rgba(&img, 0.0).is_err() && tiff_rgba(&img, f64::INFINITY).is_err());
     }
 
     #[test]

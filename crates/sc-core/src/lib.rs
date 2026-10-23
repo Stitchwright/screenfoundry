@@ -9,6 +9,7 @@
 //! * [`morph`] – exact Euclidean choke and spread of a plate (for underbase and traps).
 //! * [`halftone`] – amplitude-modulated screening (round, elliptical, line) at a screen angle.
 //! * [`marks`] – registration crosshairs.
+//! * [`dcs`] – DCS 2.0 files: a composite and one EPS per plate, single or multiple files.
 //! * [`dtf`] – direct-to-film files: mirrored colour art and a white layer.
 //! * [`export`] – 1-bit PNG and TIFF film files with their resolution.
 //! * [`jobsheet`] – the PDF job sheet that travels with the films.
@@ -22,6 +23,7 @@
 //! Nothing panics on bad input: sizes are capped and every fallible call returns [`Result`].
 
 pub mod color;
+pub mod dcs;
 pub mod dtf;
 pub mod error;
 pub mod export;
