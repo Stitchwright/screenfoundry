@@ -88,7 +88,9 @@ screened at its own angle (`angles`, default 22.5°, 67.5°, 45°, 15°, 75°, �
 patterns do not clash; the underbase prints first, then the inks light to dark. Up to eight
 inks; give them (`inks`) or let ScreenFoundry find them (`colors`).
 
-`dotGain` works here too (and is the Dot Gain box in the panel). It does not model dots overlapping
+`dotGain` works here too (and is the Dot Gain box in the panel). Inks gain differently on the same
+mesh, so `inkGains` gives each ink its own number in the order of `inks` (it replaces `dotGain` for
+that ink; the panel has one box only). It does not model dots overlapping
 or how opaque the ink is. Print a test and adjust the dot limits (`minDot`, `maxDot`), the dot gain
 and the line screen before a production run.
 
@@ -290,8 +292,7 @@ parameter.
 
 ## Known limits
 
-- Simulated process treats dots as side by side, not overlapping, and the dot gain is one number
-  for every ink. 
+- Simulated process treats dots as side by side, not overlapping. 
 - One trap width and one choke width for the whole job.
 - Films are PNG, TIFF, CCITT Group 4 TIFF or PDF; no machine-specific (CTS, DTF) output yet.
 - The defaults come from published practitioner advice that disagrees in places. Test-print

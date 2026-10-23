@@ -130,6 +130,10 @@ pub struct SimulatedJob {
     /// and dark ends (a hybrid screen).
     #[serde(default)]
     pub hybrid: Option<Hybrid>,
+    /// Dot gain of each ink in order, replacing the screen's own `dot_gain` for that ink (inks
+    /// beyond the list keep it): thick or fine inks gain differently on the same mesh.
+    #[serde(default)]
+    pub gains: Vec<f64>,
 }
 
 impl SimulatedJob {
@@ -154,10 +158,11 @@ impl SimulatedJob {
                 return Err(param("inks", "plate/ink mismatch"));
             };
             let angle = angles.get(i % angles.len()).copied().unwrap_or(22.5);
-            let am = HalftoneOptions { angle_deg: angle, ..self.halftone };
+            let gain = self.gains.get(i).copied().unwrap_or(self.halftone.dot_gain);
+            let am = HalftoneOptions { angle_deg: angle, dot_gain: gain, ..self.halftone };
             let bitmap = match (&self.fm, &self.hybrid) {
-                (Some(fm), Some(h)) => hybrid_screen(plate, &am, fm, h)?,
-                (Some(fm), None) => fm_screen(plate, fm)?,
+                (Some(fm), Some(h)) => hybrid_screen(plate, &am, &FmOptions { dot_gain: gain, ..*fm }, h)?,
+                (Some(fm), None) => fm_screen(plate, &FmOptions { dot_gain: gain, ..*fm })?,
                 _ => halftone(plate, &am)?,
             };
             films.push(Film { name: ink.name.clone(), ink_rgb: ink.rgb, mesh: ink.mesh, role: Role::Color, bitmap });
@@ -307,6 +312,7 @@ mod tests {
             },
             fm: None,
             hybrid: None,
+            gains: Vec::new(),
         }
     }
 
@@ -345,6 +351,17 @@ mod tests {
         let ub = &films[0].bitmap;
         assert!(ub.get(60, 70) && !ub.get(60, 5), "under the art, not under the background");
         assert!(!ub.get(60, 20), "choked in from the edge");
+    }
+
+    #[test]
+    fn each_ink_can_have_its_own_dot_gain() {
+        let mut j = sim_job(false);
+        let plain = j.run(&half_and_half()).unwrap();
+        j.gains = vec![0.0, 0.2]; // Navy (ink 0) as before, Red (ink 1) compensated
+        let films = j.run(&half_and_half()).unwrap();
+        let cov = |fs: &[Film], n: &str| fs.iter().find(|f| f.name == n).map(|f| f.bitmap.coverage()).unwrap_or(-1.0);
+        assert_eq!(cov(&films, "Navy"), cov(&plain, "Navy"));
+        assert!(cov(&films, "Red") < cov(&plain, "Red") - 0.03, "{} vs {}", cov(&films, "Red"), cov(&plain, "Red"));
     }
 
     #[test]

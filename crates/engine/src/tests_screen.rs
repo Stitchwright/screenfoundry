@@ -1120,3 +1120,26 @@ fn the_print_test_page_makes_numbered_films_without_a_document() {
         assert!(s.execute("screen.testPage", &bad).is_err(), "{bad}");
     }
 }
+
+#[test]
+fn simulate_takes_a_dot_gain_for_each_ink() {
+    let mut s = Session::new();
+    let src = png_source(120, 60, |_, _| [128, 128, 128, 255]);
+    let inks = json!([{"name": "Black", "color": "#000000"}]);
+    let mut run = |extra: Value| {
+        let mut p = json!({"source": src, "dpi": 600, "lpi": 50, "inks": inks, "minDot": 0, "maxDot": 1});
+        for (k, v) in extra.as_object().unwrap() {
+            p[k] = v.clone();
+        }
+        s.execute("screen.simulate", &p)
+    };
+    let share = |r: &Value| inked_share(&r["films"][0], 0, 120);
+    let plain = share(&run(json!({})).unwrap());
+    let own = share(&run(json!({"inkGains": [0.2]})).unwrap());
+    let global = share(&run(json!({"dotGain": 0.2})).unwrap());
+    assert!(own < plain - 0.05, "{own} vs {plain}");
+    assert!((own - global).abs() < 0.01, "{own} vs {global}");
+    for bad in [json!({"inkGains": [0.3]}), json!({"inkGains": ["a"]}), json!({"inkGains": 0.1}), json!({"inkGains": vec![0.1; 9]})] {
+        assert!(run(bad.clone()).is_err(), "{bad}");
+    }
+}
