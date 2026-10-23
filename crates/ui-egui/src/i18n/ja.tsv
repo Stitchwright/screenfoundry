@@ -6422,3 +6422,9 @@ machine	Stop	停止
 
 # ScreenFoundry: DTF files (SC-8). Machine-written first pass, to be checked by a native speaker.
 	DTF Files	DTFファイル
+
+# ScreenFoundry: FM screening (SC-7). Machine-written first pass, to be checked by a native speaker.
+	Screening	スクリーニング
+	AM	AM
+	FM	FM
+	Dot Size	ドットサイズ

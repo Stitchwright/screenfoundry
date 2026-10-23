@@ -6699,3 +6699,9 @@ machine	Stop	Спиране
 
 # ScreenFoundry: DTF files (SC-8). Machine-written first pass, to be checked by a native speaker.
 	DTF Files	DTF файлове
+
+# ScreenFoundry: FM screening (SC-7). Machine-written first pass, to be checked by a native speaker.
+	Screening	Растеризация
+	AM	AM
+	FM	FM
+	Dot Size	Размер на точката

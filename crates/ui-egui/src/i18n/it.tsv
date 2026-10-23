@@ -6383,3 +6383,9 @@ machine	Stop	Arresto
 
 # ScreenFoundry: DTF files (SC-8). Machine-written first pass, to be checked by a native speaker.
 	DTF Files	File DTF
+
+# ScreenFoundry: FM screening (SC-7). Machine-written first pass, to be checked by a native speaker.
+	Screening	Retinatura
+	AM	AM
+	FM	FM
+	Dot Size	Dimensione del punto

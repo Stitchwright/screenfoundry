@@ -7,6 +7,7 @@
 
 use crate::color::srgb_to_lab;
 use crate::error::{Result, param};
+use crate::fm::{FmOptions, fm_screen};
 use crate::halftone::{HalftoneOptions, halftone, solid};
 use crate::image::{Bitmap1, Gray8, Rgba8};
 use crate::index::index_films;
@@ -121,6 +122,10 @@ pub struct SimulatedJob {
     pub angles: Vec<f64>,
     /// Resolution, ruling, dot shape and dot limits; its `angle_deg` is replaced per ink.
     pub halftone: HalftoneOptions,
+    /// Screen every ink as scattered equal dots (FM) instead of angled dots (AM): the ruling,
+    /// angles and shape then do not apply.
+    #[serde(default)]
+    pub fm: Option<FmOptions>,
 }
 
 impl SimulatedJob {
@@ -145,7 +150,10 @@ impl SimulatedJob {
                 return Err(param("inks", "plate/ink mismatch"));
             };
             let angle = angles.get(i % angles.len()).copied().unwrap_or(22.5);
-            let bitmap = halftone(plate, &HalftoneOptions { angle_deg: angle, ..self.halftone })?;
+            let bitmap = match &self.fm {
+                Some(fm) => fm_screen(plate, fm)?,
+                None => halftone(plate, &HalftoneOptions { angle_deg: angle, ..self.halftone })?,
+            };
             films.push(Film { name: ink.name.clone(), ink_rgb: ink.rgb, mesh: ink.mesh, role: Role::Color, bitmap });
         }
         Ok(films)
@@ -291,6 +299,7 @@ mod tests {
                 max_dot: 1.0,
                 dot_gain: 0.0,
             },
+            fm: None,
         }
     }
 
@@ -369,5 +378,23 @@ mod tests {
         assert!(films[0].bitmap.get(10, 10) && !films[0].bitmap.get(50, 10));
         let bad = IndexJob { inks: Vec::new(), ..job };
         assert!(bad.run(&art()).is_err());
+    }
+
+    #[test]
+    fn an_fm_job_screens_every_ink_as_scattered_whole_cells_at_the_tone() {
+        let fm = FmOptions { cell_px: 4, min_dot: 0.0, max_dot: 1.0, dot_gain: 0.0 };
+        let films = SimulatedJob { fm: Some(fm), ..sim_job(false) }.run(&half_and_half()).unwrap();
+        assert_eq!(films.len(), 2);
+        for f in &films {
+            assert!((f.bitmap.coverage() - 0.5).abs() < 0.06, "{}: {}", f.name, f.bitmap.coverage());
+            for y in 0..120 {
+                for x in 0..120 {
+                    assert_eq!(f.bitmap.get(x, y), f.bitmap.get(x - x % 4, y - y % 4), "{} ({x}, {y})", f.name);
+                }
+            }
+        }
+        assert!(films[0].bitmap.coverage() > 0.0);
+        let am = sim_job(false).run(&half_and_half()).unwrap();
+        assert_ne!(am[0].bitmap, films[0].bitmap, "a different screening");
     }
 }

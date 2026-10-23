@@ -6633,3 +6633,9 @@ swatch	Bright Violet	Kraftig violet
 
 # ScreenFoundry: DTF files (SC-8). Machine-written first pass, to be checked by a native speaker.
 	DTF Files	DTF-filer
+
+# ScreenFoundry: FM screening (SC-7). Machine-written first pass, to be checked by a native speaker.
+	Screening	Rastrering
+	AM	AM
+	FM	FM
+	Dot Size	Punktstørrelse

@@ -6571,3 +6571,9 @@ file-filter	ScreenFoundry Template	ScreenFoundry-ის შაბლონი
 
 # ScreenFoundry: DTF files (SC-8). Machine-written first pass, to be checked by a native speaker.
 	DTF Files	DTF ფაილები
+
+# ScreenFoundry: FM screening (SC-7). Machine-written first pass, to be checked by a native speaker.
+	Screening	ეკრანირება
+	AM	AM
+	FM	FM
+	Dot Size	წერტილის ზომა

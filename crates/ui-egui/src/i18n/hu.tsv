@@ -6716,3 +6716,9 @@ machine	Stop	Megállás
 
 # ScreenFoundry: DTF files (SC-8). Machine-written first pass, to be checked by a native speaker.
 	DTF Files	DTF-fájlok
+
+# ScreenFoundry: FM screening (SC-7). Machine-written first pass, to be checked by a native speaker.
+	Screening	Raszterezés
+	AM	AM
+	FM	FM
+	Dot Size	Pontméret

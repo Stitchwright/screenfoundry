@@ -10,6 +10,7 @@ use std::io::Cursor;
 use sc_core::color::{parse_hex, to_hex};
 use sc_core::dcs::{self, Plate};
 use sc_core::dtf::{DtfOptions, gang_sheet, prepare};
+use sc_core::fm::{FmOptions, MAX_FM_CELL_PX, fm_screen};
 use sc_core::halftone::{DotShape, HalftoneOptions, MAX_DOT_GAIN, halftone};
 use sc_core::index::{MAX_CELL_PX, MAX_INDEX_INKS};
 use sc_core::inklib::{self, DEFAULT_MAX_DELTA_E, LibraryInk};
@@ -101,7 +102,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Simulated Process",
             [],
             None,
-            "{source?, dpi?, inks?: [{name?, color, mesh? (230)}], colors?: how many inks to find in the art when `inks` is not given (4; 1–8), snap?: true|{maxDeltaE? (25), library?: [{name, color}]} replace each ink by the nearest library ink and use its name when none is given, base?: \"#rrggbb\" the colour under the dots (#ffffff), underbase?: true|{name?, color?, mesh?, chokeMm?}, lpi? (45), angles?: [degrees an ink] (22.5, 67.5, 45, 15, 75, 37.5, 52.5, 7.5), shape?: round|ellipse|line (round), minDot? (0.08), maxDot? (0.95), dotGain?: how much bigger a 50% dot prints than on the film (0 = off; 0.2 = a 50% dot prints as 70%; at most 0.25; the film is lightened to cancel it), marks?, format?: png|tiff|tiff-g4|pdf (png), mirror?: flip every film left to right for emulsion-down printing (false), dcs?: single|multiple (also write the films as a DCS 2.0 file; multiple puts each plate in a file beside a main file and needs `dir`), dcsName?: the job name in the DCS files (separation), dcsCompositeDpi?: the resolution of the composite in the DCS main file (150; 10–2400; the film resolution or more gives a full resolution composite and a large file), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?} full-colour art as halftone dots of a few inks side by side over the base, each ink at its own screen angle, the underbase first then the inks light to dark → {dpi, width, height, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64}], advice: [{ink, code, message}]}",
+            "{source?, dpi?, inks?: [{name?, color, mesh? (230)}], colors?: how many inks to find in the art when `inks` is not given (4; 1–8), snap?: true|{maxDeltaE? (25), library?: [{name, color}]} replace each ink by the nearest library ink and use its name when none is given, base?: \"#rrggbb\" the colour under the dots (#ffffff), underbase?: true|{name?, color?, mesh?, chokeMm?}, lpi? (45), angles?: [degrees an ink] (22.5, 67.5, 45, 15, 75, 37.5, 52.5, 7.5), shape?: round|ellipse|line (round), screening?: am|fm (am; fm scatters equal dots with no angle or ruling so nothing can moire), dotMm?: the size of one FM dot (0.2; 0.02–5), minDot? (0.08), maxDot? (0.95), dotGain?: how much bigger a 50% dot prints than on the film (0 = off; 0.2 = a 50% dot prints as 70%; at most 0.25; the film is lightened to cancel it), marks?, format?: png|tiff|tiff-g4|pdf (png), mirror?: flip every film left to right for emulsion-down printing (false), dcs?: single|multiple (also write the films as a DCS 2.0 file; multiple puts each plate in a file beside a main file and needs `dir`), dcsName?: the job name in the DCS files (separation), dcsCompositeDpi?: the resolution of the composite in the DCS main file (150; 10–2400; the film resolution or more gives a full resolution composite and a large file), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?} full-colour art as halftone dots of a few inks side by side over the base, each ink at its own screen angle, the underbase first then the inks light to dark → {dpi, width, height, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64}], advice: [{ink, code, message}]}",
             always,
             simulate
         ),
@@ -119,7 +120,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Halftone Film",
             [],
             None,
-            "{source?, dpi?, ink?: \"#rrggbb\" (#000000), name?, mesh? (230), lpi? (45), angle? (22.5), shape?: round|ellipse|line (round), minDot?: tones below this print nothing (0.08), maxDot?: tones above this print solid (0.95), dotGain?: how much bigger a 50% dot prints than on the film (0 = off; 0.2 = a 50% dot prints as 70%; at most 0.25; the film is lightened to cancel it), marks?, format?: png|tiff|tiff-g4|pdf (png), mirror?: flip every film left to right for emulsion-down printing (false), dcs?: single|multiple (also write the films as a DCS 2.0 file; multiple puts each plate in a file beside a main file and needs `dir`), dcsName?: the job name in the DCS files (separation), dcsCompositeDpi?: the resolution of the composite in the DCS main file (150; 10–2400; the film resolution or more gives a full resolution composite and a large file), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?} one ink's tones screened into dots → {dpi, width, height, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64}], advice: [{code, message}]}",
+            "{source?, dpi?, ink?: \"#rrggbb\" (#000000), name?, mesh? (230), lpi? (45), angle? (22.5), shape?: round|ellipse|line (round), screening?: am|fm (am; fm scatters equal dots with no angle or ruling so nothing can moire), dotMm?: the size of one FM dot (0.2; 0.02–5), minDot?: tones below this print nothing (0.08), maxDot?: tones above this print solid (0.95), dotGain?: how much bigger a 50% dot prints than on the film (0 = off; 0.2 = a 50% dot prints as 70%; at most 0.25; the film is lightened to cancel it), marks?, format?: png|tiff|tiff-g4|pdf (png), mirror?: flip every film left to right for emulsion-down printing (false), dcs?: single|multiple (also write the films as a DCS 2.0 file; multiple puts each plate in a file beside a main file and needs `dir`), dcsName?: the job name in the DCS files (separation), dcsCompositeDpi?: the resolution of the composite in the DCS main file (150; 10–2400; the film resolution or more gives a full resolution composite and a large file), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?} one ink's tones screened into dots → {dpi, width, height, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64}], advice: [{code, message}]}",
             always,
             halftone_film
         ),
@@ -737,6 +738,24 @@ fn index_colour(s: &mut Session, p: &Value) -> Result<Value> {
     Ok(out)
 }
 
+/// The FM screening asked for (`screening`: am or fm): its dot size (`dotMm`, in millimetres,
+/// made pixels at `dpi`) and the dot limits and gain the AM screens take. `None` for AM.
+fn fm_of(cmd: &str, p: &Value, dpi: f64) -> Result<Option<FmOptions>> {
+    match p.get("screening") {
+        None | Some(Value::Null) => return Ok(None),
+        Some(Value::String(m)) if m == "am" => return Ok(None),
+        Some(Value::String(m)) if m == "fm" => {}
+        Some(_) => return Err(bad(cmd, "`screening` is am or fm")),
+    }
+    let dot_mm = num(p, cmd, "dotMm", 0.2, 0.02..=5.0)?;
+    Ok(Some(FmOptions {
+        cell_px: ((dot_mm / 25.4 * dpi).round() as usize).clamp(1, MAX_FM_CELL_PX),
+        min_dot: num(p, cmd, "minDot", 0.08, 0.0..=1.0)?,
+        max_dot: num(p, cmd, "maxDot", 0.95, 0.0..=1.0)?,
+        dot_gain: num(p, cmd, "dotGain", 0.0, 0.0..=MAX_DOT_GAIN)?,
+    }))
+}
+
 /// `screen.simulate`: full-colour art as halftone dots of a few inks over a base.
 fn simulate(s: &mut Session, p: &Value) -> Result<Value> {
     const C: &str = "screen.simulate";
@@ -776,13 +795,16 @@ fn simulate(s: &mut Session, p: &Value) -> Result<Value> {
             max_dot: num(p, C, "maxDot", 0.95, 0.0..=1.0)?,
             dot_gain: num(p, C, "dotGain", 0.0, 0.0..=MAX_DOT_GAIN)?,
         },
+        fm: fm_of(C, p, dpi)?,
     };
+    let fm = job.fm.is_some();
     let films = job.run(&img).map_err(sc(C))?;
     let (films, dcs) = finish_films(C, p, films, dpi, marks, fmt)?;
     let (w, h) = films.first().map(|f| (f["width"].clone(), f["height"].clone())).unwrap_or_default();
     // Mesh and line-screen advice for each ink at the angle it is printed at.
     let mut advice = Vec::new();
-    for (i, ink) in inks.iter().enumerate() {
+    // (An FM screen has no ruling or angle to check.)
+    for (i, ink) in inks.iter().enumerate().filter(|_| !fm) {
         let angle = angles.get(i % angles.len()).copied().unwrap_or(22.5);
         for a in check(ink.mesh, lpi, angle) {
             let mut v = advice_json(&a);
@@ -823,11 +845,15 @@ fn halftone_film(s: &mut Session, p: &Value) -> Result<Value> {
         max_dot: num(p, C, "maxDot", 0.95, 0.0..=1.0)?,
         dot_gain: num(p, C, "dotGain", 0.0, 0.0..=MAX_DOT_GAIN)?,
     };
-    let bitmap = halftone(&plate, &opts).map_err(sc(C))?;
+    let fm = fm_of(C, p, dpi)?;
+    let bitmap = match &fm {
+        Some(fm) => fm_screen(&plate, fm).map_err(sc(C))?,
+        None => halftone(&plate, &opts).map_err(sc(C))?,
+    };
     let film = Film { name: name_of(p.get("name"), "Halftone".into()), ink_rgb: ink, mesh, role: Role::Color, bitmap };
     let (films, dcs) = finish_films(C, p, vec![film], dpi, bool_or(p, "marks", false), FilmFormat::parse(C, p)?)?;
     let (w, h) = films.first().map(|f| (f["width"].clone(), f["height"].clone())).unwrap_or_default();
-    let advice: Vec<Value> = check(mesh, lpi, angle).iter().map(advice_json).collect();
+    let advice: Vec<Value> = if fm.is_some() { Vec::new() } else { check(mesh, lpi, angle).iter().map(advice_json).collect() };
     let lines: Vec<String> = advice.iter().map(|a| a["message"].as_str().unwrap_or_default().to_string()).collect();
     let sheet = job_sheet(C, p, dpi, &films, &lines, dir_param(p))?;
     let mut out = json!({ "dpi": dpi, "width": w, "height": h, "films": films, "advice": advice });

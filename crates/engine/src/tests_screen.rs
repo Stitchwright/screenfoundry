@@ -960,3 +960,52 @@ fn gang_sheets_can_turn_designs_and_dcs_has_a_chosen_composite_and_managed_cmyk(
         assert!(t.execute("screen.separate", &p).is_err(), "{p}");
     }
 }
+
+#[test]
+fn fm_screening_scatters_equal_dots_with_no_angle_or_advice() {
+    let mut s = Session::new();
+    let navy = [10, 20, 90];
+    // A white-to-navy ramp, 240 pixels wide: denser dots to the right.
+    let src = png_source(240, 60, |x, _| {
+        let c = mix_with_white(navy, f64::from(x) / 239.0);
+        [c[0], c[1], c[2], 255]
+    });
+    let inks = json!([{"name": "Navy", "color": "#0a1458", "mesh": 110}]);
+    // dotMm 0.4 at 600 dpi is 9 px a dot. Mesh 110 at 50 lpi would draw advice for an AM screen.
+    let p = json!({"source": src, "dpi": 600, "lpi": 50, "inks": inks, "minDot": 0, "maxDot": 1, "screening": "fm", "dotMm": 0.4});
+    let r = s.execute("screen.simulate", &p).unwrap();
+    let f = &r["films"][0];
+    let (left, mid, right) = (inked_share(f, 0, 60), inked_share(f, 90, 150), inked_share(f, 180, 240));
+    assert!(left < mid && mid < right, "{left} < {mid} < {right}");
+    assert!((left - 0.125).abs() < 0.07 && (mid - 0.5).abs() < 0.07 && (right - 0.875).abs() < 0.07, "{left} {mid} {right}");
+    assert_eq!(r["advice"].as_array().unwrap().len(), 0, "an FM screen has no ruling or angle to check");
+    // Dots are whole cells of 9 px.
+    let img = film_image(f);
+    for y in (0..img.height()).step_by(7) {
+        for x in (0..img.width()).step_by(5) {
+            assert_eq!(inked(&img, x, y), inked(&img, x - x % 9, y - y % 9), "({x}, {y})");
+        }
+    }
+    // The same plate screened AM differs, and AM keeps its advice.
+    let am = s.execute("screen.simulate", &json!({"source": src, "dpi": 600, "lpi": 50, "inks": inks, "minDot": 0, "maxDot": 1})).unwrap();
+    assert!(!am["advice"].as_array().unwrap().is_empty());
+    assert_ne!(film_image(&am["films"][0]), img);
+    let explicit_am = s
+        .execute("screen.simulate", &json!({"source": src, "dpi": 600, "lpi": 50, "inks": inks, "minDot": 0, "maxDot": 1, "screening": "am"}))
+        .unwrap();
+    assert_eq!(film_image(&explicit_am["films"][0]), film_image(&am["films"][0]));
+    // The single-ink halftone takes it too, with its tone kept and gain compensated.
+    let grey = png_source(120, 120, |_, _| [77, 77, 77, 255]);
+    let h = s.execute("screen.halftone", &json!({"source": grey, "dpi": 600, "minDot": 0, "maxDot": 1, "screening": "fm", "dotMm": 0.2})).unwrap();
+    assert!((h["films"][0]["coverage"].as_f64().unwrap() - 0.70).abs() < 0.04, "{h}");
+    assert!(h["advice"].as_array().unwrap().is_empty());
+    let g = s.execute("screen.halftone", &json!({"source": grey, "dpi": 600, "minDot": 0, "maxDot": 1, "screening": "fm", "dotGain": 0.2})).unwrap();
+    assert!((g["films"][0]["coverage"].as_f64().unwrap() - 0.50).abs() < 0.04, "{g}");
+    for bad in
+        [json!({"screening": "stochastic"}), json!({"screening": 1}), json!({"screening": "fm", "dotMm": 0}), json!({"screening": "fm", "dotMm": 9})]
+    {
+        let mut q = json!({"source": grey, "dpi": 600});
+        q.as_object_mut().unwrap().extend(bad.as_object().unwrap().clone());
+        assert!(s.execute("screen.halftone", &q).is_err(), "{q}");
+    }
+}

@@ -7,6 +7,7 @@
 //! * [`separate`] – palette extraction, spot-colour separation, tone plates.
 //! * [`simulated`] – simulated-process separation: full colour from a few inks as halftone dots.
 //! * [`morph`] – exact Euclidean choke and spread of a plate (for underbase and traps).
+//! * [`fm`] – stochastic (FM) screening by error diffusion on cells.
 //! * [`halftone`] – amplitude-modulated screening (round, elliptical, line) at a screen angle.
 //! * [`marks`] – registration crosshairs.
 //! * [`dcs`] – DCS 2.0 files: a composite and one EPS per plate, single or multiple files.
@@ -27,6 +28,7 @@ pub mod dcs;
 pub mod dtf;
 pub mod error;
 pub mod export;
+pub mod fm;
 pub mod halftone;
 pub mod image;
 pub mod index;

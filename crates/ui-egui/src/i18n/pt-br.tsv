@@ -6597,3 +6597,9 @@ mark-style	Japanese	Japonesas
 
 # ScreenFoundry: DTF files (SC-8). Machine-written first pass, to be checked by a native speaker.
 	DTF Files	Arquivos DTF
+
+# ScreenFoundry: FM screening (SC-7). Machine-written first pass, to be checked by a native speaker.
+	Screening	Retícula
+	AM	AM
+	FM	FM
+	Dot Size	Tamanho do ponto

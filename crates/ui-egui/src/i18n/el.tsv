@@ -6691,3 +6691,9 @@ machine	Stop	Στάση
 
 # ScreenFoundry: DTF files (SC-8). Machine-written first pass, to be checked by a native speaker.
 	DTF Files	Αρχεία DTF
+
+# ScreenFoundry: FM screening (SC-7). Machine-written first pass, to be checked by a native speaker.
+	Screening	Ράστερ
+	AM	AM
+	FM	FM
+	Dot Size	Μέγεθος κουκκίδας

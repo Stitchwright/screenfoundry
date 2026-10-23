@@ -6349,3 +6349,9 @@ effect	Soft	Weich
 
 # ScreenFoundry: DTF files (SC-8). Machine-written first pass, to be checked by a native speaker.
 	DTF Files	DTF-Dateien
+
+# ScreenFoundry: FM screening (SC-7). Machine-written first pass, to be checked by a native speaker.
+	Screening	Rasterung
+	AM	AM
+	FM	FM
+	Dot Size	Punktgröße

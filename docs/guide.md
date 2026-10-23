@@ -14,6 +14,7 @@ channel, the command-line tool and the MCP server.
 - [Trap and choke](#trap-and-choke)
 - [Halftones](#halftones)
 - [Simulated process](#simulated-process)
+- [FM screening](#fm-screening)
 - [Vector art](#vector-art)
 - [Index color](#index-color)
 - [DTF files](#dtf-files)
@@ -90,6 +91,23 @@ inks; give them (`inks`) or let ScreenFoundry find them (`colors`).
 `dotGain` works here too (and is the Dot Gain box in the panel). It does not model dots overlapping
 or how opaque the ink is. Print a test and adjust the dot limits (`minDot`, `maxDot`), the dot gain
 and the line screen before a production run.
+
+## FM screening
+
+Both the halftone film and simulated process can screen with scattered equal dots instead of
+angled dots: `screening: "fm"`. The number of dots follows the tone, not their size, so there is
+no line screen and no screen angle, and two inks cannot moiré against each other. The size of one
+dot is `dotMm` (default 0.2 mm), which should be several mesh threads wide or the dots will not
+hold on the screen; every dot is a whole square of that size or a run of touching squares. The
+dot limits (`minDot`, `maxDot`) and `dotGain` work as for the angled screens. There is no mesh
+advice for FM, because nothing sourced says how small an FM dot may be for a mesh.
+
+The method is Floyd–Steinberg error diffusion, run on cells of the dot size. It is not the
+void-and-cluster method; that is a patented method of the 1990s, and error diffusion is older.
+Error diffusion can show faint worm-like patterns in some flat tones and a hybrid screen (angled
+dots in the middle tones, scattered ones at the ends) is not built; print a test and compare it
+with the angled screen before choosing it for a job. In the panel, Simulated Process has an AM
+and FM choice with a Dot Size.
 
 ## Vector art
 

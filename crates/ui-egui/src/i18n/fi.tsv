@@ -6756,3 +6756,9 @@ swatch	Bright Violet	Kirkas violetti
 
 # ScreenFoundry: DTF files (SC-8). Machine-written first pass, to be checked by a native speaker.
 	DTF Files	DTF-tiedostot
+
+# ScreenFoundry: FM screening (SC-7). Machine-written first pass, to be checked by a native speaker.
+	Screening	Rasterointi
+	AM	AM
+	FM	FM
+	Dot Size	Pisteen koko

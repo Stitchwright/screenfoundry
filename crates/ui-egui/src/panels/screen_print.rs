@@ -90,6 +90,10 @@ pub struct ScreenPrintState {
     pub lpi: f64,
     /// Dot gain at 50% in percent, for simulated process (0 turns the compensation off).
     pub dot_gain_pct: f64,
+    /// Scatter equal dots (FM) instead of angled dots (AM), for simulated process.
+    pub fm: bool,
+    /// The size of one FM dot in mm.
+    pub dot_mm: f64,
     /// Side of one printed pixel in mm, for index colour.
     pub cell_mm: f64,
     /// How much error spreads between pixels in percent, for index colour (0 = flat).
@@ -112,6 +116,8 @@ impl Default for ScreenPrintState {
             trap_mm: 0.25,
             lpi: 45.0,
             dot_gain_pct: 0.0,
+            fm: false,
+            dot_mm: 0.2,
             cell_mm: 0.5,
             dither_pct: 100.0,
             marks: true,
@@ -150,6 +156,10 @@ impl ScreenPrintState {
             Method::Simulated => {
                 p["lpi"] = json!(self.lpi);
                 p["dotGain"] = json!(self.dot_gain_pct / 100.0);
+                if self.fm {
+                    p["screening"] = json!("fm");
+                    p["dotMm"] = json!(self.dot_mm);
+                }
             }
             Method::Index => {
                 p["cellMm"] = json!(self.cell_mm);
@@ -325,9 +335,21 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
         }
         Method::Simulated => {
             ui.horizontal(|ui| {
-                ui.label(RichText::new(tl!("Line Screen")).color(t.text_dim));
-                ui.add(egui::DragValue::new(&mut st.lpi).range(5.0..=150.0).speed(0.5).suffix(" lpi"));
+                ui.label(RichText::new(tl!("Screening")).color(t.text_dim));
+                ui.selectable_value(&mut st.fm, false, tl!("AM"));
+                ui.selectable_value(&mut st.fm, true, tl!("FM"));
             });
+            if st.fm {
+                ui.horizontal(|ui| {
+                    ui.label(RichText::new(tl!("Dot Size")).color(t.text_dim));
+                    ui.add(egui::DragValue::new(&mut st.dot_mm).range(0.02..=5.0).speed(0.01).suffix(" mm"));
+                });
+            } else {
+                ui.horizontal(|ui| {
+                    ui.label(RichText::new(tl!("Line Screen")).color(t.text_dim));
+                    ui.add(egui::DragValue::new(&mut st.lpi).range(5.0..=150.0).speed(0.5).suffix(" lpi"));
+                });
+            }
             ui.horizontal(|ui| {
                 ui.label(RichText::new(tl!("Dot Gain")).color(t.text_dim));
                 ui.add(egui::DragValue::new(&mut st.dot_gain_pct).range(0.0..=25.0).speed(0.25).suffix(" %"));
@@ -434,6 +456,11 @@ mod tests {
         assert_eq!(p["dotGain"], json!(0.0));
         st.dot_gain_pct = 20.0;
         assert_eq!(st.request(600.0, true).1["dotGain"], json!(0.2));
+        assert!(st.request(600.0, true).1.get("screening").is_none(), "AM is the default");
+        st.fm = true;
+        st.dot_mm = 0.3;
+        let (_, fm) = st.request(600.0, true);
+        assert_eq!((fm["screening"].clone(), fm["dotMm"].clone()), (json!("fm"), json!(0.3)));
         assert!(p.get("colors").is_none() && p.get("trapMm").is_none());
         st.method = Method::Index;
         let (cmd, p) = st.request(200.0, false);
