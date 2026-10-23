@@ -8,6 +8,7 @@
 //! * [`simulated`] – simulated-process separation: full colour from a few inks as halftone dots.
 //! * [`morph`] – exact Euclidean choke and spread of a plate (for underbase and traps).
 //! * [`fm`] – stochastic (FM) screening by error diffusion on cells.
+//! * [`curve`] – a measured dot-gain curve and its inverse, for compensating the film.
 //! * [`halftone`] – amplitude-modulated screening (round, elliptical, line) at a screen angle.
 //! * [`marks`] – registration crosshairs.
 //! * [`dcs`] – DCS 2.0 files: a composite and one EPS per plate, single or multiple files.
@@ -25,6 +26,7 @@
 //! Nothing panics on bad input: sizes are capped and every fallible call returns [`Result`].
 
 pub mod color;
+pub mod curve;
 pub mod dcs;
 pub mod dtf;
 pub mod error;

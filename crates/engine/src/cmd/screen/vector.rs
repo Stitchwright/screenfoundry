@@ -439,6 +439,7 @@ fn rasterize(r: &mut Renderer, plate: &PathData, region: Rect, scale: f64, (w, h
 struct ToneScreen {
     opts: HalftoneOptions,
     scatter: Option<Scatter>,
+    curve: Option<sc_core::curve::ToneCurve>,
 }
 
 /// `path` filled with `paint`, drawn without smoothing into `size` pixels over `region`.
@@ -478,6 +479,10 @@ fn screened_part(
             sc_core::separate::tone_plate(&img, ink_rgb).map_err(sc(C))?
         }
         Tone::Solid => return Ok(mask),
+    };
+    let plate = match &screen.curve {
+        Some(curve) => curve.compensate(&plate).map_err(sc(C))?,
+        None => plate,
     };
     let opts = HalftoneOptions { angle_deg: angle, ..screen.opts };
     let dots = screen_plate(&plate, &opts, &screen.scatter).map_err(sc(C))?;
@@ -710,6 +715,13 @@ pub(super) fn separate_vector(s: &mut Session, p: &Value) -> Result<Value> {
     let tone_screen = if screened_parts.is_empty() {
         None
     } else {
+        let curve = curve_of(p, C)?;
+        let mut scatter = scatter_of(C, p, dpi)?;
+        if curve.is_some()
+            && let Some(sc) = scatter.as_mut()
+        {
+            sc.fm.dot_gain = 0.0;
+        }
         Some(ToneScreen {
             opts: HalftoneOptions {
                 dpi,
@@ -718,9 +730,10 @@ pub(super) fn separate_vector(s: &mut Session, p: &Value) -> Result<Value> {
                 shape: shape_of(p, C)?,
                 min_dot: num(p, C, "minDot", 0.08, 0.0..=1.0)?,
                 max_dot: num(p, C, "maxDot", 0.95, 0.0..=1.0)?,
-                dot_gain: num(p, C, "dotGain", 0.0, 0.0..=MAX_DOT_GAIN)?,
+                dot_gain: if curve.is_some() { 0.0 } else { num(p, C, "dotGain", 0.0, 0.0..=MAX_DOT_GAIN)? },
             },
-            scatter: scatter_of(C, p, dpi)?,
+            scatter,
+            curve,
         })
     };
     // Print order: light to dark, as for the other methods.

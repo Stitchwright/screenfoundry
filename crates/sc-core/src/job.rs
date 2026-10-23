@@ -6,6 +6,7 @@
 //! job keeps the order explicit so a user can change it later.
 
 use crate::color::srgb_to_lab;
+use crate::curve::ToneCurve;
 use crate::error::{Result, param};
 use crate::fm::{FmOptions, Hybrid, Kernel, fm_screen, hybrid_screen};
 use crate::halftone::{HalftoneOptions, halftone, solid};
@@ -137,6 +138,9 @@ pub struct SimulatedJob {
     /// The most of the area all inks together may cover, 0.1 to 1 (default 1: no cap).
     #[serde(default = "full")]
     pub ink_limit: f64,
+    /// A measured dot-gain curve applied to every ink; replaces the dot gain of the screen and `gains`.
+    #[serde(default)]
+    pub curve: Option<ToneCurve>,
 }
 
 fn full() -> f64 {
@@ -149,7 +153,10 @@ impl SimulatedJob {
             return Err(param("inks", "a job needs at least one ink"));
         }
         let rgbs: Vec<[u8; 3]> = self.inks.iter().map(|i| i.rgb).collect();
-        let plates = simulated_plates(img, &rgbs, self.base, self.ink_limit)?;
+        let mut plates = simulated_plates(img, &rgbs, self.base, self.ink_limit)?;
+        if let Some(curve) = &self.curve {
+            plates = plates.iter().map(|p| curve.compensate(p)).collect::<Result<_>>()?;
+        }
         let angles: &[f64] = if self.angles.is_empty() { &DEFAULT_ANGLES } else { &self.angles };
 
         let lightness = |i: usize| self.inks.get(i).map_or(0.0, |k| srgb_to_lab(k.rgb)[0]);
@@ -165,7 +172,7 @@ impl SimulatedJob {
                 return Err(param("inks", "plate/ink mismatch"));
             };
             let angle = angles.get(i % angles.len()).copied().unwrap_or(22.5);
-            let gain = self.gains.get(i).copied().unwrap_or(self.halftone.dot_gain);
+            let gain = if self.curve.is_some() { 0.0 } else { self.gains.get(i).copied().unwrap_or(self.halftone.dot_gain) };
             let am = HalftoneOptions { angle_deg: angle, dot_gain: gain, ..self.halftone };
             let bitmap = match (&self.fm, &self.hybrid) {
                 (Some(fm), Some(h)) => hybrid_screen(plate, &am, &FmOptions { dot_gain: gain, ..*fm }, h)?,
@@ -192,6 +199,9 @@ pub struct IndexJob {
     /// Where each pixel's error goes.
     #[serde(default)]
     pub kernel: Kernel,
+    /// An ordered (Bayer) dither instead of error diffusion.
+    #[serde(default)]
+    pub ordered: bool,
 }
 
 impl IndexJob {
@@ -200,7 +210,7 @@ impl IndexJob {
             return Err(param("inks", "a job needs at least one ink"));
         }
         let rgbs: Vec<[u8; 3]> = self.inks.iter().map(|i| i.rgb).collect();
-        let bitmaps = index_films(img, &rgbs, self.base, self.cell_px, self.dither, self.kernel)?;
+        let bitmaps = index_films(img, &rgbs, self.base, self.cell_px, self.dither, self.kernel, self.ordered)?;
 
         let lightness = |i: usize| self.inks.get(i).map_or(0.0, |k| srgb_to_lab(k.rgb)[0]);
         let mut order: Vec<usize> = (0..self.inks.len()).collect();
@@ -324,6 +334,7 @@ mod tests {
             hybrid: None,
             gains: Vec::new(),
             ink_limit: 1.0,
+            curve: None,
         }
     }
 
@@ -376,6 +387,19 @@ mod tests {
     }
 
     #[test]
+    fn a_measured_curve_lightens_the_film_like_a_gain_would() {
+        let mut j = sim_job(false);
+        let plain: f64 = j.run(&half_and_half()).unwrap().iter().map(|f| f.bitmap.coverage()).sum();
+        j.curve = Some(ToneCurve::new(&[(0.5, 0.7)]).unwrap());
+        let cut: f64 = j.run(&half_and_half()).unwrap().iter().map(|f| f.bitmap.coverage()).sum();
+        assert!(cut < plain - 0.05, "{cut} vs {plain}");
+        // The curve replaces any plain gain.
+        j.halftone.dot_gain = 0.25;
+        let both: f64 = j.run(&half_and_half()).unwrap().iter().map(|f| f.bitmap.coverage()).sum();
+        assert!((both - cut).abs() < 1e-9);
+    }
+
+    #[test]
     fn an_ink_limit_lowers_the_dots_in_the_darks() {
         let dark = Rgba8::new(120, 120, [10u8, 20, 90, 255].repeat(120 * 120)).unwrap(); // the navy itself
         let mut j = sim_job(false);
@@ -415,6 +439,7 @@ mod tests {
             cell_px: 2,
             dither: 1.0,
             kernel: Kernel::default(),
+            ordered: false,
         };
         let films = job.run(&art()).unwrap();
         let names: Vec<_> = films.iter().map(|f| f.name.as_str()).collect();

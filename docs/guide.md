@@ -180,7 +180,9 @@ is the colour that shows where no ink prints.
 Each pixel takes the palette colour nearest to its own colour plus the error its neighbours left
 behind (error diffusion, worked in linear light so the average brightness matches the art).
 `kernel` (Diffusion in the panel, which also applies to FM dots as `fmKernel`) picks where the error goes: `floyd` (Floyd-Steinberg, default, the sharpest), `jarvis` or
-`stucki` (wider reach, smoother and a little softer). `dither` sets how much error spreads: 1 (default) is full diffusion for
+`stucki` (wider reach, smoother and a little softer). `pattern: "ordered"` swaps diffusion for an
+ordered (Bayer) dither: an even 8 × 8 pattern that repeats exactly and travels no error between
+pixels, which some shops prefer for texture they can predict on the screen. `dither` sets how much error spreads: 1 (default) is full diffusion for
 photographs, 0 maps every pixel to its nearest ink for flat art. `cellMm` (default 0.5 mm) is the
 side of one printed pixel: keep it several mesh threads wide or the pixels will not hold on the
 screen. The default is a starting point, not a standard; print a test. Inks print light to dark
@@ -229,6 +231,13 @@ It is made of three parts (`parts`: `tones`, `lines`, `trap`; all by default):
 Options: `dpi` (100 to 1200, default 600), `mesh`, `lpi`, `angle`, `shape`, `dotGain`, `dir`, `format`.
 The result lists the layout (`tonesPercent`, `lineWidthsHundredthsMm`, `trapHundredthsMm`).
 Defaults are not yet tuned from real prints (SC-10).
+
+Once you have printed the test page you can give the press's real curve instead of one gain
+number: `dotCurve` is a list of `[film, printed]` tones from 0 to 1, for example `[[0.25, 0.35],
+[0.5, 0.7], [0.75, 0.88]]` when 25% on film printed as 35%, 50% as 70% and 75% as 88%. The film is
+lightened so each tone prints as asked (straight lines between your points; 0 and 100% stay). It
+works on `screen.halftone`, `screen.simulate` and the tints and gradients of `screen.separateVector`,
+and replaces `dotGain` there.
 
 ## Mesh and line screen
 

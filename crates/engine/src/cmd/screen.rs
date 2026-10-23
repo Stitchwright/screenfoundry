@@ -85,7 +85,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Separate Vector Art",
             [],
             None,
-            "{dpi?, inkBy?: color|layer|group (color) with layer each layer that has shapes is one ink named after it and coloured by its first shape (sublayers count as their layer; an entry of `inks` with the layer's name sets its colour and mesh) and with group each outermost group is one ink named after the group (loose shapes of a layer share an ink named after the layer), inks?: [{name?, color, mesh? (156)}] the inks the art's colours go onto (each shape takes the nearest ink and a spot swatch takes the ink of its own name first; without `inks` each colour or spot swatch of the art is an ink up to 12), snap?: true|{maxDeltaE? (25), library?: [{name, color}]} replace each ink by the nearest library ink and use its name when none is given, underbase?: true|{name?, color? (#ffffff), mesh? (110), chokeMm? (0.3)}, trapMm? (0.25), pairs?: [{spread: the name of the lighter ink, under: the name of the ink printed after it that it tucks under, mm (0.25–0 for none; replaces trapMm for that pair)}], marks?, tones? (true: a spot tint below 100% and a gradient print as dots, a tint as its share of the ink and a gradient by the tone of what it draws with its darkest stop as the ink; false prints tints solid and skips gradients), lpi?: the line screen of those dots (45), shape?: round|ellipse|line (round), screening?: am|fm|hybrid (am; fm scatters equal dots with no angle or ruling so nothing can moire; hybrid scatters only the light and dark ends and angles dots between), dotMm?: the size of one FM dot (0.2; 0.02–5), fmKernel?: floyd|jarvis|stucki (floyd; how the error is spread), hybridBelow?: a hybrid scatters cells lighter than this tone (0.15; 0–1), hybridAbove?: a hybrid scatters cells darker than this tone (0.85; 0–1), minDot?: tones below this print nothing (0.08), maxDot?: tones above this print solid (0.95), dotGain?: how much bigger a 50% dot prints than on the film (0 = off; at most 0.25), vectorSvg?: give each plate as an SVG instead of a PDF in the `vector` entry (black paths, for editing; `vectorPdf` wins when both are given), vectorPdf?: also give each plate as a vector PDF in the `vector` entry of its film (the page is the artboard and with `marks` grows to hold the same four registration marks), format?: png|tiff|tiff-g4|pdf (png), mirror?: flip every film left to right for emulsion-down printing (false), dcs?: single|multiple (also write the films as a DCS 2.0 file; multiple puts each plate in a file beside a main file and needs `dir`), dcsName?: the job name in the DCS files (separation), dcsCompositeDpi?: the resolution of the composite in the DCS main file (150; 10–2400; the film resolution or more gives a full resolution composite and a large file), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?} the open document's first artboard separated as paths: solid fills and strokes (type too) go onto inks, a shape knocks out the other inks under it unless it overprints, the underbase and the traps are path operations, and each plate is drawn once at the film resolution; the underbase first then the inks light to dark → {dpi, width, height, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64, vector?: {format, path | dataBase64}}], inks: [{name, color, shapes}], skipped: [{object, why}], skippedTotal, notes: [text]}",
+            "{dpi?, inkBy?: color|layer|group (color) with layer each layer that has shapes is one ink named after it and coloured by its first shape (sublayers count as their layer; an entry of `inks` with the layer's name sets its colour and mesh) and with group each outermost group is one ink named after the group (loose shapes of a layer share an ink named after the layer), inks?: [{name?, color, mesh? (156)}] the inks the art's colours go onto (each shape takes the nearest ink and a spot swatch takes the ink of its own name first; without `inks` each colour or spot swatch of the art is an ink up to 12), snap?: true|{maxDeltaE? (25), library?: [{name, color}]} replace each ink by the nearest library ink and use its name when none is given, underbase?: true|{name?, color? (#ffffff), mesh? (110), chokeMm? (0.3)}, trapMm? (0.25), pairs?: [{spread: the name of the lighter ink, under: the name of the ink printed after it that it tucks under, mm (0.25–0 for none; replaces trapMm for that pair)}], marks?, tones? (true: a spot tint below 100% and a gradient print as dots, a tint as its share of the ink and a gradient by the tone of what it draws with its darkest stop as the ink; false prints tints solid and skips gradients), lpi?: the line screen of those dots (45), shape?: round|ellipse|line (round), screening?: am|fm|hybrid (am; fm scatters equal dots with no angle or ruling so nothing can moire; hybrid scatters only the light and dark ends and angles dots between), dotMm?: the size of one FM dot (0.2; 0.02–5), fmKernel?: floyd|jarvis|stucki (floyd; how the error is spread), hybridBelow?: a hybrid scatters cells lighter than this tone (0.15; 0–1), hybridAbove?: a hybrid scatters cells darker than this tone (0.85; 0–1), minDot?: tones below this print nothing (0.08), maxDot?: tones above this print solid (0.95), dotCurve?: [[film, printed]] (a measured curve: what each film tone from 0 to 1 printed as, e.g. [[0.5, 0.7]]; replaces dotGain; read it off the print test page), dotGain?: how much bigger a 50% dot prints than on the film (0 = off; at most 0.25), vectorSvg?: give each plate as an SVG instead of a PDF in the `vector` entry (black paths, for editing; `vectorPdf` wins when both are given), vectorPdf?: also give each plate as a vector PDF in the `vector` entry of its film (the page is the artboard and with `marks` grows to hold the same four registration marks), format?: png|tiff|tiff-g4|pdf (png), mirror?: flip every film left to right for emulsion-down printing (false), dcs?: single|multiple (also write the films as a DCS 2.0 file; multiple puts each plate in a file beside a main file and needs `dir`), dcsName?: the job name in the DCS files (separation), dcsCompositeDpi?: the resolution of the composite in the DCS main file (150; 10–2400; the film resolution or more gives a full resolution composite and a large file), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?} the open document's first artboard separated as paths: solid fills and strokes (type too) go onto inks, a shape knocks out the other inks under it unless it overprints, the underbase and the traps are path operations, and each plate is drawn once at the film resolution; the underbase first then the inks light to dark → {dpi, width, height, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64, vector?: {format, path | dataBase64}}], inks: [{name, color, shapes}], skipped: [{object, why}], skippedTotal, notes: [text]}",
             always,
             vector::separate_vector
         ),
@@ -112,7 +112,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Simulated Process",
             [],
             None,
-            "{source?, dpi?, inks?: [{name?, color, mesh? (230)}], colors?: how many inks to find in the art when `inks` is not given (4; 1–8), snap?: true|{maxDeltaE? (25), library?: [{name, color}]} replace each ink by the nearest library ink and use its name when none is given, base?: \"#rrggbb\" the colour under the dots (#ffffff), underbase?: true|{name?, color?, mesh?, chokeMm?}, lpi? (45), angles?: [degrees an ink] (22.5, 67.5, 45, 15, 75, 37.5, 52.5, 7.5), shape?: round|ellipse|line (round), screening?: am|fm|hybrid (am; fm scatters equal dots with no angle or ruling so nothing can moire; hybrid scatters only the light and dark ends and angles dots between), dotMm?: the size of one FM dot (0.2; 0.02–5), fmKernel?: floyd|jarvis|stucki (floyd; how the error is spread), hybridBelow?: a hybrid scatters cells lighter than this tone (0.15; 0–1), hybridAbove?: a hybrid scatters cells darker than this tone (0.85; 0–1), minDot? (0.08), maxDot? (0.95), dotGain?: how much bigger a 50% dot prints than on the film (0 = off; 0.2 = a 50% dot prints as 70%; at most 0.25; the film is lightened to cancel it), inkLimit? (1 = no cap; 0.1–1: the most of the area all inks may cover together; darks come out lighter), inkGains?: [each ink's own dot gain in order, 0–0.25; replaces dotGain for that ink], marks?, format?: png|tiff|tiff-g4|pdf (png), mirror?: flip every film left to right for emulsion-down printing (false), dcs?: single|multiple (also write the films as a DCS 2.0 file; multiple puts each plate in a file beside a main file and needs `dir`), dcsName?: the job name in the DCS files (separation), dcsCompositeDpi?: the resolution of the composite in the DCS main file (150; 10–2400; the film resolution or more gives a full resolution composite and a large file), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?} full-colour art as halftone dots of a few inks side by side over the base, each ink at its own screen angle, the underbase first then the inks light to dark → {dpi, width, height, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64}], advice: [{ink, code, message}]}",
+            "{source?, dpi?, inks?: [{name?, color, mesh? (230)}], colors?: how many inks to find in the art when `inks` is not given (4; 1–8), snap?: true|{maxDeltaE? (25), library?: [{name, color}]} replace each ink by the nearest library ink and use its name when none is given, base?: \"#rrggbb\" the colour under the dots (#ffffff), underbase?: true|{name?, color?, mesh?, chokeMm?}, lpi? (45), angles?: [degrees an ink] (22.5, 67.5, 45, 15, 75, 37.5, 52.5, 7.5), shape?: round|ellipse|line (round), screening?: am|fm|hybrid (am; fm scatters equal dots with no angle or ruling so nothing can moire; hybrid scatters only the light and dark ends and angles dots between), dotMm?: the size of one FM dot (0.2; 0.02–5), fmKernel?: floyd|jarvis|stucki (floyd; how the error is spread), hybridBelow?: a hybrid scatters cells lighter than this tone (0.15; 0–1), hybridAbove?: a hybrid scatters cells darker than this tone (0.85; 0–1), minDot? (0.08), maxDot? (0.95), dotCurve?: [[film, printed]] (a measured curve: what each film tone from 0 to 1 printed as, e.g. [[0.5, 0.7]]; replaces dotGain; read it off the print test page), dotGain?: how much bigger a 50% dot prints than on the film (0 = off; 0.2 = a 50% dot prints as 70%; at most 0.25; the film is lightened to cancel it), inkLimit? (1 = no cap; 0.1–1: the most of the area all inks may cover together; darks come out lighter), inkGains?: [each ink's own dot gain in order, 0–0.25; replaces dotGain for that ink], marks?, format?: png|tiff|tiff-g4|pdf (png), mirror?: flip every film left to right for emulsion-down printing (false), dcs?: single|multiple (also write the films as a DCS 2.0 file; multiple puts each plate in a file beside a main file and needs `dir`), dcsName?: the job name in the DCS files (separation), dcsCompositeDpi?: the resolution of the composite in the DCS main file (150; 10–2400; the film resolution or more gives a full resolution composite and a large file), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?} full-colour art as halftone dots of a few inks side by side over the base, each ink at its own screen angle, the underbase first then the inks light to dark → {dpi, width, height, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64}], advice: [{ink, code, message}]}",
             always,
             simulate
         ),
@@ -121,7 +121,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Index Color",
             [],
             None,
-            "{source?, dpi?, inks?: [{name?, color, mesh? (156)}], colors?: how many inks to find in the art when `inks` is not given (6; 1–12), snap?: true|{maxDeltaE? (25), library?: [{name, color}]} replace each ink by the nearest library ink and use its name when none is given, base?: \"#rrggbb\" the colour under the pixels (#ffffff), underbase?: true|{name?, color?, mesh?, chokeMm?}, cellMm?: side of one printed pixel in millimetres (0.5; 0.05–5), dither?: how much of each pixel's error spreads to its neighbours (1; 0 = flat colour; 1 = full error diffusion), kernel?: floyd|jarvis|stucki (floyd; where the error goes: jarvis and stucki are smoother and softer), marks?, format?: png|tiff|tiff-g4|pdf (png), mirror?: flip every film left to right for emulsion-down printing (false), dcs?: single|multiple (also write the films as a DCS 2.0 file; multiple puts each plate in a file beside a main file and needs `dir`), dcsName?: the job name in the DCS files (separation), dcsCompositeDpi?: the resolution of the composite in the DCS main file (150; 10–2400; the film resolution or more gives a full resolution composite and a large file), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?} full-colour art reduced to a fixed palette of inks with one ink per square pixel and no overlap or dots, the underbase first then the inks light to dark → {dpi, width, height, cellPx, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64}]}",
+            "{source?, dpi?, inks?: [{name?, color, mesh? (156)}], colors?: how many inks to find in the art when `inks` is not given (6; 1–12), snap?: true|{maxDeltaE? (25), library?: [{name, color}]} replace each ink by the nearest library ink and use its name when none is given, base?: \"#rrggbb\" the colour under the pixels (#ffffff), underbase?: true|{name?, color?, mesh?, chokeMm?}, cellMm?: side of one printed pixel in millimetres (0.5; 0.05–5), dither?: how much of each pixel's error spreads to its neighbours (1; 0 = flat colour; 1 = full error diffusion), kernel?: floyd|jarvis|stucki (floyd; where the error goes: jarvis and stucki are smoother and softer), pattern?: diffusion|ordered (diffusion; ordered repeats an even 8 × 8 pattern instead of spreading error), marks?, format?: png|tiff|tiff-g4|pdf (png), mirror?: flip every film left to right for emulsion-down printing (false), dcs?: single|multiple (also write the films as a DCS 2.0 file; multiple puts each plate in a file beside a main file and needs `dir`), dcsName?: the job name in the DCS files (separation), dcsCompositeDpi?: the resolution of the composite in the DCS main file (150; 10–2400; the film resolution or more gives a full resolution composite and a large file), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?} full-colour art reduced to a fixed palette of inks with one ink per square pixel and no overlap or dots, the underbase first then the inks light to dark → {dpi, width, height, cellPx, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64}]}",
             always,
             index_colour
         ),
@@ -130,7 +130,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Halftone Film",
             [],
             None,
-            "{source?, dpi?, ink?: \"#rrggbb\" (#000000), name?, mesh? (230), lpi? (45), angle? (22.5), shape?: round|ellipse|line (round), screening?: am|fm|hybrid (am; fm scatters equal dots with no angle or ruling so nothing can moire; hybrid scatters only the light and dark ends and angles dots between), dotMm?: the size of one FM dot (0.2; 0.02–5), fmKernel?: floyd|jarvis|stucki (floyd; how the error is spread), hybridBelow?: a hybrid scatters cells lighter than this tone (0.15; 0–1), hybridAbove?: a hybrid scatters cells darker than this tone (0.85; 0–1), minDot?: tones below this print nothing (0.08), maxDot?: tones above this print solid (0.95), dotGain?: how much bigger a 50% dot prints than on the film (0 = off; 0.2 = a 50% dot prints as 70%; at most 0.25; the film is lightened to cancel it), marks?, format?: png|tiff|tiff-g4|pdf (png), mirror?: flip every film left to right for emulsion-down printing (false), dcs?: single|multiple (also write the films as a DCS 2.0 file; multiple puts each plate in a file beside a main file and needs `dir`), dcsName?: the job name in the DCS files (separation), dcsCompositeDpi?: the resolution of the composite in the DCS main file (150; 10–2400; the film resolution or more gives a full resolution composite and a large file), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?} one ink's tones screened into dots → {dpi, width, height, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64}], advice: [{code, message}]}",
+            "{source?, dpi?, ink?: \"#rrggbb\" (#000000), name?, mesh? (230), lpi? (45), angle? (22.5), shape?: round|ellipse|line (round), screening?: am|fm|hybrid (am; fm scatters equal dots with no angle or ruling so nothing can moire; hybrid scatters only the light and dark ends and angles dots between), dotMm?: the size of one FM dot (0.2; 0.02–5), fmKernel?: floyd|jarvis|stucki (floyd; how the error is spread), hybridBelow?: a hybrid scatters cells lighter than this tone (0.15; 0–1), hybridAbove?: a hybrid scatters cells darker than this tone (0.85; 0–1), minDot?: tones below this print nothing (0.08), maxDot?: tones above this print solid (0.95), dotCurve?: [[film, printed]] (a measured curve: what each film tone from 0 to 1 printed as, e.g. [[0.5, 0.7]]; replaces dotGain; read it off the print test page), dotGain?: how much bigger a 50% dot prints than on the film (0 = off; 0.2 = a 50% dot prints as 70%; at most 0.25; the film is lightened to cancel it), marks?, format?: png|tiff|tiff-g4|pdf (png), mirror?: flip every film left to right for emulsion-down printing (false), dcs?: single|multiple (also write the films as a DCS 2.0 file; multiple puts each plate in a file beside a main file and needs `dir`), dcsName?: the job name in the DCS files (separation), dcsCompositeDpi?: the resolution of the composite in the DCS main file (150; 10–2400; the film resolution or more gives a full resolution composite and a large file), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?} one ink's tones screened into dots → {dpi, width, height, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64}], advice: [{code, message}]}",
             always,
             halftone_film
         ),
@@ -808,7 +808,13 @@ fn index_colour(s: &mut Session, p: &Value) -> Result<Value> {
         o.entry("colors").or_insert(json!(6));
     }
     let inks = inks_of(&q, C, &img, MAX_INDEX_INKS, 156.0)?;
-    let job = IndexJob { inks, base, underbase: underbase_of(p, C, mm_px)?, cell_px, dither, kernel: kernel_of(p, C, "kernel")? };
+    let ordered = match p.get("pattern") {
+        None | Some(Value::Null) => false,
+        Some(Value::String(k)) if k == "diffusion" => false,
+        Some(Value::String(k)) if k == "ordered" => true,
+        Some(_) => return Err(bad(C, "`pattern` is diffusion or ordered")),
+    };
+    let job = IndexJob { inks, base, underbase: underbase_of(p, C, mm_px)?, cell_px, dither, kernel: kernel_of(p, C, "kernel")?, ordered };
     let films = job.run(&img).map_err(sc(C))?;
     let (films, dcs) = finish_films(C, p, films, dpi, marks, fmt)?;
     let (w, h) = films.first().map(|f| (f["width"].clone(), f["height"].clone())).unwrap_or_default();
@@ -817,6 +823,25 @@ fn index_colour(s: &mut Session, p: &Value) -> Result<Value> {
     attach(&mut out, sheet);
     attach_dcs(&mut out, dcs);
     Ok(out)
+}
+
+/// `dotCurve`: a measured curve as [[film, printed], …] tones in 0..1 (what each film tone printed as).
+fn curve_of(p: &Value, cmd: &str) -> Result<Option<sc_core::curve::ToneCurve>> {
+    let list = match p.get("dotCurve") {
+        None | Some(Value::Null) => return Ok(None),
+        Some(Value::Array(a)) => a,
+        Some(_) => return Err(bad(cmd, "`dotCurve` is a list of [film, printed] tones")),
+    };
+    let pair = |v: &Value| -> Option<(f64, f64)> {
+        let a = v.as_array()?;
+        if a.len() != 2 {
+            return None;
+        }
+        Some((a.first()?.as_f64()?, a.get(1)?.as_f64()?))
+    };
+    let points: Vec<(f64, f64)> =
+        list.iter().map(pair).collect::<Option<_>>().ok_or_else(|| bad(cmd, "`dotCurve` is a list of [film, printed] tones"))?;
+    sc_core::curve::ToneCurve::new(&points).map(Some).map_err(|e| bad(cmd, e.to_string()))
 }
 
 /// A tone plate screened into film: angled dots, or scattered ones when `scatter` is given.
@@ -913,7 +938,13 @@ fn simulate(s: &mut Session, p: &Value) -> Result<Value> {
     let base = color(C, "base", p.get("base"), [255, 255, 255])?;
     let img = artwork(s, p, C, dpi)?;
     let inks = inks_of(p, C, &img, sc_core::simulated::MAX_INKS, 230.0)?;
-    let scatter = scatter_of(C, p, dpi)?;
+    let mut scatter = scatter_of(C, p, dpi)?;
+    let curve = curve_of(p, C)?;
+    if curve.is_some()
+        && let Some(sc) = scatter.as_mut()
+    {
+        sc.fm.dot_gain = 0.0;
+    }
     let job = SimulatedJob {
         inks: inks.clone(),
         base,
@@ -931,6 +962,7 @@ fn simulate(s: &mut Session, p: &Value) -> Result<Value> {
         fm: scatter.as_ref().map(|s| s.fm),
         hybrid: scatter.as_ref().and_then(|s| s.hybrid),
         ink_limit: num(p, C, "inkLimit", 1.0, sc_core::simulated::MIN_INK_LIMIT..=1.0)?,
+        curve,
         gains: match p.get("inkGains") {
             None | Some(Value::Null) => Vec::new(),
             Some(Value::Array(a)) if a.len() <= sc_core::simulated::MAX_INKS => a
@@ -988,7 +1020,17 @@ fn halftone_film(s: &mut Session, p: &Value) -> Result<Value> {
         max_dot: num(p, C, "maxDot", 0.95, 0.0..=1.0)?,
         dot_gain: num(p, C, "dotGain", 0.0, 0.0..=MAX_DOT_GAIN)?,
     };
-    let scatter = scatter_of(C, p, dpi)?;
+    let mut scatter = scatter_of(C, p, dpi)?;
+    // A measured curve replaces the plain dot gain.
+    let (plate, opts) = match curve_of(p, C)? {
+        Some(curve) => {
+            if let Some(sc) = scatter.as_mut() {
+                sc.fm.dot_gain = 0.0;
+            }
+            (curve.compensate(&plate).map_err(sc(C))?, HalftoneOptions { dot_gain: 0.0, ..opts })
+        }
+        None => (plate, opts),
+    };
     let bitmap = screen_plate(&plate, &opts, &scatter).map_err(sc(C))?;
     let film = Film { name: name_of(p.get("name"), "Halftone".into()), ink_rgb: ink, mesh, role: Role::Color, bitmap };
     let (films, dcs) = finish_films(C, p, vec![film], dpi, bool_or(p, "marks", false), FilmFormat::parse(C, p)?)?;

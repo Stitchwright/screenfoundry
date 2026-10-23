@@ -1306,4 +1306,46 @@ fn index_colour_takes_a_diffusion_kernel() {
     let (a, b) = (film_image(&fs["films"][0]), film_image(&st["films"][0]));
     assert_ne!(a.as_raw(), b.as_raw(), "different kernels, different patterns");
     assert!(run(&mut s, Some("jarvis")).is_ok() && run(&mut s, Some("nope")).is_err());
+    // An ordered pattern is a different pattern again, and unknown names are refused.
+    let mut p = json!({"source": src, "dpi": 300, "inks": inks, "cellMm": 0.17, "pattern": "ordered"});
+    let ord = s.execute("screen.index", &p).unwrap();
+    assert_ne!(film_image(&ord["films"][0]).as_raw(), a.as_raw());
+    p["pattern"] = json!("random");
+    assert!(s.execute("screen.index", &p).is_err());
+}
+
+#[test]
+fn a_measured_dot_curve_replaces_the_plain_gain() {
+    let mut s = Session::new();
+    let src = png_source(120, 60, |_, _| [128, 128, 128, 255]);
+    let run = |s: &mut Session, extra: Value| {
+        let mut p = json!({"source": src, "dpi": 600, "lpi": 50, "minDot": 0, "maxDot": 1});
+        for (k, v) in extra.as_object().unwrap() {
+            p[k] = v.clone();
+        }
+        s.execute("screen.halftone", &p)
+    };
+    let share = |r: &Value| inked_share(&r["films"][0], 0, 120);
+    let plain = share(&run(&mut s, json!({})).unwrap());
+    // A press that prints a 50% film dot as 70%: the film is lightened to give back the tone.
+    let curved = share(&run(&mut s, json!({"dotCurve": [[0.5, 0.7]]})).unwrap());
+    assert!(curved < plain - 0.05, "{curved} vs {plain}");
+    // The curve wins over dotGain.
+    let both = share(&run(&mut s, json!({"dotCurve": [[0.5, 0.7]], "dotGain": 0.25})).unwrap());
+    assert!((both - curved).abs() < 0.001, "{both} vs {curved}");
+    for bad in
+        [json!({"dotCurve": 3}), json!({"dotCurve": [[0.5]]}), json!({"dotCurve": [[0.5, 0.7], [0.4, 0.8]]}), json!({"dotCurve": [[2.0, 0.5]]})]
+    {
+        assert!(run(&mut s, bad.clone()).is_err(), "{bad}");
+    }
+    // It reaches the simulated process too.
+    let inks = json!([{"name": "Black", "color": "#000000"}]);
+    let sim = |s: &mut Session, curve: Option<Value>| {
+        let mut p = json!({"source": src, "dpi": 600, "lpi": 50, "inks": inks, "minDot": 0, "maxDot": 1});
+        if let Some(c) = curve {
+            p["dotCurve"] = c;
+        }
+        inked_share(&s.execute("screen.simulate", &p).unwrap()["films"][0], 0, 120)
+    };
+    assert!(sim(&mut s, Some(json!([[0.5, 0.7]]))) < sim(&mut s, None) - 0.05);
 }
