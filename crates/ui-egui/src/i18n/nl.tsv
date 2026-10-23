@@ -6681,3 +6681,8 @@ swatch	Bright Violet	Felviolet
 	AM	AM
 	FM	FM
 	Dot Size	Puntgrootte
+
+# ScreenFoundry: hybrid screening (SC-7). Machine-written first pass, to be checked by a native speaker.
+	Hybrid	Hybride
+	FM Below	FM onder
+	FM Above	FM boven

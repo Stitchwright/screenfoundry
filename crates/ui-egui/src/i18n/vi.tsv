@@ -6348,3 +6348,8 @@ machine	Stop	Dừng máy
 	AM	AM
 	FM	FM
 	Dot Size	Kích thước điểm
+
+# ScreenFoundry: hybrid screening (SC-7). Machine-written first pass, to be checked by a native speaker.
+	Hybrid	Lai
+	FM Below	FM dưới
+	FM Above	FM trên

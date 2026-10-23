@@ -6697,3 +6697,8 @@ machine	Stop	Στάση
 	AM	AM
 	FM	FM
 	Dot Size	Μέγεθος κουκκίδας
+
+# ScreenFoundry: hybrid screening (SC-7). Machine-written first pass, to be checked by a native speaker.
+	Hybrid	Υβριδικό
+	FM Below	FM κάτω από
+	FM Above	FM πάνω από

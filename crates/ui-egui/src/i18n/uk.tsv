@@ -6369,3 +6369,8 @@ machine	Stop	Зупинка
 	AM	AM
 	FM	FM
 	Dot Size	Розмір точки
+
+# ScreenFoundry: hybrid screening (SC-7). Machine-written first pass, to be checked by a native speaker.
+	Hybrid	Гібридний
+	FM Below	FM нижче
+	FM Above	FM вище

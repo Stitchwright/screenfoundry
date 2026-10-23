@@ -6759,3 +6759,8 @@ theme	Appearance	Apparence
 	AM	AM
 	FM	FM
 	Dot Size	Taille du point
+
+# ScreenFoundry: hybrid screening (SC-7). Machine-written first pass, to be checked by a native speaker.
+	Hybrid	Hybride
+	FM Below	FM sous
+	FM Above	FM au-dessus

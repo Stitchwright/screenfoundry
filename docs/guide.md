@@ -102,12 +102,21 @@ hold on the screen; every dot is a whole square of that size or a run of touchin
 dot limits (`minDot`, `maxDot`) and `dotGain` work as for the angled screens. There is no mesh
 advice for FM, because nothing sourced says how small an FM dot may be for a mesh.
 
-The method is Floyd–Steinberg error diffusion, run on cells of the dot size. It is not the
-void-and-cluster method; that is a patented method of the 1990s, and error diffusion is older.
-Error diffusion can show faint worm-like patterns in some flat tones and a hybrid screen (angled
-dots in the middle tones, scattered ones at the ends) is not built; print a test and compare it
-with the angled screen before choosing it for a job. In the panel, Simulated Process has an AM
-and FM choice with a Dot Size.
+The method is error diffusion, run on cells of the dot size. It is not the void-and-cluster
+method; that is a patented method of the 1990s, and error diffusion is older. `fmKernel` picks how
+the error is spread: `floyd` (Floyd and Steinberg, 1976, the default), `jarvis` (Jarvis, Judice
+and Ninke) or `stucki` (Stucki). The wider kernels smooth the texture a little and soften it;
+none is claimed to look best, and error diffusion can show faint worm-like patterns in some flat
+tones, so print a test and compare before choosing one for a job.
+
+**Hybrid.** `screening: "hybrid"` uses angled dots in the middle tones and scattered ones only
+where a cell is lighter than `hybridBelow` (default 0.15) or darker than `hybridAbove` (default
+0.85). Highlights and shadows are where the small dots of an angled screen will not hold on the
+screen, so there they become isolated whole cells of a size that will; the area printed follows
+the tone on both sides of the join, so density has no step, only the texture changes. A hybrid
+keeps the mesh and line-screen advice for its angled dots. In the panel, Simulated Process has an
+AM, FM and Hybrid choice, with a Dot Size and (for a hybrid) the two tones; the kernel is a
+command parameter.
 
 ## Vector art
 

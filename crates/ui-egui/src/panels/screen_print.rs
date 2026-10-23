@@ -32,6 +32,18 @@ pub struct InkRow {
     pub mesh: f64,
 }
 
+/// How simulated process makes its dots.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub enum Screening {
+    /// Angled dots of changing size.
+    #[default]
+    Am,
+    /// Scattered equal dots.
+    Fm,
+    /// Angled dots in the middle tones and scattered ones at the light and dark ends.
+    Hybrid,
+}
+
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub enum Method {
     /// One solid film per colour (`screen.separate`).
@@ -90,10 +102,13 @@ pub struct ScreenPrintState {
     pub lpi: f64,
     /// Dot gain at 50% in percent, for simulated process (0 turns the compensation off).
     pub dot_gain_pct: f64,
-    /// Scatter equal dots (FM) instead of angled dots (AM), for simulated process.
-    pub fm: bool,
+    /// Angled dots (AM), scattered dots (FM) or both, for simulated process.
+    pub screening: Screening,
     /// The size of one FM dot in mm.
     pub dot_mm: f64,
+    /// A hybrid scatters cells lighter than this tone and darker than the other, in percent.
+    pub hybrid_below_pct: f64,
+    pub hybrid_above_pct: f64,
     /// Side of one printed pixel in mm, for index colour.
     pub cell_mm: f64,
     /// How much error spreads between pixels in percent, for index colour (0 = flat).
@@ -116,8 +131,10 @@ impl Default for ScreenPrintState {
             trap_mm: 0.25,
             lpi: 45.0,
             dot_gain_pct: 0.0,
-            fm: false,
+            screening: Screening::Am,
             dot_mm: 0.2,
+            hybrid_below_pct: 15.0,
+            hybrid_above_pct: 85.0,
             cell_mm: 0.5,
             dither_pct: 100.0,
             marks: true,
@@ -156,9 +173,18 @@ impl ScreenPrintState {
             Method::Simulated => {
                 p["lpi"] = json!(self.lpi);
                 p["dotGain"] = json!(self.dot_gain_pct / 100.0);
-                if self.fm {
-                    p["screening"] = json!("fm");
-                    p["dotMm"] = json!(self.dot_mm);
+                match self.screening {
+                    Screening::Am => {}
+                    Screening::Fm => {
+                        p["screening"] = json!("fm");
+                        p["dotMm"] = json!(self.dot_mm);
+                    }
+                    Screening::Hybrid => {
+                        p["screening"] = json!("hybrid");
+                        p["dotMm"] = json!(self.dot_mm);
+                        p["hybridBelow"] = json!(self.hybrid_below_pct / 100.0);
+                        p["hybridAbove"] = json!(self.hybrid_above_pct / 100.0);
+                    }
                 }
             }
             Method::Index => {
@@ -336,18 +362,28 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
         Method::Simulated => {
             ui.horizontal(|ui| {
                 ui.label(RichText::new(tl!("Screening")).color(t.text_dim));
-                ui.selectable_value(&mut st.fm, false, tl!("AM"));
-                ui.selectable_value(&mut st.fm, true, tl!("FM"));
+                ui.selectable_value(&mut st.screening, Screening::Am, tl!("AM"));
+                ui.selectable_value(&mut st.screening, Screening::Fm, tl!("FM"));
+                ui.selectable_value(&mut st.screening, Screening::Hybrid, tl!("Hybrid"));
             });
-            if st.fm {
+            if st.screening != Screening::Am {
                 ui.horizontal(|ui| {
                     ui.label(RichText::new(tl!("Dot Size")).color(t.text_dim));
                     ui.add(egui::DragValue::new(&mut st.dot_mm).range(0.02..=5.0).speed(0.01).suffix(" mm"));
                 });
-            } else {
+            }
+            if st.screening != Screening::Fm {
                 ui.horizontal(|ui| {
                     ui.label(RichText::new(tl!("Line Screen")).color(t.text_dim));
                     ui.add(egui::DragValue::new(&mut st.lpi).range(5.0..=150.0).speed(0.5).suffix(" lpi"));
+                });
+            }
+            if st.screening == Screening::Hybrid {
+                ui.horizontal(|ui| {
+                    ui.label(RichText::new(tl!("FM Below")).color(t.text_dim));
+                    ui.add(egui::DragValue::new(&mut st.hybrid_below_pct).range(0.0..=100.0).speed(0.5).suffix(" %"));
+                    ui.label(RichText::new(tl!("FM Above")).color(t.text_dim));
+                    ui.add(egui::DragValue::new(&mut st.hybrid_above_pct).range(0.0..=100.0).speed(0.5).suffix(" %"));
                 });
             }
             ui.horizontal(|ui| {
@@ -457,10 +493,17 @@ mod tests {
         st.dot_gain_pct = 20.0;
         assert_eq!(st.request(600.0, true).1["dotGain"], json!(0.2));
         assert!(st.request(600.0, true).1.get("screening").is_none(), "AM is the default");
-        st.fm = true;
+        st.screening = Screening::Fm;
         st.dot_mm = 0.3;
         let (_, fm) = st.request(600.0, true);
         assert_eq!((fm["screening"].clone(), fm["dotMm"].clone()), (json!("fm"), json!(0.3)));
+        assert!(fm.get("hybridBelow").is_none());
+        st.screening = Screening::Hybrid;
+        let (_, hy) = st.request(600.0, true);
+        assert_eq!(
+            (hy["screening"].clone(), hy["hybridBelow"].clone(), hy["hybridAbove"].clone(), hy["lpi"].clone()),
+            (json!("hybrid"), json!(0.15), json!(0.85), json!(45.0))
+        );
         assert!(p.get("colors").is_none() && p.get("trapMm").is_none());
         st.method = Method::Index;
         let (cmd, p) = st.request(200.0, false);

@@ -7,7 +7,7 @@
 
 use crate::color::srgb_to_lab;
 use crate::error::{Result, param};
-use crate::fm::{FmOptions, fm_screen};
+use crate::fm::{FmOptions, Hybrid, fm_screen, hybrid_screen};
 use crate::halftone::{HalftoneOptions, halftone, solid};
 use crate::image::{Bitmap1, Gray8, Rgba8};
 use crate::index::index_films;
@@ -126,6 +126,10 @@ pub struct SimulatedJob {
     /// angles and shape then do not apply.
     #[serde(default)]
     pub fm: Option<FmOptions>,
+    /// With `fm` also set: angled dots in the middle tones and scattered ones only at the light
+    /// and dark ends (a hybrid screen).
+    #[serde(default)]
+    pub hybrid: Option<Hybrid>,
 }
 
 impl SimulatedJob {
@@ -150,9 +154,11 @@ impl SimulatedJob {
                 return Err(param("inks", "plate/ink mismatch"));
             };
             let angle = angles.get(i % angles.len()).copied().unwrap_or(22.5);
-            let bitmap = match &self.fm {
-                Some(fm) => fm_screen(plate, fm)?,
-                None => halftone(plate, &HalftoneOptions { angle_deg: angle, ..self.halftone })?,
+            let am = HalftoneOptions { angle_deg: angle, ..self.halftone };
+            let bitmap = match (&self.fm, &self.hybrid) {
+                (Some(fm), Some(h)) => hybrid_screen(plate, &am, fm, h)?,
+                (Some(fm), None) => fm_screen(plate, fm)?,
+                _ => halftone(plate, &am)?,
             };
             films.push(Film { name: ink.name.clone(), ink_rgb: ink.rgb, mesh: ink.mesh, role: Role::Color, bitmap });
         }
@@ -300,6 +306,7 @@ mod tests {
                 dot_gain: 0.0,
             },
             fm: None,
+            hybrid: None,
         }
     }
 
@@ -382,7 +389,7 @@ mod tests {
 
     #[test]
     fn an_fm_job_screens_every_ink_as_scattered_whole_cells_at_the_tone() {
-        let fm = FmOptions { cell_px: 4, min_dot: 0.0, max_dot: 1.0, dot_gain: 0.0 };
+        let fm = FmOptions { cell_px: 4, min_dot: 0.0, max_dot: 1.0, dot_gain: 0.0, kernel: Default::default() };
         let films = SimulatedJob { fm: Some(fm), ..sim_job(false) }.run(&half_and_half()).unwrap();
         assert_eq!(films.len(), 2);
         for f in &films {
@@ -396,5 +403,29 @@ mod tests {
         assert!(films[0].bitmap.coverage() > 0.0);
         let am = sim_job(false).run(&half_and_half()).unwrap();
         assert_ne!(am[0].bitmap, films[0].bitmap, "a different screening");
+    }
+
+    #[test]
+    fn a_hybrid_job_angles_the_middle_and_scatters_the_ends() {
+        let fm = FmOptions { cell_px: 4, min_dot: 0.0, max_dot: 1.0, dot_gain: 0.0, kernel: Default::default() };
+        let hybrid = Hybrid { below: 0.1, above: 0.9 };
+        // Half-tone art is a middle tone: the hybrid is the angled screen there, not the scattered one.
+        let films = SimulatedJob { fm: Some(fm), hybrid: Some(hybrid), ..sim_job(false) }.run(&half_and_half()).unwrap();
+        let am = sim_job(false).run(&half_and_half()).unwrap();
+        assert_eq!(films.len(), 2);
+        for (f, a) in films.iter().zip(&am) {
+            assert_eq!(f.bitmap, a.bitmap, "{}: a middle tone stays angled", f.name);
+        }
+        let fm_only = SimulatedJob { fm: Some(fm), ..sim_job(false) }.run(&half_and_half()).unwrap();
+        assert_ne!(films[0].bitmap, fm_only[0].bitmap);
+        // The setting is part of the saved job and reads back, and an old job without it still loads.
+        let job = SimulatedJob { fm: Some(fm), hybrid: Some(hybrid), ..sim_job(false) };
+        let back: SimulatedJob = serde_json::from_str(&serde_json::to_string(&job).unwrap()).unwrap();
+        assert_eq!(back, job);
+        let mut v = serde_json::to_value(&job).unwrap();
+        v.as_object_mut().unwrap().remove("hybrid");
+        v.as_object_mut().unwrap().remove("fm");
+        let old: SimulatedJob = serde_json::from_value(v).unwrap();
+        assert_eq!((old.fm, old.hybrid), (None, None));
     }
 }

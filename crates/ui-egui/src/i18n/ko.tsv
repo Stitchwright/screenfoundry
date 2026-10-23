@@ -6344,3 +6344,8 @@ machine	Stop	정지
 	AM	AM
 	FM	FM
 	Dot Size	도트 크기
+
+# ScreenFoundry: hybrid screening (SC-7). Machine-written first pass, to be checked by a native speaker.
+	Hybrid	하이브리드
+	FM Below	FM 미만
+	FM Above	FM 초과

@@ -6577,3 +6577,8 @@ file-filter	ScreenFoundry Template	ScreenFoundry-ის შაბლონი
 	AM	AM
 	FM	FM
 	Dot Size	წერტილის ზომა
+
+# ScreenFoundry: hybrid screening (SC-7). Machine-written first pass, to be checked by a native speaker.
+	Hybrid	ჰიბრიდული
+	FM Below	FM-ზე დაბლა
+	FM Above	FM-ზე მაღლა

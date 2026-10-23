@@ -6355,3 +6355,8 @@ effect	Soft	Weich
 	AM	AM
 	FM	FM
 	Dot Size	Punktgröße
+
+# ScreenFoundry: hybrid screening (SC-7). Machine-written first pass, to be checked by a native speaker.
+	Hybrid	Hybrid
+	FM Below	FM unter
+	FM Above	FM über

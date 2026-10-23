@@ -1009,3 +1009,68 @@ fn fm_screening_scatters_equal_dots_with_no_angle_or_advice() {
         assert!(s.execute("screen.halftone", &q).is_err(), "{q}");
     }
 }
+
+#[test]
+fn hybrid_screening_scatters_the_ends_and_angles_the_middle_and_kernels_differ() {
+    let mut s = Session::new();
+    // A ramp from white to black across 300 pixels at 600 dpi.
+    let ramp = png_source(300, 60, |x, _| {
+        let v = (255 - x * 255 / 299) as u8;
+        [v, v, v, 255]
+    });
+    let run = |s: &mut Session, extra: Value| {
+        let mut p = json!({"source": ramp, "dpi": 600, "minDot": 0, "maxDot": 1});
+        p.as_object_mut().unwrap().extend(extra.as_object().unwrap().clone());
+        film_image(&s.execute("screen.halftone", &p).unwrap()["films"][0])
+    };
+    let am = run(&mut s, json!({}));
+    let fm = run(&mut s, json!({"screening": "fm", "dotMm": 0.2}));
+    let hy = run(&mut s, json!({"screening": "hybrid", "dotMm": 0.2, "hybridBelow": 0.2, "hybridAbove": 0.8}));
+    for y in 0..60 {
+        for x in 0..300u32 {
+            // The tone the engine measures for this column: along the lightness axis to black ink.
+            let v = (255 - x * 255 / 299) as u8;
+            let t = (100.0 - sc_core::color::srgb_to_lab([v, v, v])[0]) / 100.0;
+            if !(0.17..=0.83).contains(&t) {
+                assert_eq!(inked(&hy, x, y), inked(&fm, x, y), "scattered at ({x}, {y})");
+            } else if (0.23..0.77).contains(&t) {
+                assert_eq!(inked(&hy, x, y), inked(&am, x, y), "angled at ({x}, {y})");
+            }
+        }
+    }
+    assert_ne!(hy, am);
+    assert_ne!(hy, fm);
+    // A hybrid keeps its mesh and line-screen advice (it still has angled dots); an FM screen has none.
+    let sheet = |s: &mut Session, mode: &str| {
+        let r = s.execute("screen.halftone", &json!({"source": ramp, "dpi": 600, "mesh": 60, "lpi": 55, "screening": mode})).unwrap();
+        r["advice"].as_array().unwrap().len()
+    };
+    assert!(sheet(&mut s, "hybrid") > 0 && sheet(&mut s, "fm") == 0 && sheet(&mut s, "am") > 0);
+    // The diffusion kernel changes the pattern but not the tone.
+    let floyd = run(&mut s, json!({"screening": "fm"}));
+    let jarvis = run(&mut s, json!({"screening": "fm", "fmKernel": "jarvis"}));
+    let stucki = run(&mut s, json!({"screening": "fm", "fmKernel": "stucki"}));
+    assert!(floyd != jarvis && jarvis != stucki && floyd != stucki);
+    let ink = |img: &image::GrayImage| img.pixels().filter(|p| p.0[0] == 0).count() as f64 / f64::from(img.width() * img.height());
+    assert!((ink(&floyd) - ink(&jarvis)).abs() < 0.01 && (ink(&floyd) - ink(&stucki)).abs() < 0.01);
+    // The simulated process takes them too.
+    let src = png_source(120, 120, |_, _| [128, 128, 128, 255]);
+    let sim = s
+        .execute(
+            "screen.simulate",
+            &json!({"source": src, "dpi": 600, "lpi": 50, "inks": [{"color": "#000000"}], "screening": "hybrid", "fmKernel": "stucki"}),
+        )
+        .unwrap();
+    assert_eq!(sim["films"].as_array().unwrap().len(), 1);
+    for bad in [
+        json!({"screening": "hybrid", "hybridBelow": 0.9, "hybridAbove": 0.1}),
+        json!({"screening": "hybrid", "hybridBelow": 2}),
+        json!({"screening": "fm", "fmKernel": "atkinson"}),
+        json!({"screening": "fm", "fmKernel": 3}),
+        json!({"screening": "stochastic"}),
+    ] {
+        let mut q = json!({"source": ramp, "dpi": 600});
+        q.as_object_mut().unwrap().extend(bad.as_object().unwrap().clone());
+        assert!(s.execute("screen.halftone", &q).is_err(), "{q}");
+    }
+}

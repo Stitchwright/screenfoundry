@@ -6747,3 +6747,8 @@ mark-style	Japanese	Japonské
 	AM	AM
 	FM	FM
 	Dot Size	Velikost bodu
+
+# ScreenFoundry: hybrid screening (SC-7). Machine-written first pass, to be checked by a native speaker.
+	Hybrid	Hybridní
+	FM Below	FM pod
+	FM Above	FM nad

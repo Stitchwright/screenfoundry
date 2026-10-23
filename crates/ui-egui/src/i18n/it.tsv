@@ -6389,3 +6389,8 @@ machine	Stop	Arresto
 	AM	AM
 	FM	FM
 	Dot Size	Dimensione del punto
+
+# ScreenFoundry: hybrid screening (SC-7). Machine-written first pass, to be checked by a native speaker.
+	Hybrid	Ibrido
+	FM Below	FM sotto
+	FM Above	FM sopra

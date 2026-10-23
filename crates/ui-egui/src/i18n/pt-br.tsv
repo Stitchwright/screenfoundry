@@ -6603,3 +6603,8 @@ mark-style	Japanese	Japonesas
 	AM	AM
 	FM	FM
 	Dot Size	Tamanho do ponto
+
+# ScreenFoundry: hybrid screening (SC-7). Machine-written first pass, to be checked by a native speaker.
+	Hybrid	Híbrido
+	FM Below	FM abaixo
+	FM Above	FM acima

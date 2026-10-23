@@ -6762,3 +6762,8 @@ swatch	Bright Violet	Kirkas violetti
 	AM	AM
 	FM	FM
 	Dot Size	Pisteen koko
+
+# ScreenFoundry: hybrid screening (SC-7). Machine-written first pass, to be checked by a native speaker.
+	Hybrid	Hybridi
+	FM Below	FM alle
+	FM Above	FM yli
