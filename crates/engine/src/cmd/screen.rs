@@ -121,7 +121,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Index Color",
             [],
             None,
-            "{source?, dpi?, inks?: [{name?, color, mesh? (156)}], colors?: how many inks to find in the art when `inks` is not given (6; 1–12), snap?: true|{maxDeltaE? (25), library?: [{name, color}]} replace each ink by the nearest library ink and use its name when none is given, base?: \"#rrggbb\" the colour under the pixels (#ffffff), underbase?: true|{name?, color?, mesh?, chokeMm?}, cellMm?: side of one printed pixel in millimetres (0.5; 0.05–5), dither?: how much of each pixel's error spreads to its neighbours (1; 0 = flat colour; 1 = full error diffusion), marks?, format?: png|tiff|tiff-g4|pdf (png), mirror?: flip every film left to right for emulsion-down printing (false), dcs?: single|multiple (also write the films as a DCS 2.0 file; multiple puts each plate in a file beside a main file and needs `dir`), dcsName?: the job name in the DCS files (separation), dcsCompositeDpi?: the resolution of the composite in the DCS main file (150; 10–2400; the film resolution or more gives a full resolution composite and a large file), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?} full-colour art reduced to a fixed palette of inks with one ink per square pixel and no overlap or dots, the underbase first then the inks light to dark → {dpi, width, height, cellPx, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64}]}",
+            "{source?, dpi?, inks?: [{name?, color, mesh? (156)}], colors?: how many inks to find in the art when `inks` is not given (6; 1–12), snap?: true|{maxDeltaE? (25), library?: [{name, color}]} replace each ink by the nearest library ink and use its name when none is given, base?: \"#rrggbb\" the colour under the pixels (#ffffff), underbase?: true|{name?, color?, mesh?, chokeMm?}, cellMm?: side of one printed pixel in millimetres (0.5; 0.05–5), dither?: how much of each pixel's error spreads to its neighbours (1; 0 = flat colour; 1 = full error diffusion), kernel?: floyd|jarvis|stucki (floyd; where the error goes: jarvis and stucki are smoother and softer), marks?, format?: png|tiff|tiff-g4|pdf (png), mirror?: flip every film left to right for emulsion-down printing (false), dcs?: single|multiple (also write the films as a DCS 2.0 file; multiple puts each plate in a file beside a main file and needs `dir`), dcsName?: the job name in the DCS files (separation), dcsCompositeDpi?: the resolution of the composite in the DCS main file (150; 10–2400; the film resolution or more gives a full resolution composite and a large file), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?} full-colour art reduced to a fixed palette of inks with one ink per square pixel and no overlap or dots, the underbase first then the inks light to dark → {dpi, width, height, cellPx, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64}]}",
             always,
             index_colour
         ),
@@ -808,7 +808,7 @@ fn index_colour(s: &mut Session, p: &Value) -> Result<Value> {
         o.entry("colors").or_insert(json!(6));
     }
     let inks = inks_of(&q, C, &img, MAX_INDEX_INKS, 156.0)?;
-    let job = IndexJob { inks, base, underbase: underbase_of(p, C, mm_px)?, cell_px, dither };
+    let job = IndexJob { inks, base, underbase: underbase_of(p, C, mm_px)?, cell_px, dither, kernel: kernel_of(p, C, "kernel")? };
     let films = job.run(&img).map_err(sc(C))?;
     let (films, dcs) = finish_films(C, p, films, dpi, marks, fmt)?;
     let (w, h) = films.first().map(|f| (f["width"].clone(), f["height"].clone())).unwrap_or_default();
@@ -837,15 +837,7 @@ fn scatter_of(cmd: &str, p: &Value, dpi: f64) -> Result<Option<Scatter>> {
         Some(Value::String(m)) if m == "hybrid" => true,
         Some(_) => return Err(bad(cmd, "`screening` is am, fm or hybrid")),
     };
-    let kernel = match str_param(p, "fmKernel").unwrap_or("floyd") {
-        "floyd" => Kernel::FloydSteinberg,
-        "jarvis" => Kernel::Jarvis,
-        "stucki" => Kernel::Stucki,
-        _ => return Err(bad(cmd, "`fmKernel` is floyd, jarvis or stucki")),
-    };
-    if !matches!(p.get("fmKernel"), None | Some(Value::Null | Value::String(_))) {
-        return Err(bad(cmd, "`fmKernel` is floyd, jarvis or stucki"));
-    }
+    let kernel = kernel_of(p, cmd, "fmKernel")?;
     let dot_mm = num(p, cmd, "dotMm", 0.2, 0.02..=5.0)?;
     let fm = FmOptions {
         cell_px: ((dot_mm / 25.4 * dpi).round() as usize).clamp(1, MAX_FM_CELL_PX),
@@ -864,6 +856,17 @@ fn scatter_of(cmd: &str, p: &Value, dpi: f64) -> Result<Option<Scatter>> {
         None
     };
     Ok(Some(Scatter { fm, hybrid }))
+}
+
+/// A diffusion kernel named by `key`: floyd (default), jarvis or stucki.
+fn kernel_of(p: &Value, cmd: &str, key: &str) -> Result<Kernel> {
+    match p.get(key) {
+        None | Some(Value::Null) => Ok(Kernel::FloydSteinberg),
+        Some(Value::String(k)) if k == "floyd" => Ok(Kernel::FloydSteinberg),
+        Some(Value::String(k)) if k == "jarvis" => Ok(Kernel::Jarvis),
+        Some(Value::String(k)) if k == "stucki" => Ok(Kernel::Stucki),
+        Some(_) => Err(bad(cmd, format!("`{key}` is floyd, jarvis or stucki"))),
+    }
 }
 
 /// `screen.simulate`: full-colour art as halftone dots of a few inks over a base.

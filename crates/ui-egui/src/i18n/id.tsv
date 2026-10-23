@@ -6647,3 +6647,5 @@ swatch	Bright Violet	Violet cerah
 
 # ScreenFoundry: print test page (SC-10). Machine-written first pass, to be checked by a native speaker.
 	Print Test Page	Cetak Halaman Uji
+# ScreenFoundry: ink limit and diffusion controls. Machine-written first pass, to be checked by a native speaker.
+	Ink Limit	Batas Tinta

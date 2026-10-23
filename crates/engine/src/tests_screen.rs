@@ -1162,3 +1162,22 @@ fn simulate_ink_limit_caps_the_darks() {
         assert!(s.execute("screen.simulate", &p).is_err(), "{bad}");
     }
 }
+
+#[test]
+fn index_colour_takes_a_diffusion_kernel() {
+    let mut s = Session::new();
+    let src = png_source(64, 64, |_, _| [188, 188, 188, 255]);
+    let inks = json!([{"name": "Black", "color": "#000000"}]);
+    let run = |s: &mut Session, k: Option<&str>| {
+        let mut p = json!({"source": src, "dpi": 300, "inks": inks, "cellMm": 0.17});
+        if let Some(k) = k {
+            p["kernel"] = json!(k);
+        }
+        s.execute("screen.index", &p)
+    };
+    let fs = run(&mut s, None).unwrap();
+    let st = run(&mut s, Some("stucki")).unwrap();
+    let (a, b) = (film_image(&fs["films"][0]), film_image(&st["films"][0]));
+    assert_ne!(a.as_raw(), b.as_raw(), "different kernels, different patterns");
+    assert!(run(&mut s, Some("jarvis")).is_ok() && run(&mut s, Some("nope")).is_err());
+}

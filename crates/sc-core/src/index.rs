@@ -3,7 +3,7 @@
 //!
 //! The art is averaged into square cells (a cell is a few film pixels wide, big enough to hold on
 //! the mesh), and each cell takes the palette colour nearest to its own colour plus the error its
-//! neighbours left behind (Floyd-Steinberg error diffusion, serpentine, in linear light so the
+//! neighbours left behind (error diffusion, Floyd-Steinberg by default, serpentine, in linear light so the
 //! average of the cells matches the art's brightness). The palette is the base (the colour under
 //! the pixels: a white underbase, or the garment) followed by the inks. A cell that takes the base
 //! prints no ink.
@@ -12,6 +12,7 @@
 //! posterised art), 1 is full error diffusion (photographs).
 
 use crate::error::{Result, param};
+use crate::fm::Kernel;
 use crate::image::{Bitmap1, Rgba8};
 use crate::separate::ALPHA_CUTOFF;
 use crate::simulated::to_linear;
@@ -25,9 +26,6 @@ pub const MAX_CELL_PX: usize = 256;
 /// A carried error never pulls a cell further than this per channel, so colours the palette cannot
 /// reach do not bounce error across the whole image.
 const MAX_ERROR: f64 = 0.5;
-
-/// Error diffusion weights (Floyd and Steinberg), out of 16: right, below-left, below, below-right.
-const WEIGHTS: [(isize, usize, f64); 4] = [(1, 0, 7.0 / 16.0), (-1, 1, 3.0 / 16.0), (0, 1, 5.0 / 16.0), (1, 1, 1.0 / 16.0)];
 
 fn dist2(a: &[f64; 3], b: &[f64; 3]) -> f64 {
     a.iter().zip(b).map(|(x, y)| (x - y) * (x - y)).sum()
@@ -71,7 +69,8 @@ fn cells(img: &Rgba8, cell: usize) -> (usize, usize, Vec<Option<[f64; 3]>>) {
     (cw, ch, out)
 }
 
-fn dither_cells(cw: usize, ch: usize, colors: &[Option<[f64; 3]>], palette: &[[f64; 3]], strength: f64) -> Grid {
+fn dither_cells(cw: usize, ch: usize, colors: &[Option<[f64; 3]>], palette: &[[f64; 3]], strength: f64, kernel: Kernel) -> Grid {
+    let taps = kernel.taps();
     let mut err = vec![[0.0f64; 3]; cw * ch];
     let mut index = vec![None; cw * ch];
     for y in 0..ch {
@@ -89,7 +88,7 @@ fn dither_cells(cw: usize, ch: usize, colors: &[Option<[f64; 3]>], palette: &[[f
                 *slot = Some(best);
             }
             let miss: [f64; 3] = std::array::from_fn(|k| (want[k] - chosen[k]) * strength);
-            for &(dx, dy, wt) in &WEIGHTS {
+            for &(dx, dy, wt) in &taps {
                 // Mirror the horizontal step on right-to-left rows.
                 let dx = if ltr { dx } else { -dx };
                 let (nx, ny) = (x as isize + dx, y + dy);
@@ -114,7 +113,7 @@ fn dither_cells(cw: usize, ch: usize, colors: &[Option<[f64; 3]>], palette: &[[f
 
 /// One film bitmap per ink: the cells (expanded back to `cell`-pixel squares) that took that ink.
 /// `base` is the colour under the pixels and takes no film. The films never overlap.
-pub fn index_films(img: &Rgba8, inks: &[[u8; 3]], base: [u8; 3], cell_px: usize, dither: f64) -> Result<Vec<Bitmap1>> {
+pub fn index_films(img: &Rgba8, inks: &[[u8; 3]], base: [u8; 3], cell_px: usize, dither: f64, kernel: Kernel) -> Result<Vec<Bitmap1>> {
     if inks.is_empty() || inks.len() > MAX_INDEX_INKS {
         return Err(param("inks", format!("need 1..={MAX_INDEX_INKS} inks")));
     }
@@ -127,7 +126,7 @@ pub fn index_films(img: &Rgba8, inks: &[[u8; 3]], base: [u8; 3], cell_px: usize,
     let mut palette = vec![to_linear(base)];
     palette.extend(inks.iter().map(|&c| to_linear(c)));
     let (cw, ch, colors) = cells(img, cell_px);
-    let grid = dither_cells(cw, ch, &colors, &palette, dither);
+    let grid = dither_cells(cw, ch, &colors, &palette, dither, kernel);
     let (w, h) = (img.width(), img.height());
     let mut films = Vec::with_capacity(inks.len());
     for ink in 1..=inks.len() {
@@ -158,9 +157,9 @@ mod tests {
 
     #[test]
     fn a_palette_colour_is_all_that_ink_and_the_base_is_none() {
-        let films = index_films(&solid(16, 16, RED), &[RED, BLACK], WHITE, 4, 1.0).unwrap();
+        let films = index_films(&solid(16, 16, RED), &[RED, BLACK], WHITE, 4, 1.0, Kernel::FloydSteinberg).unwrap();
         assert_eq!((films[0].coverage(), films[1].coverage()), (1.0, 0.0));
-        let films = index_films(&solid(16, 16, WHITE), &[RED, BLACK], WHITE, 4, 1.0).unwrap();
+        let films = index_films(&solid(16, 16, WHITE), &[RED, BLACK], WHITE, 4, 1.0, Kernel::FloydSteinberg).unwrap();
         assert_eq!((films[0].coverage(), films[1].coverage()), (0.0, 0.0));
     }
 
@@ -170,7 +169,7 @@ mod tests {
         let (w, h) = (64, 32);
         let d: Vec<u8> = (0..w * h).flat_map(|i| [(255 - (i % w) * 4) as u8, (255 - (i % w) * 4) as u8, (255 - (i % w) * 4) as u8, 255]).collect();
         let img = Rgba8::new(w, h, d).unwrap();
-        let films = index_films(&img, &[BLACK, RED], WHITE, 2, 1.0).unwrap();
+        let films = index_films(&img, &[BLACK, RED], WHITE, 2, 1.0, Kernel::FloydSteinberg).unwrap();
         for y in 0..h {
             for x in 0..w {
                 assert!(!(films[0].get(x, y) && films[1].get(x, y)), "x={x} y={y}");
@@ -181,17 +180,17 @@ mod tests {
     #[test]
     fn dithering_keeps_the_average_brightness() {
         // Mid grey (sRGB 188 is half the light of white) on a white and black palette: about half the cells are black.
-        let films = index_films(&solid(128, 128, [188, 188, 188]), &[BLACK], WHITE, 2, 1.0).unwrap();
+        let films = index_films(&solid(128, 128, [188, 188, 188]), &[BLACK], WHITE, 2, 1.0, Kernel::FloydSteinberg).unwrap();
         assert!((films[0].coverage() - 0.5).abs() < 0.03, "{}", films[0].coverage());
     }
 
     #[test]
     fn no_dither_maps_to_the_nearest_colour() {
         // Light grey is nearer the white base than black; with no dither it prints nothing.
-        let films = index_films(&solid(32, 32, [200, 200, 200]), &[BLACK], WHITE, 2, 0.0).unwrap();
+        let films = index_films(&solid(32, 32, [200, 200, 200]), &[BLACK], WHITE, 2, 0.0, Kernel::FloydSteinberg).unwrap();
         assert_eq!(films[0].coverage(), 0.0);
         // Dark grey is nearer black and prints solid.
-        let films = index_films(&solid(32, 32, [40, 40, 40]), &[BLACK], WHITE, 2, 0.0).unwrap();
+        let films = index_films(&solid(32, 32, [40, 40, 40]), &[BLACK], WHITE, 2, 0.0, Kernel::FloydSteinberg).unwrap();
         assert_eq!(films[0].coverage(), 1.0);
     }
 
@@ -200,7 +199,7 @@ mod tests {
         let (w, h) = (40, 40);
         let d: Vec<u8> = (0..w * h).flat_map(|i| [(i % 251) as u8, ((i / 7) % 251) as u8, ((i * 3) % 251) as u8, 255]).collect();
         let img = Rgba8::new(w, h, d).unwrap();
-        let films = index_films(&img, &[BLACK, RED], WHITE, 5, 1.0).unwrap();
+        let films = index_films(&img, &[BLACK, RED], WHITE, 5, 1.0, Kernel::FloydSteinberg).unwrap();
         for f in &films {
             for y in 0..h {
                 for x in 0..w {
@@ -219,7 +218,7 @@ mod tests {
                 d.extend_from_slice(&if x < 8 { [0, 0, 0, 255] } else { [0, 0, 0, 0] });
             }
         }
-        let films = index_films(&Rgba8::new(w, h, d).unwrap(), &[BLACK], WHITE, 2, 1.0).unwrap();
+        let films = index_films(&Rgba8::new(w, h, d).unwrap(), &[BLACK], WHITE, 2, 1.0, Kernel::FloydSteinberg).unwrap();
         for y in 0..h {
             for x in 0..w {
                 assert_eq!(films[0].get(x, y), x < 8, "x={x} y={y}");
@@ -229,19 +228,30 @@ mod tests {
 
     #[test]
     fn sizes_that_do_not_divide_by_the_cell_are_covered() {
-        let films = index_films(&solid(13, 7, BLACK), &[BLACK], WHITE, 4, 1.0).unwrap();
+        let films = index_films(&solid(13, 7, BLACK), &[BLACK], WHITE, 4, 1.0, Kernel::FloydSteinberg).unwrap();
         assert_eq!(films[0].coverage(), 1.0);
+    }
+
+    #[test]
+    fn every_kernel_keeps_the_average_and_the_cells_apart() {
+        for kernel in [Kernel::FloydSteinberg, Kernel::Jarvis, Kernel::Stucki] {
+            let films = index_films(&solid(128, 128, [188, 188, 188]), &[BLACK], WHITE, 2, 1.0, kernel).unwrap();
+            assert!((films[0].coverage() - 0.5).abs() < 0.03, "{kernel:?} {}", films[0].coverage());
+        }
+        let fs = index_films(&solid(64, 64, [188, 188, 188]), &[BLACK], WHITE, 2, 1.0, Kernel::FloydSteinberg).unwrap();
+        let st = index_films(&solid(64, 64, [188, 188, 188]), &[BLACK], WHITE, 2, 1.0, Kernel::Stucki).unwrap();
+        assert_ne!(fs, st, "different kernels, different patterns");
     }
 
     #[test]
     fn rejects_nonsense_options() {
         let img = solid(8, 8, BLACK);
-        assert!(index_films(&img, &[], WHITE, 2, 1.0).is_err());
-        assert!(index_films(&img, &[BLACK; MAX_INDEX_INKS + 1], WHITE, 2, 1.0).is_err());
-        assert!(index_films(&img, &[BLACK], WHITE, 0, 1.0).is_err());
-        assert!(index_films(&img, &[BLACK], WHITE, MAX_CELL_PX + 1, 1.0).is_err());
+        assert!(index_films(&img, &[], WHITE, 2, 1.0, Kernel::FloydSteinberg).is_err());
+        assert!(index_films(&img, &[BLACK; MAX_INDEX_INKS + 1], WHITE, 2, 1.0, Kernel::FloydSteinberg).is_err());
+        assert!(index_films(&img, &[BLACK], WHITE, 0, 1.0, Kernel::FloydSteinberg).is_err());
+        assert!(index_films(&img, &[BLACK], WHITE, MAX_CELL_PX + 1, 1.0, Kernel::FloydSteinberg).is_err());
         for bad in [-0.1, 1.1, f64::NAN, f64::INFINITY] {
-            assert!(index_films(&img, &[BLACK], WHITE, 2, bad).is_err(), "{bad}");
+            assert!(index_films(&img, &[BLACK], WHITE, 2, bad, Kernel::FloydSteinberg).is_err(), "{bad}");
         }
     }
 }

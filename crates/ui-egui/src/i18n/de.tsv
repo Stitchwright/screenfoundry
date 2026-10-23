@@ -6363,3 +6363,6 @@ effect	Soft	Weich
 
 # ScreenFoundry: print test page (SC-10). Machine-written first pass, to be checked by a native speaker.
 	Print Test Page	Testseite drucken
+# ScreenFoundry: ink limit and diffusion controls. Machine-written first pass, to be checked by a native speaker.
+	Ink Limit	Farbgrenze
+	Diffusion	Diffusion

@@ -6585,3 +6585,5 @@ file-filter	ScreenFoundry Template	ScreenFoundry-ის შაბლონი
 
 # ScreenFoundry: print test page (SC-10). Machine-written first pass, to be checked by a native speaker.
 	Print Test Page	სატესტო გვერდის ბეჭდვა
+# ScreenFoundry: ink limit and diffusion controls. Machine-written first pass, to be checked by a native speaker.
+	Ink Limit	საღებავის ლიმიტი

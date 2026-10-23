@@ -7,7 +7,7 @@
 
 use crate::color::srgb_to_lab;
 use crate::error::{Result, param};
-use crate::fm::{FmOptions, Hybrid, fm_screen, hybrid_screen};
+use crate::fm::{FmOptions, Hybrid, Kernel, fm_screen, hybrid_screen};
 use crate::halftone::{HalftoneOptions, halftone, solid};
 use crate::image::{Bitmap1, Gray8, Rgba8};
 use crate::index::index_films;
@@ -189,6 +189,9 @@ pub struct IndexJob {
     pub cell_px: usize,
     /// How much of each pixel's error spreads to its neighbours: 0 (flat) to 1 (full diffusion).
     pub dither: f64,
+    /// Where each pixel's error goes.
+    #[serde(default)]
+    pub kernel: Kernel,
 }
 
 impl IndexJob {
@@ -197,7 +200,7 @@ impl IndexJob {
             return Err(param("inks", "a job needs at least one ink"));
         }
         let rgbs: Vec<[u8; 3]> = self.inks.iter().map(|i| i.rgb).collect();
-        let bitmaps = index_films(img, &rgbs, self.base, self.cell_px, self.dither)?;
+        let bitmaps = index_films(img, &rgbs, self.base, self.cell_px, self.dither, self.kernel)?;
 
         let lightness = |i: usize| self.inks.get(i).map_or(0.0, |k| srgb_to_lab(k.rgb)[0]);
         let mut order: Vec<usize> = (0..self.inks.len()).collect();
@@ -411,6 +414,7 @@ mod tests {
             underbase: Some(UnderbaseOptions { ink: ink("White", [255, 255, 255]), choke_px: 2.0 }),
             cell_px: 2,
             dither: 1.0,
+            kernel: Kernel::default(),
         };
         let films = job.run(&art()).unwrap();
         let names: Vec<_> = films.iter().map(|f| f.name.as_str()).collect();

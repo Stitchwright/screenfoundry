@@ -90,7 +90,7 @@ inks; give them (`inks`) or let ScreenFoundry find them (`colors`).
 
 `dotGain` works here too (and is the Dot Gain box in the panel). Inks gain differently on the same
 mesh, so `inkGains` gives each ink its own number in the order of `inks` (it replaces `dotGain` for
-that ink; the panel has one box only). `inkLimit` (0.1 to 1, default 1) caps the share of the area
+that ink; the panel has one box only). `inkLimit` (0.1 to 1, default 1; Ink Limit in the panel) caps the share of the area
 all inks may cover together: the darkest tones keep some base showing, which holds open on the
 mesh, and come out lighter. It does not model dots overlapping
 or how opaque the ink is. Print a test and adjust the dot limits (`minDot`, `maxDot`), the dot gain
@@ -165,8 +165,9 @@ or let ScreenFoundry find them (`colors`, default 6, up to 12); the base (`base`
 is the colour that shows where no ink prints.
 
 Each pixel takes the palette colour nearest to its own colour plus the error its neighbours left
-behind (Floyd-Steinberg error diffusion, worked in linear light so the average brightness
-matches the art). `dither` sets how much error spreads: 1 (default) is full diffusion for
+behind (error diffusion, worked in linear light so the average brightness matches the art).
+`kernel` (Diffusion in the panel, which also applies to FM dots as `fmKernel`) picks where the error goes: `floyd` (Floyd-Steinberg, default, the sharpest), `jarvis` or
+`stucki` (wider reach, smoother and a little softer). `dither` sets how much error spreads: 1 (default) is full diffusion for
 photographs, 0 maps every pixel to its nearest ink for flat art. `cellMm` (default 0.5 mm) is the
 side of one printed pixel: keep it several mesh threads wide or the pixels will not hold on the
 screen. The default is a starting point, not a standard; print a test. Inks print light to dark

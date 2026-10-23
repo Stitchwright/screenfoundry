@@ -6436,3 +6436,6 @@ machine	Stop	停止
 
 # ScreenFoundry: print test page (SC-10). Machine-written first pass, to be checked by a native speaker.
 	Print Test Page	テストページを印刷
+# ScreenFoundry: ink limit and diffusion controls. Machine-written first pass, to be checked by a native speaker.
+	Ink Limit	インク上限
+	Diffusion	拡散

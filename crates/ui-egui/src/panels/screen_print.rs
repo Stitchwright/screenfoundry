@@ -44,6 +44,25 @@ pub enum Screening {
     Hybrid,
 }
 
+/// Where error goes in error diffusion (FM screening and index colour).
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub enum Diffusion {
+    #[default]
+    Floyd,
+    Jarvis,
+    Stucki,
+}
+
+impl Diffusion {
+    fn id(self) -> &'static str {
+        match self {
+            Self::Floyd => "floyd",
+            Self::Jarvis => "jarvis",
+            Self::Stucki => "stucki",
+        }
+    }
+}
+
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub enum Method {
     /// One solid film per colour (`screen.separate`).
@@ -113,6 +132,10 @@ pub struct ScreenPrintState {
     pub cell_mm: f64,
     /// How much error spreads between pixels in percent, for index colour (0 = flat).
     pub dither_pct: f64,
+    /// Where the error goes, for FM dots and index colour.
+    pub diffusion: Diffusion,
+    /// The most of the area all inks may cover together in percent, for simulated process.
+    pub ink_limit_pct: f64,
     pub marks: bool,
     pub films: Vec<PreviewFilm>,
     /// Mesh and angle advice of the last preview, one line each.
@@ -137,6 +160,8 @@ impl Default for ScreenPrintState {
             hybrid_above_pct: 85.0,
             cell_mm: 0.5,
             dither_pct: 100.0,
+            diffusion: Diffusion::Floyd,
+            ink_limit_pct: 100.0,
             marks: true,
             films: Vec::new(),
             advice: Vec::new(),
@@ -173,15 +198,18 @@ impl ScreenPrintState {
             Method::Simulated => {
                 p["lpi"] = json!(self.lpi);
                 p["dotGain"] = json!(self.dot_gain_pct / 100.0);
+                p["inkLimit"] = json!(self.ink_limit_pct / 100.0);
                 match self.screening {
                     Screening::Am => {}
                     Screening::Fm => {
                         p["screening"] = json!("fm");
                         p["dotMm"] = json!(self.dot_mm);
+                        p["fmKernel"] = json!(self.diffusion.id());
                     }
                     Screening::Hybrid => {
                         p["screening"] = json!("hybrid");
                         p["dotMm"] = json!(self.dot_mm);
+                        p["fmKernel"] = json!(self.diffusion.id());
                         p["hybridBelow"] = json!(self.hybrid_below_pct / 100.0);
                         p["hybridAbove"] = json!(self.hybrid_above_pct / 100.0);
                     }
@@ -190,6 +218,7 @@ impl ScreenPrintState {
             Method::Index => {
                 p["cellMm"] = json!(self.cell_mm);
                 p["dither"] = json!(self.dither_pct / 100.0);
+                p["kernel"] = json!(self.diffusion.id());
             }
         }
         (self.method.command(), p)
@@ -378,6 +407,14 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                     ui.add(egui::DragValue::new(&mut st.lpi).range(5.0..=150.0).speed(0.5).suffix(" lpi"));
                 });
             }
+            if st.screening != Screening::Am {
+                ui.horizontal(|ui| {
+                    ui.label(RichText::new(tl!("Diffusion")).color(t.text_dim));
+                    ui.selectable_value(&mut st.diffusion, Diffusion::Floyd, "Floyd-Steinberg");
+                    ui.selectable_value(&mut st.diffusion, Diffusion::Jarvis, "Jarvis");
+                    ui.selectable_value(&mut st.diffusion, Diffusion::Stucki, "Stucki");
+                });
+            }
             if st.screening == Screening::Hybrid {
                 ui.horizontal(|ui| {
                     ui.label(RichText::new(tl!("FM Below")).color(t.text_dim));
@@ -390,6 +427,10 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                 ui.label(RichText::new(tl!("Dot Gain")).color(t.text_dim));
                 ui.add(egui::DragValue::new(&mut st.dot_gain_pct).range(0.0..=25.0).speed(0.25).suffix(" %"));
             });
+            ui.horizontal(|ui| {
+                ui.label(RichText::new(tl!("Ink Limit")).color(t.text_dim));
+                ui.add(egui::DragValue::new(&mut st.ink_limit_pct).range(10.0..=100.0).speed(0.5).suffix(" %"));
+            });
         }
         Method::Index => {
             ui.horizontal(|ui| {
@@ -399,6 +440,12 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
             ui.horizontal(|ui| {
                 ui.label(RichText::new(tl!("Dither")).color(t.text_dim));
                 ui.add(egui::DragValue::new(&mut st.dither_pct).range(0.0..=100.0).speed(1.0).suffix(" %"));
+            });
+            ui.horizontal(|ui| {
+                ui.label(RichText::new(tl!("Diffusion")).color(t.text_dim));
+                ui.selectable_value(&mut st.diffusion, Diffusion::Floyd, "Floyd-Steinberg");
+                ui.selectable_value(&mut st.diffusion, Diffusion::Jarvis, "Jarvis");
+                ui.selectable_value(&mut st.diffusion, Diffusion::Stucki, "Stucki");
             });
         }
     }
@@ -493,11 +540,16 @@ mod tests {
         st.dot_gain_pct = 20.0;
         assert_eq!(st.request(600.0, true).1["dotGain"], json!(0.2));
         assert!(st.request(600.0, true).1.get("screening").is_none(), "AM is the default");
+        assert_eq!(st.request(600.0, true).1["inkLimit"], json!(1.0));
+        st.ink_limit_pct = 80.0;
+        assert_eq!(st.request(600.0, true).1["inkLimit"], json!(0.8));
+        st.ink_limit_pct = 100.0;
         st.screening = Screening::Fm;
         st.dot_mm = 0.3;
         let (_, fm) = st.request(600.0, true);
         assert_eq!((fm["screening"].clone(), fm["dotMm"].clone()), (json!("fm"), json!(0.3)));
         assert!(fm.get("hybridBelow").is_none());
+        assert_eq!(fm["fmKernel"], json!("floyd"));
         st.screening = Screening::Hybrid;
         let (_, hy) = st.request(600.0, true);
         assert_eq!(
@@ -509,6 +561,9 @@ mod tests {
         let (cmd, p) = st.request(200.0, false);
         assert_eq!(cmd, "screen.index");
         assert_eq!((p["cellMm"].clone(), p["dither"].clone()), (json!(0.5), json!(1.0)));
+        assert_eq!(p["kernel"], json!("floyd"));
+        st.diffusion = Diffusion::Stucki;
+        assert_eq!(st.request(200.0, false).1["kernel"], json!("stucki"));
         assert!(p.get("lpi").is_none() && p.get("dotGain").is_none() && p.get("trapMm").is_none());
         assert_eq!(st.preview_dpi(), 200.0);
         st.method = Method::Vector;

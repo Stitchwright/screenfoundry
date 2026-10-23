@@ -6705,3 +6705,5 @@ machine	Stop	Στάση
 
 # ScreenFoundry: print test page (SC-10). Machine-written first pass, to be checked by a native speaker.
 	Print Test Page	Εκτύπωση δοκιμαστικής σελίδας
+# ScreenFoundry: ink limit and diffusion controls. Machine-written first pass, to be checked by a native speaker.
+	Ink Limit	Όριο μελανιού
