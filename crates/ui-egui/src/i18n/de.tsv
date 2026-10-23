@@ -6360,3 +6360,6 @@ effect	Soft	Weich
 	Hybrid	Hybrid
 	FM Below	FM unter
 	FM Above	FM über
+
+# ScreenFoundry: print test page (SC-10). Machine-written first pass, to be checked by a native speaker.
+	Print Test Page	Testseite drucken

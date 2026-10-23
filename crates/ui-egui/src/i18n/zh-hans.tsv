@@ -6574,3 +6574,6 @@ machine	Stop	停止
 	Hybrid	混合
 	FM Below	FM 低于
 	FM Above	FM 高于
+
+# ScreenFoundry: print test page (SC-10). Machine-written first pass, to be checked by a native speaker.
+	Print Test Page	打印测试页

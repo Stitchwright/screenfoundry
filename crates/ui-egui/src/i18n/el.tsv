@@ -6702,3 +6702,6 @@ machine	Stop	Στάση
 	Hybrid	Υβριδικό
 	FM Below	FM κάτω από
 	FM Above	FM πάνω από
+
+# ScreenFoundry: print test page (SC-10). Machine-written first pass, to be checked by a native speaker.
+	Print Test Page	Εκτύπωση δοκιμαστικής σελίδας

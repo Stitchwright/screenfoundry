@@ -195,6 +195,23 @@ What a shop's RIP wants (white made by the RIP or supplied as a file, mirroring,
 varies, so check it against yours. The choke and the gap are starting points, not standards.
 There is no highlight-white tool beyond the graded mode, and no nesting beyond the shelf layouts above.
 
+## Print test page
+
+`screen.testPage` makes a calibration sheet (220 × 90 mm) that needs no document. Print it on your
+press with your mesh and inks, read which patches hold, and use those numbers for your settings.
+It is made of three parts (`parts`: `tones`, `lines`, `trap`; all by default):
+
+- **Test tones**: three rows (AM, FM, hybrid) of 20 numbered patches from 0 to 100 percent. The
+  smallest patch that still prints and the largest that still holds open are your tonal limits.
+- **Test lines**: clear lines in a solid block and free-standing ink lines, 0.05 to 1 mm, across
+  and down. The finest line that holds is your minimum feature.
+- **Test trap (light / dark)**: two films whose seam overlaps by 0 to 0.5 mm. Print light then dark
+  and pick the smallest overlap with no gap or halo.
+
+Options: `dpi` (100 to 1200, default 600), `mesh`, `lpi`, `angle`, `shape`, `dotGain`, `dir`, `format`.
+The result lists the layout (`tonesPercent`, `lineWidthsHundredthsMm`, `trapHundredthsMm`).
+Defaults are not yet tuned from real prints (SC-10).
+
 ## Mesh and line screen
 
 The mesh limits how fine a halftone can be. As a rule of thumb the line screen is between a fifth
@@ -265,6 +282,7 @@ rendering intent) applied to the ink's screen colour, since a spot ink's real CM
 | `screen.dtf` | Direct-to-film files: mirrored colour on transparent and a white layer. |
 | `screen.separateVector` | The open document's paths as one film per ink, with knockout, overprint and trap. |
 | `screen.halftone` | One ink's tones as dots. |
+| `screen.testPage` | Print-test sheet: tone patches, line widths and trap overlaps. |
 
 The artwork is the document's first artboard (`source: "document"`), an image file
 (`source: {path}`) or inline bytes (`source: {dataBase64}`). Run `engine.commands` for every

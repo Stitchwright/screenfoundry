@@ -6593,3 +6593,6 @@ machine	Stop	Zatrzymanie
 	Hybrid	Hybrydowy
 	FM Below	FM poniżej
 	FM Above	FM powyżej
+
+# ScreenFoundry: print test page (SC-10). Machine-written first pass, to be checked by a native speaker.
+	Print Test Page	Drukuj stronę testową

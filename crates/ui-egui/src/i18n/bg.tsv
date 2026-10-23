@@ -6710,3 +6710,6 @@ machine	Stop	Спиране
 	Hybrid	Хибриден
 	FM Below	FM под
 	FM Above	FM над
+
+# ScreenFoundry: print test page (SC-10). Machine-written first pass, to be checked by a native speaker.
+	Print Test Page	Печат на тестова страница

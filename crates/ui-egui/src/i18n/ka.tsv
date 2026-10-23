@@ -6582,3 +6582,6 @@ file-filter	ScreenFoundry Template	ScreenFoundry-ის შაბლონი
 	Hybrid	ჰიბრიდული
 	FM Below	FM-ზე დაბლა
 	FM Above	FM-ზე მაღლა
+
+# ScreenFoundry: print test page (SC-10). Machine-written first pass, to be checked by a native speaker.
+	Print Test Page	სატესტო გვერდის ბეჭდვა

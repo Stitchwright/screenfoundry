@@ -6706,3 +6706,6 @@ machine	Stop	Stopp
 	Hybrid	Hybrid
 	FM Below	FM under
 	FM Above	FM över
+
+# ScreenFoundry: print test page (SC-10). Machine-written first pass, to be checked by a native speaker.
+	Print Test Page	Skriv ut testsida

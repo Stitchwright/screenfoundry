@@ -19,6 +19,7 @@ use sc_core::jobsheet::{JobSheet, SheetFilm};
 use sc_core::marks::{MarkSpec, frame_with_marks};
 use sc_core::profile::{Advice, check, recommended_lpi_range};
 use sc_core::separate::{extract_palette, tone_plate};
+use sc_core::testpage::{self, Parts, TestPage};
 use sc_core::{Bitmap1, Rgba8};
 use serde_json::{Value, json};
 
@@ -96,6 +97,15 @@ pub fn specs() -> Vec<CommandSpec> {
             "{source?, dpi? (300; 25–2400), artboards?: all|[artboard numbers from 1] (a gang sheet of these artboards of the open document instead of the first one alone; needs sheetWidthMm), sheetWidthMm?: the sheet width (a gang sheet needs it; 10–2000), gapMm?: the space between designs (5; 0–100), rotate?: turn designs a quarter turn where that makes the sheet shorter (false), mirror?: flip the art left to right for the film (true), white?: also make the white layer (true), whiteMode?: solid|graded (solid; graded makes the white as opaque as the art), whiteChokeMm?: how far the white is pulled in from the colour edges (0.3; 0–5), format?: png|tiff (png), dir?: a folder to write the files in (without it: base64)} direct-to-film files from the artwork: the colour art on transparent (mirrored for the film) and a white layer (white where white ink prints and the art footprint pulled in by the choke) as a second file of the same size and mirroring; a gang sheet lays the designs out in rows tallest first without rotating them → {dpi, width, height, files: [{name: color|white, format, width, height, path | dataBase64}], placements?: [{artboard, x, y, width, height, rotated, xMm, yMm}] where the position is in the file (after mirroring) and the size is as placed}",
             always,
             dtf_files
+        ),
+        cmd!(
+            "screen.testPage",
+            "Print Test Page",
+            [],
+            None,
+            "{dpi? (600; 100–1200), parts?: [tones|lines|trap] (all three; each part is its own screen), mesh? (230), lpi? (45), angle? (22.5), shape?: round|ellipse|line (round), dotMm? (0.2), fmKernel?: floyd|jarvis|stucki (floyd), hybridBelow? (0.15), hybridAbove? (0.85), dotGain? (0; 0–0.25), marks?, format?: png|tiff|tiff-g4|pdf (png), mirror?: flip every film left to right for emulsion-down printing (false), dcs?: single|multiple (also write the films as a DCS 2.0 file; multiple puts each plate in a file beside a main file and needs `dir`), dcsName?: the job name in the DCS files (separation), dcsCompositeDpi?: the resolution of the composite in the DCS main file (150; 10–2400; the film resolution or more gives a full resolution composite and a large file), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order; written as job-sheet.pdf in `dir`), dir?: a folder to write the films in (without it: base64)} films of a 220 × 90 mm print-test page to expose and print once: tone patches 0–100% screened as angled dots then scattered dots then a hybrid (tones) and negative and positive lines of eight widths (lines) and light and dark squares overlapping by 0 to 0.5 mm (trap); each patch is numbered. The dot limits are not applied. Needs no open document → {dpi, width, height, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64}], layout: {pageMm, toneRows, tonesPercent, lineWidthsHundredthsMm, trapHundredthsMm}}",
+            always,
+            test_page_films
         ),
         cmd!(
             "screen.simulate",
@@ -706,6 +716,77 @@ fn dtf_files(s: &mut Session, p: &Value) -> Result<Value> {
         result["placements"] = json!(pl);
     }
     Ok(result)
+}
+
+/// `screen.testPage`: films of a print-test page (SC-10) to learn what a shop's screens hold.
+fn test_page_films(_: &mut Session, p: &Value) -> Result<Value> {
+    const C: &str = "screen.testPage";
+    let dpi = num(p, C, "dpi", 600.0, 100.0..=1200.0)?;
+    let marks = bool_or(p, "marks", false);
+    let fmt = FilmFormat::parse(C, p)?;
+    let mesh = num(p, C, "mesh", 230.0, 1.0..=1000.0)?;
+    let parts = match p.get("parts") {
+        None | Some(Value::Null) => Parts { tones: true, lines: true, trap: true },
+        Some(Value::Array(a)) if !a.is_empty() && a.len() <= 3 => {
+            let mut parts = Parts { tones: false, lines: false, trap: false };
+            for v in a {
+                match v.as_str() {
+                    Some("tones") => parts.tones = true,
+                    Some("lines") => parts.lines = true,
+                    Some("trap") => parts.trap = true,
+                    _ => return Err(bad(C, "`parts` are tones, lines or trap")),
+                }
+            }
+            parts
+        }
+        Some(_) => return Err(bad(C, "`parts` is a list of tones, lines or trap")),
+    };
+    let shape = match str_param(p, "shape").unwrap_or("round") {
+        "round" => DotShape::Round,
+        "ellipse" => DotShape::Ellipse,
+        "line" => DotShape::Line,
+        _ => return Err(bad(C, "`shape` is round, ellipse or line")),
+    };
+    // The scattered and hybrid screens of the page take the usual parameters.
+    let mut q = if p.is_object() { p.clone() } else { json!({}) };
+    q["screening"] = json!("hybrid");
+    let scatter = scatter_of(C, &q, dpi)?.ok_or_else(|| bad(C, "internal: no scattered screen"))?;
+    let page = TestPage {
+        dpi,
+        parts,
+        am: HalftoneOptions {
+            dpi,
+            lpi: num(p, C, "lpi", 45.0, 1.0..=500.0)?,
+            angle_deg: num(p, C, "angle", 22.5, -3600.0..=3600.0)?,
+            shape,
+            min_dot: 0.0,
+            max_dot: 1.0,
+            dot_gain: num(p, C, "dotGain", 0.0, 0.0..=MAX_DOT_GAIN)?,
+        },
+        fm: scatter.fm,
+        hybrid: scatter.hybrid.unwrap_or(Hybrid { below: 0.15, above: 0.85 }),
+    };
+    let films: Vec<Film> = testpage::test_page(&page)
+        .map_err(sc(C))?
+        .into_iter()
+        .map(|f| Film { name: f.name.to_string(), ink_rgb: f.rgb, mesh, role: Role::Color, bitmap: f.bitmap })
+        .collect();
+    let (films, dcs) = finish_films(C, p, films, dpi, marks, fmt)?;
+    let (w, h) = films.first().map(|f| (f["width"].clone(), f["height"].clone())).unwrap_or_default();
+    let sheet = job_sheet(C, p, dpi, &films, &[], dir_param(p))?;
+    let mut out = json!({
+        "dpi": dpi, "width": w, "height": h, "films": films,
+        "layout": {
+            "pageMm": [testpage::PAGE_MM.0, testpage::PAGE_MM.1],
+            "toneRows": testpage::TONE_ROWS,
+            "tonesPercent": testpage::TONES,
+            "lineWidthsHundredthsMm": testpage::LINES,
+            "trapHundredthsMm": testpage::TRAPS,
+        },
+    });
+    attach(&mut out, sheet);
+    attach_dcs(&mut out, dcs);
+    Ok(out)
 }
 
 /// `screen.index`: full-colour art as square pixels of a fixed palette of inks, none overlapping.

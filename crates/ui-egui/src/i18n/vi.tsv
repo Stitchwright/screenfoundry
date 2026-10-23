@@ -6353,3 +6353,6 @@ machine	Stop	Dừng máy
 	Hybrid	Lai
 	FM Below	FM dưới
 	FM Above	FM trên
+
+# ScreenFoundry: print test page (SC-10). Machine-written first pass, to be checked by a native speaker.
+	Print Test Page	In trang thử

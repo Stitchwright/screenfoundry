@@ -6752,3 +6752,6 @@ mark-style	Japanese	Japonské
 	Hybrid	Hybridní
 	FM Below	FM pod
 	FM Above	FM nad
+
+# ScreenFoundry: print test page (SC-10). Machine-written first pass, to be checked by a native speaker.
+	Print Test Page	Tisk zkušební stránky

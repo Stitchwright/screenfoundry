@@ -6433,3 +6433,6 @@ machine	Stop	停止
 	Hybrid	ハイブリッド
 	FM Below	FM 未満
 	FM Above	FM 超
+
+# ScreenFoundry: print test page (SC-10). Machine-written first pass, to be checked by a native speaker.
+	Print Test Page	テストページを印刷

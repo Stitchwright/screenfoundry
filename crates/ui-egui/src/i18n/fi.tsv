@@ -6767,3 +6767,6 @@ swatch	Bright Violet	Kirkas violetti
 	Hybrid	Hybridi
 	FM Below	FM alle
 	FM Above	FM yli
+
+# ScreenFoundry: print test page (SC-10). Machine-written first pass, to be checked by a native speaker.
+	Print Test Page	Tulosta testisivu

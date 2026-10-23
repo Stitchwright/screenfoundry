@@ -14,6 +14,7 @@
 //! * [`dtf`] – direct-to-film files: mirrored colour art and a white layer.
 //! * [`export`] – 1-bit PNG and TIFF film files with their resolution.
 //! * [`jobsheet`] – the PDF job sheet that travels with the films.
+//! * [`testpage`] – print-test films to learn what a shop's screens will hold.
 //! * [`profile`] – mesh / lines-per-inch / angle sanity checks.
 //! * [`index`] – index colour: a fixed palette of inks, one per square pixel, by error diffusion.
 //! * [`inklib`] – a generic ink library and nearest-ink matching.
@@ -41,6 +42,7 @@ mod pdfout;
 pub mod profile;
 pub mod separate;
 pub mod simulated;
+pub mod testpage;
 
 pub use error::{Result, ScError};
 pub use image::{Bitmap1, Gray8, Rgba8};

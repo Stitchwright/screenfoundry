@@ -6727,3 +6727,6 @@ machine	Stop	Megállás
 	Hybrid	Hibrid
 	FM Below	FM alatt
 	FM Above	FM felett
+
+# ScreenFoundry: print test page (SC-10). Machine-written first pass, to be checked by a native speaker.
+	Print Test Page	Tesztoldal nyomtatása

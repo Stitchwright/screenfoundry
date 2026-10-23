@@ -6764,3 +6764,6 @@ theme	Appearance	Apparence
 	Hybrid	Hybride
 	FM Below	FM sous
 	FM Above	FM au-dessus
+
+# ScreenFoundry: print test page (SC-10). Machine-written first pass, to be checked by a native speaker.
+	Print Test Page	Imprimer une page de test

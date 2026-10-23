@@ -6390,3 +6390,6 @@ machine	Stop	Остановка
 	Hybrid	Гибридный
 	FM Below	FM ниже
 	FM Above	FM выше
+
+# ScreenFoundry: print test page (SC-10). Machine-written first pass, to be checked by a native speaker.
+	Print Test Page	Печать тестовой страницы

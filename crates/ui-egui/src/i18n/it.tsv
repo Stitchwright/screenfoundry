@@ -6394,3 +6394,6 @@ machine	Stop	Arresto
 	Hybrid	Ibrido
 	FM Below	FM sotto
 	FM Above	FM sopra
+
+# ScreenFoundry: print test page (SC-10). Machine-written first pass, to be checked by a native speaker.
+	Print Test Page	Stampa pagina di prova

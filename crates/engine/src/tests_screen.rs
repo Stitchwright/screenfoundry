@@ -1074,3 +1074,49 @@ fn hybrid_screening_scatters_the_ends_and_angles_the_middle_and_kernels_differ()
         assert!(s.execute("screen.halftone", &q).is_err(), "{q}");
     }
 }
+
+#[test]
+fn the_print_test_page_makes_numbered_films_without_a_document() {
+    let mut s = Session::new();
+    let r = s.execute("screen.testPage", &json!({"dpi": 300})).unwrap();
+    let names: Vec<_> = r["films"].as_array().unwrap().iter().map(|f| f["name"].as_str().unwrap()).collect();
+    assert_eq!(names, ["Test tones", "Test lines", "Test trap (light)", "Test trap (dark)"]);
+    assert_eq!((r["width"].as_u64(), r["height"].as_u64()), (Some(2598), Some(1063)));
+    assert!(r["films"].as_array().unwrap().iter().all(|f| f["coverage"].as_f64().unwrap() > 0.0 && f["width"] == r["width"]));
+    assert_eq!(r["layout"]["toneRows"], json!(["AM", "FM", "Hybrid"]));
+    assert_eq!(r["layout"]["tonesPercent"][19], 100);
+    assert_eq!(r["layout"]["trapHundredthsMm"][8], 50);
+    // The 100% patch of the first row is solid ink and the 0% patch is clear: 300 dpi is 11.81 px a mm.
+    let tones = film_image(&r["films"][0]);
+    let mm = |v: f64| (v * 300.0 / 25.4).round() as u32;
+    assert!(inked(&tones, mm(5.0 + 19.0 * 10.5 + 4.0), mm(9.0)));
+    assert!(!inked(&tones, mm(9.0), mm(9.0)));
+    // Parts can be chosen, the screens' settings apply, marks grow every film alike, and a folder gets files.
+    let dir = vectorcraft_testkit::temp_dir("screen-testpage");
+    let sub = s
+        .execute(
+            "screen.testPage",
+            &json!({"dpi": 300, "parts": ["trap"], "marks": true, "lpi": 30, "angle": 45, "shape": "ellipse", "dotMm": 0.3, "fmKernel": "jarvis", "dir": dir.to_string_lossy()}),
+        )
+        .unwrap();
+    let films = sub["films"].as_array().unwrap();
+    assert_eq!(films.len(), 2);
+    assert!(sub["width"].as_u64() > r["width"].as_u64(), "marks add a margin");
+    for f in films {
+        assert!(std::fs::metadata(f["path"].as_str().unwrap()).unwrap().len() > 0);
+    }
+    let _ = std::fs::remove_dir_all(dir);
+    for bad in [
+        json!({"dpi": 50}),
+        json!({"dpi": 2400}),
+        json!({"parts": []}),
+        json!({"parts": ["tones", "colours"]}),
+        json!({"parts": "all"}),
+        json!({"lpi": 300}),
+        json!({"shape": "star"}),
+        json!({"fmKernel": "atkinson"}),
+        json!({"hybridBelow": 0.9, "hybridAbove": 0.1}),
+    ] {
+        assert!(s.execute("screen.testPage", &bad).is_err(), "{bad}");
+    }
+}

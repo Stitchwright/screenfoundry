@@ -6374,3 +6374,6 @@ machine	Stop	Зупинка
 	Hybrid	Гібридний
 	FM Below	FM нижче
 	FM Above	FM вище
+
+# ScreenFoundry: print test page (SC-10). Machine-written first pass, to be checked by a native speaker.
+	Print Test Page	Друк тестової сторінки
