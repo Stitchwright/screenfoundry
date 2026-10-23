@@ -561,6 +561,38 @@ fn vector_separation_knocks_out_traps_and_has_an_underbase() {
 }
 
 #[test]
+fn vector_traps_can_be_set_for_one_pair() {
+    let mut s = Session::new();
+    s.execute("file.new", &json!({"width": 200, "height": 100})).unwrap();
+    // Yellow beside navy, side by side at 100 pt; a third, red, beyond the navy.
+    shape(&mut s, (0.0, 0.0, 100.0, 100.0), YELLOW);
+    shape(&mut s, (100.0, 0.0, 50.0, 100.0), NAVY);
+    let spread = |s: &mut Session, extra: Value| {
+        let mut p = json!({"dpi": 100, "inks": inks(), "trapMm": 0.25});
+        for (k, v) in extra.as_object().unwrap() {
+            p[k] = v.clone();
+        }
+        let r = s.execute("screen.separateVector", &p).unwrap();
+        film_image(film(&r, "Yellow"))
+    };
+    // 100 dpi: the edge is at pixel 138.9. The default 0.25 mm (about 1 px) trap reaches 140 but not 146.
+    let plain = spread(&mut s, json!({}));
+    assert!(inked(&plain, 139, 70) && !inked(&plain, 146, 70));
+    let wide = spread(&mut s, json!({"pairs": [{"spread": "yellow", "under": "Navy", "mm": 2.0}]}));
+    assert!(inked(&wide, 146, 70), "2 mm is about 8 px");
+    let none = spread(&mut s, json!({"pairs": [{"spread": "Yellow", "under": "Navy", "mm": 0}]}));
+    assert!(!inked(&none, 140, 70));
+    // The other direction (navy under yellow) is not a pair that traps: yellow prints first.
+    let other = spread(&mut s, json!({"pairs": [{"spread": "Navy", "under": "Yellow", "mm": 2.0}]}));
+    assert_eq!(other.as_raw(), plain.as_raw());
+    for bad in [json!({"pairs": [{"spread": "Nope", "under": "Navy"}]}), json!({"pairs": [{"spread": "Yellow"}]}), json!({"pairs": 3})] {
+        let mut p = json!({"dpi": 100, "inks": inks()});
+        p["pairs"] = bad["pairs"].clone();
+        assert!(s.execute("screen.separateVector", &p).is_err(), "{bad}");
+    }
+}
+
+#[test]
 fn vector_overprint_prints_over_the_ink_below() {
     let mut s = Session::new();
     s.execute("file.new", &json!({"width": 200, "height": 100})).unwrap();
@@ -687,6 +719,32 @@ fn vector_plates_can_come_as_vector_pdfs() {
 }
 
 #[test]
+fn vector_plates_can_come_as_svg() {
+    let mut s = Session::new();
+    s.execute("file.new", &json!({"width": 200, "height": 100})).unwrap();
+    shape(&mut s, (0.0, 0.0, 140.0, 100.0), YELLOW);
+    shape(&mut s, (100.0, 0.0, 100.0, 100.0), NAVY);
+    let r = s.execute("screen.separateVector", &json!({"dpi": 100, "inks": inks(), "vectorSvg": true})).unwrap();
+    for f in r["films"].as_array().unwrap() {
+        assert_eq!(f["vector"]["format"], "svg");
+        let svg = vectorcraft_format::base64_decode(f["vector"]["dataBase64"].as_str().unwrap()).unwrap();
+        let text = String::from_utf8_lossy(&svg);
+        assert!(text.contains("<svg") && text.contains("<path") && !text.contains("<image"), "{}: {text}", f["name"]);
+    }
+    // The PDF wins when both are asked for; a folder gets .vector.svg files.
+    let both = s.execute("screen.separateVector", &json!({"dpi": 100, "inks": inks(), "vectorSvg": true, "vectorPdf": true})).unwrap();
+    assert_eq!(both["films"][0]["vector"]["format"], "pdf");
+    let dir = vectorcraft_testkit::temp_dir("screen-vector-svg");
+    let w = s.execute("screen.separateVector", &json!({"dpi": 100, "inks": inks(), "vectorSvg": true, "dir": dir.to_string_lossy()})).unwrap();
+    for f in w["films"].as_array().unwrap() {
+        let path = f["vector"]["path"].as_str().unwrap();
+        assert!(path.ends_with(".vector.svg"), "{path}");
+        assert!(std::fs::read_to_string(path).unwrap().contains("<svg"));
+    }
+    let _ = std::fs::remove_dir_all(dir);
+}
+
+#[test]
 fn vector_inks_can_be_one_per_layer() {
     let mut s = Session::new();
     s.execute("file.new", &json!({"width": 200, "height": 100})).unwrap();
@@ -717,6 +775,33 @@ fn vector_inks_can_be_one_per_layer() {
     assert_eq!((f["color"].as_str().unwrap(), f["mesh"].as_f64().unwrap()), ("#101050", 200.0));
     assert_eq!(film(&o, "Layer 1")["mesh"], 156.0, "the others keep the defaults");
     assert!(s.execute("screen.separateVector", &json!({"inkBy": "shape"})).is_err());
+}
+
+#[test]
+fn vector_inks_can_be_one_per_group() {
+    let mut s = Session::new();
+    s.execute("file.new", &json!({"width": 200, "height": 100})).unwrap();
+    // A yellow and a red shape in one group, a navy one in another, and a loose red one.
+    let a = shape(&mut s, (0.0, 0.0, 40.0, 100.0), YELLOW);
+    let b = shape(&mut s, (50.0, 0.0, 40.0, 100.0), "#c81e1e");
+    s.execute("object.group", &json!({"ids": [a, b]})).unwrap();
+    let c = shape(&mut s, (100.0, 0.0, 40.0, 100.0), NAVY);
+    s.execute("object.group", &json!({"ids": [c]})).unwrap();
+    shape(&mut s, (150.0, 0.0, 40.0, 100.0), "#c81e1e");
+
+    let r = s.execute("screen.separateVector", &json!({"dpi": 100, "inkBy": "group"})).unwrap();
+    let mut inks: Vec<_> =
+        r["inks"].as_array().unwrap().iter().map(|i| (i["name"].as_str().unwrap().to_string(), i["shapes"].as_u64().unwrap())).collect();
+    inks.sort();
+    assert_eq!(inks, [("Group 1".to_string(), 2), ("Group 2".to_string(), 1), ("Layer 1".to_string(), 1)]);
+    // Both colours of the first group print on its one film.
+    let g1 = film_image(film(&r, "Group 1"));
+    assert!(inked(&g1, 30, 70) && inked(&g1, 100, 70) && !inked(&g1, 170, 70) && !inked(&g1, 240, 70));
+    let loose = film_image(film(&r, "Layer 1"));
+    assert!(inked(&loose, 240, 70) && !inked(&loose, 30, 70));
+    // By colour the same art makes three inks, but the grouped red and the loose red are one.
+    let by_color = s.execute("screen.separateVector", &json!({"dpi": 100})).unwrap();
+    assert_eq!(by_color["inks"].as_array().unwrap().len(), 3);
 }
 
 #[test]

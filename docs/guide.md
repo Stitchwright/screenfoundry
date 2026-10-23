@@ -136,19 +136,24 @@ straight edge in the art is a straight edge on the film.
 - **One ink a layer.** With `inkBy: "layer"` each layer that has shapes is one ink, named after the
   layer and coloured by its first shape, whatever colours its shapes are (sublayers count as
   their layer). An entry of `inks` with the layer's name sets that ink's colour and mesh. Use it
-  when the art is already organised by screen.
+  when the art is already organised by screen. With `inkBy: "group"` each outermost group is
+  one ink instead, named after the group (shapes outside any group share one ink named after
+  their layer); use it when the art is organised in groups.
 - **Knockout and overprint.** A shape knocks out the other inks under it, so no ink prints where
   it will be covered, unless the shape is set to overprint (Attributes, or `object.setOverprint`):
   then the ink below prints whole and the shape prints over it.
 - **Trap and underbase.** Both are path operations. Each ink grows by `trapMm` (default 0.25 mm)
   only where a darker ink lies, so light colours tuck under dark ones and free edges stay put.
+  `pairs` sets the trap for one pair of inks: `{spread: "Yellow", under: "Navy", mm: 0.5}` makes
+  yellow spread 0.5 mm under navy (0 turns that pair's trap off); the other pairs keep `trapMm`.
   The underbase is the art's footprint pulled in by `chokeMm`.
 - **Vector plates.** With `vectorPdf` every film also comes as a one-page vector PDF the size of
   the artboard (black on nothing, in the `vector` entry of the film, or `NN-role-name.vector.pdf`
   next to the film in `dir`). It holds the plate's paths as they are, trap and knockout included,
   so a RIP can draw them at any resolution. With `marks` the page grows by the same margin as a
   raster film and carries the same four registration marks (as paths), so a vector plate and a
-  raster film of the same job line up.
+  raster film of the same job line up. `vectorSvg` does the same with SVG files (black paths for
+  editing in a vector program; `vectorPdf` wins if both are set).
 - **Type** is separated through its outlines, in the colours of its first style; use Create
   Outlines when characters differ in colour. Clip groups and layer clips are honoured.
 - **Left out, and said so.** Gradients, patterns, meshes, placed pictures, brush strokes, symbol

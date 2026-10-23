@@ -48,6 +48,9 @@ struct Raw {
     overprint: bool,
     /// The top-level layer the shape is on (sublayers count as their layer).
     layer: usize,
+    /// The object set the shape belongs to: its outermost group, else its layer (an index into
+    /// `Collected::set_names`).
+    set: usize,
 }
 
 #[derive(Default)]
@@ -56,6 +59,11 @@ struct Collected {
     /// The top-level layer being walked, and the name of each layer.
     layer: usize,
     layer_names: Vec<String>,
+    /// The name of each object set, and the set being walked (None outside any group).
+    set_names: Vec<String>,
+    group: Option<usize>,
+    /// The set of each layer's loose shapes (not in a group).
+    layer_sets: Vec<(usize, usize)>,
     /// (object, why) for what could not be separated.
     skipped: Vec<(String, String)>,
     skipped_total: usize,
@@ -125,7 +133,16 @@ fn walk(doc: &Document, n: &Node, clips: Clips, out: &mut Collected) {
         }
         NodeKind::Group { children, clip } => {
             out.transparent += usize::from(is_transparent(n));
+            // The outermost group is the object set; groups inside it belong to it.
+            let outer = out.group.is_none();
+            if outer {
+                out.set_names.push(n.name.clone().unwrap_or_else(|| format!("Group {}", out.set_names.len() + 1)));
+                out.group = Some(out.set_names.len() - 1);
+            }
             walk_children(doc, children, *clip, clips, out);
+            if outer {
+                out.group = None;
+            }
         }
         NodeKind::Path { guide, clipping, .. } => {
             if !*guide && !*clipping {
@@ -195,7 +212,19 @@ fn add(doc: &Document, n: &Node, path: &PathData, rule: FillRule, paint: &Paint,
         rule = FillRule::NonZero;
     }
     if !path.is_empty() {
-        out.shapes.push(Raw { path, rule, rgb: rgb8(doc, color), spot, overprint, layer: out.layer });
+        let set = match out.group {
+            Some(g) => g,
+            // Loose shapes share one set per layer, named after the layer.
+            None => match out.layer_sets.iter().find(|(l, _)| *l == out.layer) {
+                Some(&(_, set)) => set,
+                None => {
+                    out.set_names.push(out.layer_names.get(out.layer).cloned().unwrap_or_else(|| format!("Layer {}", out.layer + 1)));
+                    out.layer_sets.push((out.layer, out.set_names.len() - 1));
+                    out.set_names.len() - 1
+                }
+            },
+        };
+        out.shapes.push(Raw { path, rule, rgb: rgb8(doc, color), spot, overprint, layer: out.layer, set });
     }
 }
 
@@ -268,6 +297,50 @@ pub(super) fn trap_under(plates: &[PathData], trap: f64) -> Vec<PathData> {
         .collect()
 }
 
+/// Like [`trap_under`] with a width of its own for each pair: plate `k` grows by `width(k, j)` under
+/// each later plate `j` (0 or less: not at all there).
+pub(super) fn trap_pairs(plates: &[PathData], width: impl Fn(usize, usize) -> f64) -> Vec<PathData> {
+    plates
+        .iter()
+        .enumerate()
+        .map(|(k, p)| {
+            if p.is_empty() {
+                return p.clone();
+            }
+            let mut laps: Vec<PathData> = Vec::new();
+            for (j, q) in plates.iter().enumerate().skip(k + 1) {
+                let w = width(k, j);
+                if q.is_empty() || w <= 0.0 || !w.is_finite() {
+                    continue;
+                }
+                let lap = boolean(&offset_path(p, w, Join::Round, MITER_LIMIT), FillRule::NonZero, q, FillRule::NonZero, BoolOp::Intersect);
+                if !lap.is_empty() {
+                    laps.push(lap);
+                }
+            }
+            let mut all: Vec<(&PathData, FillRule)> = vec![(p, FillRule::NonZero)];
+            all.extend(laps.iter().map(|l| (l, FillRule::NonZero)));
+            unite_all(&all)
+        })
+        .collect()
+}
+
+/// The traps asked for by `pairs: [{spread, under, mm}]`, as (ink that spreads, ink it tucks
+/// under, width in mm) by ink index.
+fn pair_traps(p: &Value, inks: &[Ink]) -> Result<Vec<(usize, usize, f64)>> {
+    const C: &str = "screen.separateVector";
+    let list = match p.get("pairs") {
+        None | Some(Value::Null) => return Ok(Vec::new()),
+        Some(Value::Array(a)) if a.len() <= 64 => a,
+        Some(_) => return Err(bad(C, "`pairs` is a list of up to 64 {spread, under, mm}")),
+    };
+    let find = |v: Option<&Value>, key: &str| -> Result<usize> {
+        let name = v.and_then(Value::as_str).ok_or_else(|| bad(C, format!("each pair needs `{key}`, an ink name")))?;
+        inks.iter().position(|i| i.name.eq_ignore_ascii_case(name)).ok_or_else(|| bad(C, format!("no ink named {name:?} for a trap pair")))
+    };
+    list.iter().map(|e| Ok((find(e.get("spread"), "spread")?, find(e.get("under"), "under")?, num(e, C, "mm", 0.25, 0.0..=5.0)?))).collect()
+}
+
 /// A document whose one artboard is `region` and whose one object is `plate` filled with `ink`.
 fn plate_document(plate: &PathData, region: Rect, ink: Color) -> Result<Document> {
     const C: &str = "screen.separateVector";
@@ -289,6 +362,12 @@ fn plate_pdf(plate: &PathData, region: Rect) -> Result<Vec<u8>> {
     crate::cmd::rasterfx::export_pdf(&doc, &vectorcraft_pdf::PdfOptions::default()).map_err(|e| bad(C, e.to_string()))
 }
 
+/// `plate` as an SVG the size of the artboard: black ink on nothing.
+fn plate_svg(plate: &PathData, region: Rect) -> Result<Vec<u8>> {
+    let doc = plate_document(plate, region, Color::Gray { k: 1.0 })?;
+    Ok(vectorcraft_svg::export(&doc, &vectorcraft_svg::ExportOptions::default()).into_bytes())
+}
+
 /// Draw `plate` as black on nothing, without smoothing, `w` × `h` pixels over `region`, and
 /// threshold it into film.
 fn rasterize(r: &mut Renderer, plate: &PathData, region: Rect, scale: f64, (w, h): (u32, u32)) -> Result<Bitmap1> {
@@ -302,7 +381,7 @@ fn rasterize(r: &mut Renderer, plate: &PathData, region: Rect, scale: f64, (w, h
 }
 
 /// The inks of the job and the ink of each shape.
-fn assign_inks(p: &Value, raws: &[Raw], layer_names: &[String]) -> Result<(Vec<Ink>, Vec<usize>)> {
+fn assign_inks(p: &Value, raws: &[Raw], layer_names: &[String], set_names: &[String]) -> Result<(Vec<Ink>, Vec<usize>)> {
     const C: &str = "screen.separateVector";
     let mut rgbs: Vec<[u8; 3]> = Vec::new();
     let mut names: Vec<Option<String>> = Vec::new();
@@ -323,12 +402,13 @@ fn assign_inks(p: &Value, raws: &[Raw], layer_names: &[String]) -> Result<(Vec<I
         }
         Some(_) => return Err(bad(C, "`inks` is a list of {name?, color, mesh?}")),
     }
-    let by_layer = match str_param(p, "inkBy").unwrap_or("color") {
-        "color" => false,
-        "layer" => true,
-        _ => return Err(bad(C, "`inkBy` is color or layer")),
+    let (by_layer, by_set) = match str_param(p, "inkBy").unwrap_or("color") {
+        "color" => (false, false),
+        "layer" => (true, false),
+        "group" => (true, true),
+        _ => return Err(bad(C, "`inkBy` is color, layer or group")),
     };
-    // By layer the given inks only set the colour and mesh of the layer they are named for.
+    // By layer or group the given inks only set the colour and mesh of the one they are named for.
     let overrides = by_layer.then(|| (std::mem::take(&mut rgbs), std::mem::take(&mut names), std::mem::take(&mut meshes)));
     // The ink of each shape: by layer its layer's ink; else with given inks a spot swatch takes the
     // ink of its name and otherwise the nearest colour; without, every distinct colour or spot
@@ -338,14 +418,16 @@ fn assign_inks(p: &Value, raws: &[Raw], layer_names: &[String]) -> Result<(Vec<I
     let mut layers_seen: Vec<usize> = Vec::new();
     for r in raws {
         let ink = if by_layer {
-            match layers_seen.iter().position(|&l| l == r.layer) {
+            let unit = if by_set { r.set } else { r.layer };
+            match layers_seen.iter().position(|&l| l == unit) {
                 Some(i) => Some(i),
                 None => {
                     if layers_seen.len() >= MAX_INKS {
-                        return Err(bad(C, format!("the art has shapes on more than {MAX_INKS} layers: merge layers or use `inkBy` color")));
+                        return Err(bad(C, format!("the art has shapes in more than {MAX_INKS} layers or groups: merge them or use `inkBy` color")));
                     }
-                    layers_seen.push(r.layer);
-                    let name = layer_names.get(r.layer).cloned().unwrap_or_else(|| format!("Layer {}", r.layer + 1));
+                    layers_seen.push(unit);
+                    let name =
+                        if by_set { set_names.get(unit) } else { layer_names.get(unit) }.cloned().unwrap_or_else(|| format!("Layer {}", unit + 1));
                     let given_at = overrides
                         .as_ref()
                         .and_then(|(_, g_names, _)| g_names.iter().position(|n| n.as_deref().is_some_and(|n| n.eq_ignore_ascii_case(&name))));
@@ -434,22 +516,30 @@ fn vector_marks(art: Rect, dpi: f64) -> Result<(PathData, Rect)> {
 ///
 /// With `marks` (the marks and the larger region that holds them, from [`vector_marks`]) the page
 /// grows to hold them and every plate carries them.
-fn attach_vector_pdfs(films: &mut [Value], paths: &[PathData], region: Rect, marks: Option<&(PathData, Rect)>, dir: Option<&str>) -> Result<()> {
+fn attach_vector_pdfs(
+    films: &mut [Value],
+    paths: &[PathData],
+    region: Rect,
+    marks: Option<&(PathData, Rect)>,
+    dir: Option<&str>,
+    format: &str,
+) -> Result<()> {
     for (i, (entry, path)) in films.iter_mut().zip(paths).enumerate() {
-        let pdf = match marks {
-            Some((mk, framed)) => plate_pdf(&unite_all(&[(path, FillRule::NonZero), (mk, FillRule::NonZero)]), *framed)?,
-            None => plate_pdf(path, region)?,
+        let (shape, page) = match marks {
+            Some((mk, framed)) => (unite_all(&[(path, FillRule::NonZero), (mk, FillRule::NonZero)]), *framed),
+            None => (path.clone(), region),
         };
-        let mut v = json!({ "format": "pdf" });
+        let bytes = if format == "svg" { plate_svg(&shape, page)? } else { plate_pdf(&shape, page)? };
+        let mut v = json!({ "format": format });
         match dir {
             Some(dir) => {
                 let role = entry["role"].as_str().unwrap_or("color").to_string();
                 let name = entry["name"].as_str().unwrap_or("film").to_string();
-                let file = format!("{}/{:02}-{}-{}.vector.pdf", dir.trim_end_matches(['/', '\\']), i + 1, role, slug(&name));
-                crate::cmd::fileio::write_file(&file, &pdf)?;
+                let file = format!("{}/{:02}-{}-{}.vector.{format}", dir.trim_end_matches(['/', '\\']), i + 1, role, slug(&name));
+                crate::cmd::fileio::write_file(&file, &bytes)?;
                 v["path"] = json!(file);
             }
-            None => v["dataBase64"] = json!(vectorcraft_format::base64_encode(&pdf)),
+            None => v["dataBase64"] = json!(vectorcraft_format::base64_encode(&bytes)),
         }
         entry["vector"] = v;
     }
@@ -465,7 +555,14 @@ pub(super) fn separate_vector(s: &mut Session, p: &Value) -> Result<Value> {
     let dpi = num(p, C, "dpi", DEFAULT_DPI, 25.0..=2400.0)?;
     let trap_mm = num(p, C, "trapMm", 0.25, 0.0..=5.0)?;
     let marks = bool_or(p, "marks", false);
-    let vector_pdf = bool_or(p, "vectorPdf", false);
+    // `vectorPdf: true` and `vectorSvg: true` each add the plates as paths in that format (PDF wins).
+    let vector_format = if bool_or(p, "vectorPdf", false) {
+        Some("pdf")
+    } else if bool_or(p, "vectorSvg", false) {
+        Some("svg")
+    } else {
+        None
+    };
     let fmt = FilmFormat::parse(C, p)?;
     // Lengths are millimetres in the parameters and points in the document.
     let pt = |mm: f64| mm / 25.4 * 72.0;
@@ -479,7 +576,7 @@ pub(super) fn separate_vector(s: &mut Session, p: &Value) -> Result<Value> {
     if collected.shapes.len() > MAX_SHAPES {
         return Err(bad(C, format!("the art has {} shapes; at most {MAX_SHAPES} can be separated at once", collected.shapes.len())));
     }
-    let (inks, of_shape) = assign_inks(p, &collected.shapes, &collected.layer_names)?;
+    let (inks, of_shape) = assign_inks(p, &collected.shapes, &collected.layer_names, &collected.set_names)?;
     let shapes: Vec<Shape> =
         collected.shapes.into_iter().zip(&of_shape).map(|(r, &ink)| Shape { path: r.path, rule: r.rule, ink, overprint: r.overprint }).collect();
     let mut per_ink = vec![0usize; inks.len()];
@@ -495,7 +592,17 @@ pub(super) fn separate_vector(s: &mut Session, p: &Value) -> Result<Value> {
     let mut order: Vec<usize> = (0..inks.len()).collect();
     order.sort_by(|&a, &b| lightness(b).total_cmp(&lightness(a)));
     let ordered: Vec<PathData> = order.iter().filter_map(|&i| plates.get(i).cloned()).collect();
-    let trapped = trap_under(&ordered, pt(trap_mm));
+    let pairs = pair_traps(p, &inks)?;
+    let trapped = if pairs.is_empty() {
+        trap_under(&ordered, pt(trap_mm))
+    } else {
+        // `ordered` holds the inks in print order: position -> ink index in `order`.
+        trap_pairs(&ordered, |k, j| {
+            let (a, b) = (order.get(k).copied(), order.get(j).copied());
+            let own = pairs.iter().rev().find(|(sp, un, _)| Some(*sp) == a && Some(*un) == b);
+            own.map_or(trap_mm, |(_, _, mm)| *mm) / 25.4 * 72.0
+        })
+    };
 
     let mut renderer = Renderer::new();
     let mut films = Vec::with_capacity(inks.len() + 1);
@@ -530,7 +637,7 @@ pub(super) fn separate_vector(s: &mut Session, p: &Value) -> Result<Value> {
     }
 
     let (mut films, dcs) = finish_films(C, p, films, dpi, marks, fmt)?;
-    if vector_pdf {
+    if let Some(format) = vector_format {
         let framed = if marks { Some(vector_marks(region, dpi)?) } else { None };
         // Mirrored films come with mirrored vector plates: flip about the middle of the page they are drawn on.
         if bool_or(p, "mirror", false) {
@@ -538,7 +645,7 @@ pub(super) fn separate_vector(s: &mut Session, p: &Value) -> Result<Value> {
             let flip = vectorcraft_geom::Affine::new([-1.0, 0.0, 0.0, 1.0, page.x0 + page.x1, 0.0]);
             film_paths = film_paths.iter().map(|path| path.transformed(flip)).collect();
         }
-        attach_vector_pdfs(&mut films, &film_paths, region, framed.as_ref(), dir_param(p))?;
+        attach_vector_pdfs(&mut films, &film_paths, region, framed.as_ref(), dir_param(p), format)?;
     }
     let (w, h) = films.first().map(|f| (f["width"].clone(), f["height"].clone())).unwrap_or_default();
     let sheet = job_sheet(C, p, dpi, &films, &[], dir_param(p))?;
@@ -637,6 +744,24 @@ mod tests {
         // No trap: unchanged. A lone plate has nothing to tuck under.
         assert_eq!(trap_under(&plates, 0.0), plates.to_vec());
         assert_eq!(trap_under(&plates[..1], 2.0), plates[..1].to_vec());
+    }
+
+    #[test]
+    fn each_pair_can_have_its_own_trap() {
+        // Light, mid and dark side by side: the light one touches the mid, the mid touches the dark.
+        let plates = [rect(0.0, 0.0, 50.0, 100.0), rect(50.0, 0.0, 100.0, 100.0), rect(100.0, 0.0, 150.0, 100.0)];
+        let t = trap_pairs(&plates, |k, j| if (k, j) == (0, 1) { 4.0 } else { 1.0 });
+        assert!((area_of(&t[0]) - (5_000.0 + 400.0)).abs() < 1.0, "{}", area_of(&t[0]));
+        assert!((area_of(&t[1]) - (5_000.0 + 100.0)).abs() < 1.0, "{}", area_of(&t[1]));
+        assert_eq!(area_of(&t[2]), 5_000.0);
+        // Zero for a pair leaves it untrapped.
+        let t = trap_pairs(&plates, |k, j| if (k, j) == (0, 1) { 0.0 } else { 1.0 });
+        assert_eq!(area_of(&t[0]), 5_000.0);
+        // The same width everywhere agrees with the single-width trap.
+        let (a, b) = (trap_pairs(&plates, |_, _| 2.0), trap_under(&plates, 2.0));
+        for (x, y) in a.iter().zip(&b) {
+            assert!((area_of(x) - area_of(y)).abs() < 1.0);
+        }
     }
 
     #[test]
