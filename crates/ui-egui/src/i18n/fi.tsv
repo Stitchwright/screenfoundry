@@ -6772,3 +6772,5 @@ swatch	Bright Violet	Kirkas violetti
 	Print Test Page	Tulosta testisivu
 # ScreenFoundry: ink limit and diffusion controls. Machine-written first pass, to be checked by a native speaker.
 	Ink Limit	Musteraja
+# ScreenFoundry: plates to layers (undo step). Machine-written first pass, to be checked by a native speaker.
+	Plates to Layers	Levyt tasoille

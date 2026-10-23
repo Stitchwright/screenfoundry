@@ -656,6 +656,28 @@ fn attach_vector_pdfs(
     Ok(())
 }
 
+/// Add one layer per plate to the open document (one undo step), holding the plate's paths filled
+/// with the ink's colour, named after the ink. Returns the new layers' ids.
+fn plates_into_layers(s: &mut Session, plates: Vec<(String, [u8; 3], PathData)>) -> Result<Vec<u64>> {
+    s.edit("Plates to Layers", |d, _| {
+        let mut ids = Vec::with_capacity(plates.len());
+        for (name, rgb, path) in plates {
+            let layer_id = d.alloc_id();
+            let colour = vectorcraft_doc::LayerColor::Preset((d.layers.len() % vectorcraft_doc::LAYER_COLORS.len()) as u8);
+            d.layers.push(std::sync::Arc::new(Node::layer(layer_id, &format!("Plate: {name}"), colour)));
+            if !path.is_empty() {
+                let id = d.alloc_id();
+                let fill = Color::rgb(f32::from(rgb[0]) / 255.0, f32::from(rgb[1]) / 255.0, f32::from(rgb[2]) / 255.0);
+                let mut node = Node::path(id, path, Appearance::basic(Paint::solid(fill), Paint::None, 0.0));
+                node.name = Some(name.clone());
+                d.insert(Some(layer_id), 0, node).map_err(|e| bad("screen.separateVector", e.to_string()))?;
+            }
+            ids.push(layer_id.0);
+        }
+        Ok(ids)
+    })
+}
+
 /// `screen.separateVector`: the open document's paths as one film per ink.
 pub(super) fn separate_vector(s: &mut Session, p: &Value) -> Result<Value> {
     const C: &str = "screen.separateVector";
@@ -801,6 +823,12 @@ pub(super) fn separate_vector(s: &mut Session, p: &Value) -> Result<Value> {
         film_paths.push(plate.clone());
     }
 
+    // The plates as paths in the document's own space, kept for `intoLayers`.
+    let layer_plates: Vec<(String, [u8; 3], PathData)> = if bool_or(p, "intoLayers", false) {
+        films.iter().zip(&film_paths).map(|(f, path)| (f.name.clone(), f.ink_rgb, path.clone())).collect()
+    } else {
+        Vec::new()
+    };
     let (mut films, dcs) = finish_films(C, p, films, dpi, marks, fmt)?;
     if let Some(format) = vector_format {
         let framed = if marks { Some(vector_marks(region, dpi)?) } else { None };
@@ -838,6 +866,9 @@ pub(super) fn separate_vector(s: &mut Session, p: &Value) -> Result<Value> {
         "dpi": dpi, "width": w, "height": h, "films": films, "inks": ink_list,
         "skipped": skipped, "skippedTotal": collected.skipped_total, "notes": notes,
     });
+    if !layer_plates.is_empty() {
+        out["layers"] = json!(plates_into_layers(s, layer_plates)?);
+    }
     attach(&mut out, sheet);
     attach_dcs(&mut out, dcs);
     Ok(out)

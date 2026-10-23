@@ -6587,3 +6587,5 @@ file-filter	ScreenFoundry Template	ScreenFoundry-ის შაბლონი
 	Print Test Page	სატესტო გვერდის ბეჭდვა
 # ScreenFoundry: ink limit and diffusion controls. Machine-written first pass, to be checked by a native speaker.
 	Ink Limit	საღებავის ლიმიტი
+# ScreenFoundry: plates to layers (undo step). Machine-written first pass, to be checked by a native speaker.
+	Plates to Layers	ფირფიტები ფენებად

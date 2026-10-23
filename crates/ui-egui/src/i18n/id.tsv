@@ -6649,3 +6649,5 @@ swatch	Bright Violet	Violet cerah
 	Print Test Page	Cetak Halaman Uji
 # ScreenFoundry: ink limit and diffusion controls. Machine-written first pass, to be checked by a native speaker.
 	Ink Limit	Batas Tinta
+# ScreenFoundry: plates to layers (undo step). Machine-written first pass, to be checked by a native speaker.
+	Plates to Layers	Pelat ke Lapisan

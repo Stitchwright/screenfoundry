@@ -6380,3 +6380,5 @@ machine	Stop	Зупинка
 # ScreenFoundry: ink limit and diffusion controls. Machine-written first pass, to be checked by a native speaker.
 	Ink Limit	Ліміт фарби
 	Diffusion	Дифузія
+# ScreenFoundry: plates to layers (undo step). Machine-written first pass, to be checked by a native speaker.
+	Plates to Layers	Форми в шари

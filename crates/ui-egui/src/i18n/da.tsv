@@ -6649,3 +6649,5 @@ swatch	Bright Violet	Kraftig violet
 	Print Test Page	Udskriv testside
 # ScreenFoundry: ink limit and diffusion controls. Machine-written first pass, to be checked by a native speaker.
 	Ink Limit	Farvegrænse
+# ScreenFoundry: plates to layers (undo step). Machine-written first pass, to be checked by a native speaker.
+	Plates to Layers	Plader til lag

@@ -6691,3 +6691,5 @@ swatch	Bright Violet	Felviolet
 	Print Test Page	Testpagina afdrukken
 # ScreenFoundry: ink limit and diffusion controls. Machine-written first pass, to be checked by a native speaker.
 	Ink Limit	Inktlimiet
+# ScreenFoundry: plates to layers (undo step). Machine-written first pass, to be checked by a native speaker.
+	Plates to Layers	Platen naar lagen

@@ -6400,3 +6400,5 @@ machine	Stop	Arresto
 # ScreenFoundry: ink limit and diffusion controls. Machine-written first pass, to be checked by a native speaker.
 	Ink Limit	Limite inchiostro
 	Diffusion	Diffusione
+# ScreenFoundry: plates to layers (undo step). Machine-written first pass, to be checked by a native speaker.
+	Plates to Layers	Lastre in livelli

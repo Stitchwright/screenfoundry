@@ -1349,3 +1349,28 @@ fn a_measured_dot_curve_replaces_the_plain_gain() {
     };
     assert!(sim(&mut s, Some(json!([[0.5, 0.7]]))) < sim(&mut s, None) - 0.05);
 }
+
+#[test]
+fn vector_plates_can_be_added_to_the_document_as_layers() {
+    let mut s = Session::new();
+    s.execute("file.new", &json!({"width": 200, "height": 100})).unwrap();
+    shape(&mut s, (0.0, 0.0, 140.0, 100.0), YELLOW);
+    shape(&mut s, (100.0, 0.0, 100.0, 100.0), NAVY);
+    let before = s.doc().unwrap().doc.layers.len();
+    // Off by default: the document is not touched.
+    let r = s.execute("screen.separateVector", &json!({"dpi": 100, "inks": inks()})).unwrap();
+    assert!(r.get("layers").is_none());
+    assert_eq!(s.doc().unwrap().doc.layers.len(), before);
+    let r = s.execute("screen.separateVector", &json!({"dpi": 100, "inks": inks(), "intoLayers": true})).unwrap();
+    assert_eq!(r["layers"].as_array().unwrap().len(), 2);
+    let doc = &s.doc().unwrap().doc;
+    assert_eq!(doc.layers.len(), before + 2);
+    let names: Vec<_> = doc.layers.iter().filter_map(|l| l.name.clone()).collect();
+    assert!(names.contains(&"Plate: Yellow".to_string()) && names.contains(&"Plate: Navy".to_string()), "{names:?}");
+    // One undo step takes them out again.
+    s.execute("edit.undo", &json!({})).unwrap();
+    assert_eq!(s.doc().unwrap().doc.layers.len(), before);
+    // And separating again does not pick the plates up as art: they were undone, so nothing doubled.
+    let again = s.execute("screen.separateVector", &json!({"dpi": 100, "inks": inks()})).unwrap();
+    assert_eq!(again["films"].as_array().unwrap().len(), 2);
+}

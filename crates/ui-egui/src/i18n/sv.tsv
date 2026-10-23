@@ -6711,3 +6711,5 @@ machine	Stop	Stopp
 	Print Test Page	Skriv ut testsida
 # ScreenFoundry: ink limit and diffusion controls. Machine-written first pass, to be checked by a native speaker.
 	Ink Limit	Färggräns
+# ScreenFoundry: plates to layers (undo step). Machine-written first pass, to be checked by a native speaker.
+	Plates to Layers	Plåtar till lager

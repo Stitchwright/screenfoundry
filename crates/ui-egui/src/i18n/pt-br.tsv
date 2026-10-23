@@ -6613,3 +6613,5 @@ mark-style	Japanese	Japonesas
 	Print Test Page	Imprimir página de teste
 # ScreenFoundry: ink limit and diffusion controls. Machine-written first pass, to be checked by a native speaker.
 	Ink Limit	Limite de tinta
+# ScreenFoundry: plates to layers (undo step). Machine-written first pass, to be checked by a native speaker.
+	Plates to Layers	Chapas para camadas

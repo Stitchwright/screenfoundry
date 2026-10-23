@@ -147,6 +147,10 @@ straight edge in the art is a straight edge on the film.
   `pairs` sets the trap for one pair of inks: `{spread: "Yellow", under: "Navy", mm: 0.5}` makes
   yellow spread 0.5 mm under navy (0 turns that pair's trap off); the other pairs keep `trapMm`.
   The underbase is the art's footprint pulled in by `chokeMm`.
+- **Plates in the document.** `intoLayers` also adds every plate to the open document as a layer
+  named `Plate: <ink>` holding its paths in the ink's colour (one undo step), so you can inspect or
+  edit the trapped, knocked-out shapes. A later run would separate these layers
+  as art too, so hide or delete them first.
 - **Vector plates.** With `vectorPdf` every film also comes as a one-page vector PDF the size of
   the artboard (black on nothing, in the `vector` entry of the film, or `NN-role-name.vector.pdf`
   next to the film in `dir`). It holds the plate's paths as they are, trap and knockout included,
@@ -204,16 +208,18 @@ colours. The white is white ink where the art is, pulled in from its edges by `w
 - **Gang sheet.** `artboards` (`"all"`, or a list of artboard numbers from 1) lays several
   artboards of the open document out on one sheet `sheetWidthMm` wide (required; roll widths
   vary, so there is no default), `gapMm` apart (default 5): in rows, tallest first, left to
-  right, a new row when the next does not fit. The sheet is as tall as the rows need. With
+  right, a new row when the next does not fit; if packing small designs into the space beside
+  tall ones makes the sheet shorter, that layout is used instead. The sheet is only as tall as it
+  needs to be. With
   `rotate` ScreenFoundry also tries every design turned to lie wider than tall and every design
   turned to stand taller than wide (where it fits across the sheet) and uses the layout with the
   shortest sheet, so turning never does worse than not turning; a design too wide for the sheet
-  can then go turned. This is shelf packing, not a search for the best possible nesting. `placements` says where each artboard went (pixels and millimetres, as they are in the
+  can then go turned. This is a good packing, not a search for the best possible nesting. `placements` says where each artboard went (pixels and millimetres, as they are in the
   files, so after mirroring). The mirroring and the white layer then apply to the whole sheet.
 
 What a shop's RIP wants (white made by the RIP or supplied as a file, mirroring, resolution)
 varies, so check it against yours. The choke and the gap are starting points, not standards.
-There is no highlight-white tool beyond the graded mode, and no nesting beyond the shelf layouts above.
+There is no highlight-white tool beyond the graded mode, and no nesting beyond the rows and free-space packing above (designs are rectangles; shapes are not nested into each other).
 
 ## Print test page
 

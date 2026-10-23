@@ -6732,3 +6732,5 @@ machine	Stop	Megállás
 	Print Test Page	Tesztoldal nyomtatása
 # ScreenFoundry: ink limit and diffusion controls. Machine-written first pass, to be checked by a native speaker.
 	Ink Limit	Festékkorlát
+# ScreenFoundry: plates to layers (undo step). Machine-written first pass, to be checked by a native speaker.
+	Plates to Layers	Lemezek rétegekbe

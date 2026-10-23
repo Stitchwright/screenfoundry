@@ -137,6 +137,77 @@ fn shelf(sizes: &[(usize, usize)], sheet_w: usize, gap: usize) -> Option<(Vec<(u
     Some((at, y.saturating_add(row_h)))
 }
 
+/// Free-rectangle packing (MaxRects, best short side fit) of items `sizes` apart by `gap` into a
+/// sheet `sheet_w` wide and at most `max_h` tall: where each goes (x, y) in the order given and the
+/// height used. Items are placed largest first into the free space they leave the least room over,
+/// so small designs fill the gaps beside tall ones that rows would leave empty. `None` when they
+/// do not all fit.
+fn free_rects(sizes: &[(usize, usize)], sheet_w: usize, max_h: usize, gap: usize) -> Option<(Vec<(usize, usize)>, usize)> {
+    #[derive(Clone, Copy)]
+    struct R {
+        x: usize,
+        y: usize,
+        w: usize,
+        h: usize,
+    }
+    // Work with each item grown by the gap on the right and below, in a bin grown the same way.
+    let bin = R { x: 0, y: 0, w: sheet_w.checked_add(gap)?, h: max_h.checked_add(gap)? };
+    let mut free = vec![bin];
+    let mut order: Vec<usize> = (0..sizes.len()).collect();
+    order.sort_by_key(|&i| std::cmp::Reverse(sizes.get(i).map_or(0, |s| s.0.saturating_mul(s.1))));
+    let mut at = vec![(0, 0); sizes.len()];
+    let mut used = 0usize;
+    for &i in &order {
+        let &(w, h) = sizes.get(i)?;
+        let (gw, gh) = (w.checked_add(gap)?, h.checked_add(gap)?);
+        // The free rectangle with the least room left on its short side, then the highest and leftmost.
+        let spot =
+            free.iter().filter(|f| f.w >= gw && f.h >= gh).min_by_key(|f| ((f.w - gw).min(f.h - gh), f.y, f.x, (f.w - gw).max(f.h - gh))).copied()?;
+        let placed = R { x: spot.x, y: spot.y, w: gw, h: gh };
+        *at.get_mut(i)? = (placed.x, placed.y);
+        used = used.max(placed.y + h);
+        // Cut the placed item out of every free rectangle it touches.
+        let mut next: Vec<R> = Vec::with_capacity(free.len() + 4);
+        for f in &free {
+            let apart = placed.x >= f.x + f.w || placed.x + placed.w <= f.x || placed.y >= f.y + f.h || placed.y + placed.h <= f.y;
+            if apart {
+                next.push(*f);
+                continue;
+            }
+            if placed.x > f.x {
+                next.push(R { w: placed.x - f.x, ..*f });
+            }
+            if placed.x + placed.w < f.x + f.w {
+                next.push(R { x: placed.x + placed.w, w: f.x + f.w - placed.x - placed.w, ..*f });
+            }
+            if placed.y > f.y {
+                next.push(R { h: placed.y - f.y, ..*f });
+            }
+            if placed.y + placed.h < f.y + f.h {
+                next.push(R { y: placed.y + placed.h, h: f.y + f.h - placed.y - placed.h, ..*f });
+            }
+        }
+        // Drop rectangles lying inside another.
+        let all = next.clone();
+        free = next
+            .into_iter()
+            .enumerate()
+            .filter(|(k, a)| {
+                !all.iter().enumerate().any(|(j, b)| {
+                    j != *k
+                        && a.x >= b.x
+                        && a.y >= b.y
+                        && a.x + a.w <= b.x + b.w
+                        && a.y + a.h <= b.y + b.h
+                        && (j < *k || !(a.x == b.x && a.y == b.y && a.w == b.w && a.h == b.h))
+                })
+            })
+            .map(|(_, r)| r)
+            .collect();
+    }
+    Some((at, used))
+}
+
 /// One way of laying the designs out: which are turned, where each goes and how tall the rows are.
 struct Layout {
     turned: Vec<bool>,
@@ -145,7 +216,8 @@ struct Layout {
 }
 
 /// Lay `designs` out on one transparent sheet `sheet_w` pixels wide, `gap` pixels apart, in rows
-/// (shelf packing): tallest first, left to right, a new row when the next design does not fit. The
+/// (shelf packing): tallest first, left to right, a new row when the next design does not fit; when
+/// free-rectangle packing (small designs filling the space beside tall ones) makes the sheet shorter, that layout is used. The
 /// sheet is as tall as the rows need. With `rotate` each of three layouts is tried (every design
 /// as it is, every design turned to lie wider than tall, every design turned to stand taller
 /// than wide, where it fits) and the one that makes the shortest sheet is used, so turning never
@@ -176,9 +248,13 @@ pub fn gang_sheet(designs: &[Rgba8], sheet_w: usize, gap: usize, rotate: bool) -
     let mut best: Option<Layout> = None;
     for turned in candidates {
         let sizes = size_of(&turned);
-        if let Some((at, height)) = shelf(&sizes, sheet_w, gap)
-            && best.as_ref().is_none_or(|b| height < b.height)
-        {
+        let Some((at, height)) = shelf(&sizes, sheet_w, gap) else { continue };
+        // Free-rectangle packing inside the height the rows need can only do as well or better.
+        let (at, height) = match free_rects(&sizes, sheet_w, height, gap) {
+            Some((packed, h)) if h < height => (packed, h),
+            _ => (at, height),
+        };
+        if best.as_ref().is_none_or(|b| height < b.height) {
             best = Some(Layout { turned, at, height });
         }
     }
@@ -314,6 +390,43 @@ mod tests {
         for (i, a) in at.iter().enumerate() {
             for b in &at[i + 1..] {
                 assert!(a.x + a.width <= b.x || b.x + b.width <= a.x || a.y + a.height <= b.y || b.y + b.height <= a.y, "{a:?} {b:?}");
+            }
+        }
+    }
+
+    #[test]
+    fn small_designs_fill_the_space_beside_a_tall_one() {
+        // Rows would stack the third design under the first row (height 150); packed, it sits beside the tall one.
+        let designs = [block(60, 100, 1), block(40, 50, 2), block(40, 50, 3)];
+        let (sheet, placed) = gang_sheet(&designs, 100, 0, false).unwrap();
+        assert_eq!(sheet.height(), 100, "{placed:?}");
+        // Nothing overlaps and everything is inside the sheet.
+        for (i, a) in placed.iter().enumerate() {
+            assert!(a.x + a.width <= 100 && a.y + a.height <= 100, "{a:?}");
+            for b in &placed[i + 1..] {
+                let apart = a.x + a.width <= b.x || b.x + b.width <= a.x || a.y + a.height <= b.y || b.y + b.height <= a.y;
+                assert!(apart, "{a:?} overlaps {b:?}");
+            }
+        }
+        // Placements still come back in the order the designs were given.
+        assert_eq!(placed.iter().map(|p| p.index).collect::<Vec<_>>(), [0, 1, 2]);
+    }
+
+    #[test]
+    fn packing_never_loses_designs_or_overlaps_with_gaps() {
+        let designs: Vec<Rgba8> = [(30, 40), (25, 25), (50, 10), (10, 60), (40, 40), (20, 35), (15, 15)]
+            .iter()
+            .enumerate()
+            .map(|(i, &(w, h))| block(w, h, i as u8 + 1))
+            .collect();
+        let (sheet, placed) = gang_sheet(&designs, 90, 4, true).unwrap();
+        assert_eq!(placed.len(), 7);
+        for (i, a) in placed.iter().enumerate() {
+            assert!(a.x + a.width <= sheet.width() && a.y + a.height <= sheet.height(), "{a:?}");
+            for b in &placed[i + 1..] {
+                // At least the gap apart on one axis.
+                let apart = a.x + a.width + 4 <= b.x || b.x + b.width + 4 <= a.x || a.y + a.height + 4 <= b.y || b.y + b.height + 4 <= a.y;
+                assert!(apart, "{a:?} too near {b:?}");
             }
         }
     }
