@@ -546,8 +546,13 @@ fn attach(out: &mut Value, sheet: Option<Value>) {
     }
 }
 
+/// The output folder asked for, made if it is not there yet (a shop names a new folder for each job).
 fn dir_param(p: &Value) -> Option<&str> {
-    str_param(p, "dir").map(str::trim).filter(|d| !d.is_empty())
+    let dir = str_param(p, "dir").map(str::trim).filter(|d| !d.is_empty())?;
+    // A failure to make it is ignored here: the first file written into it reports the real error.
+    #[cfg(not(target_arch = "wasm32"))]
+    let _ = super::fileio::create_dir(dir);
+    Some(dir)
 }
 
 /// The inks of a job: the `inks` given (name, color, mesh), else `colors` of them found in the art.

@@ -1466,3 +1466,30 @@ fn simulate_can_add_a_highlight_white_screen_printed_last() {
     p["highlightWhite"] = json!({"from": 1.5});
     assert!(s.execute("screen.simulate", &p).is_err());
 }
+
+#[test]
+fn an_output_folder_that_does_not_exist_is_made() {
+    let mut s = Session::new();
+    let root = vectorcraft_testkit::temp_dir("screen-newdir");
+    let dir = root.join("job-1").join("films");
+    assert!(!dir.exists());
+    let r = s.execute("screen.testPage", &json!({"dpi": 100, "parts": ["trap"], "dir": dir.to_string_lossy()})).unwrap();
+    assert!(r["films"][0]["path"].as_str().unwrap().starts_with(&*dir.to_string_lossy()));
+    assert!(std::fs::read_dir(&dir).unwrap().count() >= 2);
+    let _ = std::fs::remove_dir_all(root);
+}
+
+#[test]
+fn vector_dots_at_a_low_resolution_get_a_coarser_screen_instead_of_an_error() {
+    let mut s = Session::new();
+    s.execute("file.new", &json!({"width": 200, "height": 100})).unwrap();
+    let g = shape(&mut s, (0.0, 0.0, 200.0, 100.0), "#808080");
+    s.execute("paint.setFill", &json!({"ids": [g], "gradient": {"kind": "linear"}})).unwrap();
+    // 45 lpi needs 180 dpi; at 100 dpi the screen is lowered to 25 lpi.
+    let r = s.execute("screen.separateVector", &json!({"dpi": 100})).unwrap();
+    assert!(r["notes"].as_array().unwrap().iter().any(|n| n.as_str().unwrap().contains("lowered from 45 to 25 lpi")), "{r}");
+    assert!(r["films"][0]["coverage"].as_f64().unwrap() > 0.1);
+    // A screen that already fits is left alone and says nothing.
+    let ok = s.execute("screen.separateVector", &json!({"dpi": 300})).unwrap();
+    assert!(!ok["notes"].as_array().unwrap().iter().any(|n| n.as_str().unwrap().contains("lowered")));
+}

@@ -789,6 +789,9 @@ pub(super) fn separate_vector(s: &mut Session, p: &Value) -> Result<Value> {
             ),
         ));
     }
+    // Dots need at least 4 film pixels a cell: a low resolution (a preview) gets a coarser screen.
+    let asked_lpi = num(p, C, "lpi", 45.0, 1.0..=500.0)?;
+    let lpi = asked_lpi.min(dpi / 4.0);
     let tone_screen = if screened_parts.is_empty() {
         None
     } else {
@@ -802,7 +805,7 @@ pub(super) fn separate_vector(s: &mut Session, p: &Value) -> Result<Value> {
         Some(ToneScreen {
             opts: HalftoneOptions {
                 dpi,
-                lpi: num(p, C, "lpi", 45.0, 1.0..=500.0)?,
+                lpi,
                 angle_deg: 0.0,
                 shape: shape_of(p, C)?,
                 min_dot: num(p, C, "minDot", 0.08, 0.0..=1.0)?,
@@ -904,6 +907,9 @@ pub(super) fn separate_vector(s: &mut Session, p: &Value) -> Result<Value> {
     }
     if collected.tinted > 0 {
         notes.push(format!("{} spot tints below 100% print solid", collected.tinted));
+    }
+    if !screened_parts.is_empty() && lpi < asked_lpi {
+        notes.push(format!("the line screen of the dots was lowered from {asked_lpi:.0} to {lpi:.0} lpi to fit {dpi:.0} dpi"));
     }
     if !screened_parts.is_empty() {
         notes.push(format!(

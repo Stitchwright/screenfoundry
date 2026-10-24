@@ -105,3 +105,4 @@ Decided by the owner on 2026-10-21: remove the embroidery code (done, `docs/plan
 - 2026-10-23: SC-4: opacity of solid fills and strokes prints as dots that let the inks below show.
 - 2026-10-24: SC-4: symbol instances separate through their art.
 - 2026-10-24: SC-5: highlight white. SC-4: Multiply and Darken print as overprint. Open questions researched and recorded in `docs/needs-owner.md`.
+- 2026-10-24: regression pass through the release CLI: output folders are now made when missing; vector dots at a low resolution lower the line screen instead of failing.

@@ -174,7 +174,8 @@ straight edge in the art is a straight edge on the film.
   `minDot`, `maxDot`, `dotGain` and `screening` (am, fm or hybrid) as the halftone command
   does, at each ink's own angle. The shape still knocks out other inks below it. They appear in
   the raster films only: the vector plates hold the solid parts, and `notes` says so. At most 64
-  such shapes are screened in one job. `tones: false` goes back to printing tints solid and
+  such shapes are screened in one job. When the film resolution is too low for the line screen
+  (the dots need 4 film pixels a cell, as in a preview), the screen is lowered and `notes` says so. `tones: false` goes back to printing tints solid and
   skipping gradients.
 - **Left out, and said so.** Patterns, meshes, placed pictures, brush strokes and live art that needs expanding are listed in `skipped`. Multiply and Darken blend modes print the shape over what is below, as overprint
   does (the usual advice for spot colours); other blend modes, masks, effects and a
@@ -282,7 +283,7 @@ Films are 1-bit images, black where ink must reach the garment, with the job's r
 recorded in the file so they print at the right size. Choose `format`: `png` (default), `tiff`
 (uncompressed baseline), `tiff-g4` (CCITT Group 4, which imagesetters and direct-to-screen
 machines read and which makes a flat film a few hundred bytes instead of megabytes) or `pdf` (one page per
-film at its physical size, for print shops that take PDF). Choose a folder with `dir`; without one the films come back as base64. Add `jobSheet`
+film at its physical size, for print shops that take PDF). Choose a folder with `dir` (it is made if it does not exist); without one the films come back as base64. Add `jobSheet`
 (`true`, or `{title, notes}`) for a one-page PDF that travels with the films: the film size and
 resolution, then one row per screen in print order with its colour swatch, role, mesh, coverage
 and file name, then the mesh and line-screen advice. It is written as `job-sheet.pdf` in `dir`,
