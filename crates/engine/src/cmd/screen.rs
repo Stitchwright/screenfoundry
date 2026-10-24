@@ -14,7 +14,7 @@ use sc_core::fm::{FmOptions, Hybrid, Kernel, MAX_FM_CELL_PX, fm_screen, hybrid_s
 use sc_core::halftone::{DotShape, HalftoneOptions, MAX_DOT_GAIN, halftone};
 use sc_core::index::{MAX_CELL_PX, MAX_INDEX_INKS};
 use sc_core::inklib::{self, DEFAULT_MAX_DELTA_E, LibraryInk};
-use sc_core::job::{DEFAULT_ANGLES, Film, IndexJob, Ink, Role, SimulatedJob, SpotJob, UnderbaseOptions};
+use sc_core::job::{DEFAULT_ANGLES, Film, HighlightWhite, IndexJob, Ink, Role, SimulatedJob, SpotJob, UnderbaseOptions};
 use sc_core::jobsheet::{JobSheet, SheetFilm};
 use sc_core::marks::{MarkSpec, frame_with_marks};
 use sc_core::profile::{Advice, check, recommended_lpi_range};
@@ -112,7 +112,7 @@ pub fn specs() -> Vec<CommandSpec> {
             "Simulated Process",
             [],
             None,
-            "{source?, dpi?, inks?: [{name?, color, mesh? (230)}], colors?: how many inks to find in the art when `inks` is not given (4; 1–8), snap?: true|{maxDeltaE? (25), library?: [{name, color}]} replace each ink by the nearest library ink and use its name when none is given, base?: \"#rrggbb\" the colour under the dots (#ffffff), underbase?: true|{name?, color?, mesh?, chokeMm?}, lpi? (45), angles?: [degrees an ink] (22.5, 67.5, 45, 15, 75, 37.5, 52.5, 7.5), shape?: round|ellipse|line (round), screening?: am|fm|hybrid (am; fm scatters equal dots with no angle or ruling so nothing can moire; hybrid scatters only the light and dark ends and angles dots between), dotMm?: the size of one FM dot (0.2; 0.02–5), fmKernel?: floyd|jarvis|stucki (floyd; how the error is spread), hybridBelow?: a hybrid scatters cells lighter than this tone (0.15; 0–1), hybridAbove?: a hybrid scatters cells darker than this tone (0.85; 0–1), minDot? (0.08), maxDot? (0.95), dotCurve?: [[film, printed]] (a measured curve: what each film tone from 0 to 1 printed as, e.g. [[0.5, 0.7]]; replaces dotGain; read it off the print test page), dotGain?: how much bigger a 50% dot prints than on the film (0 = off; 0.2 = a 50% dot prints as 70%; at most 0.25; the film is lightened to cancel it), inkLimit? (1 = no cap; 0.1–1: the most of the area all inks may cover together; darks come out lighter), inkGains?: [each ink's own dot gain in order, 0–0.25; replaces dotGain for that ink], marks?, format?: png|tiff|tiff-g4|pdf (png), mirror?: flip every film left to right for emulsion-down printing (false), dcs?: single|multiple (also write the films as a DCS 2.0 file; multiple puts each plate in a file beside a main file and needs `dir`), dcsName?: the job name in the DCS files (separation), dcsCompositeDpi?: the resolution of the composite in the DCS main file (150; 10–2400; the film resolution or more gives a full resolution composite and a large file), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?} full-colour art as halftone dots of a few inks side by side over the base, each ink at its own screen angle, the underbase first then the inks light to dark → {dpi, width, height, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64}], advice: [{ink, code, message}]}",
+            "{source?, dpi?, inks?: [{name?, color, mesh? (230)}], colors?: how many inks to find in the art when `inks` is not given (4; 1–8), snap?: true|{maxDeltaE? (25), library?: [{name, color}]} replace each ink by the nearest library ink and use its name when none is given, base?: \"#rrggbb\" the colour under the dots (#ffffff), underbase?: true|{name?, color?, mesh?, chokeMm?}, lpi? (45), angles?: [degrees an ink] (22.5, 67.5, 45, 15, 75, 37.5, 52.5, 7.5), shape?: round|ellipse|line (round), screening?: am|fm|hybrid (am; fm scatters equal dots with no angle or ruling so nothing can moire; hybrid scatters only the light and dark ends and angles dots between), dotMm?: the size of one FM dot (0.2; 0.02–5), fmKernel?: floyd|jarvis|stucki (floyd; how the error is spread), hybridBelow?: a hybrid scatters cells lighter than this tone (0.15; 0–1), hybridAbove?: a hybrid scatters cells darker than this tone (0.85; 0–1), minDot? (0.08), maxDot? (0.95), dotCurve?: [[film, printed]] (a measured curve: what each film tone from 0 to 1 printed as, e.g. [[0.5, 0.7]]; replaces dotGain; read it off the print test page), dotGain?: how much bigger a 50% dot prints than on the film (0 = off; 0.2 = a 50% dot prints as 70%; at most 0.25; the film is lightened to cancel it), highlightWhite? (false: true or {name? (Highlight White), mesh? (200), from? (0.6; 0–0.98)}: add a white screen printed last whose dots grow in the lightest parts, from the given relative luminance up to white), inkLimit? (1 = no cap; 0.1–1: the most of the area all inks may cover together; darks come out lighter), inkGains?: [each ink's own dot gain in order, 0–0.25; replaces dotGain for that ink], marks?, format?: png|tiff|tiff-g4|pdf (png), mirror?: flip every film left to right for emulsion-down printing (false), dcs?: single|multiple (also write the films as a DCS 2.0 file; multiple puts each plate in a file beside a main file and needs `dir`), dcsName?: the job name in the DCS files (separation), dcsCompositeDpi?: the resolution of the composite in the DCS main file (150; 10–2400; the film resolution or more gives a full resolution composite and a large file), jobSheet?: true|{title?, notes?} (a PDF page listing the screens in print order, written as job-sheet.pdf in `dir`), dir?} full-colour art as halftone dots of a few inks side by side over the base, each ink at its own screen angle, the underbase first then the inks light to dark → {dpi, width, height, films: [{name, color, role, format, mesh, coverage, width, height, path | dataBase64}], advice: [{ink, code, message}]}",
             always,
             simulate
         ),
@@ -945,6 +945,21 @@ fn simulate(s: &mut Session, p: &Value) -> Result<Value> {
     {
         sc.fm.dot_gain = 0.0;
     }
+    let highlight = match p.get("highlightWhite") {
+        None | Some(Value::Null) | Some(Value::Bool(false)) => None,
+        Some(v) => {
+            let empty = json!({});
+            let o = if v.is_object() { v } else { &empty };
+            Some(HighlightWhite {
+                ink: Ink {
+                    name: name_of(o.get("name"), "Highlight White".into()),
+                    rgb: [255, 255, 255],
+                    mesh: num(o, C, "mesh", 200.0, 1.0..=1000.0)?,
+                },
+                from: num(o, C, "from", 0.6, 0.0..=0.98)?,
+            })
+        }
+    };
     let job = SimulatedJob {
         inks: inks.clone(),
         base,
@@ -961,6 +976,7 @@ fn simulate(s: &mut Session, p: &Value) -> Result<Value> {
         },
         fm: scatter.as_ref().map(|s| s.fm),
         hybrid: scatter.as_ref().and_then(|s| s.hybrid),
+        highlight,
         ink_limit: num(p, C, "inkLimit", 1.0, sc_core::simulated::MIN_INK_LIMIT..=1.0)?,
         curve,
         gains: match p.get("inkGains") {

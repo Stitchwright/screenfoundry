@@ -1412,3 +1412,57 @@ fn vector_symbol_instances_are_separated_through_their_art() {
     // The document itself still holds instances: separating works on a copy.
     assert!(std::sync::Arc::ptr_eq(&before, &s.doc().unwrap().doc) || *before == *s.doc().unwrap().doc);
 }
+
+#[test]
+fn vector_multiply_and_darken_print_over_what_is_below_like_overprint() {
+    let mut s = Session::new();
+    s.execute("file.new", &json!({"width": 200, "height": 100})).unwrap();
+    shape(&mut s, (0.0, 0.0, 140.0, 100.0), YELLOW);
+    let top = shape(&mut s, (100.0, 0.0, 100.0, 100.0), NAVY);
+    let run = |s: &mut Session| s.execute("screen.separateVector", &json!({"dpi": 100, "inks": inks(), "trapMm": 0})).unwrap();
+    // Normal: the navy knocks the yellow out where they meet (141 px is inside the overlap).
+    let plain = run(&mut s);
+    assert!(!inked(&film_image(film(&plain, "Yellow")), 141, 70));
+    for mode in ["multiply", "darken"] {
+        s.execute("appearance.setItem", &json!({"ids": [top], "index": 0, "blend": mode})).unwrap();
+        let r = run(&mut s);
+        assert!(inked(&film_image(film(&r, "Yellow")), 141, 70), "{mode}: the yellow prints under the navy");
+        assert!(inked(&film_image(film(&r, "Navy")), 141, 70));
+        assert!(!r["notes"].as_array().unwrap().iter().any(|n| n.as_str().unwrap().contains("blend")), "{mode}: {r}");
+    }
+    // Another mode still cannot be separated and is counted.
+    s.execute("appearance.setItem", &json!({"ids": [top], "index": 0, "blend": "difference"})).unwrap();
+    assert!(run(&mut s)["notes"].as_array().unwrap().iter().any(|n| n.as_str().unwrap().contains("blend")));
+}
+
+#[test]
+fn simulate_can_add_a_highlight_white_screen_printed_last() {
+    let mut s = Session::new();
+    let src = png_source(240, 60, |x, _| {
+        let v = (f64::from(x) / 239.0 * 255.0) as u8;
+        [v, v, v, 255]
+    });
+    let inks = json!([{"name": "Black", "color": "#000000"}]);
+    let base = json!({"source": src, "dpi": 600, "lpi": 50, "inks": inks, "minDot": 0, "maxDot": 1});
+    let plain = s.execute("screen.simulate", &base).unwrap();
+    assert_eq!(plain["films"].as_array().unwrap().len(), 1);
+    let mut p = base.clone();
+    p["highlightWhite"] = json!({"from": 0.5});
+    let r = s.execute("screen.simulate", &p).unwrap();
+    let films = r["films"].as_array().unwrap();
+    assert_eq!(films.len(), 2);
+    assert_eq!(films[1]["name"], "Highlight White");
+    assert_eq!(films[1]["mesh"], 200.0);
+    let f = &films[1];
+    assert_eq!(inked_share(f, 0, 100), 0.0);
+    assert!(inked_share(f, 220, 240) > inked_share(f, 150, 170) && inked_share(f, 220, 240) > 0.7);
+    // true takes the defaults; false and null add nothing; bad values are refused.
+    p["highlightWhite"] = json!(true);
+    assert_eq!(s.execute("screen.simulate", &p).unwrap()["films"].as_array().unwrap().len(), 2);
+    for none in [json!(false), Value::Null] {
+        p["highlightWhite"] = none;
+        assert_eq!(s.execute("screen.simulate", &p).unwrap()["films"].as_array().unwrap().len(), 1);
+    }
+    p["highlightWhite"] = json!({"from": 1.5});
+    assert!(s.execute("screen.simulate", &p).is_err());
+}

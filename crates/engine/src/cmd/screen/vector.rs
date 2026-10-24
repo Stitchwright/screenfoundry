@@ -71,6 +71,8 @@ struct Raw {
 struct Collected {
     /// The opacity of the groups being walked, multiplied.
     opacity: f64,
+    /// Inside a group whose blend mode overprints.
+    blend_overprint: bool,
     /// Whether tints and gradients are screened (else tints print solid and gradients are skipped).
     tones_on: bool,
     shapes: Vec<Raw>,
@@ -103,10 +105,21 @@ impl Collected {
     }
 }
 
+/// Multiply and Darken print a shape over what is below it, as overprint does (the usual advice
+/// for spot colours is overprint or Darken, not Multiply, which compounds when shapes stack).
+fn overprints(b: BlendMode) -> bool {
+    matches!(b, BlendMode::Multiply | BlendMode::Darken)
+}
+
+/// A blend mode that cannot be separated (Normal and the overprint-like ones can).
+fn blend_ignored(b: BlendMode) -> bool {
+    b != BlendMode::Normal && !overprints(b)
+}
+
 /// Whether `n` has transparency that cannot be screened: with `opacity_ok` plain opacity does not
 /// count (a solid fill with opacity is screened as dots of that share).
 fn is_transparent(n: &Node, opacity_ok: bool) -> bool {
-    (n.opacity < 1.0 && !opacity_ok) || n.blend != BlendMode::Normal || n.extras().mask.is_some() || !n.appearance.effects.is_empty()
+    (n.opacity < 1.0 && !opacity_ok) || blend_ignored(n.blend) || n.extras().mask.is_some() || !n.appearance.effects.is_empty()
 }
 
 fn collect(doc: &Document, tones_on: bool) -> Collected {
@@ -154,6 +167,8 @@ fn walk(doc: &Document, n: &Node, clips: Clips, out: &mut Collected) {
         NodeKind::Group { children, clip } => {
             out.transparent += usize::from(is_transparent(n, out.tones_on));
             let outer_opacity = out.opacity;
+            let outer_blend = out.blend_overprint;
+            out.blend_overprint |= overprints(n.blend);
             out.opacity *= f64::from(n.opacity).clamp(0.0, 1.0);
             // The outermost group is the object set; groups inside it belong to it.
             let outer = out.group.is_none();
@@ -163,6 +178,7 @@ fn walk(doc: &Document, n: &Node, clips: Clips, out: &mut Collected) {
             }
             walk_children(doc, children, *clip, clips, out);
             out.opacity = outer_opacity;
+            out.blend_overprint = outer_blend;
             if outer {
                 out.group = None;
             }
@@ -202,9 +218,10 @@ fn leaf(doc: &Document, n: &Node, clips: Clips, out: &mut Collected) {
         match item {
             AppearanceItem::Fill(f) => {
                 if f.visible && !f.paint.is_none() {
-                    out.transparent += usize::from((f.opacity < 1.0 && !out.tones_on) || f.blend != BlendMode::Normal || !f.effects.is_empty());
+                    out.transparent += usize::from((f.opacity < 1.0 && !out.tones_on) || blend_ignored(f.blend) || !f.effects.is_empty());
                     let alpha = node_alpha * f64::from(f.opacity).clamp(0.0, 1.0);
-                    add(doc, n, &path, rule, &f.paint, (f.overprint, alpha), clips, out);
+                    let over = f.overprint || overprints(f.blend) || overprints(n.blend) || out.blend_overprint;
+                    add(doc, n, &path, rule, &f.paint, (over, alpha), clips, out);
                 }
             }
             AppearanceItem::Stroke(st) => {
@@ -215,10 +232,11 @@ fn leaf(doc: &Document, n: &Node, clips: Clips, out: &mut Collected) {
                     out.skip(n, "a brush stroke: Outline Stroke it first");
                     continue;
                 }
-                out.transparent += usize::from((st.opacity < 1.0 && !out.tones_on) || st.blend != BlendMode::Normal || !st.effects.is_empty());
+                out.transparent += usize::from((st.opacity < 1.0 && !out.tones_on) || blend_ignored(st.blend) || !st.effects.is_empty());
                 let alpha = node_alpha * f64::from(st.opacity).clamp(0.0, 1.0);
                 let outline = vectorcraft_render::effects::stroke::outline_region(&path, rule, st);
-                add(doc, n, &outline, FillRule::NonZero, &st.paint, (st.overprint, alpha), clips, out);
+                let over = st.overprint || overprints(st.blend) || overprints(n.blend) || out.blend_overprint;
+                add(doc, n, &outline, FillRule::NonZero, &st.paint, (over, alpha), clips, out);
             }
         }
     }

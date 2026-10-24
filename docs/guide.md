@@ -90,7 +90,11 @@ inks; give them (`inks`) or let ScreenFoundry find them (`colors`).
 
 `dotGain` works here too (and is the Dot Gain box in the panel). Inks gain differently on the same
 mesh, so `inkGains` gives each ink its own number in the order of `inks` (it replaces `dotGain` for
-that ink; the panel has one box only). `inkLimit` (0.1 to 1, default 1; Ink Limit in the panel) caps the share of the area
+that ink; the panel has one box only). `highlightWhite` (true, or `{name, mesh, from}`) adds a white screen printed last, whose dots grow in
+the lightest parts of the picture, from relative luminance `from` (default 0.6) up to white. It is
+for dark garments: published guides describe a separate opaque white screen printed after the
+colours on a 180 to 230 mesh, but give no formula, so treat the ramp as a starting point and
+tune `from` on your press. `inkLimit` (0.1 to 1, default 1; Ink Limit in the panel) caps the share of the area
 all inks may cover together: the darkest tones keep some base showing, which holds open on the
 mesh, and come out lighter. It does not model dots overlapping
 or how opaque the ink is. Print a test and adjust the dot limits (`minDot`, `maxDot`), the dot gain
@@ -172,7 +176,8 @@ straight edge in the art is a straight edge on the film.
   the raster films only: the vector plates hold the solid parts, and `notes` says so. At most 64
   such shapes are screened in one job. `tones: false` goes back to printing tints solid and
   skipping gradients.
-- **Left out, and said so.** Patterns, meshes, placed pictures, brush strokes and live art that needs expanding are listed in `skipped`. Blend modes, masks, effects and a
+- **Left out, and said so.** Patterns, meshes, placed pictures, brush strokes and live art that needs expanding are listed in `skipped`. Multiply and Darken blend modes print the shape over what is below, as overprint
+  does (the usual advice for spot colours); other blend modes, masks, effects and a
   gradient's own opacity are ignored (shapes print solid) and counted in `notes`. Use the raster commands for
   those.
 

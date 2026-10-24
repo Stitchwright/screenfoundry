@@ -112,6 +112,18 @@ fn footprint_underbase(img: &Rgba8, ub: &UnderbaseOptions) -> Result<Film> {
 /// threads; the rest spread the other inks apart. A starting point, not a standard.
 pub const DEFAULT_ANGLES: [f64; 8] = [22.5, 67.5, 45.0, 15.0, 75.0, 37.5, 52.5, 7.5];
 
+/// A highlight-white screen: white dots printed last, over the colours, in the lightest parts of
+/// the picture, so highlights stay bright on a dark garment. Where the sources agree is its role
+/// (a separate opaque white screen, printed last, on a 180-230 mesh); they give no formula, so
+/// the tone below is a starting point to tune: it rises from nothing at `from` (relative
+/// luminance, 0 to 1) to full white at white.
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+pub struct HighlightWhite {
+    pub ink: Ink,
+    /// Relative luminance (linear light, 0..1) where the highlight white starts.
+    pub from: f64,
+}
+
 /// Full-colour art as halftone dots of a few spot inks over a base (simulated process).
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct SimulatedJob {
@@ -141,6 +153,9 @@ pub struct SimulatedJob {
     /// A measured dot-gain curve applied to every ink; replaces the dot gain of the screen and `gains`.
     #[serde(default)]
     pub curve: Option<ToneCurve>,
+    /// A white screen for the highlights, printed after the colours.
+    #[serde(default)]
+    pub highlight: Option<HighlightWhite>,
 }
 
 fn full() -> f64 {
@@ -181,8 +196,44 @@ impl SimulatedJob {
             };
             films.push(Film { name: ink.name.clone(), ink_rgb: ink.rgb, mesh: ink.mesh, role: Role::Color, bitmap });
         }
+        if let Some(h) = &self.highlight {
+            let plate = highlight_plate(img, h.from)?;
+            let plate = match &self.curve {
+                Some(curve) => curve.compensate(&plate)?,
+                None => plate,
+            };
+            let angle = angles.get(self.inks.len() % angles.len()).copied().unwrap_or(22.5);
+            let gain = if self.curve.is_some() { 0.0 } else { self.halftone.dot_gain };
+            let am = HalftoneOptions { angle_deg: angle, dot_gain: gain, ..self.halftone };
+            let bitmap = match (&self.fm, &self.hybrid) {
+                (Some(fm), Some(hy)) => hybrid_screen(&plate, &am, &FmOptions { dot_gain: gain, ..*fm }, hy)?,
+                (Some(fm), None) => fm_screen(&plate, &FmOptions { dot_gain: gain, ..*fm })?,
+                _ => halftone(&plate, &am)?,
+            };
+            films.push(Film { name: h.ink.name.clone(), ink_rgb: h.ink.rgb, mesh: h.ink.mesh, role: Role::Color, bitmap });
+        }
         Ok(films)
     }
+}
+
+/// The tone of the highlight white at every pixel: 0 below relative luminance `from`, rising
+/// straight to 255 at white; background pixels get 0.
+fn highlight_plate(img: &Rgba8, from: f64) -> Result<Gray8> {
+    if !from.is_finite() || !(0.0..0.99).contains(&from) {
+        return Err(param("from", "must be 0 up to 0.99"));
+    }
+    let data = img
+        .pixels()
+        .map(|p| {
+            if p[3] < crate::separate::ALPHA_CUTOFF {
+                return 0;
+            }
+            let [r, g, b] = crate::simulated::to_linear([p[0], p[1], p[2]]);
+            let y = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+            (((y - from) / (1.0 - from)).clamp(0.0, 1.0) * 255.0).round() as u8
+        })
+        .collect();
+    Gray8::new(img.width(), img.height(), data)
 }
 
 /// Full-colour art reduced to a fixed palette of inks, one ink per square pixel (index colour).
@@ -335,6 +386,7 @@ mod tests {
             gains: Vec::new(),
             ink_limit: 1.0,
             curve: None,
+            highlight: None,
         }
     }
 
@@ -397,6 +449,42 @@ mod tests {
         j.halftone.dot_gain = 0.25;
         let both: f64 = j.run(&half_and_half()).unwrap().iter().map(|f| f.bitmap.coverage()).sum();
         assert!((both - cut).abs() < 1e-9);
+    }
+
+    #[test]
+    fn highlight_white_is_a_last_white_screen_in_the_lightest_parts() {
+        // A ramp from black to white: the highlight white is only in the light half.
+        let (w, h) = (200, 40);
+        let d: Vec<u8> = (0..w * h)
+            .flat_map(|i| {
+                let v = ((i % w) * 255 / (w - 1)) as u8;
+                [v, v, v, 255]
+            })
+            .collect();
+        let img = Rgba8::new(w, h, d).unwrap();
+        let mut j = sim_job(false);
+        j.halftone.min_dot = 0.0;
+        j.halftone.max_dot = 1.0;
+        j.highlight = Some(HighlightWhite { ink: ink("Highlight White", [255, 255, 255]), from: 0.5 });
+        let films = j.run(&img).unwrap();
+        let last = films.last().unwrap();
+        assert_eq!(last.name, "Highlight White", "printed last");
+        let share = |x0: usize, x1: usize| -> f64 {
+            let mut on = 0;
+            for y in 0..h {
+                for x in x0..x1 {
+                    on += usize::from(last.bitmap.get(x, y));
+                }
+            }
+            on as f64 / ((x1 - x0) * h) as f64
+        };
+        // sRGB 188 is half the light of white (x ~ 147); darker than that gets no highlight white.
+        assert_eq!(share(0, 140), 0.0);
+        assert!(share(190, 200) > 0.8 && share(150, 170) < share(190, 200), "{} {}", share(150, 170), share(190, 200));
+        // Without it, no extra film; a bad threshold is an error.
+        assert_eq!(sim_job(false).run(&img).unwrap().len(), films.len() - 1);
+        j.highlight = Some(HighlightWhite { ink: ink("W", [255, 255, 255]), from: 1.5 });
+        assert!(j.run(&img).is_err());
     }
 
     #[test]

@@ -1,80 +1,92 @@
-# What ScreenFoundry needs from the owner
+# What ScreenFoundry still needs from the owner
 
-Status: 2026-10-23. Everything below is blocked on something only a person can supply. Each item
-says what is needed, what it unblocks, and what happens meanwhile.
+Status: 2026-10-24. This used to be a list of questions. Most of them were screen-printing
+questions the owner could not be expected to answer, so they were researched instead and settled
+(see "Settled by research" below, with sources). What is left needs a real printed sheet or a
+business decision.
 
-## 1. Real prints (SC-10 calibration)
+## 1. One printed test sheet (SC-10): the only thing that really needs a shop
 
-- **What:** print `screen.testPage` (Print Test Page) on your press with your usual mesh and inks,
-  scan or photograph the result, and note which tone patches, line widths and trap overlaps held.
-  Two or three shops, if possible, with different meshes (110, 156, 230).
-- **Unblocks:** tuning the default dot limits, line screens, dot gain, trap widths and underbase
-  choke from data instead of rules of thumb; the research's open conflicts
-  (`docs/research/silkscreen-landscape.md`).
-- **Meanwhile:** the defaults come from published practitioner advice, not from prints.
+- **What:** run `screen.testPage` (Print Test Page in the Screen Print menu), or ask any local
+  screen printer to run it on their press with their usual mesh and ink, then photograph or
+  scan the result. Note which tone patches, line widths and trap overlaps held. One shop is
+  enough to start; the same sheet on a second mesh (for example 156 and 230) is better.
+- **Why nobody can look it up:** dot gain and what holds on a screen change with mesh, tension,
+  squeegee, ink and exposure, so published numbers are only anecdotes (one forum thread measured
+  5% printing as 17% and 50% as 72%; a trade article gives 20% gain at the 50% mark as an example).
+  A printer measures their own setup the same way.
+- **What it unlocks:** you (or the printer) enter the measured tones as `dotCurve` and the
+  defaults for dot limits, line screen, trap and underbase choke can be set from data.
+- **Meanwhile:** the defaults come from published practitioner advice.
 
-## 2. A real DCS 2.0 consumer (SC-8)
+## 2. A DCS reader to try the DCS output on (SC-8)
 
 - **What:** one file from `screen.separate` with `dcs: single` and one with `dcs: multiple`, opened
-  in any DCS-aware RIP or layout tool you own, and a note of what it did (opened, ignored plates,
-  errors).
-- **Unblocks:** knowing the DCS writer is correct. It was written from the public specification
-  and only read back by our own code.
+  in any DCS-aware RIP or layout program, and a note of what it did. Wasatch SoftRIP and Fiery XF
+  are examples of RIPs that read DCS2.
+- **Why:** the writer follows the public DCS 2.0 specification but has only been read back by
+  our own code. Most shops now take 1-bit TIFF, so this is low urgency.
 
-## 3. Machine-specific CTS formats (SC-8)
-
-- **What:** the name of the computer-to-screen machine(s) you target and their published file
-  format documentation (or sample jobs you own and may share).
-- **Unblocks:** direct output for that machine. Today `screen.separate` writes 1-bit TIFF films at
-  the machine's dpi, which most RIPs accept.
-
-## 4. TIFF-with-preview DCS headers (SC-8)
-
-- **What:** the public specification text for the TIFF-preview EPS header variant, or a sample.
-- **Unblocks:** DCS files that show a preview in layout tools.
-
-## 5. Mesh-aware minimum FM dot (SC-7)
-
-- **What:** a source (shop guidance or a published table) for the smallest stochastic dot a given
-  mesh holds.
-- **Unblocks:** the FM dot size defaulting from the mesh instead of a fixed `dotMm`.
-
-## 6. App icon (SC-9)
-
-- **What:** an original icon (or permission to generate a simple one in code), licensed
-  MIT OR Apache-2.0, with a row in `ASSETS.md`. The icon in the repo is still the StitchFoundry
-  artwork.
-
-## 7. Translation review
+## 3. Translation review
 
 - **What:** a native-speaker check of the machine-written first pass in the 23 catalogs
   (`crates/ui-egui/src/i18n/*.tsv`, every "ScreenFoundry:" comment block).
-- **Meanwhile:** the strings are understandable but may be stiff or wrong in places.
 
-## 8. Product definitions I did not want to guess (SC-4, SC-5)
+## 4. App icon (SC-9)
 
-Each of these is buildable once you say what a shop means by it.
+- **What:** an original icon (or a go-ahead to generate a simple one in code), licensed
+  MIT OR Apache-2.0, with a row in `ASSETS.md`. The icon in the repo is still the StitchFoundry one.
 
-- **Highlight white (SC-5):** shops differ on what it is (a white flash printed over the colours
-  in the highlights, a white screened under only the light areas, a white that replaces light
-  inks). Say which, and how it should be driven (a threshold on lightness, or its own tone
-  curve), and I will build it.
-- **Ink overlap and opacity model (SC-5):** simulated process treats dots as side by side. A real
-  model of one ink printing over another needs measured opacity or a few test prints of
-  overlapping tints (the test page does not cover it yet; it can, if you want it).
-- **Ink per tag (SC-4):** "tag" could mean a custom attribute on objects, a name prefix, or a
-  swatch group. Say which and what the ink is called.
-- **Blend modes and masks (SC-4):** multiply, screen and opacity masks have no plain
-  one-ink meaning on a screen. Options: treat multiply as overprint, or leave it to the raster
-  commands (current behaviour). Tell me which you want.
-- **Patterns and meshes (SC-4):** they need an ink colour chosen from what they draw. I can
-  screen them like gradients (ink = the darkest colour they draw) if you agree.
-- **Shape nesting (SC-8):** gang sheets nest rectangles. Nesting by outline is a larger job and
-  only pays off when the designs are very irregular.
+## 5. Decisions only the owner can make
 
-## 9. Decisions only the owner can make
-
-- **Bug-report hub name:** which hub name to switch to when the bug reporter supports it.
+- **Bug-report hub name:** which name to switch to when the bug reporter supports it.
 - **PhotoCraft git dependency (SC-0d):** deferred; say when to wire it.
 - **FM screening and patents:** error diffusion was chosen so no patent question arises. No legal
   opinion was taken. If FM screening ships commercially, ask someone qualified.
+
+## Settled by research (2026-10-24)
+
+These were open questions; each now has a default with its source. None is a standard, so
+every one is a setting a shop can change.
+
+- **Highlight white (SC-5): built** (`highlightWhite` on `screen.simulate`). Sources agree on
+  what it is: a separate opaque white screen, printed last (order: white underbase, colours light
+  to dark, black, highlight white) on a 180–230 mesh, which lifts the lightest areas on a dark
+  garment ([T-Biznetwork part two](https://t-biznetwork.com/computergraphics/colorseparations/simulatedseps-part2/),
+  [Screen Printing magazine](https://screenprintingmag.com/?p=156)). None gives a formula for how
+  its dots are sized, so ours is a plain ramp that starts at relative luminance 0.6 and reaches
+  full white (`from` changes the start). Treat the ramp as a starting point.
+- **Blend modes (SC-4): decided.** Practitioners advise overprint or Darken for spot colours and
+  advise against Multiply because it compounds when shapes stack
+  ([Adobe community answers](https://community.adobe.com/t5/illustrator-discussions/spot-colour-used-with-transparency/m-p/13073245/highlight/true)).
+  Multiply and Darken now print over what is below, like overprint. Other blend modes and masks
+  still print as plain solid shapes and are counted in the notes.
+- **Minimum FM dot per mesh (SC-7): nothing to look up.** No published table ties a minimum
+  stochastic dot to a mesh; vendors say shops test micron and gamma settings against their own
+  meshes and exposure ([solutionsforscreenprinters](https://solutionsforscreenprinters.com/?p=24811),
+  [Wasatch](https://www.wasatch.com/htmlHelp/en/color_separations/other_screens.html)). Our `dotMm`
+  is exactly that setting; the test page shows what a screen holds.
+- **Machine-specific CTS formats (SC-8): not needed.** Direct-to-screen systems take 1-bit TIFF
+  from a RIP: Exile Screenmaker (CADLink RIP, 1-bit TIFF), Douthitt CTS-30 (1-bit uncompressed
+  TIFF at 600 dpi), Fiery XF with the OneBit option, Kodak Matchprint (1-bit TIFF, G4 and LZW),
+  Wasatch (one 1-bit TIFF per separation)
+  ([Exile](https://anatol.com/presses/screenmaker), [Douthitt](https://spsionline.com/products/douthitt-cts-30-direct-to-screen-unit),
+  [Fiery](https://help.fiery.com/cws/FieryXF/9.0_cws_7.2/en-us/GUID-5D22C8CC-313D-4484-88AE-EBF45A043901.html),
+  [Matchprint](https://bigpicturemag.com/kpgs-matchprint-color-rip-gets-one-bit-tiff-interface/amp/),
+  [Wasatch](https://www.wasatch.com/htmlHelp/en/color_separations/sepTiff.html)). `screen.separate`
+  already writes uncompressed and G4 1-bit TIFF at the machine's dpi, mirrored when asked.
+- **TIFF-preview DCS headers (SC-8): optional, skipped.** The DCS 2.0 specification itself marks
+  the TIFF preview "(optional)" and requires only the composite
+  ([DCS 2.0 specification](https://www.printtechnologies.org/standards/files/dcs20spec.pdf)).
+- **Dot gain figures:** there is no typical number to build in; see item 1.
+
+## Left out on purpose
+
+- **Ink-overlap model (SC-5):** simulated process treats dots as side by side. Modelling one ink
+  printing over another needs measured opacity per ink; the test sheet could be extended to
+  measure it if a shop is willing.
+- **Ink per tag (SC-4):** groups and layers already give one ink per object set; a tag adds
+  nothing a shop asked for.
+- **Patterns and meshes (SC-4):** rare in screen-print art; use the raster commands.
+- **Outline nesting for gang sheets (SC-8):** DTF gang sheets are packed as rectangles; outline
+  nesting only pays off for very irregular shapes.
