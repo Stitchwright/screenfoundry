@@ -1,22 +1,23 @@
 # ScreenFoundry app icon
 
-**Subject:** machine embroidery: a rectangular machine hoop with the bracket that clips onto the
-embroidery arm, the machine's needle and embroidery foot, and a satin-stitched S being sewn.
+**Subject:** screen printing: a screen (an aluminium frame around fine mesh) with a halftone print on
+it, big dots on the left shrinking to nothing toward the squeegee that is pulling the ink across.
 
 **Palette:**
 
 | Colour | Hex | Used for |
 |---|---|---|
-| Navy | `#1e2b4f` | the full-bleed field |
-| Coral | `#f2546b` (lighter `#ff8c9b`, darker `#d63d55`, shadow `#b8344b`) | the satin S and the thread |
-| Linen | `#f6f1e7` | the fabric in the hoop |
-| Greys | `#e4e8ef`, `#c7cedb`, `#b3bccb`, `#8a94a8` | hoop, machine head, needle bar, foot |
+| Navy | `#16233f` (blade `#101b34`, blade edge `#34436a`) | the full-bleed field, the squeegee blade |
+| Ink red | `#e8365f` | the halftone dots |
+| Linen | `#f6f1e7` (mesh lines `#dadde4`) | the mesh |
+| Greys | `#dfe4ed`, `#c3cad8`, `#aab3c6`, `#eef1f6`, `#c7cedb` | frame, squeegee stem and handle |
 
 **Tile:** `viewBox="0 0 512 512"`, a rounded square with `rx=112`, clipped. The macOS files add Apple's
 transparent margin (tile = 824/1024 of the canvas); Windows and Linux use the tile edge to edge.
 
-**Provenance:** original artwork made for ScreenFoundry, written by hand as SVG (shapes and a stripe
-pattern, no third-party material). `screenfoundry.svg` is the canonical artwork; `screenfoundry-small.svg`
+**Provenance:** original artwork made for ScreenFoundry (2026-10-24), written by hand as SVG: circles,
+rectangles and one repeating line pattern, no third-party material and nothing traced or copied from
+any other icon, logo or product. `screenfoundry.svg` is the canonical artwork; `screenfoundry-small.svg`
 is the same file for `hicolor/scalable`. Licence: see `LICENSE.txt`.
 
 ## Files
