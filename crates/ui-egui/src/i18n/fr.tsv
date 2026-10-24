@@ -6771,3 +6771,6 @@ theme	Appearance	Apparence
 	Ink Limit	Limite d'encre
 # ScreenFoundry: plates to layers (undo step). Machine-written first pass, to be checked by a native speaker.
 	Plates to Layers	Plaques en calques
+# ScreenFoundry: test page menu item and highlight white. Machine-written first pass, to be checked by a native speaker.
+	Print Test Page…	Imprimer la page de test…
+	Highlight White	Blanc de rehaut

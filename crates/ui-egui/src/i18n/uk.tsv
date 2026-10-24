@@ -6382,3 +6382,6 @@ machine	Stop	Зупинка
 	Diffusion	Дифузія
 # ScreenFoundry: plates to layers (undo step). Machine-written first pass, to be checked by a native speaker.
 	Plates to Layers	Форми в шари
+# ScreenFoundry: test page menu item and highlight white. Machine-written first pass, to be checked by a native speaker.
+	Print Test Page…	Надрукувати тестову сторінку…
+	Highlight White	Білий для світлих тонів

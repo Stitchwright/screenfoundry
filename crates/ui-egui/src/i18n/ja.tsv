@@ -6441,3 +6441,6 @@ machine	Stop	停止
 	Diffusion	拡散
 # ScreenFoundry: plates to layers (undo step). Machine-written first pass, to be checked by a native speaker.
 	Plates to Layers	版をレイヤーに
+# ScreenFoundry: test page menu item and highlight white. Machine-written first pass, to be checked by a native speaker.
+	Print Test Page…	テストページを印刷…
+	Highlight White	ハイライトホワイト

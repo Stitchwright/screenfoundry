@@ -6589,3 +6589,6 @@ file-filter	ScreenFoundry Template	ScreenFoundry-ის შაბლონი
 	Ink Limit	საღებავის ლიმიტი
 # ScreenFoundry: plates to layers (undo step). Machine-written first pass, to be checked by a native speaker.
 	Plates to Layers	ფირფიტები ფენებად
+# ScreenFoundry: test page menu item and highlight white. Machine-written first pass, to be checked by a native speaker.
+	Print Test Page…	სატესტო გვერდის ბეჭდვა…
+	Highlight White	მაღალი სინათლის თეთრი

@@ -6368,3 +6368,6 @@ effect	Soft	Weich
 	Diffusion	Diffusion
 # ScreenFoundry: plates to layers (undo step). Machine-written first pass, to be checked by a native speaker.
 	Plates to Layers	Druckplatten in Ebenen
+# ScreenFoundry: test page menu item and highlight white. Machine-written first pass, to be checked by a native speaker.
+	Print Test Page…	Testseite drucken…
+	Highlight White	Lichter-Weiß

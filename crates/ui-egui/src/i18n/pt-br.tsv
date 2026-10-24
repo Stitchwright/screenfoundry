@@ -6615,3 +6615,6 @@ mark-style	Japanese	Japonesas
 	Ink Limit	Limite de tinta
 # ScreenFoundry: plates to layers (undo step). Machine-written first pass, to be checked by a native speaker.
 	Plates to Layers	Chapas para camadas
+# ScreenFoundry: test page menu item and highlight white. Machine-written first pass, to be checked by a native speaker.
+	Print Test Page…	Imprimir página de teste…
+	Highlight White	Branco de realce

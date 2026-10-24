@@ -6651,3 +6651,6 @@ swatch	Bright Violet	Violet cerah
 	Ink Limit	Batas Tinta
 # ScreenFoundry: plates to layers (undo step). Machine-written first pass, to be checked by a native speaker.
 	Plates to Layers	Pelat ke Lapisan
+# ScreenFoundry: test page menu item and highlight white. Machine-written first pass, to be checked by a native speaker.
+	Print Test Page…	Cetak Halaman Uji…
+	Highlight White	Putih Sorotan

@@ -6713,3 +6713,6 @@ machine	Stop	Stopp
 	Ink Limit	Färggräns
 # ScreenFoundry: plates to layers (undo step). Machine-written first pass, to be checked by a native speaker.
 	Plates to Layers	Plåtar till lager
+# ScreenFoundry: test page menu item and highlight white. Machine-written first pass, to be checked by a native speaker.
+	Print Test Page…	Skriv ut testsida…
+	Highlight White	Högdagervitt

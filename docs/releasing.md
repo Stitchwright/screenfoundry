@@ -1,13 +1,13 @@
-# Releasing VectorCraft
+# Releasing ScreenFoundry
 
 > **Last updated:** 2026-10-20 · **Change:** minor (the `release` environment and its 12 secrets, how to test signing)
 
 Every push to the `release` branch runs `.github/workflows/release.yml`. The workflow builds
 installers for macOS, Windows, Linux (including Flatpak bundles and a RISC-V tarball) and FreeBSD, plus the web build, and creates or updates a
-**draft** GitHub Release named `VectorCraft v<version>`. Nobody sees a draft until a maintainer
+**draft** GitHub Release named `ScreenFoundry v<version>`. Nobody sees a draft until a maintainer
 publishes it.
 
-User-facing names say **VectorCraft**. Files, binaries and ids stay lowercase
+User-facing names say **ScreenFoundry**. Files, binaries and ids stay lowercase
 (`screenfoundry-<version>-<platform>-<arch>.<ext>`, `com.stitchwright.screenfoundry`).
 
 ## Cutting a release
@@ -21,10 +21,10 @@ User-facing names say **VectorCraft**. Files, binaries and ids stay lowercase
    ```
 
    Commit the change (`Cargo.toml` + `Cargo.lock`) through the normal review flow, as a
-   `Release: VectorCraft v0.4.0` commit whose message says what changed for users.
+   `Release: ScreenFoundry v0.4.0` commit whose message says what changed for users.
 2. **Merge `main` into `release`** (or fast-forward it) and push. The workflow starts by itself.
 3. **Wait for the draft.** When every job is done (macOS notarization is the slow part), the
-   Releases page has a draft `VectorCraft v0.4.0`, targeting the pushed commit, with every
+   Releases page has a draft `ScreenFoundry v0.4.0`, targeting the pushed commit, with every
    artifact and `SHA256SUMS.txt`. The notes are generated from the merged pull requests.
 4. **Check it.** Download an installer or two and read the job summaries. A `::warning::` there
    means a signing secret was missing and that artifact is unsigned.
@@ -64,16 +64,16 @@ repository owner: *Settings › Pages › Build and deployment › Source: GitHu
 
 | Platform | Artifacts | Built on |
 |---|---|---|
-| macOS 11+ (universal: Apple silicon and Intel) | `vectorcraft-<v>-macos-universal.dmg`, `screenfoundry-cli-<v>-macos-universal.zip` | `macos-15` |
-| Windows x64 | `vectorcraft-<v>-windows-x64.msi`, `vectorcraft-<v>-windows-x64-portable.zip` | `windows-latest` |
-| Windows x86 (32-bit) | `vectorcraft-<v>-windows-x86.msi`, `vectorcraft-<v>-windows-x86-portable.zip` | `windows-latest` |
-| Windows on ARM64 | `vectorcraft-<v>-windows-arm64.msi`, `vectorcraft-<v>-windows-arm64-portable.zip` | `windows-latest` (cross-compiled) |
-| Linux x86_64 | `vectorcraft-<v>-linux-x86_64.{AppImage,deb,rpm,tar.gz}` | `ubuntu-22.04` |
-| Linux aarch64 | `vectorcraft-<v>-linux-aarch64.{AppImage,deb,rpm,tar.gz}` | `ubuntu-22.04-arm` |
-| Linux riscv64 | `vectorcraft-<v>-linux-riscv64.tar.gz` (cross-compiled, glibc >= 2.39; CLI smoke-tested under QEMU) | `ubuntu-24.04` |
-| Linux AppImage updates | `vectorcraft-<v>-linux-{x86_64,aarch64}.AppImage.zsync` | with the AppImages |
-| Flatpak x86_64, aarch64 | `vectorcraft-<v>-linux-{x86_64,aarch64}.flatpak` | `ubuntu-24.04`, `ubuntu-24.04-arm` (repackages the Linux tarball) |
-| FreeBSD 14 x86_64 | `vectorcraft-<v>-freebsd-x86_64.tar.gz` | a FreeBSD 14.3 VM on `ubuntu-latest` |
+| macOS 11+ (universal: Apple silicon and Intel) | `screenfoundry-<v>-macos-universal.dmg`, `screenfoundry-cli-<v>-macos-universal.zip` | `macos-15` |
+| Windows x64 | `screenfoundry-<v>-windows-x64.msi`, `screenfoundry-<v>-windows-x64-portable.zip` | `windows-latest` |
+| Windows x86 (32-bit) | `screenfoundry-<v>-windows-x86.msi`, `screenfoundry-<v>-windows-x86-portable.zip` | `windows-latest` |
+| Windows on ARM64 | `screenfoundry-<v>-windows-arm64.msi`, `screenfoundry-<v>-windows-arm64-portable.zip` | `windows-latest` (cross-compiled) |
+| Linux x86_64 | `screenfoundry-<v>-linux-x86_64.{AppImage,deb,rpm,tar.gz}` | `ubuntu-22.04` |
+| Linux aarch64 | `screenfoundry-<v>-linux-aarch64.{AppImage,deb,rpm,tar.gz}` | `ubuntu-22.04-arm` |
+| Linux riscv64 | `screenfoundry-<v>-linux-riscv64.tar.gz` (cross-compiled, glibc >= 2.39; CLI smoke-tested under QEMU) | `ubuntu-24.04` |
+| Linux AppImage updates | `screenfoundry-<v>-linux-{x86_64,aarch64}.AppImage.zsync` | with the AppImages |
+| Flatpak x86_64, aarch64 | `screenfoundry-<v>-linux-{x86_64,aarch64}.flatpak` | `ubuntu-24.04`, `ubuntu-24.04-arm` (repackages the Linux tarball) |
+| FreeBSD 14 x86_64 | `screenfoundry-<v>-freebsd-x86_64.tar.gz` | a FreeBSD 14.3 VM on `ubuntu-latest` |
 | Web | `screenfoundry-web-<v>.zip`, a static site (see [`packaging/web/README.md`](../packaging/web/README.md)) | `ubuntu-latest` |
 
 `screenfoundry --version` and `screenfoundry-cli --version` print the version from `Cargo.toml`.
@@ -89,14 +89,14 @@ The rules are in craftrules `standards/fonts.md`, the build option in
 ### macOS
 
 `packaging/macos/package.sh` builds `aarch64-apple-darwin` and `x86_64-apple-darwin` with
-`MACOSX_DEPLOYMENT_TARGET=11.0`, joins them with `lipo` and assembles `VectorCraft.app`:
+`MACOSX_DEPLOYMENT_TARGET=11.0`, joins them with `lipo` and assembles `ScreenFoundry.app`:
 
 - `Info.plist` is generated from `Info.plist.in` (bundle id `com.stitchwright.screenfoundry`,
   `LSMinimumSystemVersion` 11.0, the version and the build commit). The icon is
   `assets/app-icon/screenfoundry.icns`. `cargo xtask bundle` fills in the same template for its
   development app.
 - **Document types:** `Info.plist.in` declares every format File › Open reads, so Finder opens
-  them with VectorCraft (double-click, Open With, a drop on the Dock icon). VectorCraft owns its own
+  them with ScreenFoundry (double-click, Open With, a drop on the Dock icon). ScreenFoundry owns its own
   formats and is an alternate for the others. A test keeps the list in step with the engine's
   `OPEN_EXTS`. AppKit hands the files to the app as open-document events, which
   `apps/vectorcraft/src/open_documents.rs` opens like files named on the command line.
@@ -108,7 +108,7 @@ The rules are in craftrules `standards/fonts.md`, the build option in
   (`hdiutil create -srcfolder`, retried when a CI runner's device is busy, with an `Applications` link
   to drag onto), which is signed, notarized and stapled too; the app mounted from it must pass
   `codesign --verify --strict --deep` (#1085). Its Finder window (background, icon size and positions) comes from
-  [`packaging/macos/dmg/`](../packaging/macos/dmg/README.md), and its volume is named `VectorCraft`
+  [`packaging/macos/dmg/`](../packaging/macos/dmg/README.md), and its volume is named `ScreenFoundry`
   without the version, which the window's background needs; the DMG file name keeps the version.
 - **CLI:** the universal `screenfoundry-cli` is signed the same way, zipped, and the zip is
   notarized. A bare executable can't hold a stapled ticket, so Gatekeeper looks the CLI's ticket up
@@ -140,7 +140,7 @@ to the target triple, so host build scripts aren't affected.
   folder isn't writable the app logs a warning and uses `%APPDATA%`. Deleting `portable.txt` returns
   settings to the user profile (the `ScreenFoundryData` folder is left as it is). The MSI has no
   marker. `VECTORCRAFT_CONFIG_DIR` still wins, `VECTORCRAFT_NO_PREFS` never looks for the marker,
-  and a portable copy skips the one-time read of VectorCraft's settings. The logic is in
+  and a portable copy skips the one-time read of the old StitchFoundry and VectorCraft settings. The logic is in
   `apps/vectorcraft/src/profile.rs`. On the other platforms the marker goes where the user sees the
   app, never inside it: on macOS next to `ScreenFoundry.app`, for an AppImage next to the
   `.AppImage` file (`$APPIMAGE`). Flatpak isn't supported: `/app` is read-only, so a Flatpak install
@@ -149,9 +149,9 @@ to the target triple, so host build scripts aren't affected.
   and an App Paths entry (Win+R `screenfoundry`). Same-version upgrades are allowed, so release
   candidates replace each other.
 - Double-clicking the MSI opens a setup wizard (WixUI_InstallDir without the licence page):
-  Welcome, install folder (remembered for upgrades in `HKLM\Software\VectorCraft\InstallDir`),
+  Welcome, install folder (remembered for upgrades in `HKLM\Software\ScreenFoundry\InstallDir`),
   Shortcuts (a ticked "Create a desktop shortcut" box), Ready, a progress page, and a Finish page
-  that says where to find the app, with a ticked "Launch VectorCraft" box. The pages name the full
+  that says where to find the app, with a ticked "Launch ScreenFoundry" box. The pages name the full
   version (`vectorcraft.en-us.wxl`). `package.ps1` draws the wizard's banner and side bitmaps from
   the app icon, so no WiX stock art ships. `msiexec /qn` still installs silently, with the desktop
   shortcut unless `INSTALLDESKTOPSHORTCUT=""` is passed. Building needs the WiX UI and Util
@@ -174,12 +174,12 @@ to the target triple, so host build scripts aren't affected.
 `packaging/linux/package.sh` builds the release binaries and packages them as an AppImage, a
 `.deb` and an `.rpm` (with [nfpm](https://nfpm.goreleaser.com), from `nfpm.yaml`) and a plain
 `.tar.gz` tree (`bin/`, `share/`). The packages install both programs, the desktop entry, the
-AppStream metainfo, the MIME type for VectorCraft documents, the icons and the licence files.
+AppStream metainfo, the MIME type for ScreenFoundry documents, the icons and the licence files.
 
 **Document types.** The desktop entry's `MimeType` lists every format File › Open reads but PSD,
-PSB, `.ps` PostScript and Targa, so file managers list VectorCraft under Open With for them.
-`ai.storyteller.vectorcraft.mime.xml` declares the types that shared-mime-info lacks: VectorCraft
-documents and templates, `.ait` templates and Affinity files (`application/x-affinity`). An `.af`
+PSB, `.ps` PostScript and Targa, so file managers list ScreenFoundry under Open With for them.
+`com.stitchwright.screenfoundry.mime.xml` declares the types that shared-mime-info lacks: ScreenFoundry
+(and old VectorCraft) documents and templates, `.ait` templates and Affinity files (`application/x-affinity`). An `.af`
 file gets the Affinity type by its content, and `.afdesign` and `.afpub` files by their extension.
 A test keeps both files in step with the engine's `OPEN_EXTS`.
 
@@ -220,7 +220,7 @@ non-pre-release release. The job checks both are there.
 **Flatpak.** The `flatpak` jobs (x86_64 on `ubuntu-24.04`, aarch64 on `ubuntu-24.04-arm`) take the
 Linux job's tarball and repackage it with `packaging/linux/flatpak-bundle.sh` and
 `packaging/linux/flatpak/com.stitchwright.screenfoundry.bundle.yml` into a single-file bundle
-(`flatpak install --user vectorcraft-<v>-linux-<arch>.flatpak`), then install it and run
+(`flatpak install --user screenfoundry-<v>-linux-<arch>.flatpak`), then install it and run
 `screenfoundry-cli --version` in the sandbox. No Rust build happens there, so the bundle carries the
 same binaries as the AppImage. `packaging/linux/flatpak/com.stitchwright.screenfoundry.yml` is the
 from-source manifest for a Flathub submission (its header says how to build it); packaging-lint
@@ -243,7 +243,7 @@ files for common hosts.
 ## The draft release
 
 The last job waits for every build, downloads their artifacts, writes `SHA256SUMS.txt` and creates
-the draft `VectorCraft v<version>` with notes generated from the merged pull requests. If the draft
+the draft `ScreenFoundry v<version>` with notes generated from the merged pull requests. If the draft
 already exists, it replaces its assets and keeps it a draft. If that version is already published,
 the job fails and asks for a version bump (`cargo xtask version set`).
 

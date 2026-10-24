@@ -6717,3 +6717,6 @@ machine	Stop	Спиране
 	Ink Limit	Ограничение на мастилото
 # ScreenFoundry: plates to layers (undo step). Machine-written first pass, to be checked by a native speaker.
 	Plates to Layers	Плочи към слоеве
+# ScreenFoundry: test page menu item and highlight white. Machine-written first pass, to be checked by a native speaker.
+	Print Test Page…	Отпечатване на тестова страница…
+	Highlight White	Подчертаващо бяло

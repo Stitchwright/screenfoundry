@@ -45,7 +45,7 @@ fn sub(label: &'static str, items: Vec<Item>) -> Item {
 }
 /// Screen Print: separations and films for screen printing (SC-1).
 fn screen_print_menu() -> Vec<Item> {
-    vec![c("Separate Colors…", "ui.screenSeparate"), c("Halftone Film…", "ui.screenHalftone")]
+    vec![c("Separate Colors…", "ui.screenSeparate"), c("Halftone Film…", "ui.screenHalftone"), Sep, c("Print Test Page…", "ui.screenTestPage")]
 }
 
 /// Window → … Libraries until the code-generated libraries land (disabled entries).
@@ -435,6 +435,12 @@ pub const UI_COMMANDS: &[(&str, &str, &str, &str)] = &[
         "Halftone Film…",
         "",
         "{folder?, ...any screen.halftone parameter (dpi 600, marks true)} pick a folder (or give one), then write a halftone film of the first artboard (screen.halftone) → the screen.halftone result",
+    ),
+    (
+        "ui.screenTestPage",
+        "Print Test Page…",
+        "",
+        "{folder?, ...any screen.testPage parameter (dpi 600)} pick a folder (or give one), then write the calibration films: tone patches, line widths and trap overlaps to print on your press and read off (screen.testPage; needs no open document) → the screen.testPage result",
     ),
     (
         "ui.calibrateLifeSize",
@@ -1535,6 +1541,7 @@ pub fn run_ui_command(app: &mut VectorcraftApp, id: &str, p: &Value) -> Option<R
         "ui.calibrateLifeSize" => crate::dialogs::life_size::run(app, p),
         "ui.screenSeparate" => crate::screen_print::separate(app, p),
         "ui.screenHalftone" => crate::screen_print::halftone(app, p),
+        "ui.screenTestPage" => crate::screen_print::test_page(app, p),
         "help.commandPalette" => {
             app.ui.palette_open = !app.ui.palette_open;
             app.ui.palette_query.clear();
@@ -2370,6 +2377,8 @@ pub fn enabled(app: &VectorcraftApp, id: &str) -> bool {
         "ui.findLinksInFolder" => crate::picks::can(app, &crate::picks::PickRequest::Folder) && app.session.active().is_some(),
         "ui.packageDialog" | "docInfo.save" => app.session.active().is_some(),
         "ui.screenSeparate" | "ui.screenHalftone" => crate::picks::can(app, &crate::picks::PickRequest::Folder) && app.session.active().is_some(),
+        // The test page needs no document: only somewhere to write.
+        "ui.screenTestPage" => crate::picks::can(app, &crate::picks::PickRequest::Folder),
         "ui.batchDialog" => !app.ui.action_sets.is_empty() && app.ui.action_sets.iter().any(|s| !s.actions.is_empty()),
         "ui.epsOptionsDialog" => app.session.active().is_some(),
         "file.saveForWeb" | "file.saveForWeb.browser" => app.session.active().is_some(),

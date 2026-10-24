@@ -6693,3 +6693,6 @@ swatch	Bright Violet	Felviolet
 	Ink Limit	Inktlimiet
 # ScreenFoundry: plates to layers (undo step). Machine-written first pass, to be checked by a native speaker.
 	Plates to Layers	Platen naar lagen
+# ScreenFoundry: test page menu item and highlight white. Machine-written first pass, to be checked by a native speaker.
+	Print Test Page…	Testpagina afdrukken…
+	Highlight White	Highlight-wit

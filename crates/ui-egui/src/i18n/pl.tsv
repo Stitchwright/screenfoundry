@@ -6600,3 +6600,6 @@ machine	Stop	Zatrzymanie
 	Ink Limit	Limit farby
 # ScreenFoundry: plates to layers (undo step). Machine-written first pass, to be checked by a native speaker.
 	Plates to Layers	Płyty do warstw
+# ScreenFoundry: test page menu item and highlight white. Machine-written first pass, to be checked by a native speaker.
+	Print Test Page…	Drukuj stronę testową…
+	Highlight White	Biel akcentowa

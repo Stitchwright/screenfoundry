@@ -136,6 +136,8 @@ pub struct ScreenPrintState {
     pub diffusion: Diffusion,
     /// The most of the area all inks may cover together in percent, for simulated process.
     pub ink_limit_pct: f64,
+    /// Add a white screen for the highlights, printed last, for simulated process.
+    pub highlight_white: bool,
     pub marks: bool,
     pub films: Vec<PreviewFilm>,
     /// Mesh and angle advice of the last preview, one line each.
@@ -162,6 +164,7 @@ impl Default for ScreenPrintState {
             dither_pct: 100.0,
             diffusion: Diffusion::Floyd,
             ink_limit_pct: 100.0,
+            highlight_white: false,
             marks: true,
             films: Vec::new(),
             advice: Vec::new(),
@@ -199,6 +202,9 @@ impl ScreenPrintState {
                 p["lpi"] = json!(self.lpi);
                 p["dotGain"] = json!(self.dot_gain_pct / 100.0);
                 p["inkLimit"] = json!(self.ink_limit_pct / 100.0);
+                if self.highlight_white {
+                    p["highlightWhite"] = json!(true);
+                }
                 match self.screening {
                     Screening::Am => {}
                     Screening::Fm => {
@@ -353,9 +359,12 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
         ui.selectable_value(&mut st.method, Method::Vector, tl!("Vector Art"));
     });
     ui.horizontal(|ui| {
-        ui.label(RichText::new(tl!("Colors")).color(t.text_dim));
-        ui.add(egui::DragValue::new(&mut st.colors).range(1..=MAX_COLORS));
-        ui.add_enabled_ui(has_doc, |ui| find = widgets::secondary_button(ui, tl!("Find Colors")).clicked());
+        // Vector art finds its own inks in the paths: no count to give, nothing to find.
+        if st.method != Method::Vector {
+            ui.label(RichText::new(tl!("Colors")).color(t.text_dim));
+            ui.add(egui::DragValue::new(&mut st.colors).range(1..=MAX_COLORS));
+            ui.add_enabled_ui(has_doc, |ui| find = widgets::secondary_button(ui, tl!("Find Colors")).clicked());
+        }
         ui.add_enabled_ui(!st.inks.is_empty(), |ui| snap = widgets::secondary_button(ui, tl!("Snap to Library")).clicked());
     });
 
@@ -431,6 +440,7 @@ pub fn show(app: &mut VectorcraftApp, ui: &mut Ui) {
                 ui.label(RichText::new(tl!("Ink Limit")).color(t.text_dim));
                 ui.add(egui::DragValue::new(&mut st.ink_limit_pct).range(10.0..=100.0).speed(0.5).suffix(" %"));
             });
+            ui.checkbox(&mut st.highlight_white, tl!("Highlight White"));
         }
         Method::Index => {
             ui.horizontal(|ui| {
@@ -541,6 +551,10 @@ mod tests {
         assert_eq!(st.request(600.0, true).1["dotGain"], json!(0.2));
         assert!(st.request(600.0, true).1.get("screening").is_none(), "AM is the default");
         assert_eq!(st.request(600.0, true).1["inkLimit"], json!(1.0));
+        assert!(st.request(600.0, true).1.get("highlightWhite").is_none());
+        st.highlight_white = true;
+        assert_eq!(st.request(600.0, true).1["highlightWhite"], json!(true));
+        st.highlight_white = false;
         st.ink_limit_pct = 80.0;
         assert_eq!(st.request(600.0, true).1["inkLimit"], json!(0.8));
         st.ink_limit_pct = 100.0;

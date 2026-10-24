@@ -90,7 +90,7 @@ inks; give them (`inks`) or let ScreenFoundry find them (`colors`).
 
 `dotGain` works here too (and is the Dot Gain box in the panel). Inks gain differently on the same
 mesh, so `inkGains` gives each ink its own number in the order of `inks` (it replaces `dotGain` for
-that ink; the panel has one box only). `highlightWhite` (true, or `{name, mesh, from}`) adds a white screen printed last, whose dots grow in
+that ink; the panel has one box only). `highlightWhite` (true, or `{name, mesh, from}`; the Highlight White box in the panel) adds a white screen printed last, whose dots grow in
 the lightest parts of the picture, from relative luminance `from` (default 0.6) up to white. It is
 for dark garments: published guides describe a separate opaque white screen printed after the
 colours on a 180 to 230 mesh, but give no formula, so treat the ramp as a starting point and
@@ -232,7 +232,7 @@ There is no highlight-white tool beyond the graded mode, and no nesting beyond t
 
 ## Print test page
 
-`screen.testPage` makes a calibration sheet (220 × 90 mm) that needs no document. Print it on your
+`screen.testPage` (Screen Print › Print Test Page…, which asks for a folder) makes a calibration sheet (220 × 90 mm) that needs no document. Print it on your
 press with your mesh and inks, read which patches hold, and use those numbers for your settings.
 It is made of three parts (`parts`: `tones`, `lines`, `trap`; all by default):
 

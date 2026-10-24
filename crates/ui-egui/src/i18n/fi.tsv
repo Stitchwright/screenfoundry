@@ -6774,3 +6774,6 @@ swatch	Bright Violet	Kirkas violetti
 	Ink Limit	Musteraja
 # ScreenFoundry: plates to layers (undo step). Machine-written first pass, to be checked by a native speaker.
 	Plates to Layers	Levyt tasoille
+# ScreenFoundry: test page menu item and highlight white. Machine-written first pass, to be checked by a native speaker.
+	Print Test Page…	Tulosta testisivu…
+	Highlight White	Valkoinen kohokohtiin

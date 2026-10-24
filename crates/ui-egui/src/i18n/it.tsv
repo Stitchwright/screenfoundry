@@ -6402,3 +6402,6 @@ machine	Stop	Arresto
 	Diffusion	Diffusione
 # ScreenFoundry: plates to layers (undo step). Machine-written first pass, to be checked by a native speaker.
 	Plates to Layers	Lastre in livelli
+# ScreenFoundry: test page menu item and highlight white. Machine-written first pass, to be checked by a native speaker.
+	Print Test Page…	Stampa pagina di prova…
+	Highlight White	Bianco di rilievo

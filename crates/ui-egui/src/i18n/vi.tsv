@@ -6361,3 +6361,6 @@ machine	Stop	Dừng máy
 	Diffusion	Khuếch tán
 # ScreenFoundry: plates to layers (undo step). Machine-written first pass, to be checked by a native speaker.
 	Plates to Layers	Bản in thành lớp
+# ScreenFoundry: test page menu item and highlight white. Machine-written first pass, to be checked by a native speaker.
+	Print Test Page…	In trang thử…
+	Highlight White	Trắng điểm sáng
