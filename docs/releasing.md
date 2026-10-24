@@ -10,6 +10,24 @@ publishes it.
 User-facing names say **ScreenFoundry**. Files, binaries and ids stay lowercase
 (`screenfoundry-<version>-<platform>-<arch>.<ext>`, `com.stitchwright.screenfoundry`).
 
+## Where things stand (2026-10-24)
+
+- **Linux packages are tested.** `packaging/linux/package.sh` built the AppImage, `.deb`, `.rpm` and
+  tarball for x86_64 here (62 to 70 MB each); the tarball's CLI separated test art, and the AppImage
+  starts. Windows (MSI, portable zip) and macOS (DMG) can only be built on those systems' runners,
+  so they come from the GitHub workflows, not from a developer machine.
+- **The repository is private.** GitHub bills Actions minutes for private repositories (macOS
+  minutes count ten times, Windows twice), and a full *Builds* run builds every platform. Making the
+  repository public removes the metering; the workflows' "free for a public repository" notes assume that.
+- **No `main` or `release` branch exists yet.** CI runs on pushes to `main` and on pull requests;
+  *Release* runs on pushes to `release`. Until then the workflows can only be started by hand
+  (*Actions › Run workflow*, picking a branch).
+- **The version is still `0.14.0`**, inherited from VectorCraft. Pick ScreenFoundry's own first
+  version before releasing (`cargo xtask version set 0.1.0`).
+- **Signing needs the 12 secrets** in the `release` environment (Apple and Windows). Without them
+  the workflows still build, but installers are unsigned: Windows shows a SmartScreen warning and
+  macOS needs right-click › Open.
+
 ## Cutting a release
 
 1. **Bump the version** on `main`. It lives in exactly one place, `[workspace.package] version`
