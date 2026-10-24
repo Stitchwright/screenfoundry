@@ -1374,3 +1374,41 @@ fn vector_plates_can_be_added_to_the_document_as_layers() {
     let again = s.execute("screen.separateVector", &json!({"dpi": 100, "inks": inks()})).unwrap();
     assert_eq!(again["films"].as_array().unwrap().len(), 2);
 }
+
+#[test]
+fn vector_opacity_prints_as_dots_over_what_shows_through() {
+    let mut s = Session::new();
+    s.execute("file.new", &json!({"width": 200, "height": 100})).unwrap();
+    shape(&mut s, (0.0, 0.0, 140.0, 100.0), YELLOW);
+    let top = shape(&mut s, (100.0, 0.0, 100.0, 100.0), NAVY);
+    s.execute("appearance.setItem", &json!({"ids": [top], "index": 0, "opacity": 50})).unwrap();
+    let r = s.execute("screen.separateVector", &json!({"dpi": 300, "inks": inks(), "trapMm": 0, "minDot": 0, "maxDot": 1})).unwrap();
+    let (navy, yellow) = (film(&r, "Navy"), film(&r, "Yellow"));
+    // 300 dpi: 100 pt is pixel 417, 140 pt is 583. Half the navy ink where it is see-through,
+    // and the yellow below is not knocked out.
+    assert!((inked_share(navy, 450, 550) - 0.5).abs() < 0.1 && (inked_share(navy, 650, 800) - 0.5).abs() < 0.1);
+    assert!(inked_share(yellow, 450, 550) > 0.99, "the yellow shows through");
+    assert!(!r["notes"].as_array().unwrap().iter().any(|n| n.as_str().unwrap().contains("opacity")), "{r}");
+    // With tones off the shape prints solid again and the note comes back.
+    let off = s.execute("screen.separateVector", &json!({"dpi": 300, "inks": inks(), "trapMm": 0, "tones": false})).unwrap();
+    assert!(inked_share(film(&off, "Navy"), 650, 800) > 0.99);
+    assert!(off["notes"].as_array().unwrap().iter().any(|n| n.as_str().unwrap().contains("opacity")), "{off}");
+}
+
+#[test]
+fn vector_symbol_instances_are_separated_through_their_art() {
+    let mut s = Session::new();
+    s.execute("file.new", &json!({"width": 200, "height": 100})).unwrap();
+    let a = shape(&mut s, (10.0, 10.0, 40.0, 40.0), NAVY);
+    s.execute("symbol.new", &json!({"ids": [a], "name": "Badge"})).unwrap();
+    s.execute("symbol.place", &json!({"name": "Badge", "x": 150, "y": 50})).unwrap();
+    let before = s.doc().unwrap().doc.clone();
+    let r = s.execute("screen.separateVector", &json!({"dpi": 100})).unwrap();
+    assert_eq!(r["skippedTotal"], 0, "{r}");
+    assert_eq!(r["inks"][0]["shapes"], 2);
+    let img = film_image(&r["films"][0]);
+    // 100 dpi: the original at 10..50 pt (pixels 14..69), the placed one centred on x = 150 pt (pixel 208).
+    assert!(inked(&img, 30, 30) && inked(&img, 208, 69) && !inked(&img, 120, 69));
+    // The document itself still holds instances: separating works on a copy.
+    assert!(std::sync::Arc::ptr_eq(&before, &s.doc().unwrap().doc) || *before == *s.doc().unwrap().doc);
+}

@@ -158,19 +158,22 @@ straight edge in the art is a straight edge on the film.
   raster film and carries the same four registration marks (as paths), so a vector plate and a
   raster film of the same job line up. `vectorSvg` does the same with SVG files (black paths for
   editing in a vector program; `vectorPdf` wins if both are set).
+- **Symbols.** Instances are separated through their art (on a copy; the document keeps its
+  instances), with the instance's opacity and tint applied.
 - **Type** is separated through its outlines, in the colours of its first style; use Create
   Outlines when characters differ in colour. Clip groups and layer clips are honoured.
-- **Tints and gradients as dots.** A spot tint under 100% prints as dots of that share of the
-  ink, and a gradient prints as dots whose size follows what it draws, its ink being its
+- **Tints, opacity and gradients as dots.** A spot tint under 100% prints as dots of that share of
+  the ink, a solid fill or stroke with opacity under 100% (its own, its object's or its groups')
+  prints as dots of that share and lets the inks below it show instead of knocking them out (an
+  approximation of see-through ink on white), and a gradient prints as dots whose size follows what it draws, its ink being its
   darkest stop (a white-to-navy gradient is a navy ramp). The dots use `lpi` (45), `shape`,
   `minDot`, `maxDot`, `dotGain` and `screening` (am, fm or hybrid) as the halftone command
   does, at each ink's own angle. The shape still knocks out other inks below it. They appear in
   the raster films only: the vector plates hold the solid parts, and `notes` says so. At most 64
   such shapes are screened in one job. `tones: false` goes back to printing tints solid and
   skipping gradients.
-- **Left out, and said so.** Patterns, meshes, placed pictures, brush strokes, symbol instances
-  and live art that needs expanding are listed in `skipped`. Opacity, blend modes, masks and
-  effects are ignored (shapes print solid) and counted in `notes`. Use the raster commands for
+- **Left out, and said so.** Patterns, meshes, placed pictures, brush strokes and live art that needs expanding are listed in `skipped`. Blend modes, masks, effects and a
+  gradient's own opacity are ignored (shapes print solid) and counted in `notes`. Use the raster commands for
   those.
 
 ## Index color

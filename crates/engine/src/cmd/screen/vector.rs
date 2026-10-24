@@ -69,6 +69,8 @@ struct Raw {
 
 #[derive(Default)]
 struct Collected {
+    /// The opacity of the groups being walked, multiplied.
+    opacity: f64,
     /// Whether tints and gradients are screened (else tints print solid and gradients are skipped).
     tones_on: bool,
     shapes: Vec<Raw>,
@@ -101,12 +103,14 @@ impl Collected {
     }
 }
 
-fn is_transparent(n: &Node) -> bool {
-    n.opacity < 1.0 || n.blend != BlendMode::Normal || n.extras().mask.is_some() || !n.appearance.effects.is_empty()
+/// Whether `n` has transparency that cannot be screened: with `opacity_ok` plain opacity does not
+/// count (a solid fill with opacity is screened as dots of that share).
+fn is_transparent(n: &Node, opacity_ok: bool) -> bool {
+    (n.opacity < 1.0 && !opacity_ok) || n.blend != BlendMode::Normal || n.extras().mask.is_some() || !n.appearance.effects.is_empty()
 }
 
 fn collect(doc: &Document, tones_on: bool) -> Collected {
-    let mut out = Collected { tones_on, ..Default::default() };
+    let mut out = Collected { tones_on, opacity: 1.0, ..Default::default() };
     for (i, l) in doc.layers.iter().enumerate() {
         out.layer = i;
         out.layer_names.push(l.name.clone().unwrap_or_else(|| format!("Layer {}", i + 1)));
@@ -148,7 +152,9 @@ fn walk(doc: &Document, n: &Node, clips: Clips, out: &mut Collected) {
             walk_children(doc, children, *clip, clips, out);
         }
         NodeKind::Group { children, clip } => {
-            out.transparent += usize::from(is_transparent(n));
+            out.transparent += usize::from(is_transparent(n, out.tones_on));
+            let outer_opacity = out.opacity;
+            out.opacity *= f64::from(n.opacity).clamp(0.0, 1.0);
             // The outermost group is the object set; groups inside it belong to it.
             let outer = out.group.is_none();
             if outer {
@@ -156,6 +162,7 @@ fn walk(doc: &Document, n: &Node, clips: Clips, out: &mut Collected) {
                 out.group = Some(out.set_names.len() - 1);
             }
             walk_children(doc, children, *clip, clips, out);
+            out.opacity = outer_opacity;
             if outer {
                 out.group = None;
             }
@@ -180,7 +187,8 @@ fn rgb8(doc: &Document, color: &Color) -> [u8; 3] {
 
 fn leaf(doc: &Document, n: &Node, clips: Clips, out: &mut Collected) {
     let Some((path, rule)) = node_path(n) else { return };
-    out.transparent += usize::from(is_transparent(n));
+    out.transparent += usize::from(is_transparent(n, out.tones_on));
+    let node_alpha = out.opacity * f64::from(n.opacity).clamp(0.0, 1.0);
     let owned;
     let appearance: &Appearance = match &n.kind {
         NodeKind::Text(t) => {
@@ -194,8 +202,9 @@ fn leaf(doc: &Document, n: &Node, clips: Clips, out: &mut Collected) {
         match item {
             AppearanceItem::Fill(f) => {
                 if f.visible && !f.paint.is_none() {
-                    out.transparent += usize::from(f.opacity < 1.0 || f.blend != BlendMode::Normal || !f.effects.is_empty());
-                    add(doc, n, &path, rule, &f.paint, f.overprint, clips, out);
+                    out.transparent += usize::from((f.opacity < 1.0 && !out.tones_on) || f.blend != BlendMode::Normal || !f.effects.is_empty());
+                    let alpha = node_alpha * f64::from(f.opacity).clamp(0.0, 1.0);
+                    add(doc, n, &path, rule, &f.paint, (f.overprint, alpha), clips, out);
                 }
             }
             AppearanceItem::Stroke(st) => {
@@ -206,28 +215,42 @@ fn leaf(doc: &Document, n: &Node, clips: Clips, out: &mut Collected) {
                     out.skip(n, "a brush stroke: Outline Stroke it first");
                     continue;
                 }
-                out.transparent += usize::from(st.opacity < 1.0 || st.blend != BlendMode::Normal || !st.effects.is_empty());
+                out.transparent += usize::from((st.opacity < 1.0 && !out.tones_on) || st.blend != BlendMode::Normal || !st.effects.is_empty());
+                let alpha = node_alpha * f64::from(st.opacity).clamp(0.0, 1.0);
                 let outline = vectorcraft_render::effects::stroke::outline_region(&path, rule, st);
-                add(doc, n, &outline, FillRule::NonZero, &st.paint, st.overprint, clips, out);
+                add(doc, n, &outline, FillRule::NonZero, &st.paint, (st.overprint, alpha), clips, out);
             }
         }
     }
 }
 
 #[allow(clippy::too_many_arguments)]
-fn add(doc: &Document, n: &Node, path: &PathData, rule: FillRule, paint: &Paint, overprint: bool, clips: Clips, out: &mut Collected) {
+fn add(
+    doc: &Document,
+    n: &Node,
+    path: &PathData,
+    rule: FillRule,
+    paint: &Paint,
+    (mut overprint, alpha): (bool, f64),
+    clips: Clips,
+    out: &mut Collected,
+) {
     let (rgb, spot, tone) = match paint {
         Paint::Solid { color, swatch, tint } => {
             let spot = swatch.as_ref().filter(|s| doc.swatch(s).is_some_and(|sw| sw.spot)).cloned();
             let tinted = spot.is_some() && *tint < 1.0;
-            if tinted && out.tones_on {
-                // The ink is the swatch's own colour; the dots carry the tint.
+            // Opacity prints as a share of the ink, like a tint.
+            let share = if spot.is_some() { f64::from(*tint) } else { 1.0 } * alpha;
+            if (tinted || alpha < 1.0) && out.tones_on {
+                // The ink is the swatch's own colour; the dots carry the tint and the opacity.
                 let full = spot
                     .as_ref()
                     .and_then(|s| doc.swatch(s))
                     .and_then(|sw| if let Paint::Solid { color, .. } = &sw.paint { Some(*color) } else { None })
                     .unwrap_or(*color);
-                (rgb8(doc, &full), spot, Tone::Tint(f64::from(*tint)))
+                // A see-through shape lets what is below show: it does not knock it out.
+                overprint |= alpha < 1.0;
+                (rgb8(doc, &full), spot, Tone::Tint(share.clamp(0.0, 1.0)))
             } else {
                 out.tinted += usize::from(tinted);
                 (rgb8(doc, color), spot, Tone::Solid)
@@ -701,11 +724,25 @@ pub(super) fn separate_vector(s: &mut Session, p: &Value) -> Result<Value> {
     let underbase = underbase_of(p, C, pt)?;
 
     let st = s.doc().map_err(|_| bad(C, "no document is open"))?;
-    let region = st.doc.artboards.first().ok_or_else(|| bad(C, "the document has no artboard"))?.rect;
+    // Symbol instances are separated through a copy with their links broken.
+    let mut has_symbols = false;
+    for l in &st.doc.layers {
+        l.walk(&mut |c| has_symbols |= matches!(c.kind, NodeKind::SymbolInstance { .. }));
+    }
+    let broken;
+    let doc: &Document = if has_symbols {
+        let mut copy = (*st.doc).clone();
+        crate::cmd::brushsym::break_all_symbol_links(&mut copy);
+        broken = copy;
+        &broken
+    } else {
+        &st.doc
+    };
+    let region = doc.artboards.first().ok_or_else(|| bad(C, "the document has no artboard"))?.rect;
     let scale = dpi / 72.0;
     let size = vectorcraft_render::raster_size(region, scale).map_err(|e| bad(C, e))?;
     let tones_on = bool_or(p, "tones", true);
-    let collected = collect(&st.doc, tones_on);
+    let collected = collect(doc, tones_on);
     if collected.shapes.len() > MAX_SHAPES {
         return Err(bad(C, format!("the art has {} shapes; at most {MAX_SHAPES} can be separated at once", collected.shapes.len())));
     }
@@ -852,7 +889,7 @@ pub(super) fn separate_vector(s: &mut Session, p: &Value) -> Result<Value> {
     }
     if !screened_parts.is_empty() {
         notes.push(format!(
-            "{} tinted or gradient shapes print as dots in the films; the vector plates (vectorPdf, vectorSvg) hold only the solid parts",
+            "{} tinted, see-through or gradient shapes print as dots in the films; the vector plates (vectorPdf, vectorSvg) hold only the solid parts",
             screened_parts.len()
         ));
     }

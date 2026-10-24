@@ -809,6 +809,32 @@ fn expanded_instance(d: &mut Document, inst: &Node) -> Option<Node> {
     Some(art)
 }
 
+/// Replace every symbol instance in `d` by its plain art (instances inside symbols too, a few
+/// levels down). Returns how many instances were replaced.
+pub(crate) fn break_all_symbol_links(d: &mut Document) -> usize {
+    let mut total = 0;
+    for _ in 0..4 {
+        let mut ids = Vec::new();
+        for l in &d.layers {
+            l.walk(&mut |c| {
+                if matches!(c.kind, NodeKind::SymbolInstance { .. }) {
+                    ids.push(c.id);
+                }
+            });
+        }
+        if ids.is_empty() {
+            break;
+        }
+        // An instance of a symbol that is gone stays (it has no art to put in its place).
+        let done = break_links(d, &ids).map_or(0, |v| v.len());
+        total += done;
+        if done == 0 {
+            break;
+        }
+    }
+    total
+}
+
 fn break_links(d: &mut Document, ids: &[NodeId]) -> Result<Vec<NodeId>> {
     let mut out = vec![];
     for id in ids {
