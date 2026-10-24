@@ -51,7 +51,28 @@ says what is needed, what it unblocks, and what happens meanwhile.
   (`crates/ui-egui/src/i18n/*.tsv`, every "ScreenFoundry:" comment block).
 - **Meanwhile:** the strings are understandable but may be stiff or wrong in places.
 
-## 8. Decisions only the owner can make
+## 8. Product definitions I did not want to guess (SC-4, SC-5)
+
+Each of these is buildable once you say what a shop means by it.
+
+- **Highlight white (SC-5):** shops differ on what it is (a white flash printed over the colours
+  in the highlights, a white screened under only the light areas, a white that replaces light
+  inks). Say which, and how it should be driven (a threshold on lightness, or its own tone
+  curve), and I will build it.
+- **Ink overlap and opacity model (SC-5):** simulated process treats dots as side by side. A real
+  model of one ink printing over another needs measured opacity or a few test prints of
+  overlapping tints (the test page does not cover it yet; it can, if you want it).
+- **Ink per tag (SC-4):** "tag" could mean a custom attribute on objects, a name prefix, or a
+  swatch group. Say which and what the ink is called.
+- **Blend modes and masks (SC-4):** multiply, screen and opacity masks have no plain
+  one-ink meaning on a screen. Options: treat multiply as overprint, or leave it to the raster
+  commands (current behaviour). Tell me which you want.
+- **Patterns and meshes (SC-4):** they need an ink colour chosen from what they draw. I can
+  screen them like gradients (ink = the darkest colour they draw) if you agree.
+- **Shape nesting (SC-8):** gang sheets nest rectangles. Nesting by outline is a larger job and
+  only pays off when the designs are very irregular.
+
+## 9. Decisions only the owner can make
 
 - **Bug-report hub name:** which hub name to switch to when the bug reporter supports it.
 - **PhotoCraft git dependency (SC-0d):** deferred; say when to wire it.
