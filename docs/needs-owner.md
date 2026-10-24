@@ -32,12 +32,7 @@ business decision.
 - **What:** a native-speaker check of the machine-written first pass in the 23 catalogs
   (`crates/ui-egui/src/i18n/*.tsv`, every "ScreenFoundry:" comment block).
 
-## 4. App icon (SC-9)
-
-- **What:** an original icon (or a go-ahead to generate a simple one in code), licensed
-  MIT OR Apache-2.0, with a row in `ASSETS.md`. The icon in the repo is still the StitchFoundry one.
-
-## 5. Decisions only the owner can make
+## 4. Decisions only the owner can make
 
 - **Bug-report hub name:** which name to switch to when the bug reporter supports it.
 - **PhotoCraft git dependency (SC-0d):** deferred; say when to wire it.

@@ -43,7 +43,7 @@ Known simplifications to fix:
   simulated-process (overlapping halftone channels), index colour is separate (`screen.index`).
 - Trap and choke use one global radius; no per-pair or per-edge control.
 - Film files are 1-bit PNG, uncompressed TIFF or CCITT Group 4 TIFF or one-page PDF (Group 4 image), plus a PDF job sheet (`jobSheet` option).
-- The app icon artwork is still StitchFoundry's (renamed files, old picture): a new original icon is part of SC-9.
+- The app icon is original ScreenFoundry artwork (2026-10-24); see `assets/app-icon/README.md`.
 - The bug-report page of the StitchHub still knows this app as `stitchfoundry` (`help.rs`); switch it when the hub has `screenfoundry`.
 
 ## 4. Roadmap
@@ -58,7 +58,7 @@ Known simplifications to fix:
 | SC-6 (done: `screen.index`, `sc-core::index`, Index Color in the panel) | Index colour with a fixed ink palette and non-overlapping patterns | Palette from the existing Lab k-means (`colors`) or the user's inks; Floyd-Steinberg error diffusion in linear light on square cells; one ink a pixel. Diffusion kernels floyd/jarvis/stucki (`kernel`). Ordered (Bayer) dither (`pattern`). Left: other patterned fills, palette optimisation against the dithered result. |
 | SC-7 (done: FM, hybrid and three diffusion kernels) | Stochastic (FM) and hybrid screening | `screening: am|fm|hybrid` on `screen.halftone` and `screen.simulate`: error diffusion on cells of `dotMm` (`sc-core::fm`) with Floyd-Steinberg, Jarvis-Judice-Ninke or Stucki kernels, the dot limits and gain; a hybrid angles the middle tones and scatters cells under `hybridBelow` and over `hybridAbove`. Error diffusion was chosen over void-and-cluster so no patent question arises. Left (nothing sourced): a mesh-aware minimum dot size; blue-noise textures other than diffusion. |
 | SC-8 (done: `screen.dtf`, `mirror`, `dcs`) | CTS / DTF / DCS 2.0 output; job-sheet export | DTF: mirrored colour on transparent plus a choked white layer (solid or graded), PNG or TIFF, a gang sheet of artboards in shelf-packed rows with optional quarter turns (`sc-core::dtf`). Films: `mirror` (also on the vector PDFs). CTS: the 1-bit TIFF films at the machine's dpi, mirrored when asked; no machine-specific formats (none sourced). DCS 2.0 single- and multiple-file (`sc-core::dcs`), written from the public specification and checked only by reading it back: no DCS consumer was available. The DCS composite resolution is chosen (`dcsCompositeDpi`; full resolution allowed) and its spot CMYK goes through the colour settings. Gang sheets also try free-rectangle packing. Left: shape (non-rectangular) nesting, machine-specific CTS formats (none sourced), TIFF-with-preview DCS headers. The job sheet is done (SC-2). |
-| SC-9 | Rename to `screenfoundry` | Done 2026-10-21 except the icon artwork (needs a new original icon) and the hub name above. Binaries `screenfoundry` and `screenfoundry-cli`; documents save as `.screenfoundry`; `.stitchfoundry`, `.vectorcraft` and `.drawcraft` still open; settings come from the old StitchFoundry and VectorCraft folders when there are none yet. |
+| SC-9 | Rename to `screenfoundry` | Done 2026-10-24 except the hub name above (the icon is new original artwork). Binaries `screenfoundry` and `screenfoundry-cli`; documents save as `.screenfoundry`; `.stitchfoundry`, `.vectorcraft` and `.drawcraft` still open; settings come from the old StitchFoundry and VectorCraft folders when there are none yet. |
 | SC-10 | Calibration: print-test pages and shop feedback loop to tune the default profiles | First part done 2026-10-23: `screen.testPage` makes the sheets. Tuning the defaults needs real prints from a shop. The only way to settle the research's open conflicts. |
 
 ## 5. Decisions for the owner
@@ -106,3 +106,4 @@ Decided by the owner on 2026-10-21: remove the embroidery code (done, `docs/plan
 - 2026-10-24: SC-4: symbol instances separate through their art.
 - 2026-10-24: SC-5: highlight white. SC-4: Multiply and Darken print as overprint. Open questions researched and recorded in `docs/needs-owner.md`.
 - 2026-10-24: regression pass through the release CLI: output folders are now made when missing; vector dots at a low resolution lower the line screen instead of failing.
+- 2026-10-24: SC-9: new original app icon.
