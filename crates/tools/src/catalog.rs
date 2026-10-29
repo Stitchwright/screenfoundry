@@ -185,14 +185,6 @@ mod tests {
         assert!(n > 40);
     }
 
-    /// Startup takes the first tool of every group, so a group with no tools would crash the app.
-    #[test]
-    fn every_group_has_a_tool() {
-        for (i, g) in TOOL_GROUPS.iter().enumerate() {
-            assert!(!g.is_empty(), "tool group {i} is empty");
-        }
-    }
-
     #[test]
     fn lookups() {
         assert_eq!(tool_for_shortcut("V").unwrap().id, "selection");

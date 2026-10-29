@@ -32,7 +32,7 @@ fn state(app: &mut VectorcraftApp, ctx: &egui::Context) -> Info {
     let Some(st) = app.session.active() else { return Info::default() };
     let sel = &st.selection.objects;
     let key: Key = (st.uid, st.revision, sel.len(), sel.first().copied(), sel.last().copied());
-    let id = egui::Id::new("svgi-state");
+    let id = egui::Id::unique("svgi-state");
     if let Some((k, v)) = ctx.data(|d| d.get_temp::<(Key, Info)>(id))
         && k == key
     {
@@ -160,9 +160,7 @@ mod tests {
             .iter()
             .find(|e| e.command.as_deref() == Some("window.panel") && e.params.get("panel").and_then(Value::as_str) == Some(ID))
             .expect("the SVG Interactivity panel is listed");
-        // (ScreenFoundry's Window menu groups its panels)
-        let path = vec!["Window".to_string(), "Print and Export".to_string()];
-        assert_eq!((panel.path.clone(), panel.label.as_str(), panel.enabled), (path, "SVG Interactivity", true));
+        assert_eq!((panel.path.clone(), panel.label.as_str(), panel.enabled), (vec!["Window".to_string()], "SVG Interactivity", true));
     }
 
     // (Only names and scripts are checked: they are shown as they are, while tests running

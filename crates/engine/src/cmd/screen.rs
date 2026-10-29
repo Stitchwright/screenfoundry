@@ -23,7 +23,7 @@ use sc_core::testpage::{self, Parts, TestPage};
 use sc_core::{Bitmap1, Rgba8};
 use serde_json::{Value, json};
 
-use super::*;
+use super::{CommandSpec, EngineError, Result, Session, bad, bool_or, cmd, str_param};
 
 /// Source resolution assumed for an image file or inline bytes when `dpi` is not given.
 const DEFAULT_DPI: f64 = 300.0;

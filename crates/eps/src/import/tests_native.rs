@@ -243,6 +243,91 @@ fn in_points(mut d: Document, k: f64) -> Document {
     d
 }
 
+/// #1479: an image larger than the editing data's reader takes would be missing from the layers,
+/// while the PDF part has it (it reads larger images): the file comes in as its PDF part, with a
+/// note saying why, rather than without the image.
+#[test]
+fn an_ai_file_with_an_image_too_large_for_its_editing_data_comes_in_as_its_pdf_part() {
+    let raster = |w: u32, h: u32| {
+        format!(
+            "%AI5_File:\n%AI5_BeginRaster\n() 1 XG\n/DeviceGray XN\n[ 1 0 0 1 0 100 ] {w} {h} 0 Xh\n\
+             [ 1 0 0 1 0 100 ] 0 0 {w} {h} {w} {h} 8 1 0 0 1 0 4 4 0 0\n%%BeginData: 1\rXI\n\u{0}%%EndData\r\nXH\r\n%AI5_EndRaster\r\nN"
+        )
+    };
+    // 6,000 × 6,000 pixels: past the reader's 2^25.
+    let art = native(&layer("Texture", true, &format!("{}\n{}", square(10, 10), raster(6000, 6000))));
+    let (d, warnings, read) = crate::layered_ai(&private(&art), pdf_part(10.0, 86.0), vec![], false, true, 1.0);
+    assert!(!read, "the PDF part is used: {warnings:?}");
+    assert!(warnings.iter().any(|w| w.contains("an image is too large to read from them")), "{warnings:?}");
+    assert_eq!(d.layers[0].children().map_or(0, |c| c.len()), 1, "the PDF part's art");
+    // An image the reader takes keeps the layers.
+    let art = native(&layer("Texture", true, &format!("{}\n{}", square(10, 10), raster(1, 1))));
+    let (_, warnings, read) = crate::layered_ai(&private(&art), pdf_part(10.0, 86.0), vec![], false, true, 1.0);
+    assert!(read, "{warnings:?}");
+}
+
+/// A palette of `[None]` and White, and a color group `Inks` holding a spot color, Red ink.
+const PALETTE: &str =
+    "%AI5_BeginPalette\n0 0 Pb\n0 0 0 0 1 1 1 Xa\n(White)\nPc\n1 (Inks) 1 Pg\n0.06 0.98 1 0 (Red ink) 0 x\n(Red ink)\nPc\nPB\n%AI5_EndPalette\n";
+
+/// A `.ai` that comes in as its PDF part, whose layers can't be used, still gets the swatches and
+/// color groups of its editing data's palette in place of the defaults, and keeps the inks its PDF
+/// part's art paints with that the palette doesn't have.
+#[test]
+fn an_ai_file_that_comes_in_as_its_pdf_part_keeps_the_swatches_of_its_palette() {
+    let image = "%AI5_File:\n%AI5_BeginRaster\n() 1 XG\n/DeviceGray XN\n[ 1 0 0 1 0 100 ] 6000 6000 0 Xh\n\
+         [ 1 0 0 1 0 100 ] 0 0 6000 6000 6000 6000 8 1 0 0 1 0 4 4 0 0\n%%BeginData: 1\rXI\n\u{0}%%EndData\r\nXH\r\n%AI5_EndRaster\r\nN";
+    let art = native(&format!("{PALETTE}{}", layer("Texture", true, &format!("{}\n{image}", square(10, 10)))));
+    let mut part = pdf_part(10.0, 86.0);
+    let gold = vectorcraft_color::Paint::solid(vectorcraft_color::Color::cmyk(0.0, 0.2, 0.9, 0.1));
+    part.swatches.push(vectorcraft_color::swatch::Swatch { name: "Gold ink".into(), paint: gold, global: true, spot: true });
+    let (d, warnings, read) = crate::layered_ai(&private(&art), part, vec![], false, true, 1.0);
+    assert!(!read, "the PDF part is used: {warnings:?}");
+    let swatches: Vec<&str> = d.swatches.iter().map(|s| s.name.as_str()).collect();
+    assert_eq!(swatches, ["[None]", "White", "Gold ink"], "{warnings:?}");
+    let groups: Vec<&str> = d.swatch_groups.iter().map(|g| g.name.as_str()).collect();
+    assert_eq!(groups, ["Inks"]);
+    assert!(d.swatch("Red ink").is_some_and(|s| s.spot));
+}
+
+/// A `.ai` pattern library (a palette of pattern swatches and no layers) whose PDF part defines no
+/// pattern gets the patterns its editing data defines with the palette's pattern swatches.
+#[test]
+fn an_ai_file_without_layers_keeps_the_patterns_of_its_palette() {
+    let dots = "%AI3_BeginPattern: (Dots)\n(Dots) 0 0 4 4\n%_0 0 0 1 k\n%_1 1 m\n%_3 1 L\n%_3 3 L\n%_1 3 L\n%_f\nE\n%AI3_EndPattern\n";
+    let palette =
+        "%AI5_BeginPalette\n0 0 Pb\n0 0 0 0 1 1 1 Xa\n(White)\nPc\n(Dots) 0 0 1 1 0 0 0 0 0 [1 0 0 1 0 0] p\n(Dots)\nPc\nPB\n%AI5_EndPalette\n";
+    let art = native(&format!("{dots}{palette}"));
+    let (d, warnings, read) = crate::layered_ai(&private(&art), pdf_part(10.0, 86.0), vec![], false, true, 1.0);
+    assert!(!read, "{warnings:?}");
+    let swatches: Vec<&str> = d.swatches.iter().map(|s| s.name.as_str()).collect();
+    assert_eq!(swatches, ["[None]", "White", "Dots"], "{warnings:?}");
+    assert!(matches!(&d.swatch("Dots").map(|s| &s.paint), Some(vectorcraft_color::Paint::Pattern { pattern, .. }) if pattern == "Dots"));
+    assert!(d.pattern("Dots").is_some_and(|p| !p.art.is_empty()));
+
+    // A pattern that shows an image brings the image's data with it.
+    let pic = "%AI3_BeginPattern: (Pic)\n(Pic) 0 0 4 4\n%AI5_File:\n%AI5_BeginRaster\n() 1 XG\n/DeviceGray XN\n[ 4 0 0 4 0 4 ] 1 1 0 Xh\n\
+               [ 4 0 0 4 0 4 ] 0 0 1 1 1 1 8 1 0 0 1 0 4 4 0 0\n%%BeginData: 1\rXI\n\u{0}%%EndData\r\nXH\r\n%AI5_EndRaster\r\nN\nE\n%AI3_EndPattern\n";
+    let art = native(&format!("{pic}{}", palette.replace("(Dots)", "(Pic)")));
+    let (d, warnings, _) = crate::layered_ai(&private(&art), pdf_part(10.0, 86.0), vec![], false, true, 1.0);
+    let mut keys = vec![];
+    d.visit_images(|_, im| keys.push(im.key.clone()));
+    assert_eq!(keys.len(), 1, "{warnings:?}");
+    assert!(keys.iter().all(|k| d.images.contains_key(k)), "{keys:?}");
+}
+
+/// An EPS whose editing data can't be used, a palette with no layers among others, comes in as its
+/// page with the swatches and color groups of that palette in place of the defaults.
+#[test]
+fn an_eps_that_comes_in_as_its_page_keeps_the_swatches_of_its_palette() {
+    let r = import(&eps(&page_square(10, 10), &native(PALETTE))).unwrap();
+    assert_eq!(names(&r.document), ["Layer 1"], "{:?}", r.warnings);
+    let swatches: Vec<&str> = r.document.swatches.iter().map(|s| s.name.as_str()).collect();
+    assert_eq!(swatches, ["[None]", "White"], "{:?}", r.warnings);
+    let groups: Vec<&str> = r.document.swatch_groups.iter().map(|g| g.name.as_str()).collect();
+    assert_eq!(groups, ["Inks"]);
+}
+
 #[test]
 fn an_ai_file_gets_its_layers_and_the_art_outside_its_artboard() {
     // A square on the artboard, and one above it (the artboard is y 0 to 100 here).
@@ -1331,4 +1416,102 @@ fn raster_print_page_recovers_legacy_mesh_vector_mask_and_editable_curve() {
     let wrong = file.replace("%%BoundingBox: 0 0 100 100", "%%BoundingBox: 0 0 120 100");
     let r = import(wrong.as_bytes()).unwrap();
     assert!(r.warnings.iter().any(|w| w.contains("for a 100 × 100 pt page, not the file's 120 × 100 pt page")), "{:?}", r.warnings);
+}
+
+#[test]
+fn envelope_options_keep_the_source_text_hidden_under_its_outlined_appearance() {
+    let doc = text_document(&[("CHONKYCATS\r", 0, (8200.0, 8180.0), (0.0, 0.0), 0.0)]);
+    let slot: String = text_object(0).lines().map(|line| format!("%_{line}\n")).collect();
+    let envelope =
+        format!("%_/ArtDictionary :\n%_1 /Int (AIDeformOptionsKey) ,\n%_198 /Real (AIDeformArtHeightKey) ,\n%_X=\n%_0 Ae\n%_u\n{slot}%_U\n%_;\n");
+    let art = native_with_text(&layer("Art", true, &format!("{}\n{envelope}", square(10, 10))), &doc);
+    let r = import(&eps(&page_square(10, 10), &art)).unwrap();
+    assert_eq!(names(&r.document), ["Art"], "{:?}", r.warnings);
+    assert_eq!(kinds(&r.document.layers[0]), ["path", "text"], "{:?}", r.warnings);
+    let mut texts = vec![];
+    r.document.walk(|n| {
+        if let NodeKind::Text(t) = &n.kind {
+            texts.push((t.plain_text(), n.visible));
+        }
+    });
+    assert_eq!(texts, [("CHONKYCATS".to_string(), false)], "{:?}", r.warnings);
+    assert!(r.warnings.is_empty(), "{:?}", r.warnings);
+}
+
+/// An art style section with style `Comic`: a white fill offset and repeated by Transform under a
+/// red fill with its own blend mode, the characters at the bottom.
+fn comic_style() -> String {
+    let basic = |name: &str, body: &str| {
+        format!("/BasicFilter :\n({name}) 0 0 /Filter ,\n1 /Visible ,\n/Dictionary : /NotRecorded ,\n{body}; /Dict ;\n /Part ,\n")
+    };
+    let fill = |paint: &str| basic("Fill Style Filter", &format!("/FillStyle : 0 O\n{paint}\n0 1 0 0 0 Xy\n0 1 Xd\n/Def ;\n (FillStyle) ,\n"));
+    let compound = |name: &str, kids: &[String]| format!("/CompoundFilter :\n({name}) 0 0 /Filter ,\n1 /Visible ,\n{};\n /Part ,\n", kids.concat());
+    let rim = compound(
+        "Chain Style Filter",
+        &[
+            basic("Adobe Offset Path", "3 /Real (ofst) ,\n0 /Int (jntp) ,\n"),
+            fill("0 0 0 0 1 1 1 Xa"),
+            basic("Adobe Transform", "6 /Int (numCopies) ,\n1 /Real (moveH_Pts) ,\n"),
+        ],
+    );
+    let red = compound(
+        "Chain Style Filter",
+        &[fill("0 1 1 0 1 0 0 Xa"), basic("Blend Style Filter", "/BlendStyle : 1 0.5 0 0 0 Xy\n/Def ;\n (BlendStyle) ,\n")],
+    );
+    let stack = compound("Stack Style Filter", &[red, rim, basic("Conduit Filter", "")]);
+    format!("%AI9_BeginArtStyles\n/KnownStyle :\n(Comic) /Name ,\n/ActiveStyle :\n{}%AI9_EndArtStyles\n", compound("Chain Style Filter", &[stack]))
+}
+
+#[test]
+fn type_with_a_stacked_art_style_comes_in_as_type_with_that_appearance() {
+    // GUARDS: a style of more than one fill (or with effects on a fill) left the type as its drawn look,
+    // outlines that can't be retyped (comic lettering made with Illustrator's Appearance panel).
+    use vectorcraft_color::BlendMode;
+    use vectorcraft_doc::AppearanceItem;
+    let doc = text_document(&[("Bang\r", 0, (8200.0, 8180.0), (0.0, 0.0), 0.0)]);
+    // The look: the style's drawing round where the type lies (its anchor is at (58.5, 61.5)).
+    let drawing = "0 0 1 0 k\n54 56 m\n100 56 L\n100 80 L\n54 80 L\nf";
+    let look = format!("u\n/AI11Text :\n1 /FreeUndo ,\n0 /FrameIndex ,\n0 /StoryIndex ,\n;\n{drawing}\nU\n9 () XW\n");
+    let own: String = text_object(0).lines().map(|l| format!("%_{l}\n")).collect();
+    let art = native_with_text(&(comic_style() + &layer("Art", true, &format!("{look}{own}1 (Comic) XW\n"))), &doc);
+    let check = |d: &Document, notes: &[String]| {
+        let mut texts = vec![];
+        d.walk(|n| {
+            if let NodeKind::Text(t) = &n.kind {
+                texts.push((t.plain_text(), n.appearance.clone()));
+            }
+        });
+        let [(text, a)] = texts.as_slice() else { panic!("{texts:?} {notes:?}") };
+        assert_eq!(text, "Bang");
+        // Bottom first: the white rim with its effects, then the red fill at half opacity, multiplied.
+        let [AppearanceItem::Fill(rim), AppearanceItem::Fill(red)] = a.items.as_slice() else { panic!("{a:?}") };
+        assert_eq!(rim.effects.iter().map(|e| e.id.as_str()).collect::<Vec<_>>(), ["path.offsetPath", "distort.transform"]);
+        assert_eq!((red.blend, red.opacity), (BlendMode::Multiply, 0.5));
+        assert!(!notes.iter().any(|w| w.contains("drawn look")), "{notes:?}");
+    };
+    let (d, notes) = crate::ai_alone(&private(&art)).unwrap();
+    check(&d, &notes);
+    // From an EPS whose page draws Illustrator's rendering of the style (here, its look's rectangle):
+    // the layers are used all the same, the style's area not being held to look like the page.
+    let page = "0 0 1 0 setcmykcolor 54 56 moveto 100 56 lineto 100 80 lineto 54 80 lineto closepath fill";
+    let r = import(&eps(page, &art)).unwrap();
+    assert_eq!(names(&r.document), ["Art"], "{:?}", r.warnings);
+    check(&r.document, &r.warnings);
+}
+
+#[test]
+fn point_type_without_a_matrix_is_placed_by_its_layout() {
+    // GUARDS: Illustrator 24 leaves an unturned, unscaled point type's matrix out of its frame; such
+    // stories weren't read, and the type was left out.
+    let with = text_document(&[("Hi there\r", 0, (8200.0, 8180.0), (0.0, 0.0), 0.0)]);
+    let without = with.replace("/2 << /2 [ 1 0 0 1 0 0 ] >>", "/2 << >>");
+    assert_ne!(with, without);
+    let place = |doc: &str| {
+        let art = native_with_text(&layer("Spare", false, &text_object(0)), doc);
+        let (d, notes) = crate::ai_alone(&private(&art)).unwrap();
+        let texts = text_of(&d.layers[0]);
+        assert_eq!(texts.len(), 1, "{notes:?}");
+        (texts[0].plain_text(), texts[0].xf)
+    };
+    assert_eq!(place(&without), place(&with));
 }

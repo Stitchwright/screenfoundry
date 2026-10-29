@@ -24,7 +24,11 @@ use vectorcraft_geom::{FillRule, PathData, Rect, shapes};
 use vectorcraft_pathops::{BoolOp, Join, boolean, offset_path, unite_all};
 use vectorcraft_render::{AntiAlias, RenderOptions, Renderer};
 
-use super::*;
+use super::{
+    DEFAULT_ANGLES, DEFAULT_DPI, FilmFormat, HalftoneOptions, MAX_DOT_GAIN, MAX_INKS, Result, Scatter, Session, attach, attach_dcs, bad, bool_or,
+    color, curve_of, dir_param, finish_films, job_sheet, name_of, num, sc, scatter_of, screen_plate, shape_of, slug, snap_inks, str_param,
+    underbase_of,
+};
 use crate::cmd::pathops::node_path;
 
 /// Most shapes one job separates: knocking out is pairwise, so the work grows with the square.

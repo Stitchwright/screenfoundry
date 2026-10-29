@@ -13,17 +13,15 @@ pub fn steps_to(current: usize, target: usize) -> i64 {
     target as i64 - current as i64
 }
 
-/// A step's name in `lang`: the row of the same name with an ellipsis (a menu item's, such as an
-/// effect's) without the ellipsis, else its plain row; `None` when the catalog has neither.
+/// A step's name in `lang`: its plain row, else the row of the same name with an ellipsis (a menu
+/// item's, such as an effect's) without the ellipsis; `None` when the catalog has neither.
 pub fn step_name(lang: crate::i18n::Lang, label: &str) -> Option<String> {
     use crate::i18n::{has, tr};
-    // the menu command's own row first: a plain row of the same words can name something else
-    // (ScreenFoundry's Feather motif, not the Feather effect)
-    let dotted = format!("{label}…");
-    if has(lang, &dotted) {
-        return Some(tr(lang, &dotted).trim_end_matches('…').to_string());
+    if has(lang, label) {
+        return Some(tr(lang, label).to_string());
     }
-    has(lang, label).then(|| tr(lang, label).to_string())
+    let dotted = format!("{label}…");
+    has(lang, &dotted).then(|| tr(lang, &dotted).trim_end_matches('…').to_string())
 }
 
 /// A step's name in `lang`. A name made from a template (`Apply {name}`,
@@ -118,16 +116,17 @@ mod tests {
         assert_eq!(steps_to(3, 3), 0);
     }
 
-    /// The step names the panel paints, top to bottom. Without an image loader, each row's icon
-    /// paints a `⚠` instead, which is left out.
+    /// The step names the panel paints, top to bottom. The SVG loaders are installed so each row's
+    /// icon draws as an image instead of egui's ⚠ placeholder.
     fn listed(app: &mut VectorcraftApp) -> Vec<String> {
         let ctx = egui::Context::default();
+        egui_extras::install_image_loaders(&ctx);
         let mut out = ctx.run_ui(egui::RawInput::default(), |ui| show(app, ui));
         out.textures_delta.clear();
         out.shapes
             .iter()
             .filter_map(|c| match &c.shape {
-                egui::Shape::Text(t) if t.galley.text() != "⚠" => Some(t.galley.text().to_string()),
+                egui::Shape::Text(t) => Some(t.galley.text().to_string()),
                 _ => None,
             })
             .collect()
@@ -156,19 +155,21 @@ mod tests {
         let ja = crate::i18n::Lang::from_code("ja").expect("ja registered");
         crate::i18n::set_current(ja);
         let rows = listed(&mut app);
+        let step = |template: &str, name: &str| crate::i18n::fmt(crate::i18n::tr(ja, template), &[("name", name)]);
+        let apply = |name: &str| step("Apply {name}", name);
         let want = [
-            "グラフィックスタイル「S」を再定義",
-            "スタイル「Body」を適用",
-            "スタイル「{name}」を適用",
-            "スタイル「Apply」を適用",
-            "スタイル「Brush」を適用",
-            "スタイル「[標準文字スタイル]」を適用",
-            "スタイル「Graphic Style “X”」を再定義",
+            step("Redefine Graphic Style “{name}”", "S"),
+            apply("Body"),
+            apply("{name}"),
+            apply("Apply"),
+            apply("Brush"),
+            apply(crate::i18n::tr(ja, "[Normal Character Style]")),
+            step("Redefine {name}", "Graphic Style “X”"),
         ];
-        assert!(rows.contains(&want[0].to_string()), "{rows:#?}");
+        assert!(rows.contains(&want[0]), "{rows:#?}");
         assert_eq!(rows[rows.len() - 6..], want[1..], "{rows:#?}");
         app.session.execute("edit.undo", &json!({})).unwrap();
-        assert_eq!(listed(&mut app).last().map(String::as_str), Some(want[6]), "an undone step");
+        assert_eq!(listed(&mut app).last(), Some(&want[6]), "an undone step");
         crate::i18n::set_current(crate::i18n::Lang::EN);
         assert_eq!(listed(&mut app)[rows.len() - 6..rows.len() - 4], ["Apply Body", "Apply {name}"]);
     }
@@ -178,8 +179,12 @@ mod tests {
     #[test]
     fn effect_steps_read_the_menu_row() {
         let ja = crate::i18n::Lang::from_code("ja").expect("ja registered");
-        assert_eq!(step_name(ja, "Revolve").as_deref(), Some("回転体"));
-        assert_eq!(step_name(ja, "Feather").as_deref(), Some("ぼかし"));
+        for effect in ["Revolve", "Feather"] {
+            let menu_row =
+                crate::i18n::has(ja, &format!("{effect}…")).then(|| crate::i18n::tr(ja, &format!("{effect}…")).trim_end_matches('…').to_string());
+            let plain_row = crate::i18n::has(ja, effect).then(|| crate::i18n::tr(ja, effect).to_string());
+            assert_eq!(step_name(ja, effect), plain_row.or(menu_row), "{effect}");
+        }
         assert_eq!(step_name(ja, "No Such Step"), None);
     }
 

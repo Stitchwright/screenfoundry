@@ -4,7 +4,7 @@
 
 use serde_json::{Value, json};
 
-use super::*;
+use super::{CommandSpec, Result, Session, always, bad, cmd, str_param};
 
 /// This app's source repository.
 pub const GITHUB_URL: &str = "https://github.com/Stitchwright/screenfoundry";
@@ -160,6 +160,7 @@ fn url(u: String) -> Result<Value> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::Session;
 
     #[test]
     fn links() {
