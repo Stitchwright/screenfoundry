@@ -326,7 +326,10 @@ pub fn half_form_font(half: bool) -> Option<Vec<u8>> {
         let coverage = CoverageFormat1::new(vec![gid('K')?]);
         let subst = LigatureSubstFormat1::new(coverage.into(), vec![LigatureSet::new(vec![Ligature::new(gid('k')?, vec![gid('.')?])])]);
         let features = FeatureList::new(vec![FeatureRecord::new(Tag::new(b"half"), Feature::new(None, vec![0]))]);
-        let lookups = SubstitutionLookupList::new(vec![SubstitutionLookup::Ligature(Lookup::new(Default::default(), vec![write_fonts::tables::gsub::LigatureSubst::Format1(subst)]))]);
+        let lookups = SubstitutionLookupList::new(vec![SubstitutionLookup::Ligature(Lookup::new(
+            Default::default(),
+            vec![write_fonts::tables::gsub::LigatureSubst::Format1(subst)],
+        ))]);
         (features, lookups)
     } else {
         (FeatureList::new(vec![]), SubstitutionLookupList::new(vec![]))
