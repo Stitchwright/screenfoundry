@@ -22,8 +22,8 @@ User-facing names say **ScreenFoundry**. Files, binaries and ids stay lowercase
 - **No `main` or `release` branch exists yet.** CI runs on pushes to `main` and on pull requests;
   *Release* runs on pushes to `release`. Until then the workflows can only be started by hand
   (*Actions › Run workflow*, picking a branch).
-- **The version is still `0.14.0`**, inherited from VectorCraft. Pick ScreenFoundry's own first
-  version before releasing (`cargo xtask version set 0.1.0`).
+- **The version is `0.1.0`**, ScreenFoundry's own first version (set with
+  `cargo xtask version set 0.1.0`; it was VectorCraft's number before).
 - **Signing needs the 12 secrets** in the `release` environment (Apple and Windows). Without them
   the workflows still build, but installers are unsigned: Windows shows a SmartScreen warning and
   macOS needs right-click › Open.
