@@ -38,6 +38,7 @@ pub(crate) mod ime;
 pub mod io;
 pub mod keymap;
 pub mod layout_migration;
+pub mod maker;
 pub mod menus;
 pub mod native_menu;
 pub mod opening;
@@ -45,7 +46,6 @@ pub mod palette;
 mod panel_docking;
 pub mod panels;
 pub mod picks;
-pub mod maker;
 pub mod place;
 pub mod placing;
 pub mod plugin_runs;
@@ -106,7 +106,8 @@ pub use clock::{now_ms, now_secs};
 #[cfg(test)]
 pub(crate) use services::browsable_url;
 pub use services::{
-    DownloadFn, ExistsFn, FileFilter, FilePick, HttpDone, HttpFn, Inbox, NativeInputHook, OpenUrlFn, PickOpen, PickSave, ReadFn, RevealFn, Services, WriteFn,
+    DownloadFn, ExistsFn, FileFilter, FilePick, HttpDone, HttpFn, Inbox, NativeInputHook, OpenUrlFn, PickOpen, PickSave, ReadFn, RevealFn, Services,
+    WriteFn,
 };
 use state::{GeometryStamp, InputGeneration, PendingScreenshot, QueuedScreenshot};
 pub(crate) use state::{InputFrame, take_frame_once};

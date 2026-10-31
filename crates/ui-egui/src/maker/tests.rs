@@ -136,7 +136,12 @@ fn makerfoundrys_own_sentence_is_shown_and_nothing_opens() {
 
 #[test]
 fn a_draft_page_on_another_site_is_never_opened() {
-    for url in ["https://evil.example/designs/42", "https://makerfoundry.app.evil.example/designs/42", "javascript:alert(1)", "https://makerfoundry.app@evil.example/"] {
+    for url in [
+        "https://evil.example/designs/42",
+        "https://makerfoundry.app.evil.example/designs/42",
+        "javascript:alert(1)",
+        "https://makerfoundry.app@evil.example/",
+    ] {
         let (mut app, _, opened) = app(vec![signed_in(), reply(201, json!({"id": 42, "url": url}))]);
         app.run("ui.publishToMakerFoundry", json!({})).unwrap();
         type_credentials(&mut app);

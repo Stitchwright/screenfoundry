@@ -150,7 +150,18 @@ mod tests {
     #[test]
     fn only_a_foundry_session_token_is_ever_sent() {
         let p = publish();
-        for bad in ["", "sfs_", "sk-ant-api03-secret", "Bearer sfs_x", "sfs_a b", "sfs_a\r\nX: y", "sfs_é", "SFS_abc", " sfs_abc", &format!("sfs_{}", "a".repeat(300))] {
+        for bad in [
+            "",
+            "sfs_",
+            "sk-ant-api03-secret",
+            "Bearer sfs_x",
+            "sfs_a b",
+            "sfs_a\r\nX: y",
+            "sfs_é",
+            "SFS_abc",
+            " sfs_abc",
+            &format!("sfs_{}", "a".repeat(300)),
+        ] {
             assert!(p.request(bad).is_err(), "{bad:?}");
         }
         assert!(p.request("sfs_ok").is_ok());
@@ -191,7 +202,8 @@ mod tests {
 
     #[test]
     fn a_draft_is_read_from_a_201() {
-        let d = publish().answer(&reply(201, r#"{"id": 42, "url": "https://makerfoundry.app/designs/42", "kind": "laser", "format": "SVG"}"#)).unwrap();
+        let d =
+            publish().answer(&reply(201, r#"{"id": 42, "url": "https://makerfoundry.app/designs/42", "kind": "laser", "format": "SVG"}"#)).unwrap();
         assert_eq!(d, Draft { id: 42, url: "https://makerfoundry.app/designs/42".into() });
     }
 
@@ -216,7 +228,15 @@ mod tests {
 
     #[test]
     fn an_unreadable_201_is_an_error_not_a_draft() {
-        for body in ["", "no", "{}", r#"{"id":"42","url":"https://makerfoundry.app/d"}"#, r#"{"id":42}"#, r#"{"id":42,"url":7}"#, r#"{"id":-1,"url":"https://makerfoundry.app/d"}"#] {
+        for body in [
+            "",
+            "no",
+            "{}",
+            r#"{"id":"42","url":"https://makerfoundry.app/d"}"#,
+            r#"{"id":42}"#,
+            r#"{"id":42,"url":7}"#,
+            r#"{"id":-1,"url":"https://makerfoundry.app/d"}"#,
+        ] {
             assert!(publish().answer(&reply(201, body)).is_err(), "{body}");
         }
     }

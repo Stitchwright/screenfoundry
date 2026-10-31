@@ -5,7 +5,6 @@
 //! and a password to sign in or create an account (a new account starts with free credits and
 //! sends no email), and signs out when signed in.
 
-
 use super::{DialogSpec, form};
 use crate::state::Dialog;
 use crate::theme::Tokens;
@@ -65,7 +64,9 @@ fn account_body(app: &mut VectorcraftApp, ui: &mut egui::Ui, d: &mut Dialog) -> 
 
 fn publish_body(app: &mut VectorcraftApp, ui: &mut egui::Ui, d: &mut Dialog) -> bool {
     let t = Tokens::get(ui.ctx());
-    ui.label(tl!("Send this design to MakerFoundry as a draft. Its page opens in your browser: add the title, price and licence there, and publish it."));
+    ui.label(tl!(
+        "Send this design to MakerFoundry as a draft. Its page opens in your browser: add the title, price and licence there, and publish it."
+    ));
     ui.add_space(8.0);
     if let Some((name, bytes)) = app.maker.waiting() {
         // What goes where: the file, the site, the account.
@@ -91,4 +92,3 @@ fn status_lines(app: &VectorcraftApp, ui: &mut egui::Ui, d: &Dialog, t: &Tokens)
         ui.label(egui::RichText::new(error).color(t.error));
     }
 }
-

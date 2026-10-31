@@ -60,7 +60,9 @@ fn request_with(request: &Request, system_proxy: bool) -> Result<Response, Strin
 fn describe(e: &ureq::Error) -> String {
     match e {
         ureq::Error::Timeout(_) => "The service took too long to answer. Try again later.".into(),
-        ureq::Error::HostNotFound | ureq::Error::ConnectionFailed | ureq::Error::Io(_) => "Couldn't reach the service: check your internet connection.".into(),
+        ureq::Error::HostNotFound | ureq::Error::ConnectionFailed | ureq::Error::Io(_) => {
+            "Couldn't reach the service: check your internet connection.".into()
+        }
         other => format!("The request failed: {other}"),
     }
 }
@@ -89,7 +91,12 @@ mod tests {
                 got.extend_from_slice(&chunk[..n]);
                 let text = String::from_utf8_lossy(&got).to_ascii_lowercase();
                 let done = text.split_once("\r\n\r\n").is_some_and(|(head, body)| {
-                    let want = head.split("content-length:").nth(1).and_then(|v| v.split("\r\n").next()).and_then(|v| v.trim().parse::<usize>().ok()).unwrap_or(0);
+                    let want = head
+                        .split("content-length:")
+                        .nth(1)
+                        .and_then(|v| v.split("\r\n").next())
+                        .and_then(|v| v.trim().parse::<usize>().ok())
+                        .unwrap_or(0);
                     body.len() >= want
                 });
                 if n == 0 || done {
@@ -114,7 +121,8 @@ mod tests {
 
     #[test]
     fn the_request_goes_out_as_built_and_the_answer_comes_back() {
-        let (url, seen) = serve("HTTP/1.1 201 Created\r\nContent-Type: application/json\r\nContent-Length: 12\r\nConnection: close\r\n\r\n{\"id\": 42}\r\n");
+        let (url, seen) =
+            serve("HTTP/1.1 201 Created\r\nContent-Type: application/json\r\nContent-Length: 12\r\nConnection: close\r\n\r\n{\"id\": 42}\r\n");
         let r = request_with(&post(&url), false).unwrap();
         assert_eq!((r.status, r.body.trim()), (201, "{\"id\": 42}"));
         let request = seen.recv().unwrap().to_ascii_lowercase();
@@ -126,7 +134,8 @@ mod tests {
 
     #[test]
     fn a_refusal_is_an_answer_not_an_error() {
-        let (url, _) = serve("HTTP/1.1 429 Too Many Requests\r\nContent-Length: 40\r\nConnection: close\r\n\r\n{\"error\":{\"message\":\"Too many designs.\"}}");
+        let (url, _) =
+            serve("HTTP/1.1 429 Too Many Requests\r\nContent-Length: 40\r\nConnection: close\r\n\r\n{\"error\":{\"message\":\"Too many designs.\"}}");
         let r = request_with(&post(&url), false).unwrap();
         assert_eq!(r.status, 429);
         assert!(r.body.contains("Too many designs."));
@@ -141,7 +150,8 @@ mod tests {
 
     #[test]
     fn an_answer_is_cut_off_at_the_cap() {
-        let big = Box::leak(format!("HTTP/1.1 200 OK\r\nContent-Length: 600000\r\nConnection: close\r\n\r\n{}", "x".repeat(600_000)).into_boxed_str());
+        let big =
+            Box::leak(format!("HTTP/1.1 200 OK\r\nContent-Length: 600000\r\nConnection: close\r\n\r\n{}", "x".repeat(600_000)).into_boxed_str());
         let (url, _) = serve(big);
         let r = request_with(&post(&url), false).unwrap();
         assert!(r.body.len() as u64 <= MAX_ANSWER, "{}", r.body.len());

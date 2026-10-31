@@ -106,7 +106,8 @@ impl Site {
     pub fn parse(origin: &str) -> Result<Self, String> {
         let origin = origin.trim().trim_end_matches('/');
         let (scheme, rest) = origin.split_once("://").ok_or("a site's address starts with https://")?;
-        let bad = rest.is_empty() || rest.contains(['/', '?', '#', '@', '\\']) || !rest.is_ascii() || rest.chars().any(|c| c.is_control() || c == ' ');
+        let bad =
+            rest.is_empty() || rest.contains(['/', '?', '#', '@', '\\']) || !rest.is_ascii() || rest.chars().any(|c| c.is_control() || c == ' ');
         if bad {
             return Err("a site's address is just its host, like https://makerfoundry.app".into());
         }

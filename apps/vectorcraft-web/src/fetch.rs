@@ -41,7 +41,10 @@ pub async fn fetch(url: &str, options: &Options) -> Result<web_sys::Response, St
     let abort = controller.clone();
     let on_time = Closure::once_into_js(move || abort.abort());
     let timer = window
-        .set_timeout_with_callback_and_timeout_and_arguments_0(on_time.unchecked_ref(), (options.seconds.saturating_mul(1000)).min(i32::MAX as u32) as i32)
+        .set_timeout_with_callback_and_timeout_and_arguments_0(
+            on_time.unchecked_ref(),
+            (options.seconds.saturating_mul(1000)).min(i32::MAX as u32) as i32,
+        )
         .map_err(js)?;
     let answer = JsFuture::from(window.fetch_with_str_and_init(url, &init)).await;
     window.clear_timeout_with_handle(timer);

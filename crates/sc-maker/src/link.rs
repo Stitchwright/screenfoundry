@@ -122,7 +122,8 @@ fn plain_segment(segment: &str) -> Option<()> {
         return None;
     }
     let decoded = decode(segment)?;
-    let layered = decoded.char_indices().any(|(i, c)| c == '%' && decoded.get(i + 1..i + 3).is_some_and(|h| h.bytes().all(|b| b.is_ascii_hexdigit())));
+    let layered =
+        decoded.char_indices().any(|(i, c)| c == '%' && decoded.get(i + 1..i + 3).is_some_and(|h| h.bytes().all(|b| b.is_ascii_hexdigit())));
     let bad = decoded == "." || decoded == ".." || layered || decoded.chars().any(|c| c == '/' || c == '\\' || text::hidden(c));
     (!bad).then_some(())
 }
@@ -185,7 +186,10 @@ mod tests {
     #[test]
     fn a_makerfoundry_design_file_is_accepted_and_rebuilt() {
         assert_eq!(open_link(GOOD).unwrap().as_str(), GOOD);
-        assert_eq!(open_link("https://www.makerfoundry.app/api/v1/designs/42/file/rose.svg").unwrap().as_str(), "https://www.makerfoundry.app/api/v1/designs/42/file/rose.svg");
+        assert_eq!(
+            open_link("https://www.makerfoundry.app/api/v1/designs/42/file/rose.svg").unwrap().as_str(),
+            "https://www.makerfoundry.app/api/v1/designs/42/file/rose.svg"
+        );
         // the address fetched is the rebuilt one: scheme and host in lower case
         assert_eq!(open_link("HTTPS://MakerFoundry.APP/api/v1/designs/42/file/rose.svg").unwrap().as_str(), GOOD);
         assert_eq!(open_link("https://makerfoundry.app/api/v1/designs/7/file/Big%20Rose%20%281%29.svg").unwrap().file_name(), "Big Rose (1).svg");
@@ -368,6 +372,10 @@ mod tests {
         assert_eq!(refusal(403, r#"{"error":{"message":"That design is for sale."}}"#), "That design is for sale.");
         assert_eq!(refusal(404, r#"{"error":{"message":"That design isn't on MakerFoundry."}}"#), "That design isn't on MakerFoundry.");
         assert_eq!(refusal(429, r#"{"error":{"message":"Too many downloads."}}"#), "Too many downloads.");
-        assert!(refusal(403, "").contains("doesn't allow") && refusal(404, "x").contains("isn't on MakerFoundry") && refusal(429, "").contains("too many"));
+        assert!(
+            refusal(403, "").contains("doesn't allow")
+                && refusal(404, "x").contains("isn't on MakerFoundry")
+                && refusal(429, "").contains("too many")
+        );
     }
 }

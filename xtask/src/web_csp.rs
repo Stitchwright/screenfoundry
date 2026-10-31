@@ -73,7 +73,8 @@ fn policy(html: &str) -> Option<&str> {
 
 /// The `'sha256-...'` source for `script`.
 fn source_of(script: &str) -> String {
-    let digest: Vec<u8> = sha256::hex(script.as_bytes()).as_bytes().chunks(2).filter_map(|p| u8::from_str_radix(std::str::from_utf8(p).ok()?, 16).ok()).collect();
+    let digest: Vec<u8> =
+        sha256::hex(script.as_bytes()).as_bytes().chunks(2).filter_map(|p| u8::from_str_radix(std::str::from_utf8(p).ok()?, 16).ok()).collect();
     format!("'sha256-{}'", base64(&digest))
 }
 
@@ -120,7 +121,10 @@ fn check(html: &str) -> Result<(), String> {
     for body in inline_scripts(html) {
         let want = source_of(body);
         if !sources.contains(&want.as_str()) {
-            return Err(format!("an inline script's hash {want} is not in script-src: the page would load nothing (script starts: {:?})", body.trim().chars().take(60).collect::<String>()));
+            return Err(format!(
+                "an inline script's hash {want} is not in script-src: the page would load nothing (script starts: {:?})",
+                body.trim().chars().take(60).collect::<String>()
+            ));
         }
     }
     let connect = directive("connect-src").ok_or("the policy has no connect-src")?;
@@ -173,7 +177,9 @@ mod tests {
 
     #[test]
     fn base64_matches_rfc_4648_vectors() {
-        for (plain, coded) in [("", ""), ("f", "Zg=="), ("fo", "Zm8="), ("foo", "Zm9v"), ("foob", "Zm9vYg=="), ("fooba", "Zm9vYmE="), ("foobar", "Zm9vYmFy")] {
+        for (plain, coded) in
+            [("", ""), ("f", "Zg=="), ("fo", "Zm8="), ("foo", "Zm9v"), ("foob", "Zm9vYg=="), ("fooba", "Zm9vYmE="), ("foobar", "Zm9vYmFy")]
+        {
             assert_eq!(base64(plain.as_bytes()), coded);
         }
     }
