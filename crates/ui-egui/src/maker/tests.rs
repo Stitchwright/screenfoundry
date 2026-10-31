@@ -79,7 +79,7 @@ fn publishing_signed_out_asks_to_sign_in_then_shows_what_is_sent_and_only_then_s
     // signed in: the Publish dialog shows the file and where it goes; still nothing sent to MakerFoundry
     assert_eq!(kind(&app), Some(PUBLISH_KIND));
     assert_eq!(app.maker.email(), Some("me@example.com"));
-    assert_eq!(app.maker.waiting().map(|(n, _)| n), Some("Shirt.svg.svg").filter(|_| false).or(Some("Shirt.svg")));
+    assert_eq!(app.maker.waiting().map(|(n, _)| n), Some("Shirt.svg"));
     assert_eq!(seen.borrow().len(), 1);
     assert!(opened.borrow().is_empty());
     // Send

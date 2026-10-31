@@ -124,12 +124,10 @@ proptest! {
     #[test]
     fn only_session_tokens_are_signed_with(token in prop_oneof![any::<String>(), "[ -~]{0,40}", "sfs_[ -~]{0,40}"]) {
         let publish = Publish::new(Site::makerfoundry(), "a.svg", "PHN2Zy8+".into(), "x").unwrap();
-        for request in [publish.request(&token), Accounts::new(Site::accounts()).account(&token), Accounts::new(Site::accounts()).sign_out(&token)] {
-            if let Ok(r) = request {
-                let auth = r.headers.iter().find(|(k, _)| *k == "Authorization").map(|(_, v)| v.clone()).unwrap();
-                prop_assert_eq!(auth, format!("Bearer {token}"));
-                prop_assert!(token.starts_with("sfs_") && token.len() > 4 && token.bytes().all(|b| b.is_ascii_alphanumeric() || b == b'-' || b == b'_'));
-            }
+        for r in [publish.request(&token), Accounts::new(Site::accounts()).account(&token), Accounts::new(Site::accounts()).sign_out(&token)].into_iter().flatten() {
+            let auth = r.headers.iter().find(|(k, _)| *k == "Authorization").map(|(_, v)| v.clone()).unwrap();
+            prop_assert_eq!(auth, format!("Bearer {token}"));
+            prop_assert!(token.starts_with("sfs_") && token.len() > 4 && token.bytes().all(|b| b.is_ascii_alphanumeric() || b == b'-' || b == b'_'));
         }
     }
 
