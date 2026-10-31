@@ -68,9 +68,13 @@ fn publish_body(app: &mut VectorcraftApp, ui: &mut egui::Ui, d: &mut Dialog) -> 
         "Send this design to MakerFoundry as a draft. Its page opens in your browser: add the title, price and licence there, and publish it."
     ));
     ui.add_space(8.0);
-    if let Some((name, bytes)) = app.maker.waiting() {
-        // What goes where: the file, the site, the account.
-        ui.label(egui::RichText::new(format!("{name}  ({} KB)", bytes.div_ceil(1024))).strong());
+    widgets::label_row(ui, tl!("Name:"), LABEL, |ui| {
+        form::text(ui, d, "name", FIELD);
+    });
+    ui.add_space(4.0);
+    if let Some(bytes) = app.maker.waiting() {
+        // What goes where: the file as it will be named, its size, the site.
+        ui.label(egui::RichText::new(format!("{}  ({} KB)", sc_maker::publish::svg_file_name(&d.str("name")), bytes.div_ceil(1024))).strong());
         ui.label(egui::RichText::new(sc_maker::Site::MAKERFOUNDRY.trim_start_matches("https://")).color(t.text_dim));
     }
     if let Some(email) = app.maker.email() {

@@ -77,9 +77,9 @@ impl MakerState {
         self.pending.is_some()
     }
 
-    /// The design waiting in the Publish dialog: its file name and size in bytes.
-    pub fn waiting(&self) -> Option<(&str, u64)> {
-        self.prepared.as_ref().map(|p| (p.file_name.as_str(), p.bytes))
+    /// The design waiting in the Publish dialog: its size in bytes.
+    pub fn waiting(&self) -> Option<u64> {
+        self.prepared.as_ref().map(|p| p.bytes)
     }
 }
 
@@ -119,8 +119,11 @@ fn open_account(app: &mut VectorcraftApp) {
     app.ui.dialog = Some(Dialog::new(ACCOUNT_KIND, json!({ "email": "", "password": "", "error": "" })));
 }
 
+/// The Publish dialog, with the name the draft will be given: MakerFoundry makes its title from
+/// the file name ("Tiger_shirt-front.svg" becomes "Tiger shirt front"), so the person can change it.
 fn open_publish(app: &mut VectorcraftApp) {
-    app.ui.dialog = Some(Dialog::new(PUBLISH_KIND, json!({ "error": "" })));
+    let name = app.maker.prepared.as_ref().map(|p| p.file_name.trim_end_matches(".svg").to_string()).unwrap_or_default();
+    app.ui.dialog = Some(Dialog::new(PUBLISH_KIND, json!({ "error": "", "name": name })));
 }
 
 /// The Foundry Account dialog's OK: sign in or create an account, or sign out when signed in.
@@ -145,10 +148,13 @@ pub(crate) fn confirm_account(app: &mut VectorcraftApp, d: &Dialog) -> Result<Va
 }
 
 /// The Publish dialog's Send: sign the request with the session and send it.
-pub(crate) fn confirm_publish(app: &mut VectorcraftApp, _d: &Dialog) -> Result<Value, String> {
+pub(crate) fn confirm_publish(app: &mut VectorcraftApp, d: &Dialog) -> Result<Value, String> {
     let token = app.maker.session.as_ref().map(|s| s.token.clone()).ok_or_else(|| tl!("Sign in to your Foundry Account to publish.").to_string())?;
     let prepared = app.maker.prepared.clone().ok_or("there is no design to publish")?;
-    let publish = Publish::new(Site::makerfoundry(), &prepared.file_name, prepared.file_base64, &prepared.app)?;
+    // the name typed in the dialog, else the document's
+    let typed = d.str("name");
+    let name = if typed.trim().is_empty() { prepared.file_name.as_str() } else { typed.as_str() };
+    let publish = Publish::new(Site::makerfoundry(), name, prepared.file_base64, &prepared.app)?;
     let request = publish.request(&token)?;
     send(app, request, Pending::Publish(publish))?;
     set_field(app, PUBLISH_KIND, "error", json!(""));

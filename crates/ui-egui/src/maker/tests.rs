@@ -79,7 +79,9 @@ fn publishing_signed_out_asks_to_sign_in_then_shows_what_is_sent_and_only_then_s
     // signed in: the Publish dialog shows the file and where it goes; still nothing sent to MakerFoundry
     assert_eq!(kind(&app), Some(PUBLISH_KIND));
     assert_eq!(app.maker.email(), Some("me@example.com"));
-    assert_eq!(app.maker.waiting().map(|(n, _)| n), Some("Shirt.svg"));
+    assert_eq!(app.ui.dialog.as_ref().unwrap().str("name"), "Shirt", "the document's name, to change");
+    // MakerFoundry makes the draft's title from the file name: the person can name it
+    app.ui.dialog.as_mut().unwrap().fields.insert("name".into(), json!("Tiger shirt front"));
     assert_eq!(seen.borrow().len(), 1);
     assert!(opened.borrow().is_empty());
     // Send
@@ -89,13 +91,27 @@ fn publishing_signed_out_asks_to_sign_in_then_shows_what_is_sent_and_only_then_s
     assert_eq!(sent[1].url, "https://makerfoundry.app/api/v1/designs");
     assert!(sent[1].headers.contains(&("Authorization", "Bearer sfs_tok-1".into())));
     let body: Value = serde_json::from_str(&sent[1].body).unwrap();
-    assert_eq!(body["file_name"], "Shirt.svg");
+    assert_eq!(body["file_name"], "Tiger shirt front.svg");
     assert!(body["app"].as_str().unwrap().starts_with("ScreenFoundry "));
     let svg = vectorcraft_format::base64_decode(body["file"].as_str().unwrap()).unwrap();
     assert!(String::from_utf8(svg).unwrap().contains("<svg"));
     // the draft's page opens, and the dialog is gone
     assert_eq!(*opened.borrow(), ["https://makerfoundry.app/designs/42"]);
     assert!(app.ui.dialog.is_none() && app.maker.waiting().is_none());
+}
+
+#[test]
+fn a_blank_or_hostile_name_still_gives_a_plain_svg_name() {
+    for (typed, want) in [("", "Shirt.svg"), ("   ", "Shirt.svg"), ("../../etc/passwd", "passwd.svg"), ("a\r\nb", "ab.svg"), (".svg", "design.svg")] {
+        let (mut app, seen, _) = app(vec![signed_in(), draft()]);
+        app.run("ui.publishToMakerFoundry", json!({})).unwrap();
+        type_credentials(&mut app);
+        press_ok(&mut app).unwrap();
+        app.ui.dialog.as_mut().unwrap().fields.insert("name".into(), json!(typed));
+        press_ok(&mut app).unwrap();
+        let body: Value = serde_json::from_str(&seen.borrow()[1].body).unwrap();
+        assert_eq!(body["file_name"], want, "{typed:?}");
+    }
 }
 
 #[test]
