@@ -143,7 +143,7 @@ fn g4_data(film: &Bitmap1) -> Result<Vec<u8>> {
     for y in 0..film.height() {
         let row = (0..film.width()).map(|x| if film.get(x, y) { Color::Black } else { Color::White });
         // `VecWriter` cannot fail, so the error is `Infallible`; the `map_err` keeps it honest.
-        enc.encode_line(row, width).map_err(|_| param("film", "CCITT encoding failed"))?;
+        enc.encode_line(row, width.into()).map_err(|_| param("film", "CCITT encoding failed"))?;
     }
     Ok(enc.finish().map_err(|_| param("film", "CCITT encoding failed"))?.finish())
 }

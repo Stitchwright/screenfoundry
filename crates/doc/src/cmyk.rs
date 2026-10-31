@@ -491,12 +491,8 @@ impl Rows<'_> {
 }
 
 impl hayro_ccitt::Decoder for Rows<'_> {
-    fn push_pixel(&mut self, white: bool) {
-        self.run(white, 1);
-    }
-
-    fn push_pixel_chunk(&mut self, white: bool, chunk_count: u32) {
-        self.run(white, u64::from(chunk_count) * 8);
+    fn push_pixels(&mut self, white: bool, count: u32) {
+        self.run(white, u64::from(count));
     }
 
     fn next_line(&mut self) {

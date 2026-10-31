@@ -116,6 +116,8 @@ pub(super) fn blend(b: usvg::BlendMode) -> BlendMode {
         B::Saturation => BlendMode::Saturation,
         B::Color => BlendMode::Color,
         B::Luminosity => BlendMode::Luminosity,
+        // CSS plus-lighter adds the colours; there is no additive mode here, and Screen is the nearest
+        B::PlusLighter => BlendMode::Screen,
     }
 }
 
