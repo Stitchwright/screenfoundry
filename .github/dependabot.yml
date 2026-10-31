@@ -35,6 +35,34 @@ updates:
         update-types: ["patch"]
         patterns: ["*"]
     open-pull-requests-limit: 10
+    # Updates held back on purpose (see PR #17). Remove a rule to try again.
+    ignore:
+      # egui/eframe/winit and friends are [patch.crates-io]'d to storytold forks: they move with
+      # the forks, by hand, not on upstream releases.
+      - dependency-name: "egui*"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      - dependency-name: "eframe"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      - dependency-name: "epaint*"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      - dependency-name: "ecolor"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      - dependency-name: "emath"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      - dependency-name: "winit"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      # zbus 6 removes the blocking API: portal_save.rs (and its mock portal tests) need an async rewrite.
+      - dependency-name: "zbus"
+        versions: [">= 6"]
+      # harfrust 0.14+ removes ShaperData/ShaperInstance/FontRef/UnicodeBuffer: crates/text's shaping needs redoing.
+      - dependency-name: "harfrust"
+        versions: [">= 0.14"]
+      # vello 0.3 changes composite modes and pixmap types across crates/render, and breaks
+      # root-level blend modes (a render test draws blue instead of white, seen in PatternFoundry).
+      - dependency-name: "vello_cpu"
+        versions: [">= 0.3"]
+      - dependency-name: "vello_common"
+        versions: [">= 0.3"]
     commit-message:
       prefix: "chore(deps)"
 
