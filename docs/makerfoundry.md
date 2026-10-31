@@ -1,6 +1,6 @@
 # MakerFoundry
 
-Status: 2026-10-31. Task **SC-11**. Built and tested without the network; the live check and the browser check are listed under "Not checked".
+Status: 2026-10-31. Task **SC-11**: built, tested, and checked live and in Chromium (see below); the hosted page and MakerFoundry's button are the open items.
 
 [MakerFoundry](https://makerfoundry.app) is the Foundry family's marketplace for designs. ScreenFoundry works with it in two ways. MakerFoundry's side of the contract is its
 [`docs/api.md`](https://github.com/SiteSentrix/makerfoundry/blob/main/docs/api.md). The code here is `crates/sc-maker` (requests, answers and the address checks; no network code),
@@ -55,11 +55,26 @@ lacks the three sites: a stale hash leaves the page blank (LaserFoundry's hosted
 - The dialogs end to end with a recording host (`crates/ui-egui/src/maker/tests.rs`): nothing is sent before Send, the password and token are not kept, an ended sign-in goes back to sign-in, a draft page on
   another site is never opened. The desktop client against a server on this machine (`apps/vectorcraft/src/http.rs`): request as built, redirects not followed, answers capped, other requests never sent.
 
+## Checked live and in a browser (2026-10-31)
+- **Live services, with the owner's OK.** A throwaway Foundry account (`/v1/signup`, 100 credits), a tiny SVG published with the request shape the app builds (`POST /api/v1/designs`): `201`, a draft of the
+  laser kind, format SVG (design 3 on MakerFoundry, left there: apps cannot delete); sign-out `200`. Also `GET` of design 1's file: `404` with MakerFoundry's sentence "That design isn't on MakerFoundry.",
+  and CORS allowing `https://stitchwright.github.io` and exposing `Content-Disposition`; the account service answers the web app's preflight (`authorization`, `content-type`, `POST`).
+  (The requests were sent with `curl` in the shape `sc-maker` builds; the desktop client's own HTTPS against the live services was not run.)
+- **The real web build in Chromium** (`trunk build`, served locally, MakerFoundry and the account service mocked at the network edge): 20 checks for Open in ScreenFoundry and 18 for Publish, all passing:
+  the page boots under its policy with no policy errors (the hook filled one script hash); a good link opens as `tiger-shirt.svg`, with exactly one request, for the checked address; `?open=` leaves the
+  address and other parameters stay; `403`, `404` and `429` show MakerFoundry's own sentence; nine look-alike or foreign addresses (`.evil.com`, `@evil.com`, a port, a trailing dot, `http`, `..`, `%2e%2e`,
+  another host, `javascript:`) make no request at all; a redirect is not followed (the other site is never asked); a `.dxf` file is refused; a hostile header name opens as a plain name; a declared 40 MB is
+  refused; publishing signs in (POST to the account service), shows the Publish dialog before anything goes to MakerFoundry, sends a signed POST with the typed name, and opens the draft page in a new tab only
+  when it is on MakerFoundry (an answer naming another site opens nothing; a `429` shows its sentence). The scripts were Playwright scripts kept outside the repository (this repository is Rust only); to repeat
+  the check: `cd apps/vectorcraft-web && trunk build`, serve `dist/web`, load `/?open=<encoded address>` with MakerFoundry's address routed to a stand-in.
+
 ## Not checked
-- **The live services.** A throwaway Foundry account and a real publish (`201`) need the owner's OK, and leave a test draft on MakerFoundry (it has no delete endpoint for apps).
-- **The web build in a real browser (Chromium).** The hosted page (`https://stitchwright.github.io/screenfoundry/`) returns 404 until the repository is public and Pages is on; building it needs Trunk.
-  Whether the account service answers CORS for the web app's address is not known (publishing from the web app needs it; MakerFoundry's `MF_API_ORIGINS` already lists the site).
-- A real MakerFoundry design opened from its page (the button is off until it is switched on), and Windows and macOS.
+- **The hosted page.** `https://stitchwright.github.io/screenfoundry/` returns 404 until the repository is public and Pages is on; the CI step `cargo xtask web-csp dist/web/index.html --check` then runs on the
+  real site build. The Chromium run used a local server.
+- A real MakerFoundry design opened from its page (the button is off until it is switched on, and MakerFoundry's side is not deployed yet), Windows and macOS, and a software-rendered WebGL (not WebGPU) browser.
+- The sign-in is not kept between runs (memory only), by design.
 
 ## For MakerFoundry's chat
-See the prompt in the session notes: the web app's address, that it opens SVG only, the file-name rules the address check enforces, and the question about a screen-printing kind that takes films.
+The web app's address is `https://stitchwright.github.io/screenfoundry/` and it opens **SVG only**. MakerFoundry's addresses (`/api/v1/designs/{id}/file/{slug}.svg`, optionally `?t=<48 hex>`) pass every check
+(`sc-maker` tests use the same shapes). The Publish dialog has a name field because the draft's title comes from the file name; the app string is `ScreenFoundry <version>`. Switch the button on once the
+repository is public and Pages serves the app.
