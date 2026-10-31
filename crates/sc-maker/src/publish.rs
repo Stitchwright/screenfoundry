@@ -37,7 +37,7 @@ impl Publish {
             return Err("there is nothing to publish".into());
         }
         let valid = |c: char| c.is_ascii_alphanumeric() || matches!(c, '+' | '/' | '=');
-        if file_base64.len() % 4 != 0 || !file_base64.chars().all(valid) {
+        if !file_base64.len().is_multiple_of(4) || !file_base64.chars().all(valid) {
             return Err("the design isn't base64 text".into());
         }
         if file_base64.len() / 4 * 3 > MAX_FILE_BYTES + 3 {
