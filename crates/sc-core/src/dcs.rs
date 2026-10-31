@@ -126,8 +126,9 @@ fn plate_eps(p: &Plate, bbox: (u32, u32), pt: (f64, f64), title: &str) -> Vec<u8
         }
     }
     let mut out = format!(
-        "{EPS_SIGNATURE}\n%%Creator: ScreenFoundry\n%%Title: {title} ({})\n%%BoundingBox: 0 0 {} {}\n%%DocumentData: Binary\n%%LanguageLevel: 1\n%%EndComments\n\
+        "{EPS_SIGNATURE}\n%%Creator: ScreenFoundry\n%%Title: {} ({})\n%%BoundingBox: 0 0 {} {}\n%%DocumentData: Binary\n%%LanguageLevel: 1\n%%EndComments\n\
          gsave\n0 0 translate {:.4} {:.4} scale\n/pic {stride} string def\n{w} {h} 1 [{w} 0 0 -{h} 0 {h}] {{currentfile pic readstring pop}} image\n",
+        dsc_name(title),
         dsc_name(p.name),
         bbox.0,
         bbox.1,
@@ -431,5 +432,20 @@ mod tests {
         assert!(text(plate(Some([0.02, 0.1, 0.95, 0.0]))).contains("%%CMYKCustomColor: 0.020 0.100 0.950 0.000 (A)"));
         // Out of range and non-finite values are held to 0..1.
         assert!(text(plate(Some([1.7, -0.3, f64::NAN, 0.5]))).contains("%%CMYKCustomColor: 1.000 0.000 0.000 0.500 (A)"));
+    }
+
+    #[test]
+    fn a_job_name_cannot_break_the_plate_comments() {
+        let (a, _) = two_plates();
+        let plates = [Plate { name: "A", rgb: [250, 220, 20], cmyk: None, film: &a }];
+        let title = "Job\n%%EndComments\nerasepage\r(x)";
+        let (_, files) = multiple_files(&plates, 300.0, title, &["a.eps".into()], 150.0).unwrap();
+        let single = single_file(&plates, 300.0, title, 150.0).unwrap();
+        for eps in [&files[0][..], &single[..]] {
+            let text = String::from_utf8_lossy(eps);
+            let head = &text[..text.find("%%EndComments\n").unwrap()];
+            assert!(head.lines().all(|l| l.starts_with("%")), "{head}");
+            assert!(!text.contains("\nerasepage"), "{head}");
+        }
     }
 }
