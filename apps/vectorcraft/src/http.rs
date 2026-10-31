@@ -30,7 +30,14 @@ pub(crate) fn send(request: Request, done: HttpDone) {
 
 /// Send `request` and wait for the answer.
 fn request_blocking(request: &Request) -> Result<Response, String> {
+    request_with(request, true)
+}
+
+/// [`request_blocking`], choosing whether the system's proxy settings apply (the tests talk to a
+/// server on this machine).
+fn request_with(request: &Request, system_proxy: bool) -> Result<Response, String> {
     let config = ureq::Agent::config_builder()
+        .proxy(if system_proxy { ureq::Proxy::try_from_env() } else { None })
         .max_redirects(0)
         .http_status_as_error(false)
         .timeout_global(Some(TIMEOUT))
@@ -74,10 +81,24 @@ mod tests {
         let (tx, rx) = mpsc::channel();
         std::thread::spawn(move || {
             let (mut socket, _) = listener.accept().unwrap();
-            let mut got = vec![0u8; 8192];
-            let n = socket.read(&mut got).unwrap();
-            tx.send(String::from_utf8_lossy(&got[..n]).into_owned()).unwrap();
-            socket.write_all(reply.as_bytes()).unwrap();
+            // the head, then as many body bytes as its Content-Length says
+            let mut got: Vec<u8> = vec![];
+            let mut chunk = [0u8; 4096];
+            loop {
+                let n = socket.read(&mut chunk).unwrap_or(0);
+                got.extend_from_slice(&chunk[..n]);
+                let text = String::from_utf8_lossy(&got).to_ascii_lowercase();
+                let done = text.split_once("\r\n\r\n").is_some_and(|(head, body)| {
+                    let want = head.split("content-length:").nth(1).and_then(|v| v.split("\r\n").next()).and_then(|v| v.trim().parse::<usize>().ok()).unwrap_or(0);
+                    body.len() >= want
+                });
+                if n == 0 || done {
+                    break;
+                }
+            }
+            // (a test that doesn't look at the request has dropped the receiver)
+            let _ = tx.send(String::from_utf8_lossy(&got).into_owned());
+            let _ = socket.write_all(reply.as_bytes());
         });
         (url, rx)
     }
@@ -94,7 +115,7 @@ mod tests {
     #[test]
     fn the_request_goes_out_as_built_and_the_answer_comes_back() {
         let (url, seen) = serve("HTTP/1.1 201 Created\r\nContent-Type: application/json\r\nContent-Length: 12\r\nConnection: close\r\n\r\n{\"id\": 42}\r\n");
-        let r = request_blocking(&post(&url)).unwrap();
+        let r = request_with(&post(&url), false).unwrap();
         assert_eq!((r.status, r.body.trim()), (201, "{\"id\": 42}"));
         let request = seen.recv().unwrap().to_ascii_lowercase();
         assert!(request.starts_with("post /api/v1/designs http/1.1"), "{request}");
@@ -106,7 +127,7 @@ mod tests {
     #[test]
     fn a_refusal_is_an_answer_not_an_error() {
         let (url, _) = serve("HTTP/1.1 429 Too Many Requests\r\nContent-Length: 40\r\nConnection: close\r\n\r\n{\"error\":{\"message\":\"Too many designs.\"}}");
-        let r = request_blocking(&post(&url)).unwrap();
+        let r = request_with(&post(&url), false).unwrap();
         assert_eq!(r.status, 429);
         assert!(r.body.contains("Too many designs."));
     }
@@ -114,7 +135,7 @@ mod tests {
     #[test]
     fn a_redirect_is_not_followed() {
         let (url, _) = serve("HTTP/1.1 302 Found\r\nLocation: https://evil.example/\r\nContent-Length: 0\r\nConnection: close\r\n\r\n");
-        let r = request_blocking(&post(&url)).unwrap();
+        let r = request_with(&post(&url), false).unwrap();
         assert_eq!(r.status, 302, "the redirect itself is the answer");
     }
 
@@ -122,7 +143,7 @@ mod tests {
     fn an_answer_is_cut_off_at_the_cap() {
         let big = Box::leak(format!("HTTP/1.1 200 OK\r\nContent-Length: 600000\r\nConnection: close\r\n\r\n{}", "x".repeat(600_000)).into_boxed_str());
         let (url, _) = serve(big);
-        let r = request_blocking(&post(&url)).unwrap();
+        let r = request_with(&post(&url), false).unwrap();
         assert!(r.body.len() as u64 <= MAX_ANSWER, "{}", r.body.len());
     }
 
@@ -138,7 +159,7 @@ mod tests {
     #[test]
     fn nothing_listening_is_a_sentence() {
         let closed = TcpListener::bind("127.0.0.1:0").unwrap().local_addr().unwrap();
-        let e = request_blocking(&post(&format!("http://{closed}"))).unwrap_err();
+        let e = request_with(&post(&format!("http://{closed}")), false).unwrap_err();
         assert!(e.contains("Couldn't reach") || e.contains("failed"), "{e}");
     }
 }
