@@ -62,6 +62,10 @@ jobs:
       - name: Build
         working-directory: apps/vectorcraft-web
         run: trunk build --release
+      - name: Check the page's content security policy
+        # every inline script's hash is in script-src (a stale one leaves the page blank), and the
+        # policy names MakerFoundry and Foundry Account (xtask/src/web_csp.rs)
+        run: cargo xtask web-csp dist/web/index.html --check
       - name: Check the site
         run: |
           test -f dist/web/index.html

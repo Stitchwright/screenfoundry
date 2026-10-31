@@ -27,6 +27,12 @@ business decision.
 - **Why:** the writer follows the public DCS 2.0 specification but has only been read back by
   our own code. Most shops now take 1-bit TIFF, so this is low urgency.
 
+## 2b. MakerFoundry (SC-11): your OK and two switches
+- **Live check:** say OK and a throwaway Foundry account publishes a tiny SVG. It leaves a test draft on MakerFoundry (no delete endpoint for apps).
+- **The web app's address** (`https://stitchwright.github.io/screenfoundry/`) returns 404 until the repository is public and Pages is on (Settings › Pages › Source: GitHub Actions). Then tell the
+  MakerFoundry chat to switch the Open in ScreenFoundry button on.
+- **Browser check:** the page needs a Chromium run of the real build (Trunk). It was not done yet.
+
 ## 3. Translation review
 
 - **What:** a native-speaker check of the machine-written first pass in the 23 catalogs

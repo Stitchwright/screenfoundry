@@ -60,6 +60,7 @@ Known simplifications to fix:
 | SC-8 (done: `screen.dtf`, `mirror`, `dcs`) | CTS / DTF / DCS 2.0 output; job-sheet export | DTF: mirrored colour on transparent plus a choked white layer (solid or graded), PNG or TIFF, a gang sheet of artboards in shelf-packed rows with optional quarter turns (`sc-core::dtf`). Films: `mirror` (also on the vector PDFs). CTS: the 1-bit TIFF films at the machine's dpi, mirrored when asked; no machine-specific formats (none sourced). DCS 2.0 single- and multiple-file (`sc-core::dcs`), written from the public specification and checked only by reading it back: no DCS consumer was available. The DCS composite resolution is chosen (`dcsCompositeDpi`; full resolution allowed) and its spot CMYK goes through the colour settings. Gang sheets also try free-rectangle packing. Left: shape (non-rectangular) nesting, machine-specific CTS formats (none sourced), TIFF-with-preview DCS headers. The job sheet is done (SC-2). |
 | SC-9 | Rename to `screenfoundry` | Done 2026-10-24 except the hub name above (the icon is new original artwork). Binaries `screenfoundry` and `screenfoundry-cli`; documents save as `.screenfoundry`; `.stitchfoundry`, `.vectorcraft` and `.drawcraft` still open; settings come from the old StitchFoundry and VectorCraft folders when there are none yet. |
 | SC-10 | Calibration: print-test pages and shop feedback loop to tune the default profiles | First part done 2026-10-23: `screen.testPage` makes the sheets. Tuning the defaults needs real prints from a shop. The only way to settle the research's open conflicts. |
+| SC-11 (done 2026-10-31 except the live and browser checks: `docs/makerfoundry.md`) | MakerFoundry: publish the drawing as an SVG draft and open an SVG from a link | `screen.makerFoundryExport`, File › Publish to MakerFoundry… and Foundry Account…, `sc-maker`, the web app's `?open=`, a content security policy for the web page. A screen-printing kind on MakerFoundry for films is a later request. |
 
 ## 5. Decisions for the owner
 
@@ -94,6 +95,7 @@ Decided by the owner on 2026-10-21: remove the embroidery code (done, `docs/plan
 - 2026-10-22: SC-2: PDF films (`format: pdf`): one page per film at physical size.
 - 2026-10-22: SC-3 first part: Screen Print panel (Window menu); palette finder keeps exact flat colours and drops edge-blend clusters.
 - 2026-10-23: SC-10 first part: print-test page (`sc-core::testpage`, `screen.testPage`).
+- 2026-10-31: SC-11: MakerFoundry (`sc-maker`, `screen.makerFoundryExport`, Publish to MakerFoundry…, Foundry Account…, `?open=` in the web app, web page policy).
 - 2026-10-23: SC-5: per-ink dot gain (`inkGains` on `screen.simulate`).
 - 2026-10-23: SC-5: ink limit (`inkLimit` on `screen.simulate`).
 - 2026-10-23: SC-6: diffusion kernels for index colour (`kernel` on `screen.index`).

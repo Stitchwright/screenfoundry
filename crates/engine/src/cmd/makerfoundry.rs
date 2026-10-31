@@ -8,7 +8,7 @@ use sc_maker::publish::{MAX_FILE_BYTES, svg_file_name};
 use serde_json::{Value, json};
 
 use super::fileio::encode_all;
-use super::{CommandSpec, EngineError, Result, Session, bad, cmd, has_doc, str_param};
+use super::{CommandSpec, Result, Session, bad, cmd, has_doc, str_param};
 
 const C: &str = "screen.makerFoundryExport";
 
@@ -34,12 +34,12 @@ fn export(s: &mut Session, p: &Value) -> Result<Value> {
     let mut encoded = encode_all(doc, "svg", &json!({}))?;
     let mut warnings = std::mem::take(&mut encoded.warnings);
     let mut files = encoded.files.into_iter();
-    let (_, bytes) = files.next().ok_or_else(|| EngineError::Other("the drawing exported no SVG".into()))?;
+    let (_, bytes) = files.next().ok_or_else(|| bad(C, "the drawing is empty: draw something before publishing it"))?;
     if files.next().is_some() {
         warnings.push("the drawing has several artboards: only the first is published".into());
     }
     if bytes.len() > MAX_FILE_BYTES {
-        return Err(bad(C, format!("the SVG is {} MB: MakerFoundry takes at most {} MB", bytes.len().div_ceil(1024 * 1024), MAX_FILE_BYTES / 1024 / 1024)));
+        return Err(bad(C, "the SVG is bigger than the 8 MB MakerFoundry takes"));
     }
     Ok(json!({
         "fileName": name,

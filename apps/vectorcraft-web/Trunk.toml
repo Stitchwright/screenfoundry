@@ -16,3 +16,10 @@ port = 8766
 stage = "post_build"
 command = "cargo"
 command_arguments = ["xtask", "web-fonts"]
+
+# Fills the page's content security policy with the hashes of its inline scripts and checks it
+# (xtask/src/web_csp.rs): Trunk's module script changes with every build.
+[[hooks]]
+stage = "post_build"
+command = "cargo"
+command_arguments = ["xtask", "web-csp"]

@@ -15,6 +15,7 @@ mod pngsuite;
 mod sha256;
 mod stats;
 mod version;
+mod web_csp;
 mod web_fonts;
 
 use std::path::{Path, PathBuf};
@@ -43,6 +44,9 @@ commands:
   icns <out.icns> <png>...
                   pack PNGs into a macOS .icns (used by packaging/icons.sh)
   stats [--exact] count tests and lines per crate (--exact: ask the test harness via `-- --list`)
+  web-csp [index.html] [--check]
+                  fill the web page's content security policy with its inline scripts' hashes and check
+                  it (the Trunk post_build hook; --check only checks)
   web-fonts       copy the craft-fonts faces in crates/text/web-fonts.txt into the web site (the Trunk
                   post_build hook; a no-op without CRAFT_FONTS_DIR)
 ";
@@ -67,6 +71,7 @@ fn main() -> ExitCode {
         Some("icns") => ico::run_icns(&rest),
         Some("version") => version::run(&root(), &rest),
         Some("stats") => stats::run(&root(), rest.contains(&"--exact")),
+        Some("web-csp") => web_csp::run(&root(), &rest),
         Some("web-fonts") => web_fonts::run(&root()),
         Some("-h" | "--help" | "help") | None => {
             print!("{USAGE}");
