@@ -1,0 +1,17 @@
+[package]
+name = "sc-maker"
+description = "ScreenFoundry's side of MakerFoundry: publish a design as a draft, open one from a link, Foundry Account sign-in (requests, answers and address checks; no network code)"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+
+[dependencies]
+serde_json.workspace = true
+
+[dev-dependencies]
+proptest.workspace = true
+
+[lints]
+workspace = true

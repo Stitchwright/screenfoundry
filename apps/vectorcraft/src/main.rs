@@ -62,6 +62,7 @@ use vectorcraft_ui_egui::{ClipboardProbeFactory, FilePick, Services, Vectorcraft
 
 mod app;
 mod host_services;
+mod http;
 mod prefs;
 mod titlebar;
 

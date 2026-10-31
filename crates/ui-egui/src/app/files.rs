@@ -22,5 +22,6 @@ impl VectorcraftApp {
             }
         }
         place::drain(self);
+        crate::maker::drain(self);
     }
 }

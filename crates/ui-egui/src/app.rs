@@ -104,6 +104,7 @@ impl VectorcraftApp {
             last_window_title: String::new(),
             graphics_adapter: None,
             place: Default::default(),
+            maker: Default::default(),
             system_paste: false,
             clipboard_image_request: None,
             system_paste_at: f64::NEG_INFINITY,

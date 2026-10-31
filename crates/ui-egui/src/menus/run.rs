@@ -549,6 +549,8 @@ fn run_ui_part6(app: &mut VectorcraftApp, id: &str, p: &Value) -> Option<Result<
 fn run_ui_part7(app: &mut VectorcraftApp, id: &str, p: &Value) -> Option<Result<Value, String>> {
     let s = |k: &str| p.get(k).and_then(Value::as_str).map(str::to_string);
     let r = match id {
+        "ui.publishToMakerFoundry" => crate::maker::publish(app, p),
+        "ui.foundryAccount" => crate::maker::account(app, p),
         "ui.screenSeparate" => crate::screen_print::separate(app, p),
         "ui.screenHalftone" => crate::screen_print::halftone(app, p),
         "ui.screenTestPage" => crate::screen_print::test_page(app, p),

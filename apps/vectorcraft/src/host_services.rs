@@ -295,6 +295,8 @@ pub(crate) fn services(parent: Parent, ui: egui::Context) -> Services {
         open_url: Some(Box::new(|url: &str| {
             let _ = webbrowser::open(url);
         })),
+        // MakerFoundry and Foundry Account (SC-11): HTTPS on a thread of its own.
+        http: Some(Box::new(super::http::send)),
         reveal: Some(Box::new(reveal)),
         // Links panel: Edit Original; Package: Show Package. Relink to Folder and Package pick folders.
         open_file: Some(Box::new(open_file)),

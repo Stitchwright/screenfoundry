@@ -245,6 +245,9 @@ pub fn enabled(app: &VectorcraftApp, id: &str) -> bool {
         "ui.placementOptionsDialog" => selected_image(app, |_| true) || selected_placed(app),
         "ui.findLinksInFolder" => crate::picks::can(app, &crate::picks::PickRequest::Folder) && app.session.active().is_some(),
         "ui.packageDialog" | "docInfo.save" => app.session.active().is_some(),
+        // MakerFoundry needs the host to send requests; publishing needs a drawing as well.
+        "ui.publishToMakerFoundry" => app.services.http.is_some() && app.session.active().is_some(),
+        "ui.foundryAccount" => app.services.http.is_some(),
         "ui.screenSeparate" | "ui.screenHalftone" => crate::picks::can(app, &crate::picks::PickRequest::Folder) && app.session.active().is_some(),
         // The test page needs no document: only somewhere to write.
         "ui.screenTestPage" => crate::picks::can(app, &crate::picks::PickRequest::Folder),

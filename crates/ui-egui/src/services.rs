@@ -47,6 +47,14 @@ pub type Inbox = Arc<Mutex<Vec<(String, Vec<u8>)>>>;
 /// (the save or export then fails as a refused write does: #1693).
 pub type DownloadFn = Box<dyn FnMut(&str, &[u8]) -> Result<(), String>>;
 
+/// Hands the answer to an [`HttpFn`] request back: the status and body, or why nothing came. Called
+/// once, on any thread, when the answer is in.
+pub type HttpDone = Box<dyn FnOnce(Result<sc_maker::Response, String>) + Send>;
+
+/// Sends an HTTP request (MakerFoundry and Foundry Account, `crate::maker`) with no cookies, no
+/// redirects, a time limit and a cap on the answer's size.
+pub type HttpFn = Box<dyn FnMut(sc_maker::Request, HttpDone)>;
+
 /// Opens a URL in the system browser.
 pub type OpenUrlFn = Box<dyn FnMut(&str)>;
 
@@ -89,6 +97,9 @@ pub struct Services {
     pub clipboard_read: Option<Box<dyn FnMut() -> Option<String>>>,
     /// Open a URL in the system browser (desktop). Without it, egui opens it (a new tab on the web).
     pub open_url: Option<OpenUrlFn>,
+    /// Sends the requests to MakerFoundry and the Foundry Account service. None: the commands say
+    /// this version can't reach them.
+    pub http: Option<HttpFn>,
     /// Show an open dialog for several files (File → Place…); returns their paths (none: cancelled).
     pub pick_open_multi: Option<Box<dyn FnMut() -> Vec<String>>>,
     /// Web: start an async pick of files to place (they arrive via `place_inbox`).

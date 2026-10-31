@@ -4655,6 +4655,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "sc-maker"
+version = "0.1.0"
+dependencies = [
+ "proptest",
+ "serde_json",
+]
+
+[[package]]
 name = "schannel"
 version = "0.1.30"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -6073,6 +6081,7 @@ dependencies = [
  "pollster 1.0.1",
  "raw-window-handle",
  "rfd",
+ "sc-maker",
  "serde_json",
  "socket2",
  "ureq",
@@ -6214,6 +6223,7 @@ dependencies = [
  "rustix 1.1.5",
  "ruzstd",
  "sc-core",
+ "sc-maker",
  "serde",
  "serde_json",
  "thiserror 2.0.21",
@@ -6532,6 +6542,7 @@ dependencies = [
  "image",
  "log",
  "rustix 1.1.5",
+ "sc-maker",
  "serde",
  "serde_json",
  "toml",
@@ -6565,6 +6576,7 @@ dependencies = [
  "js-sys",
  "log",
  "rfd",
+ "sc-maker",
  "serde_json",
  "vectorcraft-engine",
  "vectorcraft-format",

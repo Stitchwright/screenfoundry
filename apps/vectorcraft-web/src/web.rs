@@ -140,12 +140,14 @@ async fn run(host: Host, canvas: web_sys::HtmlCanvasElement, moving: Option<Movi
                             log::error!("vectorcraft-web: couldn't install window.vectorcraft: {}", js_err(e));
                         }
                         let mut app = VectorcraftApp::new(Session::new(), services).with_control(control_rx);
-                        // Open in ScreenFoundry: `?open=` names a design on MakerFoundry, opened once
-                        if let Some(raw) = query_param("open") {
-                            match crate::open_link::allowed(&raw) {
-                                Ok(url) => {
+                        // Open in ScreenFoundry: `?open=` names a design on MakerFoundry, read once
+                        // and taken out of the page's address so a reload doesn't fetch it again.
+                        if let Some(raw) = open_param() {
+                            forget_open_param();
+                            match sc_maker::link::open_link(&raw) {
+                                Ok(checked) => {
                                     app.status("Opening the design from MakerFoundry…");
-                                    crate::open_link::start(url, host.inbox.clone(), host.note.clone(), ctx.clone());
+                                    crate::open_link::start(checked, host.inbox.clone(), host.note.clone(), ctx.clone());
                                 }
                                 Err(why) => app.status(format!("Couldn't open the design: {why}")),
                             }
@@ -204,6 +206,26 @@ fn detect_language() {
 fn query_param(name: &str) -> Option<String> {
     let query = query();
     query.trim_start_matches('?').split('&').find_map(|kv| kv.strip_prefix(name)?.strip_prefix('=').map(str::to_string)).filter(|v| !v.is_empty())
+}
+
+/// The `open` parameter of the page's address, URL-decoded once (`None` when absent or empty).
+fn open_param() -> Option<String> {
+    let params = web_sys::UrlSearchParams::new_with_str(&query()).ok()?;
+    params.get("open").filter(|v| !v.is_empty())
+}
+
+/// Take `open` out of the page's address, keeping the rest of it.
+fn forget_open_param() {
+    let Some(window) = web_sys::window() else { return };
+    let location = window.location();
+    let (Ok(path), Ok(search), Ok(hash)) = (location.pathname(), location.search(), location.hash()) else { return };
+    let Ok(params) = web_sys::UrlSearchParams::new_with_str(&search) else { return };
+    params.delete("open");
+    let rest = params.to_string().as_string().unwrap_or_default();
+    let url = if rest.is_empty() { format!("{path}{hash}") } else { format!("{path}?{rest}{hash}") };
+    if let Ok(history) = window.history() {
+        let _ = history.replace_state_with_url(&wasm_bindgen::JsValue::NULL, "", Some(&url));
+    }
 }
 
 fn query() -> String {
@@ -448,7 +470,10 @@ fn services(inbox: Inbox, place_inbox: PlaceInbox, ctx: egui::Context, locks: Op
     let picked = place_inbox.clone();
     let place_ctx = ctx.clone();
     let screen_color = eye_dropper(ctx.clone());
+    let http_ctx = ctx.clone();
     Services {
+        // Publish to MakerFoundry and Foundry Account: `fetch`, for the few requests the app makes.
+        http: Some(Box::new(move |request, done| crate::maker_http::send(request, done, http_ctx.clone()))),
         // File → Place…: the picked files go to the Place dialog.
         place_async: Some(Box::new(move || {
             let inbox = picked.clone();

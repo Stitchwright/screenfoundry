@@ -34,6 +34,7 @@ mod export_as;
 mod export_for_screens;
 pub mod eyedropper;
 pub mod file_info;
+mod maker;
 pub mod find_links;
 pub mod flare_options;
 pub mod flatten;
@@ -328,6 +329,8 @@ registry! {
     ImportPdf: [import_pdf::KIND] => import_pdf::SPEC,
     SwatchConflict: [swatch_conflict::KIND] => swatch_conflict::SPEC,
     FileInfo: [file_info::KIND] => file_info::SPEC,
+    FoundryAccount: [crate::maker::ACCOUNT_KIND] => maker::ACCOUNT,
+    MakerFoundryPublish: [crate::maker::PUBLISH_KIND] => maker::PUBLISH,
     RasterEffectsSettings: [raster_effects::KIND] => raster_effects::SPEC,
     EffectGallery: [effect_gallery::KIND] => effect_gallery::SPEC,
     MissingLinks: [missing_links::KIND] => missing_links::SPEC,

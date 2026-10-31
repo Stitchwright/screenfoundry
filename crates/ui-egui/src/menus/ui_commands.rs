@@ -542,6 +542,18 @@ pub const UI_COMMANDS: &[(&str, &str, &str, &str)] = &[
     ),
     ("help.about", "About ScreenFoundry", "", "{}"),
     (
+        "ui.publishToMakerFoundry",
+        "Publish to MakerFoundry…",
+        "",
+        "{fileName?: the name to publish under (default: the document's title)} export the drawing as an SVG and open the dialog that shows what goes where; the person presses Send there (no command sends it for them), and the draft's page opens in the browser (signs in to Foundry Account first when needed; the draft is private until the person publishes it on MakerFoundry)",
+    ),
+    (
+        "ui.foundryAccount",
+        "Foundry Account…",
+        "",
+        "{} the dialog to sign in to Foundry Account (the sign-in MakerFoundry uses), create an account or sign out; the sign-in is kept in memory for this run only",
+    ),
+    (
         "ui.screenSeparate",
         "Separate Colors…",
         "",

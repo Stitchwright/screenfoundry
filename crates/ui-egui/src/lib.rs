@@ -45,6 +45,7 @@ pub mod palette;
 mod panel_docking;
 pub mod panels;
 pub mod picks;
+pub mod maker;
 pub mod place;
 pub mod placing;
 pub mod plugin_runs;
@@ -105,7 +106,7 @@ pub use clock::{now_ms, now_secs};
 #[cfg(test)]
 pub(crate) use services::browsable_url;
 pub use services::{
-    DownloadFn, ExistsFn, FileFilter, FilePick, Inbox, NativeInputHook, OpenUrlFn, PickOpen, PickSave, ReadFn, RevealFn, Services, WriteFn,
+    DownloadFn, ExistsFn, FileFilter, FilePick, HttpDone, HttpFn, Inbox, NativeInputHook, OpenUrlFn, PickOpen, PickSave, ReadFn, RevealFn, Services, WriteFn,
 };
 use state::{GeometryStamp, InputGeneration, PendingScreenshot, QueuedScreenshot};
 pub(crate) use state::{InputFrame, take_frame_once};
@@ -177,6 +178,8 @@ pub struct VectorcraftApp {
     pub graphics_adapter: Option<String>,
     /// File → Place: picked files, the place cursor's thumbnails, the Control bar's image details.
     pub place: place::PlaceState,
+    /// Foundry Account and Publish to MakerFoundry (SC-11).
+    pub maker: maker::MakerState,
     /// The Paste commands can paste from the system clipboard alone: it holds something to paste
     /// (SVG without a `system_clipboard`) while the internal clipboard is empty. It enables the
     /// Paste menu items.

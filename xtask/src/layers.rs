@@ -65,6 +65,8 @@ pub const TABLE: &[(&str, Class)] = &[
     ("scriptcheck", Class::Standalone),
     // ScreenFoundry screen-printing core (no dependencies on the app crates).
     ("sc-core", Class::Standalone),
+    // MakerFoundry requests, answers and address checks (SC-11): no network code, no app crates.
+    ("sc-maker", Class::Standalone),
 ];
 
 /// Explicit orderings *within* a layer (earlier may be used by later).

@@ -53,6 +53,7 @@ vectorcraft-scriptcheck = { path = "crates/scriptcheck" }
 
 # ScreenFoundry screen-printing core
 sc-core = { path = "crates/sc-core" }
+sc-maker = { path = "crates/sc-maker" }
 
 
 # foundation

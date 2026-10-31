@@ -192,6 +192,27 @@ fn text_edit_limited_name(ui: &mut egui::Ui, d: &mut Dialog, key: &str, width: f
     }
 }
 
+/// A one-line field that shows dots, for a password, bound to `d.fields[key]`.
+pub(super) fn password(ui: &mut egui::Ui, d: &mut Dialog, key: &str, width: f32) -> egui::Response {
+    let t = Tokens::get(ui.ctx());
+    let label = crate::widgets::take_previous_label(ui);
+    let mut s = d.str(key);
+    let id = ui.scope_id().with(("dlg-password", key));
+    let r = egui::Frame::NONE
+        .fill(t.input)
+        .stroke(egui::Stroke::new(1.0, t.input_border))
+        .corner_radius(egui::CornerRadius::same(3))
+        .inner_margin(egui::Margin::symmetric(6, 3))
+        .show(ui, |ui| {
+            crate::theme::strong_selected_text(ui);
+            ui.add(egui::TextEdit::singleline(&mut s).id(id).frame(egui::Frame::NONE).desired_width(width).password(true))
+        });
+    if r.inner.changed() {
+        d.fields.insert(key.into(), Value::String(s));
+    }
+    crate::widgets::label_field(r.inner, label)
+}
+
 /// A text box `rows` lines tall and `width` wide bound to `d.fields[key]`. Enter adds a line (it
 /// doesn't press OK while the box has focus).
 pub(super) fn text_area(ui: &mut egui::Ui, d: &mut Dialog, key: &str, width: f32, rows: usize) -> egui::Response {
