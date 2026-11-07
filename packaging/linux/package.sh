@@ -41,7 +41,7 @@ case "$ARCH" in
   aarch64 | arm64) ARCH=aarch64; DEB_ARCH=arm64 ;;
   *) echo "unsupported architecture $ARCH" >&2; exit 2 ;;
 esac
-export VECTORCRAFT_MAINTAINER="${VECTORCRAFT_MAINTAINER:-SiteSentrix <maintainers@sitesentrix.com>}"
+export VECTORCRAFT_MAINTAINER="${VECTORCRAFT_MAINTAINER:-StitchFoundry <support@stitchfoundry.app>}"
 BASENAME="screenfoundry-$VERSION-linux-$ARCH"
 
 echo "==> ScreenFoundry $VERSION for Linux $ARCH ($FORMATS)"

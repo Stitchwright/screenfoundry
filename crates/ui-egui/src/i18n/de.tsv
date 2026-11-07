@@ -4885,7 +4885,7 @@ lighting	Light	Licht
 	Tatami	Tatami
 
 # Embroidery (ScreenFoundry), phase 1
-	By SiteSentrix, based on VectorCraft by the ArtCraft team. MIT OR Apache-2.0. Fonts: Source Sans 3, Inter, JetBrains Mono (OFL). Icons: Lucide (ISC) + VectorCraft.	Von SiteSentrix, auf Basis von VectorCraft vom ArtCraft-Team. MIT OR Apache-2.0. Schriften: Source Sans 3, Inter, JetBrains Mono (OFL). Symbole: Lucide (ISC) + VectorCraft.
+	From the StitchFoundry family, based on VectorCraft by the ArtCraft team. MIT OR Apache-2.0. Fonts: Source Sans 3, Inter, JetBrains Mono (OFL). Icons: Lucide (ISC) + VectorCraft.	Von StitchFoundry, auf Basis von VectorCraft vom ArtCraft-Team. MIT OR Apache-2.0. Schriften: Source Sans 3, Inter, JetBrains Mono (OFL). Symbole: Lucide (ISC) + VectorCraft.
 	Version {version} — open-source screen-printing prepress in pure Rust.	Version {version} – Open-Source-Druckvorstufe für den Siebdruck in reinem Rust.
 	Machine embroidery digitizing — fast, open, scriptable.	Maschinenstickerei digitalisieren – schnell, offen, skriptfähig.
 	Split Here	Hier teilen
@@ -6456,7 +6456,7 @@ effect	Soft	Weich
 	Claude is writing the report…	Claude schreibt den Bericht…
 	Have Claude Write It	Von Claude schreiben lassen
 	Help make ScreenFoundry better	Helfen Sie, ScreenFoundry zu verbessern
-	I agree to send this to SiteSentrix, the maker of ScreenFoundry, to improve the software. It won't be shared with anyone else.	Ich bin einverstanden, dies an SiteSentrix, den Hersteller von ScreenFoundry, zu senden, um die Software zu verbessern. Es wird an niemanden sonst weitergegeben.
+	I agree to send this to StitchFoundry, the maker of ScreenFoundry, to improve the software. It won't be shared with anyone else.	Ich bin einverstanden, dies an StitchFoundry, den Hersteller von ScreenFoundry, zu senden, um die Software zu verbessern. Es wird an niemanden sonst weitergegeben.
 	Include a summary of the design	Eine Zusammenfassung des Designs beifügen
 	Include the conversation with Claude	Das Gespräch mit Claude beifügen
 	Include the photos ({n})	Die Fotos beifügen ({n})

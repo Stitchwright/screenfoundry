@@ -5395,7 +5395,7 @@ mark-style	Japanese	Japońskie
 @msg	{_1} export failed: {e}	Eksport {_1} nie powiódł się: {e}
 	Stitch Lines	Linie ściegów
 	Tatami	Tatami
-	By SiteSentrix, based on VectorCraft by the ArtCraft team. MIT OR Apache-2.0. Fonts: Source Sans 3, Inter, JetBrains Mono (OFL). Icons: Lucide (ISC) + VectorCraft.	SiteSentrix, na podstawie VectorCraft zespołu ArtCraft. MIT OR Apache-2.0. Czcionki: Source Sans 3, Inter, JetBrains Mono (OFL). Ikony: Lucide (ISC) + VectorCraft.
+	From the StitchFoundry family, based on VectorCraft by the ArtCraft team. MIT OR Apache-2.0. Fonts: Source Sans 3, Inter, JetBrains Mono (OFL). Icons: Lucide (ISC) + VectorCraft.	StitchFoundry, na podstawie VectorCraft zespołu ArtCraft. MIT OR Apache-2.0. Czcionki: Source Sans 3, Inter, JetBrains Mono (OFL). Ikony: Lucide (ISC) + VectorCraft.
 	Version {version} — open-source screen-printing prepress in pure Rust.	Wersja {version} — otwartoźródłowe przygotowanie do druku sitowego w czystym Ruście.
 	Machine embroidery digitizing — fast, open, scriptable.	Digitalizacja haftu maszynowego — szybka, otwarta, skryptowalna.
 	Split Here	Podziel tutaj
@@ -6697,7 +6697,7 @@ machine	Stop	Zatrzymanie
 	Claude is writing the report…	Claude pisze raport…
 	Have Claude Write It	Niech Claude to napisze
 	Help make ScreenFoundry better	Pomóż ulepszyć ScreenFoundry
-	I agree to send this to SiteSentrix, the maker of ScreenFoundry, to improve the software. It won't be shared with anyone else.	Zgadzam się wysłać to do SiteSentrix, twórcy ScreenFoundry, aby ulepszyć program. Nie zostanie to udostępnione nikomu innemu.
+	I agree to send this to StitchFoundry, the maker of ScreenFoundry, to improve the software. It won't be shared with anyone else.	Zgadzam się wysłać to do StitchFoundry, twórcy ScreenFoundry, aby ulepszyć program. Nie zostanie to udostępnione nikomu innemu.
 	Include a summary of the design	Dołącz podsumowanie projektu
 	Include the conversation with Claude	Dołącz rozmowę z Claude
 	Include the photos ({n})	Dołącz zdjęcia ({n})

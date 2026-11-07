@@ -5147,7 +5147,7 @@ effect	Points	Điểm
 @msg	{_1} export failed: {e}	xuất {_1} thất bại: {e}
 	Stitch Lines	Đường mũi thêu
 	Tatami	Tatami
-	By SiteSentrix, based on VectorCraft by the ArtCraft team. MIT OR Apache-2.0. Fonts: Source Sans 3, Inter, JetBrains Mono (OFL). Icons: Lucide (ISC) + VectorCraft.	Bởi SiteSentrix, dựa trên VectorCraft của nhóm ArtCraft. MIT OR Apache-2.0. Phông chữ: Source Sans 3, Inter, JetBrains Mono (OFL). Biểu tượng: Lucide (ISC) + VectorCraft.
+	From the StitchFoundry family, based on VectorCraft by the ArtCraft team. MIT OR Apache-2.0. Fonts: Source Sans 3, Inter, JetBrains Mono (OFL). Icons: Lucide (ISC) + VectorCraft.	Bởi StitchFoundry, dựa trên VectorCraft của nhóm ArtCraft. MIT OR Apache-2.0. Phông chữ: Source Sans 3, Inter, JetBrains Mono (OFL). Biểu tượng: Lucide (ISC) + VectorCraft.
 	Version {version} — open-source screen-printing prepress in pure Rust.	Phiên bản {version} — phần mềm tiền in cho in lụa mã nguồn mở viết hoàn toàn bằng Rust.
 	Machine embroidery digitizing — fast, open, scriptable.	Số hóa thêu máy — nhanh, mở, có thể lập trình.
 	Split Here	Chia tại đây
@@ -6454,7 +6454,7 @@ machine	Stop	Dừng máy
 	Claude is writing the report…	Claude đang viết báo cáo…
 	Have Claude Write It	Để Claude viết
 	Help make ScreenFoundry better	Giúp ScreenFoundry tốt hơn
-	I agree to send this to SiteSentrix, the maker of ScreenFoundry, to improve the software. It won't be shared with anyone else.	Tôi đồng ý gửi nội dung này cho SiteSentrix, nhà phát triển ScreenFoundry, để cải thiện phần mềm. Nội dung sẽ không được chia sẻ với ai khác.
+	I agree to send this to StitchFoundry, the maker of ScreenFoundry, to improve the software. It won't be shared with anyone else.	Tôi đồng ý gửi nội dung này cho StitchFoundry, nhà phát triển ScreenFoundry, để cải thiện phần mềm. Nội dung sẽ không được chia sẻ với ai khác.
 	Include a summary of the design	Kèm bản tóm tắt thiết kế
 	Include the conversation with Claude	Kèm cuộc trò chuyện với Claude
 	Include the photos ({n})	Kèm ảnh ({n})

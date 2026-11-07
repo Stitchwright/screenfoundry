@@ -15,7 +15,7 @@ fn main() -> Result<(), String> {
     res.set_icon("../../assets/app-icon/screenfoundry.ico")
         .set("ProductName", "ScreenFoundry")
         .set("FileDescription", "ScreenFoundry machine embroidery digitizer")
-        .set("CompanyName", "SiteSentrix")
+        .set("CompanyName", "StitchFoundry")
         .set("LegalCopyright", "Copyright (c) Bruce Wattendorf (SiteSentrix) and the VectorCraft authors. MIT OR Apache-2.0.")
         .set("OriginalFilename", "screenfoundry.exe")
         .set("InternalName", "screenfoundry");

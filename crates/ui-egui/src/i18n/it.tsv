@@ -4934,7 +4934,7 @@ lighting	Light	Luce
 	Tatami	Tatami
 
 # Embroidery (ScreenFoundry), phase 1
-	By SiteSentrix, based on VectorCraft by the ArtCraft team. MIT OR Apache-2.0. Fonts: Source Sans 3, Inter, JetBrains Mono (OFL). Icons: Lucide (ISC) + VectorCraft.	Di SiteSentrix, basato su VectorCraft del team ArtCraft. MIT OR Apache-2.0. Font: Source Sans 3, Inter, JetBrains Mono (OFL). Icone: Lucide (ISC) + VectorCraft.
+	From the StitchFoundry family, based on VectorCraft by the ArtCraft team. MIT OR Apache-2.0. Fonts: Source Sans 3, Inter, JetBrains Mono (OFL). Icons: Lucide (ISC) + VectorCraft.	Di StitchFoundry, basato su VectorCraft del team ArtCraft. MIT OR Apache-2.0. Font: Source Sans 3, Inter, JetBrains Mono (OFL). Icone: Lucide (ISC) + VectorCraft.
 	Version {version} — open-source screen-printing prepress in pure Rust.	Versione {version} — prestampa per serigrafia open source in puro Rust.
 	Machine embroidery digitizing — fast, open, scriptable.	Digitalizzazione per ricamo a macchina — veloce, aperta, programmabile.
 	Split Here	Dividi qui
@@ -6491,7 +6491,7 @@ machine	Stop	Arresto
 	Claude is writing the report…	Claude sta scrivendo il resoconto…
 	Have Claude Write It	Fallo scrivere a Claude
 	Help make ScreenFoundry better	Aiuta a migliorare ScreenFoundry
-	I agree to send this to SiteSentrix, the maker of ScreenFoundry, to improve the software. It won't be shared with anyone else.	Accetto di inviare questo a SiteSentrix, il produttore di ScreenFoundry, per migliorare il programma. Non sarà condiviso con nessun altro.
+	I agree to send this to StitchFoundry, the maker of ScreenFoundry, to improve the software. It won't be shared with anyone else.	Accetto di inviare questo a StitchFoundry, il produttore di ScreenFoundry, per migliorare il programma. Non sarà condiviso con nessun altro.
 	Include a summary of the design	Includi un riepilogo del disegno
 	Include the conversation with Claude	Includi la conversazione con Claude
 	Include the photos ({n})	Includi le foto ({n})
