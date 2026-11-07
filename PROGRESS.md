@@ -11,3 +11,5 @@
 - 2026-11-03 nightly sweep: no needs-triage issues; history secret scan clean; cargo audit unchanged (#19). Filed #32 and fixed it here: `screen.*` commands refuse a source image over the 100 MP cap from its header, before decoding it.
 - 2026-11-04 nightly maintenance: queue empty; `cargo xtask ci` cut off by the 30-min background limit with no failures seen; sc-core tests stable over 3 runs (130 pass). Added `color.rs` tests (grey chroma, delta-E symmetry, hex edges). Tests only.
 - 2026-11-04: flaky render test `a_ready_bitmap_draws_again_where_its_file_shows` fixed: a background worker could make both bitmaps before the first frame finished, so the frame already showed them ("the bitmaps show" failed, e.g. on PR #37). The test now holds the workers (test-only `hold_workers`) while it draws that frame.
+- 2026-11-07 nightly sweep: no needs-triage issues; history secret scan clean; cargo audit unchanged (#19); no new findings filed.
+- Fixed #41 here: `cargo xtask cleanroom` now exists and runs in `cargo xtask ci` (Adobe notices and creator stamps, owner-reviewed allowlist).

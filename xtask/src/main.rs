@@ -7,6 +7,7 @@ mod affinity_corpus;
 mod assets;
 mod brands;
 mod bundle;
+mod cleanroom;
 mod cursors;
 mod ico;
 mod layers;
@@ -27,6 +28,8 @@ usage: cargo xtask <command>
 commands:
   assets          check that every icon/image/font/asset is attributed in ASSETS.md
   brands          check that user-visible text (labels, params docs, MCP, docs, packaging) names no other vendor's products
+  cleanroom       check that no file carries the reference vendor's copyright notice or an application creator
+                  stamp of theirs (the clean-room rule; allowlist in xtask/src/cleanroom.rs)
   cursors         warn about Cursor values with no entry in crates/tools/src/cursors.toml (never fails)
   i18n-report     list the strings each language's catalog lacks, shown in English (fails only on a
                   broken scan; ci runs it too)
@@ -34,7 +37,7 @@ commands:
   layers          enforce the crate dependency layering (plan/architecture.md §3)
   wasm            cargo check --target wasm32-unknown-unknown for the wasm-safe crates and the web app
   test            the workspace tests (cargo nextest when installed, else cargo test), then the doctests
-  ci              fmt --check, clippy -D warnings, test, doctests, no-bundled-fonts, pdf-deps, assets, brands, cursors (warnings only), layers, wasm (stops at first failure)
+  ci              fmt --check, clippy -D warnings, test, doctests, no-bundled-fonts, pdf-deps, assets, brands, cleanroom, cursors (warnings only), layers, wasm (stops at first failure)
   corpus [--download] [--affinity]
                   show where test corpora live; --download fetches PngSuite into corpus/pngsuite,
                   --affinity the pinned public Affinity documents into corpus/affinity
@@ -57,6 +60,7 @@ fn main() -> ExitCode {
     let result = match args.first().map(String::as_str) {
         Some("assets") => assets::run(&root()),
         Some("brands") => brands::run(&root()),
+        Some("cleanroom") => cleanroom::run(&root()),
         Some("cursors") => cursors::run(&root()),
         Some("i18n-report") => cmd_i18n_report(),
         Some("layers") => cmd_layers(),
@@ -301,6 +305,7 @@ fn cmd_ci() -> Result<(), String> {
         ("pdf-deps", Box::new(|| pdf_deps::run(&root()))),
         ("assets", Box::new(|| assets::run(&root()))),
         ("brands", Box::new(|| brands::run(&root()))),
+        ("cleanroom", Box::new(|| cleanroom::run(&root()))),
         ("cursors", Box::new(|| cursors::run(&root()))),
         ("i18n-report", Box::new(cmd_i18n_report)),
         ("layers", Box::new(cmd_layers)),

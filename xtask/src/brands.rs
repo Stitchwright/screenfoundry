@@ -41,8 +41,8 @@ const DENY: &[&str] = &[
 /// Marks a line that keeps a legacy name on purpose.
 const ALLOW: &str = "brand-ok";
 
-/// This file lists the names it rejects.
-const SELF: &str = "xtask/src/brands.rs";
+/// This file lists the names it rejects, and the clean-room check names the vendor whose marks it looks for.
+const SELF: [&str; 2] = ["xtask/src/brands.rs", "xtask/src/cleanroom.rs"];
 
 /// The cursor manifest, which designers read.
 const CURSOR_MANIFEST: &str = "crates/tools/src/cursors.toml";
@@ -106,7 +106,11 @@ fn kind_of(path: &str) -> Option<Kind> {
         Some(Kind::Text)
     } else if path == "Cargo.toml" || path.ends_with("/Cargo.toml") {
         Some(Kind::Manifest)
-    } else if path.ends_with(".rs") && ["crates/", "apps/", "xtask/"].iter().any(|d| path.starts_with(d)) && path != SELF && !is_test_path(path) {
+    } else if path.ends_with(".rs")
+        && ["crates/", "apps/", "xtask/"].iter().any(|d| path.starts_with(d))
+        && !SELF.contains(&path)
+        && !is_test_path(path)
+    {
         Some(Kind::Rust)
     } else {
         None
@@ -370,7 +374,9 @@ line Pantone"; }
         assert_eq!(kind_of("crates/tools/src/text_tests.rs"), None);
         assert_eq!(kind_of("crates/color/src/cms/tests.rs"), None);
         assert_eq!(kind_of("crates/engine/tests/command_sweep.rs"), None);
-        assert_eq!(kind_of(SELF), None);
+        for path in SELF {
+            assert_eq!(kind_of(path), None);
+        }
         assert_eq!(kind_of("crates/ui-egui/Cargo.toml"), Some(Kind::Manifest));
         assert_eq!(kind_of("docs/brand/LICENSE-brand.txt"), Some(Kind::Text));
         assert_eq!(kind_of("packaging/linux/nfpm.yaml"), Some(Kind::Text));
